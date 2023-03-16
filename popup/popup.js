@@ -10,13 +10,12 @@ async function storageGet(key) {
     return (await chrome.storage.local.get([key]))[key];
 }
 
-
 function setFakeDate(date) {
     window.TT_FAKE_DATE = date || undefined;
 }
 
 async function injectFakeDate(fakeDate) {
-    console.log("injecting fake date", fakeDate)
+    console.log('injecting fake date', fakeDate)
     const tabId = await getActiveTabId();
 
     await chrome.scripting.executeScript({
@@ -26,6 +25,7 @@ async function injectFakeDate(fakeDate) {
         world: 'MAIN'
     });
 }
+
 async function onFakeDate(fakeDate) {
     await injectFakeDate(fakeDate);
     await chrome.storage.local.set({ fakeDate });
@@ -38,13 +38,13 @@ async function onFakeDate(fakeDate) {
     window.close();
 }
 
-const input = document.getElementById("fakeDateInput");
+const input = document.getElementById('fakeDateInput');
 
 const initialValue = await storageGet('fakeDate') || (new Date()).toISOString();
-input.setAttribute("value", initialValue);
+input.setAttribute('value', initialValue);
 
 
-document.getElementById("setBtn").onclick = async () => {
+document.getElementById('setBtn').onclick = async () => {
     const fakeDate = input.value;
     //TODO validate
     await onFakeDate(fakeDate)
@@ -61,6 +61,6 @@ input.onkeydown = async (event) => {
 };
 
 
-document.getElementById("resetBtn").onclick = async () => {
+document.getElementById('resetBtn').onclick = async () => {
     await onFakeDate('')
 }
