@@ -26,6 +26,7 @@
     "scripting",
     "storage"
   ],
+  "content_security_policy": "default-src 'self'; frame-ancestors 'none';",
   "content_scripts": [
     {
       "js": [
