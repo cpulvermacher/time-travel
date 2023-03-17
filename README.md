@@ -14,6 +14,7 @@
 - publish repo
 - privacy policy (host on github) , add to web store
 - public to web store
+- create 440x280 pixels promo banner
 
 # Similar extensions
 - Change Timezone (Time Shift)
