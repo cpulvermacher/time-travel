@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Time Travel",
-  "description": "Spoof the current date and time seen by websites. You might find this useful for debugging frontend applications that depend on the time.",
+  "description": "Spoof the current date and time seen by websites. Useful for debugging frontend applications that depend on the time.",
   "version": "0.1.0",
   "icons": {
     "16": "images/icon-16.png",

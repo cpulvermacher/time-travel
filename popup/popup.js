@@ -40,7 +40,8 @@ async function onFakeDate(fakeDate) {
 
 const input = document.getElementById('fakeDateInput');
 
-const initialValue = await storageGet('fakeDate') || (new Date()).toISOString();
+const fakeDateFromStorage = await storageGet('fakeDate')
+const initialValue = fakeDateFromStorage || (new Date()).toISOString();
 input.setAttribute('value', initialValue);
 
 
@@ -59,7 +60,6 @@ input.onkeydown = async (event) => {
         await onFakeDate(fakeDate)
     }
 };
-
 
 document.getElementById('resetBtn').onclick = async () => {
     await onFakeDate('')
