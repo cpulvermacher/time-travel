@@ -1,0 +1,36 @@
+html,
+body {
+    height: 90px;
+}
+
+body {
+    padding: 15px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.buttonrow {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+button {
+    padding: 5px 10px;
+    background: white;
+    color: #6060f4;
+    border: 1px solid #9f9f9f;
+    border-radius: 3px;
+}
+
+input {
+    margin-bottom: 10px;
+}
+
+button#setBtn {
+    background: #6060f4;
+    color: white;
+}
