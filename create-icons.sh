@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -eu
 
 create_logo() {
     size=$1
