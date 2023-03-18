@@ -1,9 +1,10 @@
 
 # Installation
 - Download this repository
+- run `npm run build`
 - Open chrome://extensions
 - Enable 'Developer Mode'
-- Click 'Load unpacked' and select the directory containing this README file.
+- Click 'Load unpacked' and select the `dist/` directory
 
 # Similar extensions
 - Change Timezone (Time Shift)
