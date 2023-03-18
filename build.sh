@@ -4,8 +4,10 @@ set -eu
 rm -rf dist
 mkdir dist
 
+vite build
+
+# copy extra assets
 cp -a images dist/
-cp -a popup dist/
 cp -a scripts dist/
 cp -a background.js dist/
 cp -a manifest.json dist/
