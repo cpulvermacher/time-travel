@@ -4,8 +4,14 @@
         "es2016": true,
         "webextensions": true
     },
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint"
+    ],
     "extends": [
-        "eslint:recommended"
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
     ],
     "overrides": [],
     "parserOptions": {
@@ -13,6 +19,7 @@
         "sourceType": "module"
     },
     "rules": {
+        "@typescript-eslint/no-non-null-assertion": "off",
         "quotes": [
             2,
             "single",

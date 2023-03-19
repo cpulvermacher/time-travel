@@ -4,10 +4,11 @@
   "private": "true",
   "scripts": {
     "build": "sh ./build.sh",
-    "lint": "eslint *.js **/*.js"
+    "lint": "tsc && eslint *.js **/*.js *.ts **/*.ts"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.224",
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
     "eslint": "^8.36.0",
     "vite": "^4.2.0"
   }

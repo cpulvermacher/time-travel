@@ -21,8 +21,8 @@
         "types": [
             "chrome"
         ]
-    }
-    // "include": [
-    //     "src"
-    // ]
+    },
+    "include": [
+        "popup"
+    ]
 }

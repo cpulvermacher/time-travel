@@ -1,7 +1,7 @@
 async function getActiveTabId() {
-    let queryOptions = { active: true, currentWindow: true }
+    const queryOptions = { active: true, currentWindow: true }
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
-    let [tab] = await chrome.tabs.query(queryOptions)
+    const [tab] = await chrome.tabs.query(queryOptions)
     return tab.id
 }
 
@@ -17,9 +17,11 @@ function setFakeDate(date: string) {
 async function injectFakeDate(fakeDate: string) {
     console.log('injecting fake date', fakeDate)
     const tabId = await getActiveTabId()
+    if (tabId == undefined)
+        return
 
     await chrome.scripting.executeScript({
-        target: { tabId: tabId },
+        target: { tabId },
         func: setFakeDate,
         args: [fakeDate],
         world: 'MAIN'
@@ -38,14 +40,17 @@ async function onFakeDate(fakeDate: string) {
     window.close()
 }
 
-const input: HTMLInputElement = document.getElementById('fakeDateInput')
+const input = document.getElementById('fakeDateInput') as HTMLInputElement
 
-const fakeDateFromStorage = await storageGet('fakeDate')
-const initialValue = fakeDateFromStorage || (new Date()).toISOString()
-input.setAttribute('value', initialValue)
+input.setAttribute('value', (new Date()).toISOString())
+storageGet('fakeDate').then((fakeDateFromStorage) => {
+    if (fakeDateFromStorage) {
+        input.setAttribute('value', fakeDateFromStorage)
+    }
+})
 
 
-document.getElementById('setBtn').onclick = async () => {
+document.getElementById('setBtn')!.onclick = async () => {
     const fakeDate = input.value
     //TODO validate
     await onFakeDate(fakeDate)
@@ -61,6 +66,6 @@ input.onkeydown = async (event) => {
     }
 }
 
-document.getElementById('resetBtn').onclick = async () => {
+document.getElementById('resetBtn')!.onclick = async () => {
     await onFakeDate('')
 }
