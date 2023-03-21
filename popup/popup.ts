@@ -10,6 +10,15 @@ async function storageGet(key: string) {
     return (await chrome.storage.local.get([key]))[key]
 }
 
+function setError(message: string) {
+    const errorMsg = document.getElementById('errormsg')
+    if (!errorMsg)
+        return
+
+    errorMsg.innerText = message
+    errorMsg.className = message ? 'error--visible' : 'error--hidden'
+}
+
 function setFakeDate(date: string) {
     window.TT_FAKE_DATE = date || undefined
 }
@@ -18,8 +27,9 @@ async function injectFakeDate(fakeDate: string) {
     console.log('injecting fake date', fakeDate)
     const tabId = await getActiveTabId()
     if (tabId == undefined)
-        return
+        throw new Error("Couldn't get active tab")
 
+    // this fails (not surprisingly)
     await chrome.scripting.executeScript({
         target: { tabId },
         func: setFakeDate,
@@ -29,15 +39,26 @@ async function injectFakeDate(fakeDate: string) {
 }
 
 async function onFakeDate(fakeDate: string) {
-    await injectFakeDate(fakeDate)
-    await chrome.storage.local.set({ fakeDate })
+    if (fakeDate && isNaN(Date.parse(fakeDate))) {
+        setError('Invalid format! Try "2023-03-25 12:40", "2023-03-25T12:40Z" (UTC) or "2023-03-25" (midnight).')
+        return
+    }
 
-    //TODO error handling (we might not get a tab)
-    await chrome.action.setBadgeText({
-        tabId: await getActiveTabId(),
-        text: fakeDate ? 'ON' : ''
-    })
-    window.close()
+    try {
+        await injectFakeDate(fakeDate)
+
+        await chrome.storage.local.set({ fakeDate })
+
+        await chrome.action.setBadgeText({
+            tabId: await getActiveTabId(),
+            text: fakeDate ? 'ON' : ''
+        })
+
+        window.close()
+
+    } catch (e) {
+        setError('Couldn\'t set date: ' + e)
+    }
 }
 
 const input = document.getElementById('fakeDateInput') as HTMLInputElement
@@ -52,7 +73,6 @@ storageGet('fakeDate').then((fakeDateFromStorage) => {
 
 document.getElementById('setBtn')!.onclick = async () => {
     const fakeDate = input.value
-    //TODO validate
     await onFakeDate(fakeDate)
 }
 
@@ -61,7 +81,6 @@ input.onkeydown = async (event) => {
         event.preventDefault()
 
         const fakeDate = input.value
-        //TODO validate
         await onFakeDate(fakeDate)
     }
 }

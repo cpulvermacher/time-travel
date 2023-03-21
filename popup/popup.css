@@ -1,6 +1,6 @@
 html,
 body {
-    height: 90px;
+    min-height: 90px;
 }
 
 body {
@@ -10,6 +10,11 @@ body {
     flex-direction: column;
     justify-content: space-between;
     gap: 10px;
+}
+
+.error--visible {
+    color: #893b3b;
+    border: 1px solid #893b3b;
 }
 
 .buttonrow {
