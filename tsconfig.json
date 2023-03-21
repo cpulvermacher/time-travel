@@ -23,6 +23,6 @@
         ]
     },
     "include": [
-        "popup"
+        "src/popup"
     ]
 }

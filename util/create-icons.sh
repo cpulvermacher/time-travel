@@ -9,10 +9,10 @@ create_logo() {
     optipng "$filename"
 }
 
-ORIGINAL=icon.svg
+ORIGINAL=../icon.svg
 
 SIZES="16 32 48 128"
 for s in $SIZES
 do
-    create_logo "$s" "images/icon-${s}.png"
+    create_logo "$s" "../images/icon-${s}.png"
 done

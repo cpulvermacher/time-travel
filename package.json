@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": "true",
   "scripts": {
-    "build": "sh ./build.sh",
-    "lint": "tsc && eslint *.js **/*.js *.ts **/*.ts"
+    "build": "sh ./util/build.sh",
+    "lint": "tsc && eslint **/*.js *.ts **/*.ts"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.224",
