@@ -10,6 +10,11 @@ async function storageGet(key: string) {
     return (await chrome.storage.local.get([key]))[key]
 }
 
+function truncateDateForInput(date: Date): string {
+    // truncate seconds, add Z for UTC
+    return date.toISOString().slice(0, 16) + 'Z'
+}
+
 function setError(message: string) {
     const errorMsg = document.getElementById('errormsg')
     if (!errorMsg)
@@ -63,13 +68,13 @@ async function onFakeDate(fakeDate: string) {
 
 const input = document.getElementById('fakeDateInput') as HTMLInputElement
 
-input.setAttribute('value', getNowUTC())
+input.setAttribute('value', truncateDateForInput(new Date()))
 storageGet('fakeDate').then((fakeDateFromStorage) => {
     if (fakeDateFromStorage) {
-        input.setAttribute('value', fakeDateFromStorage)
+        const fakeDate = new Date(Date.parse(fakeDateFromStorage))
+        input.setAttribute('value', truncateDateForInput(fakeDate))
     }
 })
-
 
 document.getElementById('setBtn')!.onclick = async () => {
     const fakeDate = input.value
@@ -87,9 +92,4 @@ input.onkeydown = async (event) => {
 
 document.getElementById('resetBtn')!.onclick = async () => {
     await onFakeDate('')
-}
-
-function getNowUTC(): string {
-    // truncate seconds, add Z for UTC
-    return (new Date()).toISOString().slice(0, 16) + 'Z'
 }
