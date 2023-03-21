@@ -63,7 +63,7 @@ async function onFakeDate(fakeDate: string) {
 
 const input = document.getElementById('fakeDateInput') as HTMLInputElement
 
-input.setAttribute('value', (new Date()).toISOString())
+input.setAttribute('value', getNowUTC())
 storageGet('fakeDate').then((fakeDateFromStorage) => {
     if (fakeDateFromStorage) {
         input.setAttribute('value', fakeDateFromStorage)
@@ -87,4 +87,9 @@ input.onkeydown = async (event) => {
 
 document.getElementById('resetBtn')!.onclick = async () => {
     await onFakeDate('')
+}
+
+function getNowUTC(): string {
+    // truncate seconds, add Z for UTC
+    return (new Date()).toISOString().slice(0, 16) + 'Z'
 }
