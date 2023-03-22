@@ -7,8 +7,10 @@ export default defineConfig({
         emptyOutDir: true,
         target: 'chrome100',
         rollupOptions: {
-            input: ['/popup/popup.html'],
+            input: ['/background.ts', '/popup/popup.html'],
             output: {
+                entryFileNames: assetInfo =>
+                    assetInfo.name === 'background' ? '[name].js' : 'assets/[name]-[hash].js',
             }
         }
     },

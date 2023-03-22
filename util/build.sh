@@ -12,7 +12,6 @@ vite build
 # copy extra assets
 cp -a images dist/
 cp -a src/scripts dist/
-cp -a src/background.js dist/
 cp -a src/manifest.json dist/
 
 
