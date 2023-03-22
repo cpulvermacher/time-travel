@@ -4,7 +4,7 @@
   "private": "true",
   "scripts": {
     "build": "sh ./util/build.sh",
-    "lint": "tsc && eslint src/**/*.js *.ts **/*.ts"
+    "lint": "tsc && eslint *.ts **/*.ts"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.224",

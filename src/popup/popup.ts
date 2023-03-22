@@ -1,3 +1,5 @@
+/// <reference types="../global"/>
+
 async function getActiveTabId() {
     const queryOptions = { active: true, currentWindow: true }
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
