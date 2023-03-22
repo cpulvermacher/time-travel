@@ -5,7 +5,7 @@ export default defineConfig({
     build: {
         outDir: '../dist',
         emptyOutDir: true,
-        target: 'chrome100',
+        target: 'chrome96',
         rollupOptions: {
             input: ['/background.ts', '/popup/popup.html', '/scripts/replace_date.ts'],
             output: {
