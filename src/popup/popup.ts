@@ -1,16 +1,6 @@
 /// <reference types="../global"/>
 
-async function getActiveTabId() {
-    const queryOptions = { active: true, currentWindow: true }
-    // `tab` will either be a `tabs.Tab` instance or `undefined`.
-    const [tab] = await chrome.tabs.query(queryOptions)
-    return tab.id
-}
-
-//Note: needs 'storage' permission
-async function storageGet(key: string) {
-    return (await chrome.storage.local.get([key]))[key]
-}
+import { injectFunction, setBadgeText, setStorage, storageGet } from '../util/browser'
 
 function truncateDateForInput(date: Date): string {
     // truncate seconds, add Z for UTC
@@ -30,21 +20,6 @@ function setFakeDate(date: string) {
     window.TT_FAKE_DATE = date || undefined
 }
 
-async function injectFakeDate(fakeDate: string) {
-    console.log('injecting fake date', fakeDate)
-    const tabId = await getActiveTabId()
-    if (tabId == undefined)
-        throw new Error("Couldn't get active tab")
-
-    // this fails (not surprisingly)
-    await chrome.scripting.executeScript({
-        target: { tabId },
-        func: setFakeDate,
-        args: [fakeDate],
-        world: 'MAIN'
-    })
-}
-
 async function onFakeDate(fakeDate: string) {
     if (fakeDate && isNaN(Date.parse(fakeDate))) {
         setError('Invalid format! Try "2023-03-25 12:40", "2023-03-25T12:40Z" (UTC) or "2023-03-25" (midnight).')
@@ -52,14 +27,9 @@ async function onFakeDate(fakeDate: string) {
     }
 
     try {
-        await injectFakeDate(fakeDate)
-
-        await chrome.storage.local.set({ fakeDate })
-
-        await chrome.action.setBadgeText({
-            tabId: await getActiveTabId(),
-            text: fakeDate ? 'ON' : ''
-        })
+        await injectFunction(setFakeDate, [fakeDate])
+        await setStorage('fakeDate', fakeDate)
+        await setBadgeText(fakeDate ? 'ON' : '')
 
         window.close()
 
@@ -68,6 +38,7 @@ async function onFakeDate(fakeDate: string) {
     }
 }
 
+// ==================== initialize popup ====================
 const input = document.getElementById('fakeDateInput') as HTMLInputElement
 
 input.setAttribute('value', truncateDateForInput(new Date()))
