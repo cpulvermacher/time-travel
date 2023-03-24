@@ -14,20 +14,28 @@ export async function setStorage(key: string, value: string) {
     await chrome.storage.local.set({ key: value })
 }
 
-export async function injectFunction<Args extends [string]>(
-    func: (...args: Args) => void,
+export async function injectFunction<Args extends [string], Result>(
+    func: (...args: Args) => Result,
     args: Args
-) {
+): Promise<NonNullable<chrome.scripting.Awaited<Result>> | null> {
     const tabId = await getActiveTabId()
     if (tabId == undefined)
         throw new Error("Couldn't get active tab")
 
-    await chrome.scripting.executeScript({
+    const result = await chrome.scripting.executeScript({
         target: { tabId },
         func,
         args,
-        world: 'MAIN'
+        world: 'MAIN',
+        injectImmediately: true,
     })
+
+    for (const value of result) {
+        if (value.result)
+            return value.result
+    }
+    return null
+
 }
 
 export async function setBadgeText(text: string) {

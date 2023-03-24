@@ -1,6 +1,5 @@
-/// <reference types="../global"/>
 
-import { injectFunction, setBadgeText, setStorage, storageGet } from '../util/browser'
+import { injectFunction, setBadgeText, storageGet } from '../util/browser'
 
 function truncateDateForInput(date: Date): string {
     // truncate seconds, add Z for UTC
@@ -17,7 +16,11 @@ function setError(message: string) {
 }
 
 function setFakeDate(date: string) {
-    window.TT_FAKE_DATE = date || undefined
+    const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
+    if (date)
+        window.sessionStorage.setItem(FAKE_DATE_STORAGE_KEY, date)
+    else
+        window.sessionStorage.removeItem(FAKE_DATE_STORAGE_KEY)
 }
 
 async function onFakeDate(fakeDate: string) {
@@ -28,7 +31,6 @@ async function onFakeDate(fakeDate: string) {
 
     try {
         await injectFunction(setFakeDate, [fakeDate])
-        await setStorage('fakeDate', fakeDate)
         await setBadgeText(fakeDate ? 'ON' : '')
 
         window.close()

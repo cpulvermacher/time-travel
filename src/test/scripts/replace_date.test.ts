@@ -6,8 +6,10 @@ import '../../scripts/replace_date'
 
 describe('fake Date', () => {
     afterEach(() => {
-        window.TT_FAKE_DATE = undefined
+        sessionStorage.clear()
     })
+    const setFakeDate = (date: string) =>
+        sessionStorage.setItem('timeTravelDate', date)
 
     it('constructor() with actual date', () => {
         const date = new Date()
@@ -16,7 +18,7 @@ describe('fake Date', () => {
 
     it('constructor() with fake date', () => {
         const fakeDate = '2010-01-01T00:00:00.000Z'
-        window.TT_FAKE_DATE = fakeDate
+        setFakeDate(fakeDate)
         const date = new Date()
         expect(date.toISOString()).toBe(fakeDate)
     })
@@ -28,7 +30,7 @@ describe('fake Date', () => {
 
     it('now() with fake date', () => {
         const fakeDate = '1970-01-01T00:00:00.123Z'
-        window.TT_FAKE_DATE = fakeDate
+        setFakeDate(fakeDate)
         const date = Date.now()
         expect(date).toBe(123)
     })
@@ -41,7 +43,7 @@ describe('fake Date', () => {
 
     test.skip('Date() with fake date', () => {
         const fakeDate = '1970-01-01T00:00:00.123Z'
-        window.TT_FAKE_DATE = fakeDate
+        setFakeDate(fakeDate)
 
         const dateStr = Date()
         const date = new Date(Date.parse(dateStr))
@@ -55,7 +57,8 @@ describe('fake Date', () => {
             let date: Date
 
             beforeEach(() => {
-                window.TT_FAKE_DATE = fakeDate
+                if (fakeDate)
+                    setFakeDate(fakeDate)
                 date = new Date('2021-09-15T12:34:56.789')
             })
 
