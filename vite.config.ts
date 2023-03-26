@@ -1,11 +1,15 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
     root: 'src',
+    test: {
+        environment: 'happy-dom'
+    },
     build: {
         outDir: '../dist',
         emptyOutDir: true,
         target: 'chrome96',
+        // minify: false,
         rollupOptions: {
             input: ['/background.ts', '/popup/popup.html', '/scripts/replace_date.ts'],
             output: {
