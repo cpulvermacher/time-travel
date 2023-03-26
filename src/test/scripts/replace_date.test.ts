@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, test } from 'vitest'
 
 const testStartDate = new Date()
 
@@ -31,6 +31,21 @@ describe('fake Date', () => {
         window.TT_FAKE_DATE = fakeDate
         const date = Date.now()
         expect(date).toBe(123)
+    })
+
+    test.skip('Date() with actual date', () => {
+        const date = Date()
+        //1s accuracy
+        expect(Date.parse(date) + 1000).toBeGreaterThan(testStartDate.valueOf())
+    })
+
+    test.skip('Date() with fake date', () => {
+        const fakeDate = '1970-01-01T00:00:00.123Z'
+        window.TT_FAKE_DATE = fakeDate
+
+        const dateStr = Date()
+        const date = new Date(Date.parse(dateStr))
+        expect(date.toISOString()).toBe(fakeDate)
     })
 
 
