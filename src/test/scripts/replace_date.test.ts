@@ -2,7 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, test } from 'vitest'
 
 const testStartDate = new Date()
 
+// emulate conditions for enabled extension
+sessionStorage.setItem('timeTravelDate', 'abc')
 import '../../scripts/replace_date'
+sessionStorage.clear()
 
 describe('fake Date', () => {
     afterEach(() => {

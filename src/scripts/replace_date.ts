@@ -24,16 +24,22 @@ class FakeDate extends Date {
     }
 }
 
-// eslint-disable-next-line no-global-assign
-Date = FakeDate as DateConstructor
-
 // needed for now()
 const originalDateNow = Date.now
-Date.now = () => {
+const fakeNow = () => {
     const fakeDate = getFakeDate()
     if (fakeDate !== null) {
         return Date.parse(fakeDate)
     } else {
         return originalDateNow()
     }
+}
+
+// FakeDate does not support all of Date's features right now, replace only when we already have a fake date set
+// this means on you need to reload the page at least once after setting a date, but it's better than breaking
+// random web pages
+if (getFakeDate() != null) {
+    // eslint-disable-next-line no-global-assign
+    Date = FakeDate as DateConstructor
+    Date.now = fakeNow
 }
