@@ -1,13 +1,8 @@
 (() => {
-    function getFakeDate(): string | null {
-        const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
-        try {
-            return window.sessionStorage.getItem(FAKE_DATE_STORAGE_KEY)
-        } catch (err) {
-            //in sandbox, we might not be able to access sessionStorage
-            return null
-        }
-    }
+    const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
+
+    const originalDate = Date
+    const originalDateNow = Date.now
 
     // needed for constructor
     class FakeDate extends Date {
@@ -26,7 +21,6 @@
     }
 
     // needed for now()
-    const originalDateNow = Date.now
     const fakeNow = () => {
         const fakeDate = getFakeDate()
         if (fakeDate !== null) {
@@ -36,12 +30,29 @@
         }
     }
 
-    // FakeDate does not support all of Date's features right now, replace only when we already have a fake date set
-    // this means on you need to reload the page at least once after setting a date, but it's better than breaking
-    // random web pages
-    if (getFakeDate() != null) {
-        // eslint-disable-next-line no-global-assign
-        Date = FakeDate as DateConstructor
-        Date.now = fakeNow
+    function getFakeDate(): string | null {
+        try {
+            return window.sessionStorage.getItem(FAKE_DATE_STORAGE_KEY)
+        } catch (err) {
+            //in sandbox, we might not be able to access sessionStorage
+            return null
+        }
     }
+
+    const toggleDateIfNeeded = () => {
+        // FakeDate does not support all of Date's features right now, replace only when we already have a fake date set
+        // this seems better than breaking random web pages
+        if (getFakeDate() != null) {
+            // eslint-disable-next-line no-global-assign
+            Date = FakeDate as DateConstructor
+            Date.now = fakeNow
+        } else {
+            // eslint-disable-next-line no-global-assign
+            Date = originalDate
+            Date.now = originalDateNow
+
+        }
+    }
+
+    toggleDateIfNeeded()
 })()
