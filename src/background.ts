@@ -37,9 +37,7 @@ async function setBadgeText(tabId, text: string) {
 }
 
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
-  return
   const tabId = activeInfo.tabId
-  console.log('activated', tabId)
   try {
     const fakeDate = await injectFunction(tabId, getFakeDate, [''])
     await setBadgeText(tabId, fakeDate ? 'ON' : '')

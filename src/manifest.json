@@ -27,6 +27,9 @@
     "storage",
     "webNavigation"
   ],
+  "host_permissions": [
+    "*://*/*"
+  ],
   "content_scripts": [
     {
       "js": [
