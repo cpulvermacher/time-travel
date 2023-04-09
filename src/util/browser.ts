@@ -44,3 +44,9 @@ export async function setBadgeText(text: string) {
         text
     })
 }
+export async function setTitle(title: string) {
+    await chrome.action.setTitle({
+        tabId: await getActiveTabId(),
+        title
+    })
+}

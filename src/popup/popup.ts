@@ -1,4 +1,6 @@
-import { injectFunction, setBadgeText } from '../util/browser'
+import { injectFunction, setBadgeText, setTitle } from '../util/browser'
+
+const defaultTitleText = 'Time Travel'
 
 function truncateDateForInput(date: Date): string {
     // truncate seconds, add Z for UTC
@@ -41,6 +43,7 @@ async function onFakeDate(fakeDate: string) {
     try {
         await injectFunction(setFakeDate, [fakeDate])
         await setBadgeText(fakeDate ? 'ON' : '')
+        await setTitle(defaultTitleText + (fakeDate ? ` (${fakeDate})` : ' (Off)'))
 
         window.close()
 
