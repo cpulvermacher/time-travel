@@ -42,7 +42,8 @@
     const toggleDateIfNeeded = () => {
         // FakeDate does not support all of Date's features right now, replace only when we already have a fake date set
         // this seems better than breaking random web pages
-        if (getFakeDate() != null) {
+        const fakeDateActive = getFakeDate() != null
+        if (fakeDateActive) {
             // eslint-disable-next-line no-global-assign
             Date = FakeDate as DateConstructor
             Date.now = fakeNow
@@ -55,4 +56,6 @@
     }
 
     toggleDateIfNeeded()
+
+    document.addEventListener('timeTravelToggled', toggleDateIfNeeded)
 })()
