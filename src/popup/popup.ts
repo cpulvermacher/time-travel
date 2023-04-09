@@ -34,6 +34,10 @@ function setFakeDate(date: string) {
     document.dispatchEvent(event)
 }
 
+function getTargetHost() {
+    return window.location.host
+}
+
 async function onFakeDate(fakeDate: string) {
     if (fakeDate && isNaN(Date.parse(fakeDate))) {
         setError('Invalid format! Try "2023-03-25 12:40", "2023-03-25T12:40Z" (UTC) or "2023-03-25" (midnight).')
@@ -62,7 +66,15 @@ injectFunction(getFakeDate, ['']).then((fakeDateFromStorage) => {
         const fakeDate = new Date(Date.parse(fakeDateFromStorage))
         input.setAttribute('value', truncateDateForInput(fakeDate))
     }
-})
+}).catch(() => { /* ignore */ })
+
+injectFunction(getTargetHost, ['']).then((host) => {
+    const targetHint = document.getElementById('targetHost')
+    if (host && targetHint) {
+        targetHint.innerText = host
+    }
+}).catch(() => { /* ignore */ })
+
 
 document.getElementById('setBtn')!.onclick = async () => {
     const fakeDate = input.value

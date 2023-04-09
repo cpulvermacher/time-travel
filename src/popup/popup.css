@@ -12,6 +12,20 @@ body {
     gap: 10px;
 }
 
+.targetHint {
+    text-align: right;
+    font-size: smaller;
+    color: #777;
+}
+
+.targetHint:has(> .targetHint__host:empty) {
+    display:none;
+}
+
+.targetHint__host {
+    font-weight: bold;
+}
+
 .error--visible {
     color: #893b3b;
     border: 1px solid #893b3b;
@@ -29,10 +43,6 @@ button {
     color: #6060f4;
     border: 1px solid #9f9f9f;
     border-radius: 3px;
-}
-
-input {
-    margin-bottom: 10px;
 }
 
 button#setBtn {
