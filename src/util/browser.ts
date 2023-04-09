@@ -5,15 +5,6 @@ export async function getActiveTabId() {
     return tab.id
 }
 
-//Note: needs 'storage' permission
-export async function storageGet(key: string) {
-    return (await chrome.storage.local.get([key]))[key]
-}
-
-export async function setStorage(key: string, value: string) {
-    await chrome.storage.local.set({ key: value })
-}
-
 export async function injectFunction<Args extends [string], Result>(
     func: (...args: Args) => Result,
     args: Args
