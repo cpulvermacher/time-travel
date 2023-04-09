@@ -1,5 +1,4 @@
-
-import { injectFunction, setBadgeText, storageGet } from '../util/browser'
+import { injectFunction, setBadgeText } from '../util/browser'
 
 function truncateDateForInput(date: Date): string {
     // truncate seconds, add Z for UTC
@@ -15,7 +14,14 @@ function setError(message: string) {
     errorMsg.className = message ? 'error--visible' : 'error--hidden'
 }
 
+function getFakeDate() {
+    //needs to be defined locally!
+    const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
+    return window.sessionStorage.getItem(FAKE_DATE_STORAGE_KEY)
+}
+
 function setFakeDate(date: string) {
+    //needs to be defined locally!
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
     if (date)
         window.sessionStorage.setItem(FAKE_DATE_STORAGE_KEY, date)
@@ -44,7 +50,8 @@ async function onFakeDate(fakeDate: string) {
 const input = document.getElementById('fakeDateInput') as HTMLInputElement
 
 input.setAttribute('value', truncateDateForInput(new Date()))
-storageGet('fakeDate').then((fakeDateFromStorage) => {
+
+injectFunction(getFakeDate, ['']).then((fakeDateFromStorage) => {
     if (fakeDateFromStorage) {
         const fakeDate = new Date(Date.parse(fakeDateFromStorage))
         input.setAttribute('value', truncateDateForInput(fakeDate))
