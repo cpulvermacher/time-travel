@@ -1,6 +1,5 @@
-
 chrome.runtime.onInstalled.addListener(async () => {
-  chrome.action.setBadgeBackgroundColor({ color: '#6060f4' })
+  await chrome.action.setBadgeBackgroundColor({ color: '#6060f4' })
 })
 
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
