@@ -29,9 +29,6 @@ function setFakeDate(date: string) {
         window.sessionStorage.setItem(FAKE_DATE_STORAGE_KEY, date)
     else
         window.sessionStorage.removeItem(FAKE_DATE_STORAGE_KEY)
-
-    const event = new Event('timeTravelToggled')
-    document.dispatchEvent(event)
 }
 
 function getTargetHost() {

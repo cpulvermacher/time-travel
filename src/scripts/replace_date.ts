@@ -57,5 +57,5 @@
 
     toggleDateIfNeeded()
 
-    document.addEventListener('timeTravelToggled', toggleDateIfNeeded)
+    window.addEventListener('onstorage', toggleDateIfNeeded)
 })()
