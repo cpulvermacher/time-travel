@@ -41,3 +41,8 @@ export async function setTitle(title: string) {
         title
     })
 }
+export async function reloadTab() {
+    const tabId = await getActiveTabId()
+    if (tabId != undefined)
+        await chrome.tabs.reload(tabId)
+}

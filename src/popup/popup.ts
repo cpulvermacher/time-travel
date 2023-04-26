@@ -1,4 +1,4 @@
-import { injectFunction, setBadgeText, setTitle } from '../util/browser'
+import { injectFunction, reloadTab, setBadgeText, setTitle } from '../util/browser'
 
 const defaultTitleText = 'Time Travel'
 
@@ -35,6 +35,43 @@ function getTargetHost() {
     return window.location.host
 }
 
+async function registerContentScriptIfNeeded() {
+    const scriptId = 'replaceDate'
+    const scripts = await chrome.scripting.getRegisteredContentScripts({ ids: [scriptId] })
+    //TODO this isn't the right way to figure out if we have injected into the current tab!
+    if (scripts.length > 0)
+        return false
+
+    await chrome.scripting.registerContentScripts(
+        [
+            {
+                'id': scriptId,
+                'js': [
+                    'scripts/replace_date.js'
+                ],
+                'matches': [
+                    '<all_urls>'
+                ],
+                'runAt': 'document_start',
+                'world': 'MAIN',
+                'allFrames': true
+            }
+        ])
+    return true
+}
+
+function showReloadModal() {
+    const reloadButton = document.getElementById('reloadBtn') as HTMLButtonElement
+    reloadButton.onclick = async () => {
+        await reloadTab()
+        window.close()
+    }
+
+    const modal = document.getElementById('reloadModal')
+    modal?.classList.remove('modal--hidden')
+    modal?.classList.add('modal--ripple')
+}
+
 async function onFakeDate(fakeDate: string) {
     if (fakeDate && isNaN(Date.parse(fakeDate))) {
         setError('Invalid format! Try "2023-03-25 12:40", "2023-03-25T12:40Z" (UTC) or "2023-03-25" (midnight).')
@@ -42,11 +79,16 @@ async function onFakeDate(fakeDate: string) {
     }
 
     try {
+        const needsReload = await registerContentScriptIfNeeded()
         await injectFunction(setFakeDate, [fakeDate])
         await setBadgeText(fakeDate ? 'ON' : '')
         await setTitle(defaultTitleText + (fakeDate ? ` (${fakeDate})` : ' (Off)'))
 
-        window.close()
+        if (needsReload) {
+            showReloadModal()
+        } else {
+            window.close()
+        }
 
     } catch (e) {
         setError('Couldn\'t set date: ' + e)

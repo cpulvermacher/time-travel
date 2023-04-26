@@ -25,18 +25,5 @@
     "activeTab",
     "scripting",
     "webNavigation"
-  ],
-  "content_scripts": [
-    {
-      "js": [
-        "scripts/replace_date.js"
-      ],
-      "matches": [
-        "<all_urls>"
-      ],
-      "run_at": "document_start",
-      "world": "MAIN",
-      "all_frames": true
-    }
   ]
 }
