@@ -31,32 +31,40 @@ function setFakeDate(date: string) {
         window.sessionStorage.removeItem(FAKE_DATE_STORAGE_KEY)
 }
 
+function isContentScriptInjected() {
+    return !!((window as { __timeTravelInjected?: boolean }).__timeTravelInjected)
+}
+
 function getTargetHost() {
     return window.location.host
 }
 
+/** registers content script, returns true if reload is needed*/
 async function registerContentScriptIfNeeded() {
-    const scriptId = 'replaceDate'
-    const scripts = await chrome.scripting.getRegisteredContentScripts({ ids: [scriptId] })
-    //TODO this isn't the right way to figure out if we have injected into the current tab!
-    if (scripts.length > 0)
+    const isScriptInjected = await injectFunction(isContentScriptInjected, [''])
+    console.log('script detcted:', isScriptInjected)
+    if (isScriptInjected)
         return false
 
-    await chrome.scripting.registerContentScripts(
-        [
-            {
-                'id': scriptId,
-                'js': [
-                    'scripts/replace_date.js'
-                ],
-                'matches': [
-                    '<all_urls>'
-                ],
-                'runAt': 'document_start',
-                'world': 'MAIN',
-                'allFrames': true
-            }
-        ])
+    const CONTENT_SCRIPT: chrome.scripting.RegisteredContentScript = {
+        'id': 'replaceDate',
+        'js': [
+            'scripts/replace_date.js'
+        ],
+        'matches': [
+            '<all_urls>'
+        ],
+        'runAt': 'document_start',
+        'world': 'MAIN',
+        'allFrames': true
+    }
+    const scripts = await chrome.scripting.getRegisteredContentScripts({ ids: [CONTENT_SCRIPT.id] })
+    if (scripts.length > 0) {
+        await chrome.scripting.updateContentScripts([CONTENT_SCRIPT])
+    } else {
+        await chrome.scripting.registerContentScripts([CONTENT_SCRIPT])
+    }
+
     return true
 }
 

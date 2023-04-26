@@ -1,6 +1,8 @@
 (() => {
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
 
+    window['__timeTravelInjected'] = true
+
     const originalDate = Date
     const originalDateNow = Date.now
 
@@ -51,7 +53,6 @@
             // eslint-disable-next-line no-global-assign
             Date = originalDate
             Date.now = originalDateNow
-
         }
     }
 
