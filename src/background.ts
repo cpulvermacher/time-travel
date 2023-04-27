@@ -60,7 +60,8 @@ async function updateBadgeAndTitle(tabId: number) {
     const fakeDate = await injectFunction(tabId, getFakeDate, [''])
     await setBadgeText(tabId, fakeDate ? 'ON' : '')
     await setTitle(tabId, defaultTitleText + (fakeDate ? ` (${fakeDate})` : ' (Off)'))
-  } catch {
+  } catch (e) {
     //ignore errors
+    console.warn(e)
   }
 }

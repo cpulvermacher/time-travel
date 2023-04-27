@@ -1,9 +1,12 @@
 import { defineConfig } from 'vitest/config'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
     root: 'src',
     test: {
         environment: 'happy-dom'
+    },
+    esbuild: {
+        pure: mode === 'production' ? ['console.log'] : [],
     },
     build: {
         outDir: '../dist',
@@ -25,4 +28,4 @@ export default defineConfig({
             }
         },
     }
-})
+}))

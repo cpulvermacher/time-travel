@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 set -eu
 
+MODE=$1
+
 ROOT=$(dirname -- "$0")/..
 cd "$ROOT"
 
 rm -rf dist
 mkdir dist
 
-vite build
+vite build -m "${MODE}"
 
 # copy extra assets
 cp -a images dist/

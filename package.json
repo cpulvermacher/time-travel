@@ -3,7 +3,8 @@
   "version": "0.0.3",
   "private": "true",
   "scripts": {
-    "build": "sh ./util/build.sh",
+    "build": "sh ./util/build.sh production",
+    "dev": "sh ./util/build.sh dev",
     "lint": "tsc && eslint *.ts **/*.ts",
     "test": "vitest --run"
   },
