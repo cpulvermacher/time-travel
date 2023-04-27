@@ -15,6 +15,6 @@
     "happy-dom": "9.9.2",
     "typescript": "^5.0.2",
     "vite": "^4.2.0",
-    "vitest": "^0.29.7"
+    "vitest": "^0.30.1"
   }
 }
