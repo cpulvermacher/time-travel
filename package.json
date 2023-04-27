@@ -12,7 +12,7 @@
     "@types/chrome": "^0.0.233",
     "@typescript-eslint/eslint-plugin": "^5.59.1",
     "eslint": "^8.39.0",
-    "happy-dom": "9.1.9",
+    "happy-dom": "9.9.2",
     "typescript": "^5.0.2",
     "vite": "^4.2.0",
     "vitest": "^0.29.7"
