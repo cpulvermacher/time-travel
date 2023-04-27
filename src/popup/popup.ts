@@ -87,7 +87,11 @@ async function onFakeDate(fakeDate: string) {
     }
 
     try {
-        const needsReload = await registerContentScriptIfNeeded()
+        let needsReload = false
+        if (fakeDate) {
+            needsReload = await registerContentScriptIfNeeded()
+        }
+
         await injectFunction(setFakeDate, [fakeDate])
         await setBadgeText(fakeDate ? 'ON' : '')
         await setTitle(defaultTitleText + (fakeDate ? ` (${fakeDate})` : ' (Off)'))
