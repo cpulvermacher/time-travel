@@ -22,6 +22,6 @@ async function updateBadgeAndTitle(tabId: number) {
         await setTitle(tabId, defaultTitleText + (fakeDate ? ` (${fakeDate})` : ' (Off)'))
     } catch (e) {
         //ignore errors
-        console.warn(e)
+        console.log(e)
     }
 }
