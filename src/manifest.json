@@ -1,30 +1,30 @@
 {
-  "manifest_version": 3,
-  "name": "Time Travel",
-  "description": "Spoof the current date and time seen by websites. Useful for debugging frontend applications that depend on the time.",
-  "version": "0.0.4",
-  "icons": {
-    "16": "images/icon-16.png",
-    "32": "images/icon-32.png",
-    "48": "images/icon-48.png",
-    "128": "images/icon-128.png"
-  },
-  "background": {
-    "service_worker": "background.js",
-    "type": "module"
-  },
-  "action": {
-    "default_icon": {
-      "16": "images/icon-16.png",
-      "32": "images/icon-32.png",
-      "48": "images/icon-48.png",
-      "128": "images/icon-128.png"
+    "manifest_version": 3,
+    "name": "Time Travel",
+    "description": "Spoof the current date and time seen by websites. Useful for debugging frontend applications that depend on the time.",
+    "version": "0.0.4",
+    "icons": {
+        "16": "images/icon-16.png",
+        "32": "images/icon-32.png",
+        "48": "images/icon-48.png",
+        "128": "images/icon-128.png"
     },
-    "default_popup": "popup/popup.html"
-  },
-  "permissions": [
-    "activeTab",
-    "scripting",
-    "webNavigation"
-  ]
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "action": {
+        "default_icon": {
+            "16": "images/icon-16.png",
+            "32": "images/icon-32.png",
+            "48": "images/icon-48.png",
+            "128": "images/icon-128.png"
+        },
+        "default_popup": "popup/popup.html"
+    },
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "webNavigation"
+    ]
 }
