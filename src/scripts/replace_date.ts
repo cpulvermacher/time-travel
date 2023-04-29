@@ -1,5 +1,5 @@
 (() => {
-    console.log("injected content-script in", window.location.host)
+    console.log('injected content-script in', window.location.host)
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
 
     window['__timeTravelInjected'] = true
@@ -46,7 +46,7 @@
         // FakeDate does not support all of Date's features right now, replace only when we already have a fake date set
         // this seems better than breaking random web pages
         const fakeDateActive = getFakeDate() != null
-        console.log("toggle fake date", fakeDateActive, window.location.host)
+        console.log('toggle fake date', fakeDateActive, window.location.host)
         if (fakeDateActive) {
             // eslint-disable-next-line no-global-assign
             Date = FakeDate as DateConstructor

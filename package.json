@@ -5,7 +5,7 @@
   "scripts": {
     "build": "sh ./util/build.sh production",
     "dev": "sh ./util/build.sh dev",
-    "lint": "tsc && eslint *.ts **/*.ts",
+    "lint": "tsc && eslint *.ts src/",
     "test": "vitest --run"
   },
   "devDependencies": {
