@@ -3,6 +3,7 @@
     "name": "Time Travel",
     "description": "Spoof the current date and time seen by websites. Useful for debugging frontend applications that depend on the time.",
     "version": "0.0.4",
+    "minimum_chrome_version": "96",
     "icons": {
         "16": "images/icon-16.png",
         "32": "images/icon-32.png",
