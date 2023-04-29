@@ -14,12 +14,10 @@ export default defineConfig(({ mode }) => ({
         target: 'chrome96',
         // minify: false,
         rollupOptions: {
-            input: ['/background.ts', '/popup/popup.html', '/scripts/replace_date.ts'],
+            input: ['/scripts/sw-chrome.ts', '/popup/popup.html', '/scripts/replace_date.ts'],
             output: {
                 entryFileNames: assetInfo => {
-                    if (assetInfo.name === 'background') {
-                        return '[name].js'
-                    } else if (assetInfo.name === 'replace_date') {
+                    if (assetInfo.name === 'replace_date' || assetInfo.name === 'sw-chrome') {
                         return 'scripts/[name].js'
                     } else {
                         return 'assets/[name]-[hash].js'
