@@ -1,5 +1,5 @@
 import { getActiveTabId, injectFunction, reloadTab, setBadgeText, setTitle } from '../util/browser'
-import { defaultTitleText, getFakeDate, setFakeDate } from '../util/common'
+import { defaultTitleText, getFakeDate, isContentScriptInjected, setFakeDate } from '../util/common'
 
 function truncateDateForInput(date: Date): string {
     // truncate seconds, add Z for UTC
@@ -13,10 +13,6 @@ function setError(message: string) {
 
     errorMsg.innerText = message
     errorMsg.className = message ? 'error--visible' : 'error--hidden'
-}
-
-function isContentScriptInjected() {
-    return !!((window as { __timeTravelInjected?: boolean }).__timeTravelInjected)
 }
 
 function getTargetHost() {

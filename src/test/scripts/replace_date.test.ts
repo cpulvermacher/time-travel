@@ -1,18 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, test } from 'vitest'
+import { setFakeDate } from '../../util/common'
+
+//Note: sessionStorage starts empty, so this just sets up the event listener
+import '../../scripts/replace_date'
 
 const testStartDate = new Date()
 
-// emulate conditions for enabled extension
-sessionStorage.setItem('timeTravelDate', 'abc')
-import '../../scripts/replace_date'
-sessionStorage.clear()
-
 describe('fake Date', () => {
     afterEach(() => {
-        sessionStorage.clear()
+        setFakeDate('')
     })
-    const setFakeDate = (date: string) =>
-        sessionStorage.setItem('timeTravelDate', date)
 
     it('constructor() with actual date', () => {
         const date = new Date()

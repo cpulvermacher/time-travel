@@ -2,8 +2,6 @@
     console.log('injected content-script in', window.location.host)
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
 
-    window['__timeTravelInjected'] = true
-
     const originalDate = Date
     const originalDateNow = Date.now
 
@@ -42,7 +40,7 @@
         }
     }
 
-    const toggleDateIfNeeded = () => {
+    const timeTravelCheckToggle = () => {
         // FakeDate does not support all of Date's features right now, replace only when we already have a fake date set
         // this seems better than breaking random web pages
         const fakeDateActive = getFakeDate() != null
@@ -58,7 +56,7 @@
         }
     }
 
-    toggleDateIfNeeded()
+    timeTravelCheckToggle()
 
-    window.addEventListener('onstorage', toggleDateIfNeeded)
+    window['__timeTravelCheckToggle'] = timeTravelCheckToggle
 })()
