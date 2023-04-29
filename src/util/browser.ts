@@ -6,10 +6,10 @@ export async function getActiveTabId() {
 }
 
 export async function injectFunction<Args extends [string], Result>(
+    tabId: number | undefined,
     func: (...args: Args) => Result,
     args: Args
 ): Promise<NonNullable<chrome.scripting.Awaited<Result>> | null> {
-    const tabId = await getActiveTabId()
     if (tabId == undefined)
         throw new Error("Couldn't get active tab")
 
@@ -26,21 +26,22 @@ export async function injectFunction<Args extends [string], Result>(
             return value.result
     }
     return null
-
 }
 
-export async function setBadgeText(text: string) {
+export async function setBadgeText(tabId: number | undefined, text: string) {
     await chrome.action.setBadgeText({
-        tabId: await getActiveTabId(),
+        tabId,
         text
     })
 }
-export async function setTitle(title: string) {
+
+export async function setTitle(tabId: number | undefined, title: string) {
     await chrome.action.setTitle({
-        tabId: await getActiveTabId(),
+        tabId,
         title
     })
 }
+
 export async function reloadTab() {
     const tabId = await getActiveTabId()
     if (tabId != undefined)

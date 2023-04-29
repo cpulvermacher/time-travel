@@ -1,6 +1,5 @@
-import { injectFunction, reloadTab, setBadgeText, setTitle } from '../util/browser'
-
-const defaultTitleText = 'Time Travel'
+import { getActiveTabId, injectFunction, reloadTab, setBadgeText, setTitle } from '../util/browser'
+import { defaultTitleText, getFakeDate, setFakeDate } from '../util/common'
 
 function truncateDateForInput(date: Date): string {
     // truncate seconds, add Z for UTC
@@ -16,21 +15,6 @@ function setError(message: string) {
     errorMsg.className = message ? 'error--visible' : 'error--hidden'
 }
 
-function getFakeDate() {
-    //needs to be defined locally!
-    const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
-    return window.sessionStorage.getItem(FAKE_DATE_STORAGE_KEY)
-}
-
-function setFakeDate(date: string) {
-    //needs to be defined locally!
-    const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
-    if (date)
-        window.sessionStorage.setItem(FAKE_DATE_STORAGE_KEY, date)
-    else
-        window.sessionStorage.removeItem(FAKE_DATE_STORAGE_KEY)
-}
-
 function isContentScriptInjected() {
     return !!((window as { __timeTravelInjected?: boolean }).__timeTravelInjected)
 }
@@ -40,8 +24,8 @@ function getTargetHost() {
 }
 
 /** registers content script, returns true if reload is needed*/
-async function registerContentScriptIfNeeded() {
-    const isScriptInjected = await injectFunction(isContentScriptInjected, [''])
+async function registerContentScriptIfNeeded(tabId: number | undefined) {
+    const isScriptInjected = await injectFunction(tabId, isContentScriptInjected, [''])
     console.log('script detcted:', isScriptInjected)
     if (isScriptInjected)
         return false
@@ -87,14 +71,16 @@ async function onFakeDate(fakeDate: string) {
     }
 
     try {
+        const tabId = await getActiveTabId()
+
         let needsReload = false
         if (fakeDate) {
-            needsReload = await registerContentScriptIfNeeded()
+            needsReload = await registerContentScriptIfNeeded(tabId)
         }
 
-        await injectFunction(setFakeDate, [fakeDate])
-        await setBadgeText(fakeDate ? 'ON' : '')
-        await setTitle(defaultTitleText + (fakeDate ? ` (${fakeDate})` : ' (Off)'))
+        await injectFunction(tabId, setFakeDate, [fakeDate])
+        await setBadgeText(tabId, fakeDate ? 'ON' : '')
+        await setTitle(tabId, defaultTitleText + (fakeDate ? ` (${fakeDate})` : ' (Off)'))
 
         if (needsReload) {
             showReloadModal()
@@ -112,20 +98,21 @@ const input = document.getElementById('fakeDateInput') as HTMLInputElement
 
 input.setAttribute('value', truncateDateForInput(new Date()))
 
-injectFunction(getFakeDate, ['']).then((fakeDateFromStorage) => {
-    if (fakeDateFromStorage) {
-        const fakeDate = new Date(Date.parse(fakeDateFromStorage))
-        input.setAttribute('value', truncateDateForInput(fakeDate))
-    }
-}).catch(() => { /* ignore */ })
+getActiveTabId().then((tabId) => {
+    injectFunction(tabId, getFakeDate, ['']).then((fakeDateFromStorage) => {
+        if (fakeDateFromStorage) {
+            const fakeDate = new Date(Date.parse(fakeDateFromStorage))
+            input.setAttribute('value', truncateDateForInput(fakeDate))
+        }
+    }).catch(() => { /* ignore */ })
 
-injectFunction(getTargetHost, ['']).then((host) => {
-    const targetHint = document.getElementById('targetHost')
-    if (host && targetHint) {
-        targetHint.innerText = host
-    }
-}).catch(() => { /* ignore */ })
-
+    injectFunction(tabId, getTargetHost, ['']).then((host) => {
+        const targetHint = document.getElementById('targetHost')
+        if (host && targetHint) {
+            targetHint.innerText = host
+        }
+    }).catch(() => { /* ignore */ })
+})
 
 document.getElementById('setBtn')!.onclick = async () => {
     const fakeDate = input.value
