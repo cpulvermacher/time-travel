@@ -1,6 +1,7 @@
 {
     "name": "time-travel",
     "version": "0.0.4",
+    "license": "MIT",
     "private": "true",
     "scripts": {
         "build": "sh ./util/build.sh production",
