@@ -9,10 +9,10 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
     await updateBadgeAndTitle(activeInfo.tabId)
 })
 
-chrome.webNavigation.onCommitted.addListener(async (details) => {
-    if (details.url.startsWith('chrome://'))
-        return
-    await updateBadgeAndTitle(details.tabId)
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
+    if (changeInfo.url == undefined)
+        return // url unchanged, nothing to do
+    await updateBadgeAndTitle(tabId)
 })
 
 async function updateBadgeAndTitle(tabId: number) {
