@@ -1,8 +1,9 @@
 # Time Travel
 
-![status](https://flat.badgen.net/github/checks/cpulvermacher/time-travel)
-![latest tag](https://flat.badgen.net/github/tag/cpulvermacher/time-travel)
-![license](https://flat.badgen.net/github/license/cpulvermacher/time-travel)
+[![Latest tag](https://flat.badgen.net/github/tag/cpulvermacher/time-travel)](https://github.com/cpulvermacher/time-travel/tags)
+[![Chrome Web Store](https://flat.badgen.net/chrome-web-store/v/jfdbpgcmmenmelcghpbbkldkcfiejcjg)](https://chrome.google.com/webstore/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg)
+[![Status](https://flat.badgen.net/github/checks/cpulvermacher/time-travel)](https://github.com/cpulvermacher/time-travel/actions/workflows/node.js.yml)
+[![License](https://flat.badgen.net/github/license/cpulvermacher/time-travel)](./LICENSE)
 
 A Chrome extension to change the current date and time seen by websites. The
 result is similar to changing the system time, and can be used to debug
