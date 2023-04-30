@@ -36,7 +36,8 @@ async function registerContentScriptIfNeeded(tabId: number | undefined) {
         ],
         'runAt': 'document_start',
         'world': 'MAIN',
-        'allFrames': true
+        'allFrames': true,
+        'persistAcrossSessions': false,
     }, {
         'id': 'sendActive',
         'js': [
@@ -47,7 +48,8 @@ async function registerContentScriptIfNeeded(tabId: number | undefined) {
         ],
         'runAt': 'document_start',
         'world': 'ISOLATED',
-        'allFrames': true
+        'allFrames': true,
+        'persistAcrossSessions': false,
     }]
     const scripts = await chrome.scripting.getRegisteredContentScripts({ ids: contentScripts.map(script => script.id) })
     if (scripts.length > 0) {
