@@ -70,7 +70,8 @@ function showReloadModal() {
 
     const modal = document.getElementById('reloadModal')
     modal?.classList.remove('modal--hidden')
-    modal?.classList.add('modal--ripple')
+    const modalBackground = document.getElementById('modalBackground')
+    modalBackground?.classList.add('modal-background--visible')
 }
 
 async function onFakeDate(fakeDate: string) {
