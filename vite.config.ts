@@ -1,5 +1,7 @@
 import { defineConfig } from 'vitest/config'
 
+const moduleNames = ['replace_date', 'send_active', 'sw-chrome']
+const tsEntryModules = moduleNames.map(name => `/scripts/${name}.ts`)
 export default defineConfig(({ mode }) => ({
     root: 'src',
     test: {
@@ -14,10 +16,10 @@ export default defineConfig(({ mode }) => ({
         target: 'chrome96',
         // minify: false,
         rollupOptions: {
-            input: ['/scripts/sw-chrome.ts', '/popup/popup.html', '/scripts/replace_date.ts', '/scripts/send_active.ts'],
+            input: tsEntryModules.concat(['/popup/popup.html']),
             output: {
                 entryFileNames: assetInfo => {
-                    if (assetInfo.name === 'replace_date' || assetInfo.name === 'sw-chrome' || assetInfo.name == 'send_active') {
+                    if (moduleNames.includes(assetInfo.name)) {
                         return 'scripts/[name].js'
                     } else {
                         return 'assets/[name]-[hash].js'
