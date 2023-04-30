@@ -15,7 +15,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
     await updateBadgeAndTitle(tabId)
 })
 
-async function updateBadgeAndTitle(tabId: number) {
+chrome.runtime.onMessage.addListener(async (message, sender) => {
+    if (message == 'active' && sender.tab?.id) {
+        await updateBadgeAndTitle(sender.tab.id, true)
+    }
+})
+
+async function updateBadgeAndTitle(tabId: number, forceOn?: boolean) {
     try {
         const fakeDate = await injectFunction(tabId, getFakeDate, [''])
         await setBadgeText(tabId, fakeDate ? 'ON' : '')
@@ -23,5 +29,9 @@ async function updateBadgeAndTitle(tabId: number) {
     } catch (e) {
         //ignore errors
         console.log(e)
+    }
+
+    if (forceOn) {
+        await setBadgeText(tabId, 'ON')
     }
 }
