@@ -12,7 +12,8 @@ mkdir dist
 vite build -m "${MODE}"
 
 # copy extra assets
-cp -a images dist/
+mkdir dist/images/
+cp -a images/*.png dist/images/
 cp -a src/manifest.json dist/
 
 
