@@ -29,6 +29,7 @@ export async function injectFunction<Args extends [string], Result>(
 }
 
 export async function setBadgeText(tabId: number | undefined, text: string) {
+    await chrome.action.setBadgeBackgroundColor({ color: '#6060f4' })
     await chrome.action.setBadgeText({
         tabId,
         text
