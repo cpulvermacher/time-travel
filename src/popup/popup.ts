@@ -108,6 +108,8 @@ async function onFakeDate(fakeDate: string) {
 const input = document.getElementById('fakeDateInput') as HTMLInputElement
 
 input.setAttribute('value', toLocalTime(new Date()))
+input.focus()
+input.setSelectionRange(-1, -1)
 
 getActiveTabId().then((tabId) => {
     injectFunction(tabId, getFakeDate, ['']).then((fakeDateFromStorage) => {
