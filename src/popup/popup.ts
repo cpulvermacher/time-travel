@@ -1,9 +1,10 @@
 import { getActiveTabId, injectFunction, reloadTab, setBadgeText, setTitle } from '../util/browser'
 import { defaultTitleText, getFakeDate, isContentScriptInjected, setFakeDate } from '../util/common'
 
-function truncateDateForInput(date: Date): string {
-    // truncate seconds, add Z for UTC
-    return date.toISOString().slice(0, 16) + 'Z'
+function toLocalTime(date: Date): string {
+    // returns date in format "YYYY-MM-DD hh:mm" in local time
+    const d = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    return d.toISOString().slice(0, 16).replace('T', ' ')
 }
 
 function setError(message: string) {
@@ -106,13 +107,13 @@ async function onFakeDate(fakeDate: string) {
 // ==================== initialize popup ====================
 const input = document.getElementById('fakeDateInput') as HTMLInputElement
 
-input.setAttribute('value', truncateDateForInput(new Date()))
+input.setAttribute('value', toLocalTime(new Date()))
 
 getActiveTabId().then((tabId) => {
     injectFunction(tabId, getFakeDate, ['']).then((fakeDateFromStorage) => {
         if (fakeDateFromStorage) {
             const fakeDate = new Date(Date.parse(fakeDateFromStorage))
-            input.setAttribute('value', truncateDateForInput(fakeDate))
+            input.setAttribute('value', toLocalTime(fakeDate))
         }
     }).catch(() => { /* ignore */ })
 
