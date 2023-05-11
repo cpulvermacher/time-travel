@@ -73,6 +73,8 @@ function showReloadModal() {
     modal?.classList.remove('modal--hidden')
     const modalBackground = document.getElementById('modalBackground')
     modalBackground?.classList.add('modal-background--visible')
+    reloadButton.focus()
+
 }
 
 async function onFakeDate(fakeDate: string) {
