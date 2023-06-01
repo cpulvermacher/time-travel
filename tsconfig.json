@@ -18,11 +18,12 @@
         "resolveJsonModule": true,
         "isolatedModules": false,
         "noEmit": true,
+        "sourceMap": false,
         "types": [
             "chrome"
         ]
     },
     "include": [
-        "src/popup"
+        "src/"
     ]
 }
