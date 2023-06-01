@@ -11,16 +11,17 @@ describe('fake Date', () => {
         setFakeDate('')
     })
 
-    it('constructor() with actual date', () => {
+    it('new Date() with actual date', () => {
         const date = new Date()
         expect(date.valueOf()).toBeGreaterThan(testStartDate.valueOf())
     })
 
-    it('constructor() with fake date', () => {
+    it('new Date() with fake date', () => {
         const fakeDate = '2010-01-01T00:00:00.000Z'
         setFakeDate(fakeDate)
         const date = new Date()
         expect(date.toISOString()).toBe(fakeDate)
+        expect(date.valueOf()).toBe(1262304000000)
     })
 
     it('now() with actual date', () => {
@@ -78,20 +79,69 @@ describe('fake Date', () => {
     values.forEach((fakeDate) => {
         describe(`fake date = ${fakeDate}`, () => {
             let date: Date
+            let utcDate: Date
 
             beforeEach(() => {
                 if (fakeDate)
                     setFakeDate(fakeDate)
                 date = new Date('2021-09-15T12:34:56.789')
+                utcDate = new Date('2021-09-15T12:34:56.789Z')
             })
 
-            it('constructor(string)', () => {
-                date = new Date('2021-09-15T12:34:56.789Z')
-                expect(date.toISOString()).toBe('2021-09-15T12:34:56.789Z')
+            //tests for all javascript Date methods that should NOT be influenced by fake date
+            it('new Date(string)', () => {
+                date = new Date('1958-09-15T12:34:56.789Z')
+                expect(date.toISOString()).toBe('1958-09-15T12:34:56.789Z')
             })
 
-            //tests for all javascript Date methods
+            it('new Date(number)', () => {
+                date = new Date(999)
+                expect(date.toISOString()).toBe('1970-01-01T00:00:00.999Z')
+            })
 
+            it('new Date(y, m, d, ..)', () => {
+                date = new Date(2021, 8, 15, 12, 34, 56, 789) //local time
+
+                expect(date.getFullYear()).toEqual(2021)
+                expect(date.getMonth()).toEqual(8)
+                expect(date.getDate()).toEqual(15)
+                expect(date.getDay()).toEqual(3)
+                expect(date.getHours()).toEqual(12)
+                expect(date.getMinutes()).toEqual(34)
+                expect(date.getSeconds()).toEqual(56)
+                expect(date.getMilliseconds()).toEqual(789)
+            })
+
+            it('valueOf()', () => {
+                expect(date.valueOf()).toEqual(date.getTime())
+            })
+
+            it('@@toPrimitive', () => {
+                expect(date[Symbol.toPrimitive]('number')).toEqual(date.getTime())
+            })
+
+            it('toISOString()', () => {
+                expect(utcDate.toISOString()).toEqual('2021-09-15T12:34:56.789Z')
+            })
+
+            it('toJSON()', () => {
+                expect(utcDate.toJSON()).toEqual('2021-09-15T12:34:56.789Z')
+            })
+
+            it('toUTCString()', () => {
+                expect(utcDate.toUTCString()).toEqual('Wed, 15 Sep 2021 12:34:56 GMT')
+            })
+
+            it('getTime()', () => {
+                expect(utcDate.getTime()).toEqual(1631709296789)
+            })
+
+            it('setTime()', () => {
+                date.setTime(1234567890)
+                expect(date.getTime()).toEqual(1234567890)
+            })
+
+            // local time methods
             it('getFullYear()', () => {
                 expect(date.getFullYear()).toEqual(2021)
             })
@@ -122,11 +172,6 @@ describe('fake Date', () => {
 
             it('getMilliseconds()', () => {
                 expect(date.getMilliseconds()).toEqual(789)
-            })
-
-            it('getTime()', () => {
-                date = new Date('2021-09-15T12:34:56.789Z')
-                expect(date.getTime()).toEqual(1631709296789)
             })
 
             it('setFullYear()', () => {
@@ -164,19 +209,83 @@ describe('fake Date', () => {
                 expect(date.getMilliseconds()).toEqual(123)
             })
 
-            it('setTime()', () => {
-                date.setTime(1234567890)
-                expect(date.getTime()).toEqual(1234567890)
+            // and UTC variants
+            it('getUTCFullYear()', () => {
+                expect(utcDate.getUTCFullYear()).toEqual(2021)
             })
 
+            it('getUTCMonth()', () => {
+                expect(utcDate.getUTCMonth()).toEqual(8)
+            })
+
+            it('getUTCDate()', () => {
+                expect(utcDate.getUTCDate()).toEqual(15)
+            })
+
+            it('getUTCDay()', () => {
+                expect(utcDate.getUTCDay()).toEqual(3)
+            })
+
+            it('getUTCHours()', () => {
+                expect(utcDate.getUTCHours()).toEqual(12)
+            })
+
+            it('getUTCMinutes()', () => {
+                expect(utcDate.getUTCMinutes()).toEqual(34)
+            })
+
+            it('getUTCSeconds()', () => {
+                expect(utcDate.getUTCSeconds()).toEqual(56)
+            })
+
+            it('getUTCMilliseconds()', () => {
+                expect(utcDate.getUTCMilliseconds()).toEqual(789)
+            })
+
+            it('setUTCFullYear()', () => {
+                date.setUTCFullYear(2022)
+                expect(date.getUTCFullYear()).toEqual(2022)
+            })
+
+            it('setUTCMonth()', () => {
+                date.setUTCMonth(1)
+                expect(date.getUTCMonth()).toEqual(1)
+            })
+
+            it('setUTCDate()', () => {
+                date.setUTCDate(15)
+                expect(date.getUTCDate()).toEqual(15)
+            })
+
+            it('setUTCHours()', () => {
+                date.setUTCHours(6)
+                expect(date.getUTCHours()).toEqual(6)
+            })
+
+            it('setUTCMinutes()', () => {
+                date.setUTCMinutes(45)
+                expect(date.getUTCMinutes()).toEqual(45)
+            })
+
+            it('setUTCSeconds()', () => {
+                date.setUTCSeconds(30)
+                expect(date.getUTCSeconds()).toEqual(30)
+            })
+
+            it('setUTCMilliseconds()', () => {
+                date.setUTCMilliseconds(123)
+                expect(date.getUTCMilliseconds()).toEqual(123)
+            })
+
+            // static members
             it('UTC()', () => {
                 const ms = Date.UTC(1970, 0, 1, 0, 0, 3, 4)
-
                 expect(ms).toEqual(3004)
             })
 
-            it('@@toPrimitive', () => {
-                expect(date[Symbol.toPrimitive]('number')).toEqual(date.getTime())
+            it('parse()', () => {
+                const ms = Date.parse('1970-01-01T00:00:00.634Z')
+                expect(ms).toEqual(634)
             })
         })
     })
