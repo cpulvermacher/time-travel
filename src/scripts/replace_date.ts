@@ -3,20 +3,33 @@
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
 
     const originalDate = Date
-    const originalDateNow = Date.now
 
-    // needed for constructor
-    class FakeDate extends Date {
-        constructor(...options: []) {
-            if (options.length) {
-                super(...options)
+    // Date constructor, needs to be a function to allow both constructing (`new Date()`) and calling without new: `Date()`
+    function FakeDate(
+        this: Date | void,
+        yearOrObject?: number | string | Date,
+        monthIndex?: number,
+        date?: number,
+        hours?: number,
+        minutes?: number,
+        seconds?: number,
+        ms?: number
+    ) {
+        if (!(this instanceof Date)) { //invoked without 'new'
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            return (new (FakeDate as any)()).toString()
+        }
+
+        if (yearOrObject != undefined && monthIndex == undefined) {
+            return new originalDate(yearOrObject)
+        } else if (yearOrObject != undefined && monthIndex != undefined) {
+            return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds, ms)
+        } else {
+            const fakeDate = getFakeDate()
+            if (fakeDate !== null) {
+                return new originalDate(fakeDate)
             } else {
-                const fakeDate = getFakeDate()
-                if (fakeDate !== null) {
-                    super(fakeDate)
-                } else {
-                    super()
-                }
+                return new originalDate()
             }
         }
     }
@@ -27,9 +40,14 @@
         if (fakeDate !== null) {
             return Date.parse(fakeDate)
         } else {
-            return originalDateNow()
+            return originalDate.now()
         }
     }
+
+    FakeDate.prototype = Date.prototype
+    FakeDate.parse = Date.parse
+    FakeDate.UTC = Date.UTC
+    FakeDate.now = fakeNow
 
     function getFakeDate(): string | null {
         try {
@@ -48,11 +66,9 @@
         if (fakeDateActive) {
             // eslint-disable-next-line no-global-assign
             Date = FakeDate as DateConstructor
-            Date.now = fakeNow
         } else {
             // eslint-disable-next-line no-global-assign
             Date = originalDate
-            Date.now = originalDateNow
         }
     }
 

@@ -24,7 +24,6 @@ To restore the system time, click the extension icon again and press Reset.
 - Only Chrome support (for now)
 - Only JavaScript is affected by the extension. 
 - The extension does not work in iframes with the `sandbox` attribute
-- Calling `Date()` without `new` still returns real time 
 - Some apps require a ticking clock and may break when setting a static fake date
 
 ## Installation

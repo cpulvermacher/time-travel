@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { setFakeDate } from '../../util/common'
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
@@ -35,19 +35,42 @@ describe('fake Date', () => {
         expect(date).toBe(123)
     })
 
-    test.skip('Date() with actual date', () => {
-        const date = Date()
+    it('Date() with actual date', () => {
+        const dateStr = Date()
+
+        expect(dateStr).toBe((new Date()).toString())
+
         //1s accuracy
-        expect(Date.parse(date) + 1000).toBeGreaterThan(testStartDate.valueOf())
+        expect(Date.parse(dateStr) + 1000).toBeGreaterThan(testStartDate.valueOf())
     })
 
-    test.skip('Date() with fake date', () => {
+    it('Date() with fake date', () => {
         const fakeDate = '1970-01-01T00:00:00.123Z'
+        const fakeDateInMsSinceEpoch = 123
         setFakeDate(fakeDate)
 
         const dateStr = Date()
-        const date = new Date(Date.parse(dateStr))
-        expect(date.toISOString()).toBe(fakeDate)
+
+        expect(dateStr).toBe((new Date()).toString())
+
+        //check whether it's within 1s of fakeDate
+        expect(Date.parse(dateStr)).toBeLessThanOrEqual(fakeDateInMsSinceEpoch)
+        expect(Date.parse(dateStr) + 1000).toBeGreaterThan(fakeDateInMsSinceEpoch)
+    })
+
+    it('Date() without new ignores parameters', () => {
+        const fakeDate = '1970-01-01T00:00:00.123Z'
+        const fakeDateInMsSinceEpoch = 123
+        setFakeDate(fakeDate)
+
+        // @ts-expect-error: Date type specifies that no parameter is expected, but spec also requires ignoring any parameters passed
+        const dateStr = Date(9999)
+
+        expect(dateStr).toBe((new Date()).toString())
+
+        //check whether it's within 1s of fakeDate
+        expect(Date.parse(dateStr)).toBeLessThanOrEqual(fakeDateInMsSinceEpoch)
+        expect(Date.parse(dateStr) + 1000).toBeGreaterThan(fakeDateInMsSinceEpoch)
     })
 
 
@@ -144,6 +167,16 @@ describe('fake Date', () => {
             it('setTime()', () => {
                 date.setTime(1234567890)
                 expect(date.getTime()).toEqual(1234567890)
+            })
+
+            it('UTC()', () => {
+                const ms = Date.UTC(1970, 0, 1, 0, 0, 3, 4)
+
+                expect(ms).toEqual(3004)
+            })
+
+            it('@@toPrimitive', () => {
+                expect(date[Symbol.toPrimitive]('number')).toEqual(date.getTime())
             })
         })
     })
