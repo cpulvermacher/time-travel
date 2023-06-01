@@ -22,7 +22,7 @@
 
         if (yearOrObject != undefined && monthIndex == undefined) {
             return new originalDate(yearOrObject)
-        } else if (yearOrObject != undefined && monthIndex != undefined) {
+        } else if (yearOrObject && monthIndex != undefined) {
             return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds, ms)
         } else {
             const fakeDate = getFakeDate()
@@ -36,12 +36,7 @@
 
     // needed for now()
     const fakeNow = () => {
-        const fakeDate = getFakeDate()
-        if (fakeDate !== null) {
-            return Date.parse(fakeDate)
-        } else {
-            return originalDate.now()
-        }
+        return (new Date()).getTime()
     }
 
     FakeDate.prototype = Date.prototype
