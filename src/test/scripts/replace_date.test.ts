@@ -32,6 +32,7 @@ describe('fake Date', () => {
     it('now() with fake date', () => {
         const fakeDate = '1970-01-01T00:00:00.123Z'
         setFakeDate(fakeDate)
+
         const date = Date.now()
         expect(date).toBe(123)
     })
@@ -72,6 +73,14 @@ describe('fake Date', () => {
         //check whether it's within 1s of fakeDate
         expect(Date.parse(dateStr)).toBeLessThanOrEqual(fakeDateInMsSinceEpoch)
         expect(Date.parse(dateStr) + 1000).toBeGreaterThan(fakeDateInMsSinceEpoch)
+    })
+
+    it('Intl.DateTimeFormat with fake date', () => {
+        const fakeDate = '1970-03-01T00:00:00.123'
+        setFakeDate(fakeDate)
+
+        const intlString = new Intl.DateTimeFormat('en-US').format(new Date())
+        expect(intlString).toBe('3/1/1970')
     })
 
 
@@ -286,6 +295,14 @@ describe('fake Date', () => {
             it('parse()', () => {
                 const ms = Date.parse('1970-01-01T00:00:00.634Z')
                 expect(ms).toEqual(634)
+            })
+
+            //intl
+            it('Intl.DateTimeFormat', () => {
+                const intlString = new Intl.DateTimeFormat('en-US').format(date)
+
+                expect(intlString).toBe('9/15/2021')
+
             })
         })
     })
