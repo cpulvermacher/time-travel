@@ -76,11 +76,11 @@ describe('fake Date', () => {
     })
 
     it('Intl.DateTimeFormat with fake date', () => {
-        const fakeDate = '1970-03-01T00:00:00.123'
+        const fakeDate = '1970-03-01T00:34:00.123'
         setFakeDate(fakeDate)
 
-        const intlString = new Intl.DateTimeFormat('en-US').format(new Date())
-        expect(intlString).toBe('3/1/1970')
+        const intlString = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format(new Date())
+        expect(intlString).toBe('Sunday, March 1, 1970 at 12:34:00 AM')
     })
 
 
@@ -299,10 +299,9 @@ describe('fake Date', () => {
 
             //intl
             it('Intl.DateTimeFormat', () => {
-                const intlString = new Intl.DateTimeFormat('en-US').format(date)
+                const intlString = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format(date)
 
-                expect(intlString).toBe('9/15/2021')
-
+                expect(intlString).toBe('Wednesday, September 15, 2021 at 12:34:56 PM')
             })
         })
     })
