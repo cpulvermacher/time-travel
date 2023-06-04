@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, test } from 'vitest'
 import { setFakeDate } from '../../util/common'
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
@@ -75,11 +75,19 @@ describe('fake Date', () => {
         expect(Date.parse(dateStr) + 1000).toBeGreaterThan(fakeDateInMsSinceEpoch)
     })
 
-    it('Intl.DateTimeFormat with fake date', () => {
+    it('Intl.DateTimeFormat, passing fake date', () => {
         const fakeDate = '1970-03-01T00:34:00.123'
         setFakeDate(fakeDate)
 
         const intlString = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format(new Date())
+        expect(intlString).toBe('Sunday, March 1, 1970 at 12:34:00 AM')
+    })
+
+    test.skip('Intl.DateTimeFormat without arguments, with fake date', () => {
+        const fakeDate = '1970-03-01T00:34:00.123'
+        setFakeDate(fakeDate)
+
+        const intlString = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format()
         expect(intlString).toBe('Sunday, March 1, 1970 at 12:34:00 AM')
     })
 
