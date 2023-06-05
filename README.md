@@ -10,13 +10,13 @@ result is similar to changing the system time, and can be used to debug
 frontend JavaScript applications.
 
 ## Usage
-- Click the extension icon in the toolbar
+- Click the extension icon in the toolbar.
 - Enter the date and time you want to set and confirm, e.g.:
   - "2023-04-27 12:40" (local time)
   - "2023-04-27T12:40Z" (UTC)
   - "2023-04-27" (midnight local time)
-- When first activating the extension on a tab, click Reload when prompted
-- 🎉 Any JavaScript `Date` object will now return the constant date/time you set!
+- When first activating the extension on a tab, click Reload when prompted.
+- 🎉 Any JavaScript `Date` object will now return the fake date/time you set!
 
 To restore the system time, click the extension icon again and press Reset.
 
@@ -24,14 +24,14 @@ To restore the system time, click the extension icon again and press Reset.
 - Only Chrome support (for now)
 - Only JavaScript is affected by the extension. 
 - The extension does not work in iframes with the `sandbox` attribute
-- Some apps require a ticking clock and may break when setting a static fake date
+- Some apps require a ticking clock and may break when setting a static date
 
 ## Installation
 Get it from the Chrome Web Store: https://chrome.google.com/webstore/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg
 
 To build and use a local version:
 - Download this repository
-- run `npm run build`
+- Run `npm run build`
 - Open chrome://extensions
 - Enable 'Developer Mode'
 - Click 'Load unpacked' and select the `dist/` directory
