@@ -7,15 +7,18 @@
 </head>
 
 <body>
-    <label>
-        Date and time to set:
-        <input type="text" size="20" maxlength="20" id="fakeDateInput" spellcheck="false" />
-        <div class="targetHint">for
-            <span class="targetHint__host" id="targetHost"></span>
-        </div>
-    </label>
+    <div class="row">
+        <label>
+            Date and time to set:
+            <input type="text" size="20" maxlength="20" id="fakeDateInput" spellcheck="false" />
+        </label>
+        <button id="tickToggleBtn">⏵</button>
+    </div>
+    <div class="targetHint">for
+        <span class="targetHint__host" id="targetHost"></span>
+    </div>
     <p class="error--hidden" id="errormsg"></p>
-    <div class="buttonrow">
+    <div class="row">
         <button id="resetBtn">Reset</button>
         <button id="setBtn">Fake Date</button>
     </div>

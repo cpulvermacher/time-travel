@@ -31,18 +31,23 @@ body {
     border: 1px solid #893b3b;
 }
 
-.buttonrow {
+.row {
     display: flex;
     justify-content: space-between;
     gap: 10px;
+    align-items: flex-end;
+}
+
+input, button {
+    border: 1px solid #9f9f9f;
+    border-radius: 3px;
+    padding: 5px 10px;
 }
 
 button {
-    padding: 5px 10px;
+    height: 27px;
     background: white;
     color: #6060f4;
-    border: 1px solid #9f9f9f;
-    border-radius: 3px;
 }
 
 button#setBtn {
@@ -50,12 +55,18 @@ button#setBtn {
     color: white;
 }
 
+button#tickToggleBtn {
+    width: 28px;
+    text-align: center;
+    padding: 5px;
+    line-height: 3px;
+    font-size: x-large;
+}
+
 input {
+    width: 20ch;
     margin-top: 5px;
-    padding: 5px 10px;
     background: white;
-    border: 1px solid #9f9f9f;
-    border-radius: 3px;
 }
 
 input:focus, button:focus {

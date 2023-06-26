@@ -23,7 +23,14 @@
         if (yearOrObject === undefined) {
             const fakeDate = getFakeDate()
             if (fakeDate !== null) {
-                return new originalDate(fakeDate)
+                const fakeDateObject = new originalDate(fakeDate)
+                if (window['__timeTravelTickStartDate'] == null) {
+                    return fakeDateObject
+                } else {
+                    const startDate = window['__timeTravelTickStartDate']
+                    const elapsed = originalDate.now() - startDate
+                    return new originalDate(fakeDateObject.getTime() + elapsed)
+                }
             } else {
                 return new originalDate()
             }
@@ -77,7 +84,18 @@
         }
     }
 
+    const timeTravelTickToggle = () => {
+        const isTicking = window['__timeTravelTickStartDate'] != undefined
+        console.log('toggle pause', isTicking)
+        if (isTicking) {
+            window['__timeTravelTickStartDate'] = undefined
+        } else {
+            window['__timeTravelTickStartDate'] = (new originalDate()).getTime()
+        }
+    }
+
     timeTravelCheckToggle()
 
     window['__timeTravelCheckToggle'] = timeTravelCheckToggle
+    window['__timeTravelTickToggle'] = timeTravelTickToggle
 })()

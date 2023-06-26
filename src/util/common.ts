@@ -3,6 +3,8 @@ export const defaultTitleText = 'Time Travel'
 declare global {
     interface Window {
         __timeTravelCheckToggle?: () => void
+        __timeTravelTickToggle?: () => void
+        __timeTravelTickStartDate?: number
     }
 }
 
@@ -22,6 +24,15 @@ export function setFakeDate(date: string) {
 
     if (window.__timeTravelCheckToggle)
         window.__timeTravelCheckToggle()
+}
+
+export function isClockTicking(): boolean {
+    return !!window.__timeTravelTickStartDate
+}
+
+export function toggleTick() {
+    if (window.__timeTravelTickToggle)
+        window.__timeTravelTickToggle()
 }
 
 export function isContentScriptInjected() {

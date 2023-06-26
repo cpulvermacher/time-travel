@@ -1,5 +1,5 @@
 import { getActiveTabId, injectFunction, reloadTab, setBadgeText, setTitle } from '../util/browser'
-import { defaultTitleText, getFakeDate, isContentScriptInjected, setFakeDate } from '../util/common'
+import { defaultTitleText, getFakeDate, isClockTicking, isContentScriptInjected, setFakeDate, toggleTick } from '../util/common'
 
 function toLocalTime(date: Date): string {
     // returns date in format "YYYY-MM-DD hh:mm" in local time
@@ -106,6 +106,27 @@ async function onFakeDate(fakeDate: string) {
     }
 }
 
+async function onToggleTick() {
+    try {
+        const tabId = await getActiveTabId()
+        await injectFunction(tabId, toggleTick, [''])
+    } catch (e) {
+        setError('Couldn\'t toggle clock: ' + e)
+    }
+}
+async function updateTickToggleButtonState() {
+    let clockIsRunning = false
+    try {
+        const tabId = await getActiveTabId()
+        clockIsRunning = !!await injectFunction(tabId, isClockTicking, [''])
+    } catch (e) {
+        //
+    }
+    const toggleBtn = document.getElementById('tickToggleBtn')!
+    toggleBtn.innerText = clockIsRunning ? '⏹' : '⏵'
+}
+
+
 // ==================== initialize popup ====================
 const input = document.getElementById('fakeDateInput') as HTMLInputElement
 
@@ -127,12 +148,9 @@ getActiveTabId().then((tabId) => {
             targetHint.innerText = host
         }
     }).catch(() => { /* ignore */ })
-})
 
-document.getElementById('setBtn')!.onclick = async () => {
-    const fakeDate = input.value
-    await onFakeDate(fakeDate)
-}
+    updateTickToggleButtonState()
+})
 
 input.onkeydown = async (event) => {
     if (event.key == 'Enter') {
@@ -143,6 +161,19 @@ input.onkeydown = async (event) => {
     }
 }
 
+//TODO fix button optics
+//TODO initial button state
+//TODO also tick time in popup
+document.getElementById('tickToggleBtn')!.onclick = async () => {
+    await onToggleTick()
+    await updateTickToggleButtonState()
+}
+
 document.getElementById('resetBtn')!.onclick = async () => {
     await onFakeDate('')
+}
+
+document.getElementById('setBtn')!.onclick = async () => {
+    const fakeDate = input.value
+    await onFakeDate(fakeDate)
 }
