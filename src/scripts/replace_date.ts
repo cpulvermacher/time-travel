@@ -20,27 +20,27 @@
             return (new (FakeDate as any)()).toString()
         }
 
-        if (yearOrObject != undefined && monthIndex == undefined) {
-            return new originalDate(yearOrObject)
-        } else if (yearOrObject != undefined && monthIndex != undefined && date != undefined && hours != undefined && minutes != undefined && seconds != undefined && ms != undefined) {
-            return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds, ms)
-        } else if (yearOrObject != undefined && monthIndex != undefined && date != undefined && hours != undefined && minutes != undefined && seconds != undefined) {
-            return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds)
-        } else if (yearOrObject != undefined && monthIndex != undefined && date != undefined && hours != undefined && minutes != undefined) {
-            return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes)
-        } else if (yearOrObject != undefined && monthIndex != undefined && date != undefined && hours != undefined) {
-            return new originalDate(yearOrObject as number, monthIndex, date, hours)
-        } else if (yearOrObject != undefined && monthIndex != undefined && date != undefined) {
-            return new originalDate(yearOrObject as number, monthIndex, date)
-        } else if (yearOrObject != undefined && monthIndex != undefined) {
-            return new originalDate(yearOrObject as number, monthIndex)
-        } else {
+        if (yearOrObject === undefined) {
             const fakeDate = getFakeDate()
             if (fakeDate !== null) {
                 return new originalDate(fakeDate)
             } else {
                 return new originalDate()
             }
+        } else if (monthIndex === undefined) {
+            return new originalDate(yearOrObject)
+        } else if (date === undefined) {
+            return new originalDate(yearOrObject as number, monthIndex)
+        } else if (hours === undefined) {
+            return new originalDate(yearOrObject as number, monthIndex, date)
+        } else if (minutes === undefined) {
+            return new originalDate(yearOrObject as number, monthIndex, date, hours)
+        } else if (seconds === undefined) {
+            return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes)
+        } else if (ms === undefined) {
+            return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds)
+        } else {
+            return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds, ms)
         }
     }
 
