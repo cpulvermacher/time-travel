@@ -116,7 +116,72 @@ describe('fake Date', () => {
                 expect(date.toISOString()).toBe('1970-01-01T00:00:00.999Z')
             })
 
-            it('new Date(y, m, d, ..)', () => {
+            it('new Date(y, m)', () => {
+                date = new Date(2021, 8) //local time
+
+                expect(date.getFullYear()).toEqual(2021)
+                expect(date.getMonth()).toEqual(8)
+                expect(date.getDate()).toEqual(1)
+                expect(date.getDay()).toEqual(3)
+                expect(date.getHours()).toEqual(0)
+                expect(date.getMinutes()).toEqual(0)
+                expect(date.getSeconds()).toEqual(0)
+                expect(date.getMilliseconds()).toEqual(0)
+            })
+
+            it('new Date(y, m, d)', () => {
+                date = new Date(2021, 8, 15) //local time
+
+                expect(date.getFullYear()).toEqual(2021)
+                expect(date.getMonth()).toEqual(8)
+                expect(date.getDate()).toEqual(15)
+                expect(date.getDay()).toEqual(3)
+                expect(date.getHours()).toEqual(0)
+                expect(date.getMinutes()).toEqual(0)
+                expect(date.getSeconds()).toEqual(0)
+                expect(date.getMilliseconds()).toEqual(0)
+            })
+
+            it('new Date(y, m, d, h)', () => {
+                date = new Date(2021, 8, 15, 12) //local time
+
+                expect(date.getFullYear()).toEqual(2021)
+                expect(date.getMonth()).toEqual(8)
+                expect(date.getDate()).toEqual(15)
+                expect(date.getDay()).toEqual(3)
+                expect(date.getHours()).toEqual(12)
+                expect(date.getMinutes()).toEqual(0)
+                expect(date.getSeconds()).toEqual(0)
+                expect(date.getMilliseconds()).toEqual(0)
+            })
+
+            it('new Date(y, m, d, h, m)', () => {
+                date = new Date(2021, 8, 15, 12, 34) //local time
+
+                expect(date.getFullYear()).toEqual(2021)
+                expect(date.getMonth()).toEqual(8)
+                expect(date.getDate()).toEqual(15)
+                expect(date.getDay()).toEqual(3)
+                expect(date.getHours()).toEqual(12)
+                expect(date.getMinutes()).toEqual(34)
+                expect(date.getSeconds()).toEqual(0)
+                expect(date.getMilliseconds()).toEqual(0)
+            })
+
+            it('new Date(y, m, d, h, m, s)', () => {
+                date = new Date(2021, 8, 15, 12, 34, 56) //local time
+
+                expect(date.getFullYear()).toEqual(2021)
+                expect(date.getMonth()).toEqual(8)
+                expect(date.getDate()).toEqual(15)
+                expect(date.getDay()).toEqual(3)
+                expect(date.getHours()).toEqual(12)
+                expect(date.getMinutes()).toEqual(34)
+                expect(date.getSeconds()).toEqual(56)
+                expect(date.getMilliseconds()).toEqual(0)
+            })
+
+            it('new Date(y, m, d, h, m, s, ms)', () => {
                 date = new Date(2021, 8, 15, 12, 34, 56, 789) //local time
 
                 expect(date.getFullYear()).toEqual(2021)
@@ -127,6 +192,12 @@ describe('fake Date', () => {
                 expect(date.getMinutes()).toEqual(34)
                 expect(date.getSeconds()).toEqual(56)
                 expect(date.getMilliseconds()).toEqual(789)
+            })
+
+            it('new Date(NaN)', () => {
+                date = new Date(NaN)
+                expect(date.valueOf()).toBe(NaN)
+                expect(date.toString()).toBe('Invalid Date')
             })
 
             it('valueOf()', () => {
