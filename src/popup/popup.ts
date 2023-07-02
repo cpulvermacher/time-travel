@@ -109,20 +109,25 @@ async function onFakeDate(fakeDate: string) {
 async function onToggleTick() {
     try {
         const tabId = await getActiveTabId()
-        await injectFunction(tabId, toggleTick, [''])
+        const nowTimestampStr = (new Date()).getTime().toString()
+        await injectFunction(tabId, toggleTick, [nowTimestampStr])
     } catch (e) {
         setError('Couldn\'t toggle clock: ' + e)
     }
 }
 
-async function updateTickToggleButtonState() {
-    let clockIsRunning = false
+async function getTickState() {
     try {
         const tabId = await getActiveTabId()
-        clockIsRunning = !!await injectFunction(tabId, isClockTicking, [''])
+        return !!await injectFunction(tabId, isClockTicking, [''])
     } catch (e) {
-        //
+        return false
     }
+}
+
+
+async function updateTickToggleButtonState() {
+    const clockIsRunning = await getTickState()
     const toggleBtn = document.getElementsByClassName('tick-state')[0]
     if (clockIsRunning)
         toggleBtn.classList.remove('tick-state--stopped')
@@ -165,6 +170,7 @@ input.onkeydown = async (event) => {
     }
 }
 
+//TODO inject on click?
 //TODO also tick time in popup
 document.getElementById('tickToggleBtn')!.onclick = async () => {
     await onToggleTick()

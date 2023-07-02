@@ -84,18 +84,7 @@
         }
     }
 
-    const timeTravelTickToggle = () => {
-        const isTicking = window['__timeTravelTickStartDate'] != undefined
-        console.log('toggle pause', isTicking)
-        if (isTicking) {
-            window['__timeTravelTickStartDate'] = undefined
-        } else {
-            window['__timeTravelTickStartDate'] = (new originalDate()).getTime()
-        }
-    }
-
     timeTravelCheckToggle()
 
     window['__timeTravelCheckToggle'] = timeTravelCheckToggle
-    window['__timeTravelTickToggle'] = timeTravelTickToggle
 })()

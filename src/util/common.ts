@@ -30,9 +30,13 @@ export function isClockTicking(): boolean {
     return !!window.__timeTravelTickStartDate
 }
 
-export function toggleTick() {
-    if (window.__timeTravelTickToggle)
-        window.__timeTravelTickToggle()
+export function toggleTick(nowTimestampStr: string) {
+    if (window['__timeTravelTickStartDate']) {
+        window['__timeTravelTickStartDate'] = undefined
+    } else {
+        const nowTimestamp: number | undefined = nowTimestampStr ? Number.parseInt(nowTimestampStr) : undefined
+        window['__timeTravelTickStartDate'] = nowTimestamp
+    }
 }
 
 export function isContentScriptInjected() {
