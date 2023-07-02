@@ -56,11 +56,25 @@ button#setBtn {
 }
 
 button#tickToggleBtn {
-    width: 28px;
-    text-align: center;
-    padding: 5px;
-    line-height: 3px;
+    min-width: 27px;
+    width: 27px;
+    position: relative;
+}
+
+.tick-state {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     font-size: x-large;
+    line-height: 26px;
+}
+
+.tick-state.tick-state--stopped::before {
+    content: '\23F5';
+}
+.tick-state:not(.tick-state--stopped)::before {
+    content: '\23F9';
 }
 
 input {

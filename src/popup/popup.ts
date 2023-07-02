@@ -114,6 +114,7 @@ async function onToggleTick() {
         setError('Couldn\'t toggle clock: ' + e)
     }
 }
+
 async function updateTickToggleButtonState() {
     let clockIsRunning = false
     try {
@@ -122,8 +123,11 @@ async function updateTickToggleButtonState() {
     } catch (e) {
         //
     }
-    const toggleBtn = document.getElementById('tickToggleBtn')!
-    toggleBtn.innerText = clockIsRunning ? '⏹' : '⏵'
+    const toggleBtn = document.getElementsByClassName('tick-state')[0]
+    if (clockIsRunning)
+        toggleBtn.classList.remove('tick-state--stopped')
+    else
+        toggleBtn.classList.add('tick-state--stopped')
 }
 
 
@@ -161,8 +165,6 @@ input.onkeydown = async (event) => {
     }
 }
 
-//TODO fix button optics
-//TODO initial button state
 //TODO also tick time in popup
 document.getElementById('tickToggleBtn')!.onclick = async () => {
     await onToggleTick()
