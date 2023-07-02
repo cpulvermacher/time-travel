@@ -3,8 +3,6 @@ export const defaultTitleText = 'Time Travel'
 declare global {
     interface Window {
         __timeTravelCheckToggle?: () => void
-        __timeTravelTickToggle?: () => void
-        __timeTravelTickStartDate?: number
     }
 }
 
@@ -27,15 +25,19 @@ export function setFakeDate(date: string) {
 }
 
 export function isClockTicking(): boolean {
-    return !!window.__timeTravelTickStartDate
+    const TICK_START_DATE_STORAGE_KEY = 'timeTravelTickStartDate'
+    const currentStartDate = window.sessionStorage.getItem(TICK_START_DATE_STORAGE_KEY)
+    return currentStartDate != null
 }
 
 export function toggleTick(nowTimestampStr: string) {
-    if (window['__timeTravelTickStartDate']) {
-        window['__timeTravelTickStartDate'] = undefined
+    const TICK_START_DATE_STORAGE_KEY = 'timeTravelTickStartDate'
+    const currentStartDate = window.sessionStorage.getItem(TICK_START_DATE_STORAGE_KEY)
+
+    if (currentStartDate != null) {
+        window.sessionStorage.removeItem(TICK_START_DATE_STORAGE_KEY)
     } else {
-        const nowTimestamp: number | undefined = nowTimestampStr ? Number.parseInt(nowTimestampStr) : undefined
-        window['__timeTravelTickStartDate'] = nowTimestamp
+        window.sessionStorage.setItem(TICK_START_DATE_STORAGE_KEY, nowTimestampStr)
     }
 }
 

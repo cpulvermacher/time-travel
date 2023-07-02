@@ -23,7 +23,7 @@ function getTargetHost() {
 /** registers content script, returns true if reload is needed*/
 async function registerContentScriptIfNeeded(tabId: number | undefined) {
     const isScriptInjected = await injectFunction(tabId, isContentScriptInjected, [''])
-    console.log('script detcted:', isScriptInjected)
+    console.log('script detected:', isScriptInjected)
     if (isScriptInjected)
         return false
 
@@ -170,11 +170,11 @@ input.onkeydown = async (event) => {
     }
 }
 
-//TODO inject on click?
 //TODO also tick time in popup
 document.getElementById('tickToggleBtn')!.onclick = async () => {
     await onToggleTick()
     await updateTickToggleButtonState()
+    await onFakeDate(input.value)
 }
 
 document.getElementById('resetBtn')!.onclick = async () => {
@@ -182,6 +182,5 @@ document.getElementById('resetBtn')!.onclick = async () => {
 }
 
 document.getElementById('setBtn')!.onclick = async () => {
-    const fakeDate = input.value
-    await onFakeDate(fakeDate)
+    await onFakeDate(input.value)
 }

@@ -1,6 +1,7 @@
 (() => {
     console.log('injected content-script in', window.location.host)
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
+    const TICK_START_DATE_STORAGE_KEY = 'timeTravelTickStartDate'
 
     const originalDate = Date
 
@@ -21,13 +22,13 @@
         }
 
         if (yearOrObject === undefined) {
-            const fakeDate = getFakeDate()
+            const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
             if (fakeDate !== null) {
                 const fakeDateObject = new originalDate(fakeDate)
-                if (window['__timeTravelTickStartDate'] == null) {
+                const startDate = getTickStartDate()
+                if (startDate == null) {
                     return fakeDateObject
                 } else {
-                    const startDate = window['__timeTravelTickStartDate']
                     const elapsed = originalDate.now() - startDate
                     return new originalDate(fakeDateObject.getTime() + elapsed)
                 }
@@ -61,11 +62,23 @@
     FakeDate.UTC = Date.UTC
     FakeDate.now = fakeNow
 
-    function getFakeDate(): string | null {
+    function getFromStorage(key: string): string | null {
         try {
-            return window.sessionStorage.getItem(FAKE_DATE_STORAGE_KEY)
+            return window.sessionStorage.getItem(key)
         } catch (err) {
             //in sandbox, we might not be able to access sessionStorage
+            return null
+        }
+    }
+
+    function getTickStartDate(): number | null {
+        const startDate = getFromStorage(TICK_START_DATE_STORAGE_KEY)
+        if (startDate == null)
+            return null
+
+        try {
+            return Number.parseInt(startDate)
+        } catch (err) {
             return null
         }
     }
@@ -73,7 +86,7 @@
     const timeTravelCheckToggle = () => {
         // FakeDate does not support all of Date's features right now, replace only when we already have a fake date set
         // this seems better than breaking random web pages
-        const fakeDateActive = getFakeDate() != null
+        const fakeDateActive = getFromStorage(FAKE_DATE_STORAGE_KEY) != null
         console.log('toggle fake date', fakeDateActive, window.location.host)
         if (fakeDateActive) {
             // eslint-disable-next-line no-global-assign
