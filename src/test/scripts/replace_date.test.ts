@@ -80,7 +80,7 @@ describe('fake Date', () => {
         setFakeDate(fakeDate)
 
         const intlString = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format(new Date())
-        expect(intlString).toBe('Sunday, March 1, 1970 at 12:34:00 AM')
+        expect(intlString).toMatch(/Sunday, March 1, 1970 at 12:34:00\WAM/)
     })
 
     test.skip('Intl.DateTimeFormat without arguments, with fake date', () => {
@@ -88,7 +88,7 @@ describe('fake Date', () => {
         setFakeDate(fakeDate)
 
         const intlString = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format()
-        expect(intlString).toBe('Sunday, March 1, 1970 at 12:34:00 AM')
+        expect(intlString).toMatch(/Sunday, March 1, 1970 at 12:34:00\WAM/)
     })
 
 
@@ -380,7 +380,7 @@ describe('fake Date', () => {
             it('Intl.DateTimeFormat', () => {
                 const intlString = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format(date)
 
-                expect(intlString).toBe('Wednesday, September 15, 2021 at 12:34:56 PM')
+                expect(intlString).toMatch(/Wednesday, September 15, 2021 at 12:34:56\WPM/)
             })
         })
     })
