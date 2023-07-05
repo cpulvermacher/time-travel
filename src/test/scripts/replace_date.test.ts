@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, test } from 'vitest'
-import { setFakeDate } from '../../util/common'
+import { setFakeDate, toggleTick } from '../../util/common'
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
 import '../../scripts/replace_date'
@@ -8,7 +8,7 @@ const testStartDate = new Date()
 
 describe('fake Date', () => {
     afterEach(() => {
-        setFakeDate('')
+        window.sessionStorage.clear()
     })
 
     it('new Date() with actual date', () => {
@@ -22,6 +22,18 @@ describe('fake Date', () => {
         const date = new Date()
         expect(date.toISOString()).toBe(fakeDate)
         expect(date.valueOf()).toBe(1262304000000)
+    })
+
+    it('new Date() returns actual date after turning fake date off', () => {
+        const fakeDate = '2010-01-01T00:00:00.000Z'
+        setFakeDate(fakeDate)
+        const date = new Date()
+        expect(date.toISOString()).toBe(fakeDate)
+
+        setFakeDate('')
+        const date2 = new Date()
+        expect(date2.toISOString()).not.toBe(fakeDate)
+        expect(date2.valueOf()).toBeGreaterThanOrEqual(testStartDate.valueOf())
     })
 
     it('now() with actual date', () => {
@@ -91,6 +103,42 @@ describe('fake Date', () => {
         expect(intlString).toMatch(/Sunday, March 1, 1970 at 12:34:00\WAM/)
     })
 
+    describe('ticking', () => {
+        const sleep = async (sleepMs: number) => await new Promise(res => setTimeout(res, sleepMs))
+
+        it('new Date() ticks forward ', async () => {
+            const timestamp1 = (new Date()).valueOf()
+
+            await sleep(1)
+            expect((new Date()).valueOf()).toBeGreaterThan(timestamp1)
+        })
+
+        it('new Date() with fake date & tickStartDate ticks forward ', async () => {
+            const fakeDate = '2010-01-01T00:00:00.000Z'
+            toggleTick((new Date()).valueOf().toString())
+            setFakeDate(fakeDate)
+
+            await sleep(1)
+            const timestamp1 = (new Date()).valueOf()
+            expect(timestamp1).toBeGreaterThan(1262304000000)
+
+            await sleep(1)
+            expect((new Date()).valueOf()).toBeGreaterThan(timestamp1)
+        })
+
+        it('new Date() with fake date & without tickStartDate does not tick forward ', async () => {
+            const fakeDate = '2010-01-01T00:00:00.000Z'
+            toggleTick((new Date()).valueOf().toString())
+            setFakeDate(fakeDate)
+
+            await sleep(1)
+            const timestamp1 = (new Date()).valueOf()
+            expect(timestamp1).toBeGreaterThan(1262304000000)
+
+            await sleep(1)
+            expect((new Date()).valueOf()).toBeGreaterThan(timestamp1)
+        })
+    })
 
     const values = [undefined, '2010-01-01T00:00:00.000Z']
     values.forEach((fakeDate) => {
