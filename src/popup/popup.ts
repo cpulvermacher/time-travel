@@ -1,6 +1,6 @@
 import { getActiveTabId, injectFunction, reloadTab, setBadgeText, setTitle } from '../util/browser'
 import { defaultTitleText } from '../util/common'
-import { getFakeDate, isClockTicking, isContentScriptInjected, setFakeDate, toggleTick } from '../util/inject'
+import * as inject from '../util/inject'
 
 function toLocalTime(date: Date): string {
     // returns date in format "YYYY-MM-DD hh:mm" in local time
@@ -23,7 +23,7 @@ function getTargetHost() {
 
 /** registers content script, returns true if reload is needed*/
 async function registerContentScriptIfNeeded(tabId: number | undefined) {
-    const isScriptInjected = await injectFunction(tabId, isContentScriptInjected, [''])
+    const isScriptInjected = await injectFunction(tabId, inject.isContentScriptInjected, [''])
     console.log('script detected:', isScriptInjected)
     if (isScriptInjected)
         return false
@@ -92,7 +92,7 @@ async function onFakeDate(fakeDate: string) {
             needsReload = await registerContentScriptIfNeeded(tabId)
         }
 
-        await injectFunction(tabId, setFakeDate, [fakeDate])
+        await injectFunction(tabId, inject.setFakeDate, [fakeDate])
         await setBadgeText(tabId, fakeDate ? 'ON' : '')
         await setTitle(tabId, defaultTitleText + (fakeDate ? ` (${fakeDate})` : ' (Off)'))
 
@@ -111,7 +111,7 @@ async function onToggleTick() {
     try {
         const tabId = await getActiveTabId()
         const nowTimestampStr = (new Date()).getTime().toString()
-        await injectFunction(tabId, toggleTick, [nowTimestampStr])
+        await injectFunction(tabId, inject.toggleTick, [nowTimestampStr])
     } catch (e) {
         setError('Couldn\'t toggle clock: ' + e)
     }
@@ -120,7 +120,7 @@ async function onToggleTick() {
 async function getTickState() {
     try {
         const tabId = await getActiveTabId()
-        return !!await injectFunction(tabId, isClockTicking, [''])
+        return !!await injectFunction(tabId, inject.isClockTicking, [''])
     } catch (e) {
         return false
     }
@@ -148,7 +148,7 @@ input.focus()
 input.setSelectionRange(-1, -1)
 
 getActiveTabId().then((tabId) => {
-    injectFunction(tabId, getFakeDate, ['']).then((fakeDateFromStorage) => {
+    injectFunction(tabId, inject.getFakeDate, ['']).then((fakeDateFromStorage) => {
         if (fakeDateFromStorage) {
             const fakeDate = new Date(Date.parse(fakeDateFromStorage))
             input.setAttribute('value', toLocalTime(fakeDate))

@@ -1,6 +1,6 @@
 import { injectFunction, setBadgeText, setTitle } from '../util/browser'
 import { defaultTitleText } from '../util/common'
-import { getFakeDate } from '../util/inject'
+import * as inject from '../util/inject'
 
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
     await updateBadgeAndTitle(activeInfo.tabId)
@@ -20,7 +20,7 @@ chrome.runtime.onMessage.addListener(async (message, sender) => {
 
 async function updateBadgeAndTitle(tabId: number, forceOn?: boolean) {
     try {
-        const fakeDate = await injectFunction(tabId, getFakeDate, [''])
+        const fakeDate = await injectFunction(tabId, inject.getFakeDate, [''])
         await setBadgeText(tabId, fakeDate ? 'ON' : '')
         await setTitle(tabId, (fakeDate ? `${defaultTitleText} (${fakeDate})` : defaultTitleText))
     } catch (e) {
