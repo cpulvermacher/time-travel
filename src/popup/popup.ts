@@ -1,5 +1,5 @@
-import { getActiveTabId, injectFunction, reloadTab, setBadgeText, setTitle } from '../util/browser'
-import { defaultTitleText } from '../util/common'
+import { getActiveTabId, injectFunction, reloadTab } from '../util/browser'
+import { getContentScriptState, setBadgeAndTitle } from '../util/common'
 import * as inject from '../util/inject'
 
 function toLocalTime(date: Date): string {
@@ -86,6 +86,8 @@ async function onFakeDate(fakeDate: string) {
 
     try {
         const tabId = await getActiveTabId()
+        if (tabId == undefined)
+            throw new Error("Couldn't get active tab ID") //TODO consider making getActiveTab throw
 
         let needsReload = false
         if (fakeDate) {
@@ -93,8 +95,9 @@ async function onFakeDate(fakeDate: string) {
         }
 
         await injectFunction(tabId, inject.setFakeDate, [fakeDate])
-        await setBadgeText(tabId, fakeDate ? 'ON' : '')
-        await setTitle(tabId, defaultTitleText + (fakeDate ? ` (${fakeDate})` : ' (Off)'))
+
+        const state = await getContentScriptState(tabId)
+        await setBadgeAndTitle(tabId, state)
 
         if (needsReload) {
             showReloadModal()
