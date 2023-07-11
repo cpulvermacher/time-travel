@@ -147,20 +147,19 @@ input.setAttribute('value', toLocalTime(new Date()))
 input.focus()
 input.setSelectionRange(-1, -1)
 
-getActiveTabId().then((tabId) => {
-    injectFunction(tabId, inject.getFakeDate, ['']).then((fakeDateFromStorage) => {
-        if (fakeDateFromStorage) {
-            const fakeDate = new Date(Date.parse(fakeDateFromStorage))
-            input.setAttribute('value', toLocalTime(fakeDate))
-        }
-    }).catch(() => { /* ignore */ })
+getActiveTabId().then(async (tabId) => {
+    const fakeDateFromStorage = await injectFunction(tabId, inject.getFakeDate, [''])
+    if (fakeDateFromStorage) {
+        const fakeDate = new Date(Date.parse(fakeDateFromStorage))
+        input.setAttribute('value', toLocalTime(fakeDate))
 
-    injectFunction(tabId, getTargetHost, ['']).then((host) => {
-        const targetHint = document.getElementById('targetHost')
-        if (host && targetHint) {
-            targetHint.innerText = host
-        }
-    }).catch(() => { /* ignore */ })
+    }
+
+    const host = await injectFunction(tabId, getTargetHost, [''])
+    const targetHint = document.getElementById('targetHost')
+    if (host && targetHint) {
+        targetHint.innerText = host
+    }
 
     updateTickToggleButtonState()
 })
