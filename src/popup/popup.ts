@@ -1,5 +1,6 @@
 import { getActiveTabId, injectFunction, reloadTab, setBadgeText, setTitle } from '../util/browser'
-import { defaultTitleText, getFakeDate, isClockTicking, isContentScriptInjected, setFakeDate, toggleTick } from '../util/common'
+import { defaultTitleText } from '../util/common'
+import { getFakeDate, isClockTicking, isContentScriptInjected, setFakeDate, toggleTick } from '../util/inject'
 
 function toLocalTime(date: Date): string {
     // returns date in format "YYYY-MM-DD hh:mm" in local time
@@ -136,8 +137,11 @@ async function updateTickToggleButtonState() {
 }
 
 
-// ==================== initialize popup ====================
+// ==================== initialize popup state ====================
 const input = document.getElementById('fakeDateInput') as HTMLInputElement
+const resetButton = document.getElementById('resetBtn') as HTMLButtonElement
+const setButton = document.getElementById('setBtn') as HTMLButtonElement
+const tickToggleButton = document.getElementById('tickToggleBtn') as HTMLButtonElement
 
 input.setAttribute('value', toLocalTime(new Date()))
 input.focus()
@@ -161,6 +165,7 @@ getActiveTabId().then((tabId) => {
     updateTickToggleButtonState()
 })
 
+// ==================== set up event handlers ====================
 input.onkeydown = async (event) => {
     if (event.key == 'Enter') {
         event.preventDefault()
@@ -171,16 +176,16 @@ input.onkeydown = async (event) => {
 }
 
 //TODO also tick time in popup
-document.getElementById('tickToggleBtn')!.onclick = async () => {
+tickToggleButton.onclick = async () => {
     await onToggleTick()
     await updateTickToggleButtonState()
     await onFakeDate(input.value)
 }
 
-document.getElementById('resetBtn')!.onclick = async () => {
+resetButton.onclick = async () => {
     await onFakeDate('')
 }
 
-document.getElementById('setBtn')!.onclick = async () => {
+setButton.onclick = async () => {
     await onFakeDate(input.value)
 }

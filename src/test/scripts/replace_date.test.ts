@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, test } from 'vitest'
-import { setFakeDate, toggleTick } from '../../util/common'
+import { setFakeDate, toggleTick } from '../../util/inject'
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
 import '../../scripts/replace_date'

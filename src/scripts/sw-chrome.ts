@@ -1,5 +1,6 @@
 import { injectFunction, setBadgeText, setTitle } from '../util/browser'
-import { defaultTitleText, getFakeDate } from '../util/common'
+import { defaultTitleText } from '../util/common'
+import { getFakeDate } from '../util/inject'
 
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
     await updateBadgeAndTitle(activeInfo.tabId)
