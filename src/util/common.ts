@@ -12,15 +12,17 @@ type ContentScriptState = {
 
 export async function setBadgeAndTitle(tabId: number, state: ContentScriptState) {
     let badgeText = ''
-    if (state.fakeDateActive)
+    if (state.fakeDateActive) {
         badgeText = 'ON'
+    }
 
     await setBadgeText(tabId, badgeText)
 
     let title = defaultTitleText
-    if (state.fakeDateActive)
-        title += ` (${state.fakeDate})`
-    else if (state.isScriptInjected) {
+    if (state.fakeDateActive) {
+        const clockState = state.clockIsRunning ? 'ticking' : 'stopped'
+        title += ` (${state.fakeDate} - Clock ${clockState})`
+    } else if (state.isScriptInjected) {
         title += ' (Off)'
     }
     await setTitle(tabId, title)
