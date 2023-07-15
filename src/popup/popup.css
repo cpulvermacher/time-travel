@@ -50,6 +50,11 @@ button {
     color: #6060f4;
 }
 
+button:disabled {
+    background: white !important;
+    color: #9f9f9f !important;
+}
+
 button#setBtn {
     background: #6060f4;
     color: white;

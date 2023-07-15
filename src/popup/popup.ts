@@ -169,6 +169,12 @@ getActiveTabId().then(async (tabId) => {
     }
 
     updateTickToggleButtonState(state.clockIsRunning)
+}).catch((error) => {
+    setError('Time Travel cannot be used. ' + error)
+    input.disabled = true
+    tickToggleButton.disabled = true
+    resetButton.disabled = true
+    setButton.disabled = true
 })
 
 // ==================== set up event handlers ====================
