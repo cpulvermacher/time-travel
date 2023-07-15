@@ -109,22 +109,36 @@ async function onFakeDate(fakeDate: string) {
 }
 
 /** toggles clock ticking state, returns true iff the clock was started */
-async function onToggleTick(forceOff = false) {
+async function onToggleTick() {
     try {
         const tabId = await getActiveTabId()
         const state = await getContentScriptState(tabId)
 
-        if (state.clockIsRunning || forceOff) {
-            await injectFunction(tabId, inject.toggleTick, [''])
+        if (state.clockIsRunning) {
+            await resetTickStartDate(null)
         } else {
-            const nowTimestampStr = (new Date()).getTime().toString()
-            await injectFunction(tabId, inject.toggleTick, [nowTimestampStr])
+            await resetTickStartDate(new Date())
         }
         return !state.clockIsRunning
     } catch (e) {
         setError('Couldn\'t toggle clock: ' + e)
     }
     return false
+}
+
+async function resetTickStartDate(date: Date | null) {
+    try {
+        const tabId = await getActiveTabId()
+
+        if (date === null) {
+            await injectFunction(tabId, inject.toggleTick, [''])
+        } else {
+            const nowTimestampStr = date.getTime().toString()
+            await injectFunction(tabId, inject.toggleTick, [nowTimestampStr])
+        }
+    } catch (e) {
+        setError('Couldn\'t toggle clock: ' + e)
+    }
 }
 
 async function updateTickToggleButtonState(clockIsRunning: boolean) {
@@ -188,9 +202,16 @@ tickToggleButton.onclick = async () => {
 
 resetButton.onclick = async () => {
     await onFakeDate('')
-    await onToggleTick(true)
+    await resetTickStartDate(null)
 }
 
 setButton.onclick = async () => {
+    const tabId = await getActiveTabId()
+    const state = await getContentScriptState(tabId)
+    if (state.tickStartDate) {
+        // we want to start from the new faked date, without any offset
+        await resetTickStartDate(new Date())
+    }
+
     await onFakeDate(input.value)
 }
