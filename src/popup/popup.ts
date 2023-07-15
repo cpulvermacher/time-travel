@@ -150,7 +150,15 @@ getActiveTabId().then(async (tabId) => {
     const state = await getContentScriptState(tabId)
     if (state.fakeDate) {
         const fakeDate = new Date(Date.parse(state.fakeDate))
-        input.setAttribute('value', toLocalTime(fakeDate))
+        if (state.fakeDateActive && state.clockIsRunning && state.tickStartDate) {
+            const tickStartDate = Number.parseInt(state.tickStartDate)
+            const elapsed = Date.now() - tickStartDate
+            const fakeDateNow = new Date(fakeDate.getTime() + elapsed)
+            input.setAttribute('value', toLocalTime(fakeDateNow))
+
+        } else {
+            input.setAttribute('value', toLocalTime(fakeDate))
+        }
     }
 
     const host = await injectFunction(tabId, getTargetHost, [''])
