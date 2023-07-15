@@ -30,7 +30,7 @@ export function getTickStartDate(): string | null {
 }
 
 /** enables clock ticking if nowTimestampStr is non-empty */
-export function toggleTick(nowTimestampStr: string) {
+export function setTickStartDate(nowTimestampStr: string) {
     const TICK_START_DATE_STORAGE_KEY = 'timeTravelTickStartDate'
 
     if (!nowTimestampStr) {

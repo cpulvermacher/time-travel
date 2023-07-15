@@ -78,7 +78,7 @@ function showReloadModal() {
 
 }
 
-async function onFakeDate(fakeDate: string) {
+async function setFakeDate(fakeDate: string) {
     if (fakeDate && isNaN(Date.parse(fakeDate))) {
         setError('Invalid format! Try "2023-03-25 12:40", "2023-03-25T12:40Z" (UTC) or "2023-03-25" (midnight).')
         return
@@ -109,7 +109,7 @@ async function onFakeDate(fakeDate: string) {
 }
 
 /** toggles clock ticking state, returns true iff the clock was started */
-async function onToggleTick() {
+async function toggleTick() {
     try {
         const tabId = await getActiveTabId()
         const state = await getContentScriptState(tabId)
@@ -131,10 +131,10 @@ async function resetTickStartDate(date: Date | null) {
         const tabId = await getActiveTabId()
 
         if (date === null) {
-            await injectFunction(tabId, inject.toggleTick, [''])
+            await injectFunction(tabId, inject.setTickStartDate, [''])
         } else {
             const nowTimestampStr = date.getTime().toString()
-            await injectFunction(tabId, inject.toggleTick, [nowTimestampStr])
+            await injectFunction(tabId, inject.setTickStartDate, [nowTimestampStr])
         }
     } catch (e) {
         setError('Couldn\'t toggle clock: ' + e)
@@ -189,19 +189,18 @@ input.onkeydown = async (event) => {
     if (event.key == 'Enter') {
         event.preventDefault()
 
-        const fakeDate = input.value
-        await onFakeDate(fakeDate)
+        setButton.click()
     }
 }
 
 tickToggleButton.onclick = async () => {
-    const isTicking = await onToggleTick()
+    const isTicking = await toggleTick()
     await updateTickToggleButtonState(isTicking)
-    await onFakeDate(input.value)
+    await setFakeDate(input.value)
 }
 
 resetButton.onclick = async () => {
-    await onFakeDate('')
+    await setFakeDate('')
     await resetTickStartDate(null)
 }
 
@@ -213,5 +212,5 @@ setButton.onclick = async () => {
         await resetTickStartDate(new Date())
     }
 
-    await onFakeDate(input.value)
+    await setFakeDate(input.value)
 }
