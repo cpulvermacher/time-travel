@@ -108,28 +108,26 @@ async function onFakeDate(fakeDate: string) {
     }
 }
 
+/** toggles clock ticking state, returns true iff the clock was started */
 async function onToggleTick() {
     try {
         const tabId = await getActiveTabId()
-        const nowTimestampStr = (new Date()).getTime().toString()
-        await injectFunction(tabId, inject.toggleTick, [nowTimestampStr])
+        const state = await getContentScriptState(tabId)
+
+        if (state.clockIsRunning) {
+            await injectFunction(tabId, inject.toggleTick, [''])
+        } else {
+            const nowTimestampStr = (new Date()).getTime().toString()
+            await injectFunction(tabId, inject.toggleTick, [nowTimestampStr])
+        }
+        return !state.clockIsRunning
     } catch (e) {
         setError('Couldn\'t toggle clock: ' + e)
     }
+    return false
 }
 
-async function getTickState() {
-    try {
-        const tabId = await getActiveTabId()
-        return !!await injectFunction(tabId, inject.isClockTicking, [''])
-    } catch (e) {
-        return false
-    }
-}
-
-
-async function updateTickToggleButtonState() {
-    const clockIsRunning = await getTickState()
+async function updateTickToggleButtonState(clockIsRunning: boolean) {
     const toggleBtn = document.getElementsByClassName('tick-state')[0]
     if (clockIsRunning)
         toggleBtn.classList.remove('tick-state--stopped')
@@ -149,11 +147,10 @@ input.focus()
 input.setSelectionRange(-1, -1)
 
 getActiveTabId().then(async (tabId) => {
-    const fakeDateFromStorage = await injectFunction(tabId, inject.getFakeDate, [''])
-    if (fakeDateFromStorage) {
-        const fakeDate = new Date(Date.parse(fakeDateFromStorage))
+    const state = await getContentScriptState(tabId)
+    if (state.fakeDate) {
+        const fakeDate = new Date(Date.parse(state.fakeDate))
         input.setAttribute('value', toLocalTime(fakeDate))
-
     }
 
     const host = await injectFunction(tabId, getTargetHost, [''])
@@ -162,7 +159,7 @@ getActiveTabId().then(async (tabId) => {
         targetHint.innerText = host
     }
 
-    updateTickToggleButtonState()
+    updateTickToggleButtonState(state.clockIsRunning)
 })
 
 // ==================== set up event handlers ====================
@@ -175,10 +172,9 @@ input.onkeydown = async (event) => {
     }
 }
 
-//TODO also tick time in popup
 tickToggleButton.onclick = async () => {
-    await onToggleTick()
-    await updateTickToggleButtonState()
+    const isTicking = await onToggleTick()
+    await updateTickToggleButtonState(isTicking)
     await onFakeDate(input.value)
 }
 

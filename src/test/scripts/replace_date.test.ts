@@ -129,14 +129,11 @@ describe('fake Date', () => {
         it('new Date() with fake date & without tickStartDate does not tick forward ', async () => {
             const fakeDate = '2010-01-01T00:00:00.000Z'
             toggleTick((new Date()).valueOf().toString())
+            toggleTick('') //disable tick
             setFakeDate(fakeDate)
 
             await sleep(1)
-            const timestamp1 = (new Date()).valueOf()
-            expect(timestamp1).toBeGreaterThan(1262304000000)
-
-            await sleep(1)
-            expect((new Date()).valueOf()).toBeGreaterThan(timestamp1)
+            expect((new Date()).toISOString()).toBe(fakeDate)
         })
     })
 
