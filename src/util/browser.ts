@@ -1,18 +1,18 @@
-export async function getActiveTabId() {
+export async function getActiveTabId(): Promise<number> {
     const queryOptions = { active: true, currentWindow: true }
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
     const [tab] = await chrome.tabs.query(queryOptions)
+    if (tab.id === undefined)
+        throw new Error("Couldn't get active tab")
+
     return tab.id
 }
 
 export async function injectFunction<Args extends [string], Result>(
-    tabId: number | undefined,
+    tabId: number,
     func: (...args: Args) => Result,
     args: Args
 ): Promise<NonNullable<chrome.scripting.Awaited<Result>> | null> {
-    if (tabId == undefined)
-        throw new Error("Couldn't get active tab")
-
     const result = await chrome.scripting.executeScript({
         target: { tabId },
         func,
@@ -45,6 +45,5 @@ export async function setTitle(tabId: number | undefined, title: string) {
 
 export async function reloadTab() {
     const tabId = await getActiveTabId()
-    if (tabId != undefined)
-        await chrome.tabs.reload(tabId)
+    await chrome.tabs.reload(tabId)
 }

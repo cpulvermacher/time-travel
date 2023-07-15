@@ -22,7 +22,7 @@ function getTargetHost() {
 }
 
 /** registers content script, returns true if reload is needed*/
-async function registerContentScriptIfNeeded(tabId: number | undefined) {
+async function registerContentScriptIfNeeded(tabId: number) {
     const isScriptInjected = await injectFunction(tabId, inject.isContentScriptInjected, [''])
     console.log('script detected:', isScriptInjected)
     if (isScriptInjected)
@@ -86,8 +86,6 @@ async function onFakeDate(fakeDate: string) {
 
     try {
         const tabId = await getActiveTabId()
-        if (tabId == undefined)
-            throw new Error("Couldn't get active tab ID") //TODO consider making getActiveTab throw
 
         let needsReload = false
         if (fakeDate) {
