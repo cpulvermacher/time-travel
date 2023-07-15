@@ -109,12 +109,12 @@ async function onFakeDate(fakeDate: string) {
 }
 
 /** toggles clock ticking state, returns true iff the clock was started */
-async function onToggleTick() {
+async function onToggleTick(forceOff = false) {
     try {
         const tabId = await getActiveTabId()
         const state = await getContentScriptState(tabId)
 
-        if (state.clockIsRunning) {
+        if (state.clockIsRunning || forceOff) {
             await injectFunction(tabId, inject.toggleTick, [''])
         } else {
             const nowTimestampStr = (new Date()).getTime().toString()
@@ -180,6 +180,7 @@ tickToggleButton.onclick = async () => {
 
 resetButton.onclick = async () => {
     await onFakeDate('')
+    await onToggleTick(true)
 }
 
 setButton.onclick = async () => {
