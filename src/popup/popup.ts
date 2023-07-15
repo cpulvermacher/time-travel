@@ -84,60 +84,47 @@ async function setFakeDate(fakeDate: string) {
         return
     }
 
-    try {
-        const tabId = await getActiveTabId()
+    const tabId = await getActiveTabId()
 
-        let needsReload = false
-        if (fakeDate) {
-            needsReload = await registerContentScriptIfNeeded(tabId)
-        }
-
-        await injectFunction(tabId, inject.setFakeDate, [fakeDate])
-
-        const state = await getContentScriptState(tabId)
-        await setBadgeAndTitle(tabId, state)
-
-        if (needsReload) {
-            showReloadModal()
-        } else {
-            window.close()
-        }
-
-    } catch (e) {
-        setError('Couldn\'t set date: ' + e)
+    let needsReload = false
+    if (fakeDate) {
+        needsReload = await registerContentScriptIfNeeded(tabId)
     }
+
+    await injectFunction(tabId, inject.setFakeDate, [fakeDate])
+
+    const state = await getContentScriptState(tabId)
+    await setBadgeAndTitle(tabId, state)
+
+    if (needsReload) {
+        showReloadModal()
+    } else {
+        window.close()
+    }
+
 }
 
 /** toggles clock ticking state, returns true iff the clock was started */
 async function toggleTick() {
-    try {
-        const tabId = await getActiveTabId()
-        const state = await getContentScriptState(tabId)
+    const tabId = await getActiveTabId()
+    const state = await getContentScriptState(tabId)
 
-        if (state.clockIsRunning) {
-            await resetTickStartDate(null)
-        } else {
-            await resetTickStartDate(new Date())
-        }
-        return !state.clockIsRunning
-    } catch (e) {
-        setError('Couldn\'t toggle clock: ' + e)
+    if (state.clockIsRunning) {
+        await resetTickStartDate(null)
+    } else {
+        await resetTickStartDate(new Date())
     }
-    return false
+    return !state.clockIsRunning
 }
 
 async function resetTickStartDate(date: Date | null) {
-    try {
-        const tabId = await getActiveTabId()
+    const tabId = await getActiveTabId()
 
-        if (date === null) {
-            await injectFunction(tabId, inject.setTickStartDate, [''])
-        } else {
-            const nowTimestampStr = date.getTime().toString()
-            await injectFunction(tabId, inject.setTickStartDate, [nowTimestampStr])
-        }
-    } catch (e) {
-        setError('Couldn\'t toggle clock: ' + e)
+    if (date === null) {
+        await injectFunction(tabId, inject.setTickStartDate, [''])
+    } else {
+        const nowTimestampStr = date.getTime().toString()
+        await injectFunction(tabId, inject.setTickStartDate, [nowTimestampStr])
     }
 }
 
@@ -194,23 +181,36 @@ input.onkeydown = async (event) => {
 }
 
 tickToggleButton.onclick = async () => {
-    const isTicking = await toggleTick()
-    await updateTickToggleButtonState(isTicking)
-    await setFakeDate(input.value)
+    try {
+        const isTicking = await toggleTick()
+        await updateTickToggleButtonState(isTicking)
+        await setFakeDate(input.value)
+    } catch (e) {
+        setError('Couldn\'t toggle clock: ' + e)
+        await updateTickToggleButtonState(false)
+    }
 }
 
 resetButton.onclick = async () => {
-    await setFakeDate('')
-    await resetTickStartDate(null)
+    try {
+        await setFakeDate('')
+        await resetTickStartDate(null)
+    } catch (e) {
+        setError('Couldn\'t reset: ' + e)
+    }
 }
 
 setButton.onclick = async () => {
-    const tabId = await getActiveTabId()
-    const state = await getContentScriptState(tabId)
-    if (state.tickStartDate) {
-        // we want to start from the new faked date, without any offset
-        await resetTickStartDate(new Date())
-    }
+    try {
+        const tabId = await getActiveTabId()
+        const state = await getContentScriptState(tabId)
+        if (state.tickStartDate) {
+            // we want to start from the new faked date, without any offset
+            await resetTickStartDate(new Date())
+        }
 
-    await setFakeDate(input.value)
+        await setFakeDate(input.value)
+    } catch (e) {
+        setError('Couldn\'t set date: ' + e)
+    }
 }
