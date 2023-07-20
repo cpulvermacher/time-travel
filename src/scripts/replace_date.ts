@@ -1,7 +1,7 @@
 (() => {
     console.log('injected content-script in', window.location.host)
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
-    const TICK_START_DATE_STORAGE_KEY = 'timeTravelTickStartDate'
+    const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp'
 
     const originalDate = Date
 
@@ -25,11 +25,11 @@
             const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
             if (fakeDate !== null) {
                 const fakeDateObject = new originalDate(fakeDate)
-                const startDate = getTickStartDate()
-                if (startDate == null) {
+                const startTimestamp = getTickStartTimestamp()
+                if (startTimestamp == null) {
                     return fakeDateObject
                 } else {
-                    const elapsed = originalDate.now() - startDate
+                    const elapsed = originalDate.now() - startTimestamp
                     return new originalDate(fakeDateObject.getTime() + elapsed)
                 }
             } else {
@@ -71,13 +71,13 @@
         }
     }
 
-    function getTickStartDate(): number | null {
-        const startDate = getFromStorage(TICK_START_DATE_STORAGE_KEY)
-        if (startDate == null)
+    function getTickStartTimestamp(): number | null {
+        const startTimestamp = getFromStorage(TICK_START_STORAGE_KEY)
+        if (startTimestamp == null)
             return null
 
         try {
-            return Number.parseInt(startDate)
+            return Number.parseInt(startTimestamp)
         } catch (err) {
             return null
         }

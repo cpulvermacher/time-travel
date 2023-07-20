@@ -24,19 +24,19 @@ export function setFakeDate(date: string) {
         window.__timeTravelCheckToggle()
 }
 
-export function getTickStartDate(): string | null {
-    const TICK_START_DATE_STORAGE_KEY = 'timeTravelTickStartDate'
-    return window.sessionStorage.getItem(TICK_START_DATE_STORAGE_KEY)
+export function getTickStartTimestamp(): string | null {
+    const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp'
+    return window.sessionStorage.getItem(TICK_START_STORAGE_KEY)
 }
 
 /** enables clock ticking if nowTimestampStr is non-empty */
-export function setTickStartDate(nowTimestampStr: string) {
-    const TICK_START_DATE_STORAGE_KEY = 'timeTravelTickStartDate'
+export function setTickStartTimestamp(nowTimestampStr: string) {
+    const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp'
 
     if (!nowTimestampStr) {
-        window.sessionStorage.removeItem(TICK_START_DATE_STORAGE_KEY)
+        window.sessionStorage.removeItem(TICK_START_STORAGE_KEY)
     } else {
-        window.sessionStorage.setItem(TICK_START_DATE_STORAGE_KEY, nowTimestampStr)
+        window.sessionStorage.setItem(TICK_START_STORAGE_KEY, nowTimestampStr)
     }
 }
 

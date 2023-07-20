@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener((message, sender) => {
         const state = {
             isScriptInjected: true,
             fakeDate: message.fakeDate,
-            tickStartDate: message.tickStartDate,
+            tickStartTimestamp: message.tickStartTimestamp,
             clockIsRunning: message.isClockTicking,
             fakeDateActive: true
         }

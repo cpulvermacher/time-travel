@@ -4,11 +4,11 @@
 
 const fakeDate = window.sessionStorage.getItem('timeTravelDate')
 if (fakeDate) {
-    const tickStartDate = window.sessionStorage.getItem('timeTravelTickStartDate')
+    const tickStartTimestamp = window.sessionStorage.getItem('timeTravelTickStartTimestamp')
     chrome.runtime.sendMessage({
         msg: 'active',
         fakeDate,
-        tickStartDate,
-        isClockTicking: !!tickStartDate
+        tickStartTimestamp,
+        isClockTicking: !!tickStartTimestamp
     })
 }

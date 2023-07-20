@@ -105,21 +105,21 @@ async function toggleTick() {
     const state = await getContentScriptState(tabId)
 
     if (state.clockIsRunning) {
-        await resetTickStartDate(null)
+        await resetTickStart(null)
     } else {
-        await resetTickStartDate(new Date())
+        await resetTickStart(new Date())
     }
     return !state.clockIsRunning
 }
 
-async function resetTickStartDate(date: Date | null) {
+async function resetTickStart(date: Date | null) {
     const tabId = await getActiveTabId()
 
     if (date === null) {
-        await injectFunction(tabId, inject.setTickStartDate, [''])
+        await injectFunction(tabId, inject.setTickStartTimestamp, [''])
     } else {
         const nowTimestampStr = date.getTime().toString()
-        await injectFunction(tabId, inject.setTickStartDate, [nowTimestampStr])
+        await injectFunction(tabId, inject.setTickStartTimestamp, [nowTimestampStr])
     }
 }
 
@@ -146,9 +146,9 @@ getActiveTabId().then(async (tabId) => {
     const state = await getContentScriptState(tabId)
     if (state.fakeDate) {
         const fakeDate = new Date(Date.parse(state.fakeDate))
-        if (state.fakeDateActive && state.clockIsRunning && state.tickStartDate) {
-            const tickStartDate = Number.parseInt(state.tickStartDate)
-            const elapsed = Date.now() - tickStartDate
+        if (state.fakeDateActive && state.clockIsRunning && state.tickStartTimestamp) {
+            const tickStartTimestamp = Number.parseInt(state.tickStartTimestamp)
+            const elapsed = Date.now() - tickStartTimestamp
             const fakeDateNow = new Date(fakeDate.getTime() + elapsed)
             input.setAttribute('value', formatLocalTime(fakeDateNow))
 
@@ -195,7 +195,7 @@ tickToggleButton.onclick = async () => {
 resetButton.onclick = async () => {
     try {
         await setFakeDate('')
-        await resetTickStartDate(null)
+        await resetTickStart(null)
     } catch (e) {
         setError('Couldn\'t reset: ' + e)
     }
@@ -205,9 +205,9 @@ setButton.onclick = async () => {
     try {
         const tabId = await getActiveTabId()
         const state = await getContentScriptState(tabId)
-        if (state.tickStartDate) {
+        if (state.tickStartTimestamp) {
             // we want to start from the new faked date, without any offset
-            await resetTickStartDate(new Date())
+            await resetTickStart(new Date())
         }
 
         await setFakeDate(input.value)

@@ -6,7 +6,7 @@ export const defaultTitleText = 'Time Travel'
 type ContentScriptState = {
     isScriptInjected: boolean
     fakeDate: string | null
-    tickStartDate: string | null
+    tickStartTimestamp: string | null
     clockIsRunning: boolean
     fakeDateActive: boolean
 }
@@ -43,12 +43,12 @@ export async function setBadgeAndTitle(tabId: number, state: ContentScriptState)
 export async function getContentScriptState(tabId: number): Promise<ContentScriptState> {
     let isScriptInjected = false
     let fakeDate: string | null = null
-    let tickStartDate: string | null = null
+    let tickStartTimestamp: string | null = null
 
     try {
         isScriptInjected = !!await injectFunction(tabId, inject.isContentScriptInjected, [''])
         fakeDate = await injectFunction(tabId, inject.getFakeDate, [''])
-        tickStartDate = await injectFunction(tabId, inject.getTickStartDate, [''])
+        tickStartTimestamp = await injectFunction(tabId, inject.getTickStartTimestamp, [''])
     } catch {
         //pass
     }
@@ -56,8 +56,8 @@ export async function getContentScriptState(tabId: number): Promise<ContentScrip
     return {
         isScriptInjected,
         fakeDate,
-        tickStartDate,
-        clockIsRunning: isScriptInjected && !!fakeDate && !!tickStartDate,
+        tickStartTimestamp: tickStartTimestamp,
+        clockIsRunning: isScriptInjected && !!fakeDate && !!tickStartTimestamp,
         fakeDateActive: isScriptInjected && !!fakeDate
     }
 }

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, test } from 'vitest'
-import { setFakeDate, setTickStartDate } from '../../util/inject'
+import { setFakeDate, setTickStartTimestamp } from '../../util/inject'
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
 import '../../scripts/replace_date'
@@ -113,9 +113,9 @@ describe('fake Date', () => {
             expect((new Date()).valueOf()).toBeGreaterThan(timestamp1)
         })
 
-        it('new Date() with fake date & tickStartDate ticks forward ', async () => {
+        it('new Date() with fake date & tickStartTimestamp ticks forward ', async () => {
             const fakeDate = '2010-01-01T00:00:00.000Z'
-            setTickStartDate((new Date()).valueOf().toString())
+            setTickStartTimestamp((new Date()).valueOf().toString())
             setFakeDate(fakeDate)
 
             await sleep(1)
@@ -126,10 +126,10 @@ describe('fake Date', () => {
             expect((new Date()).valueOf()).toBeGreaterThan(timestamp1)
         })
 
-        it('new Date() with fake date & without tickStartDate does not tick forward ', async () => {
+        it('new Date() with fake date & without tickStartTimestamp does not tick forward ', async () => {
             const fakeDate = '2010-01-01T00:00:00.000Z'
-            setTickStartDate((new Date()).valueOf().toString())
-            setTickStartDate('') //disable tick
+            setTickStartTimestamp((new Date()).valueOf().toString())
+            setTickStartTimestamp('') //disable tick
             setFakeDate(fakeDate)
 
             await sleep(1)
