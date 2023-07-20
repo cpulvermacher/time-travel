@@ -11,6 +11,16 @@ type ContentScriptState = {
     fakeDateActive: boolean
 }
 
+/** Returns date in format "YYYY-MM-DD hh:mm" in local time, or "Invalid Date" if invalid */
+export function formatLocalTime(date: Date): string {
+    if (isNaN(date.getTime())) {
+        return 'Invalid Date'
+    }
+
+    const d = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    return d.toISOString().slice(0, 16).replace('T', ' ')
+}
+
 export async function setBadgeAndTitle(tabId: number, state: ContentScriptState) {
     let badgeText = ''
     if (state.fakeDateActive) {
@@ -20,9 +30,10 @@ export async function setBadgeAndTitle(tabId: number, state: ContentScriptState)
     await setBadgeText(tabId, badgeText)
 
     let title = defaultTitleText
-    if (state.fakeDateActive) {
+    if (state.fakeDateActive && state.fakeDate) {
+        const formattedFakeDate = formatLocalTime(new Date(state.fakeDate))
         const clockState = state.clockIsRunning ? 'ticking' : 'stopped'
-        title += ` (${state.fakeDate} - Clock ${clockState})`
+        title += ` (${formattedFakeDate} - Clock ${clockState})`
     } else if (state.isScriptInjected) {
         title += ' (Off)'
     }

@@ -1,12 +1,7 @@
 import { getActiveTabId, injectFunction, reloadTab } from '../util/browser'
-import { getContentScriptState, setBadgeAndTitle } from '../util/common'
+import { formatLocalTime, getContentScriptState, setBadgeAndTitle } from '../util/common'
 import * as inject from '../util/inject'
 
-function toLocalTime(date: Date): string {
-    // returns date in format "YYYY-MM-DD hh:mm" in local time
-    const d = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-    return d.toISOString().slice(0, 16).replace('T', ' ')
-}
 
 function setError(message: string) {
     const errorMsg = document.getElementById('errormsg')
@@ -143,7 +138,7 @@ const resetButton = document.getElementById('resetBtn') as HTMLButtonElement
 const setButton = document.getElementById('setBtn') as HTMLButtonElement
 const tickToggleButton = document.getElementById('tickToggleBtn') as HTMLButtonElement
 
-input.setAttribute('value', toLocalTime(new Date()))
+input.setAttribute('value', formatLocalTime(new Date()))
 input.focus()
 input.setSelectionRange(-1, -1)
 
@@ -155,10 +150,10 @@ getActiveTabId().then(async (tabId) => {
             const tickStartDate = Number.parseInt(state.tickStartDate)
             const elapsed = Date.now() - tickStartDate
             const fakeDateNow = new Date(fakeDate.getTime() + elapsed)
-            input.setAttribute('value', toLocalTime(fakeDateNow))
+            input.setAttribute('value', formatLocalTime(fakeDateNow))
 
         } else {
-            input.setAttribute('value', toLocalTime(fakeDate))
+            input.setAttribute('value', formatLocalTime(fakeDate))
         }
     }
 
