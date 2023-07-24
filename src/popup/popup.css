@@ -98,7 +98,7 @@ input:focus, button:focus {
     left: -50%;
     width: 150%;
     height: 100%;
-    background: #6060f4;
+    background: radial-gradient(#8080fd, #6060f4);
     transform: rotate(90deg);
     transform-origin: bottom right;
     transition: transform 0.3s ease-in;
