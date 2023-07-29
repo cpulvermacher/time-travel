@@ -22,13 +22,13 @@ To restore the system time, click the extension icon again and press Reset.
 
 ## Limitations
 - Only Chrome support (for now)
-- Only JavaScript is affected by the extension. 
+- Only JavaScript is affected by the extension.
 - The extension does not work in iframes with the `sandbox` attribute
-- Some apps require a ticking clock and may break when setting a static date
 
 ## Installation
 Get it from the Chrome Web Store: https://chrome.google.com/webstore/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg
 
+## Build
 To build and use a local version:
 - Download this repository
 - Run `npm run build`
