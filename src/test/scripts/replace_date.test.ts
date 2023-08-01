@@ -104,12 +104,13 @@ describe('fake Date', () => {
     })
 
     describe('ticking', () => {
-        const sleep = async (sleepMs: number) => await new Promise(res => setTimeout(res, sleepMs))
+        const sleepMs = 2 //at least 1ms
+        const sleep = async () => await new Promise(res => setTimeout(res, sleepMs))
 
         it('new Date() ticks forward ', async () => {
             const timestamp1 = (new Date()).valueOf()
 
-            await sleep(1)
+            await sleep()
             expect((new Date()).valueOf()).toBeGreaterThan(timestamp1)
         })
 
@@ -118,11 +119,11 @@ describe('fake Date', () => {
             setTickStartTimestamp((new Date()).valueOf().toString())
             setFakeDate(fakeDate)
 
-            await sleep(1)
+            await sleep()
             const timestamp1 = (new Date()).valueOf()
             expect(timestamp1).toBeGreaterThan(1262304000000)
 
-            await sleep(1)
+            await sleep()
             expect((new Date()).valueOf()).toBeGreaterThan(timestamp1)
         })
 
@@ -132,7 +133,7 @@ describe('fake Date', () => {
             setTickStartTimestamp('') //disable tick
             setFakeDate(fakeDate)
 
-            await sleep(1)
+            await sleep()
             expect((new Date()).toISOString()).toBe(fakeDate)
         })
     })
