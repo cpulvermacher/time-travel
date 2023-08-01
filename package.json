@@ -11,7 +11,7 @@
     },
     "devDependencies": {
         "@types/chrome": "^0.0.242",
-        "@typescript-eslint/eslint-plugin": "^5.60.1",
+        "@typescript-eslint/eslint-plugin": "^6.2.1",
         "eslint": "^8.44.0",
         "happy-dom": "^9.20.3",
         "typescript": "^5.1.6",
