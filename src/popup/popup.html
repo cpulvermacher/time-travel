@@ -12,7 +12,7 @@
             Date and time to set:
             <input type="text" size="20" maxlength="20" id="fakeDateInput" spellcheck="false" />
         </label>
-        <button id="tickToggleBtn">
+        <button id="tickToggleBtn" title="Start/stop progressing clock from given value">
             <span class="tick-state"></span>
         </button>
     </div>
@@ -21,8 +21,8 @@
     </div>
     <p class="error--hidden" id="errormsg"></p>
     <div class="row">
-        <button id="resetBtn">Reset</button>
-        <button id="setBtn">Change Date</button>
+        <button id="resetBtn" title="Stop faking time and reset">Reset</button>
+        <button id="setBtn" title="Change time to the value entered">Change Date</button>
     </div>
 
     <div class="modal-background" id="modalBackground"></div>
