@@ -12,10 +12,6 @@ function setError(message: string) {
     errorMsg.className = message ? 'error--visible' : 'error--hidden'
 }
 
-function getTargetHost() {
-    return window.location.host
-}
-
 /** registers content script, returns true if reload is needed*/
 async function registerContentScriptIfNeeded(tabId: number) {
     const isScriptInjected = await injectFunction(tabId, inject.isContentScriptInjected, [''])
@@ -155,12 +151,6 @@ getActiveTabId().then(async (tabId) => {
         } else {
             input.setAttribute('value', formatLocalTime(fakeDate))
         }
-    }
-
-    const host = await injectFunction(tabId, getTargetHost, [''])
-    const targetHint = document.getElementById('targetHost')
-    if (host && targetHint) {
-        targetHint.innerText = host
     }
 
     updateTickToggleButtonState(state.clockIsRunning)

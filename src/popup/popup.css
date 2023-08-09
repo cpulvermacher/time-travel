@@ -12,20 +12,6 @@ body {
     gap: 10px;
 }
 
-.targetHint {
-    text-align: right;
-    font-size: smaller;
-    color: #777;
-}
-
-.targetHint:has(> .targetHint__host:empty) {
-    display:none;
-}
-
-.targetHint__host {
-    font-weight: bold;
-}
-
 .error--visible {
     color: #893b3b;
     border: 1px solid #893b3b;
