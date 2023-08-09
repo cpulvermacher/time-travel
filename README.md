@@ -20,8 +20,12 @@ frontend JavaScript applications.
 
 To restore the system time, click the extension icon again and press Reset.
 
+By default, the clock will be paused when the fake time is turned on.
+You can press the play (▶) button to make the fake clock tick forward at a normal rate.
+Press stop (⏹) to pause the clock again.
+
 ## Limitations
-- Only Chrome support (for now)
+- Only Chrome / Chromium support (for now)
 - Only JavaScript is affected by the extension.
 - The extension does not work in iframes with the `sandbox` attribute
 
