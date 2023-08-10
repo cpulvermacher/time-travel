@@ -177,7 +177,7 @@ tickToggleButton.onclick = async () => {
         await updateTickToggleButtonState(isTicking)
         await setFakeDate(input.value)
     } catch (e) {
-        setError('Couldn\'t toggle clock: ' + e)
+        setError('Toggling clock failed: ' + e)
         await updateTickToggleButtonState(false)
     }
 }
@@ -187,7 +187,7 @@ resetButton.onclick = async () => {
         await setFakeDate('')
         await resetTickStart(null)
     } catch (e) {
-        setError('Couldn\'t reset: ' + e)
+        setError('Reset failed: ' + e)
     }
 }
 
@@ -202,6 +202,6 @@ setButton.onclick = async () => {
 
         await setFakeDate(input.value)
     } catch (e) {
-        setError('Couldn\'t set date: ' + e)
+        setError('Setting date failed: ' + e)
     }
 }
