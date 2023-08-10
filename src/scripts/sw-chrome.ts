@@ -25,8 +25,8 @@ chrome.runtime.onMessage.addListener((message, sender) => {
 })
 
 async function updateBadgeAndTitle(tabId: number) {
-    const state = await getContentScriptState(tabId)
     try {
+        const state = await getContentScriptState(tabId)
         await setBadgeAndTitle(tabId, state)
     } catch (e) {
         //ignore errors

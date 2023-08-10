@@ -45,13 +45,9 @@ export async function getContentScriptState(tabId: number): Promise<ContentScrip
     let fakeDate: string | null = null
     let tickStartTimestamp: string | null = null
 
-    try {
-        isScriptInjected = !!await injectFunction(tabId, inject.isContentScriptInjected, [''])
-        fakeDate = await injectFunction(tabId, inject.getFakeDate, [''])
-        tickStartTimestamp = await injectFunction(tabId, inject.getTickStartTimestamp, [''])
-    } catch {
-        //pass
-    }
+    isScriptInjected = !!await injectFunction(tabId, inject.isContentScriptInjected, [''])
+    fakeDate = await injectFunction(tabId, inject.getFakeDate, [''])
+    tickStartTimestamp = await injectFunction(tabId, inject.getTickStartTimestamp, [''])
 
     return {
         isScriptInjected,
