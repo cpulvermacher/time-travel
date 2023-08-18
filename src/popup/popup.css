@@ -1,6 +1,7 @@
 html,
 body {
     min-height: 90px;
+    min-width: fit-content;
 }
 
 body {
