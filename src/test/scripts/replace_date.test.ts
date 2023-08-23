@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { setFakeDate, setTickStartTimestamp } from '../../util/inject'
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
@@ -87,20 +87,55 @@ describe('fake Date', () => {
         expect(Date.parse(dateStr) + 1000).toBeGreaterThan(fakeDateInMsSinceEpoch)
     })
 
-    it('Intl.DateTimeFormat, passing fake date', () => {
-        const fakeDate = '1970-03-01T00:34:00.123'
-        setFakeDate(fakeDate)
+    describe('Intl.DateTimeFormat', () => {
+        it('format() with passed fake Date', () => {
+            const fakeDate = '1970-03-01T00:34:00.123'
+            setFakeDate(fakeDate)
 
-        const intlString = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format(new Date())
-        expect(intlString).toMatch(/Sunday, March 1, 1970 at 12:34:00\WAM/)
-    })
+            const intlString = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format(new Date())
+            expect(intlString).toMatch(/Sunday, March 1, 1970 at 12:34:00\WAM/)
+        })
 
-    test.skip('Intl.DateTimeFormat without arguments, with fake date', () => {
-        const fakeDate = '1970-03-01T00:34:00.123'
-        setFakeDate(fakeDate)
+        it('format() without arguments', () => {
+            const fakeDate = '1970-03-01T00:34:00.123'
+            setFakeDate(fakeDate)
 
-        const intlString = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format()
-        expect(intlString).toMatch(/Sunday, March 1, 1970 at 12:34:00\WAM/)
+            const intlString = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format()
+            expect(intlString).toMatch(/Sunday, March 1, 1970 at 12:34:00\WAM/)
+        })
+
+        it('format() without arguments, constructor called without new', () => {
+            const fakeDate = '1970-03-01T00:34:00.123'
+            setFakeDate(fakeDate)
+
+            const intlString = Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format()
+            expect(intlString).toMatch(/Sunday, March 1, 1970 at 12:34:00\WAM/)
+        })
+
+        const fakeDateParts = [
+            { 'type': 'month', 'value': 'Mar' },
+            { 'type': 'literal', 'value': ' ' },
+            { 'type': 'day', 'value': '1' },
+            { 'type': 'literal', 'value': ', ' },
+            { 'type': 'year', 'value': '1970' }
+        ]
+
+        it('formatToParts() with passed fake Date', () => {
+            const fakeDate = '1970-03-01T00:34:00.123'
+            setFakeDate(fakeDate)
+
+            const parts = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).formatToParts(new Date())
+            expect(parts).toStrictEqual(fakeDateParts)
+        })
+
+        it('formatToParts() without arguments', () => {
+            const fakeDate = '1970-03-01T00:34:00.123'
+            setFakeDate(fakeDate)
+
+            const parts = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).formatToParts()
+            expect(parts).toStrictEqual(fakeDateParts)
+        })
+
     })
 
     describe('ticking', () => {
