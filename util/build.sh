@@ -16,6 +16,7 @@ if [ "$MODE" = "dev" ]
 then
     LONG_VERSION="$LONG_VERSION-dev"
 fi
+export LONG_VERSION
 
 cd "$ROOT"
 

@@ -27,5 +27,8 @@ export default defineConfig(({ mode }) => ({
                 }
             }
         },
+    },
+    define: {
+        '__EXT_VERSION__': JSON.stringify(process.env.LONG_VERSION)
     }
 }))

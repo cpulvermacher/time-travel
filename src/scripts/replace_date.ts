@@ -1,5 +1,5 @@
 (() => {
-    console.log('injected content-script in', window.location.host)
+    console.log(`injected content-script (version ${__EXT_VERSION__}) for host ${window.location.host}`)
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
     const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp'
 
