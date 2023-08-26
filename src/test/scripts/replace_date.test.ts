@@ -258,6 +258,18 @@ describe('fake Date', () => {
                 expect(utcDate.toISOString()).toEqual('2021-09-15T12:34:56.789Z')
             })
 
+            it('toLocaleString()', () => {
+                expect(date.toLocaleString('en-US')).toMatch(/9\/15\/2021, 12:34:56\WPM/)
+            })
+
+            it('toLocaleDateString()', () => {
+                expect(date.toLocaleDateString('en-US')).toMatch(/9\/15\/2021/)
+            })
+
+            it('toLocaleTimeString()', () => {
+                expect(date.toLocaleTimeString('en-US')).toMatch(/12:34:56\WPM/)
+            })
+
             it('toJSON()', () => {
                 expect(utcDate.toJSON()).toEqual('2021-09-15T12:34:56.789Z')
             })
