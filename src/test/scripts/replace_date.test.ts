@@ -112,28 +112,12 @@ describe('fake Date', () => {
             expect(intlString).toMatch(/Sunday, March 1, 1970 at 12:34:00\WAM/)
         })
 
-        const fakeDateParts = [
-            { 'type': 'month', 'value': 'Mar' },
-            { 'type': 'literal', 'value': ' ' },
-            { 'type': 'day', 'value': '1' },
-            { 'type': 'literal', 'value': ', ' },
-            { 'type': 'year', 'value': '1970' }
-        ]
-
-        it('formatToParts() with passed fake Date', () => {
-            const fakeDate = '1970-03-01T00:34:00.123'
-            setFakeDate(fakeDate)
-
-            const parts = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).formatToParts(new Date())
-            expect(parts).toStrictEqual(fakeDateParts)
-        })
-
         it('formatToParts() without arguments', () => {
             const fakeDate = '1970-03-01T00:34:00.123'
             setFakeDate(fakeDate)
 
             const parts = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).formatToParts()
-            expect(parts).toStrictEqual(fakeDateParts)
+            expect(parts.map(pair => pair.value).join('')).toStrictEqual('Mar 1, 1970')
         })
 
     })
@@ -470,10 +454,51 @@ describe('fake Date', () => {
             })
 
             //intl
-            it('Intl.DateTimeFormat', () => {
+            it('Intl.DateTimeFormat.format', () => {
                 const intlString = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format(date)
 
                 expect(intlString).toMatch(/Wednesday, September 15, 2021 at 12:34:56\WPM/)
+            })
+
+            it('Intl.DateTime.formatToParts', () => {
+                const parts = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).formatToParts(date)
+                expect(parts.map(pair => pair.value).join('')).toStrictEqual('Sep 15, 2021')
+            })
+
+            it('Intl.DateTimeFormat.formatRange', () => {
+                const range = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).formatRange(date, date)
+
+                expect(range).toEqual('Sep 15, 2021')
+            })
+
+            it('Intl.DateTimeFormat.formatRangeToParts', () => {
+                const rangeParts = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).formatRangeToParts(date, date)
+
+                expect(rangeParts.map(pair => pair.value).join('')).toStrictEqual('Sep 15, 2021')
+            })
+
+            it('Intl.DateTimeFormat.resolvedOptions', () => {
+                const options = new Intl.DateTimeFormat().resolvedOptions()
+
+                expect(options.timeZone).not.toBeUndefined()
+            })
+
+            it('Intl.DateTimeFormat.prototype.constructor', () => {
+                const object = Intl.DateTimeFormat.prototype.constructor('en-US', { dateStyle: 'full', timeStyle: 'medium' })
+
+                expect(object.format(date)).toMatch(/Wednesday, September 15, 2021 at 12:34:56\WPM/)
+            })
+
+            it('Intl.DateTimeFormat.prototype[@@toStringTag]', () => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                expect((Intl.DateTimeFormat.prototype as any)[Symbol.toStringTag]).toBe('Intl.DateTimeFormat')
+                expect(new Intl.DateTimeFormat().toString()).toBe('[object Intl.DateTimeFormat]')
+            })
+
+            it('Intl.DateTimeFormat.supportedLocalesOf', () => {
+                const supportedLocales = Intl.DateTimeFormat.supportedLocalesOf('en')
+
+                expect(supportedLocales).toContain('en')
             })
         })
     })
