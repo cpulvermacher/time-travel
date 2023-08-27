@@ -35,7 +35,7 @@ Get it from the Chrome Web Store: https://chrome.google.com/webstore/detail/time
 ## Build
 To build and use a local version:
 - Download this repository
-- Run `npm run build`
+- Run `npm run dev` (or `npm run build` for a production version)
 - Open chrome://extensions
 - Enable 'Developer Mode'
 - Click 'Load unpacked' and select the `dist/` directory
