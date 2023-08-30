@@ -13,16 +13,16 @@ frontend JavaScript applications.
 - Click the extension icon in the toolbar.
 - Enter the date and time you want to set and confirm, e.g.:
   - "2023-04-27 12:40" (local time)
-  - "2023-04-27T12:40Z" (UTC)
   - "2023-04-27" (midnight local time)
+  - "2023-04-27T12:40Z" (UTC)
 - When first activating the extension on a tab, click Reload when prompted.
 - 🎉 Any JavaScript `Date` object will now return the fake date/time you set!
 
-To restore the system time, click the extension icon again and press Reset.
+To restore the system time, click the extension icon and press Reset.
 
 By default, the clock will be paused when the fake time is turned on.
 You can press the play (▶) button to make the fake clock tick forward at a normal rate.
-Press stop (⏹) to pause the clock again.
+Press stop (⏹) to pause the clock .
 
 ## Limitations
 - Only Chrome / Chromium support (for now)
