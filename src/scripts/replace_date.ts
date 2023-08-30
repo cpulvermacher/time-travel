@@ -91,6 +91,7 @@
     }
 
     FakeDate.prototype = Date.prototype
+    FakeDate.prototype.constructor = FakeDate
 
     //static methods
     FakeDate.parse = Date.parse

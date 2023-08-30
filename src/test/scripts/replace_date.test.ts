@@ -87,6 +87,24 @@ describe('fake Date', () => {
         expect(Date.parse(dateStr) + 1000).toBeGreaterThan(fakeDateInMsSinceEpoch)
     })
 
+    it('Date.prototype.constructor without new returns string', () => {
+        const fakeDate = '1970-01-01T00:00:00.123Z'
+        setFakeDate(fakeDate)
+
+        const dateStr = Date.prototype.constructor()
+
+        expect(dateStr).toBe((new Date()).toString())
+    })
+
+    it('Date.prototype.constructor without new ignores arguments', () => {
+        const fakeDate = '1970-01-01T00:00:00.123Z'
+        setFakeDate(fakeDate)
+
+        const dateStr = Date.prototype.constructor(9999999)
+
+        expect(dateStr).toBe((new Date()).toString())
+    })
+
     describe('Intl.DateTimeFormat', () => {
         it('format() with passed fake Date', () => {
             const fakeDate = '1970-03-01T00:34:00.123'
@@ -277,12 +295,24 @@ describe('fake Date', () => {
                 expect(utcDate.toISOString()).toEqual('2021-09-15T12:34:56.789Z')
             })
 
+            it('toString()', () => {
+                expect(date.toString()).toMatch(/Sep 15 2021 12:34:56 .*/)
+            })
+
+            it('toDateString()', () => {
+                expect(date.toDateString()).toEqual('Wed Sep 15 2021')
+            })
+
+            it('toTimeString()', () => {
+                expect(date.toLocaleTimeString()).toContain('12:34:56')
+            })
+
             it('toLocaleString()', () => {
                 expect(date.toLocaleString('en-US')).toMatch(/9\/15\/2021, 12:34:56\WPM/)
             })
 
             it('toLocaleDateString()', () => {
-                expect(date.toLocaleDateString('en-US')).toMatch(/9\/15\/2021/)
+                expect(date.toLocaleDateString('en-US')).toEqual('9/15/2021')
             })
 
             it('toLocaleTimeString()', () => {
@@ -460,7 +490,7 @@ describe('fake Date', () => {
                 expect(intlString).toMatch(/Wednesday, September 15, 2021 at 12:34:56\WPM/)
             })
 
-            it('Intl.DateTime.formatToParts', () => {
+            it('Intl.DateTimeFormat.formatToParts', () => {
                 const parts = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).formatToParts(date)
                 expect(parts.map(pair => pair.value).join('')).toStrictEqual('Sep 15, 2021')
             })
