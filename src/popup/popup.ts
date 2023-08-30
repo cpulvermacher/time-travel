@@ -1,4 +1,4 @@
-import { getActiveTabId, injectFunction, reloadTab } from '../util/browser'
+import { getActiveTabId, injectFunction, isFileUrl, reloadTab } from '../util/browser'
 import { formatLocalTime, getContentScriptState, setBadgeAndTitle } from '../util/common'
 import * as inject from '../util/inject'
 
@@ -10,6 +10,13 @@ function setError(message: string) {
 
     errorMsg.innerText = message
     errorMsg.className = message ? 'error--visible' : 'error--hidden'
+}
+
+function disableUi() {
+    input.disabled = true
+    tickToggleButton.disabled = true
+    resetButton.disabled = true
+    setButton.disabled = true
 }
 
 /** registers content script, returns true if reload is needed*/
@@ -139,27 +146,33 @@ input.focus()
 input.setSelectionRange(-1, -1)
 
 getActiveTabId().then(async (tabId) => {
-    const state = await getContentScriptState(tabId)
-    if (state.fakeDate) {
-        const fakeDate = new Date(Date.parse(state.fakeDate))
-        if (state.fakeDateActive && state.clockIsRunning && state.tickStartTimestamp) {
-            const tickStartTimestamp = Number.parseInt(state.tickStartTimestamp)
-            const elapsed = Date.now() - tickStartTimestamp
-            const fakeDateNow = new Date(fakeDate.getTime() + elapsed)
-            input.setAttribute('value', formatLocalTime(fakeDateNow))
+    try {
+        const state = await getContentScriptState(tabId)
+        if (state.fakeDate) {
+            const fakeDate = new Date(Date.parse(state.fakeDate))
+            if (state.fakeDateActive && state.clockIsRunning && state.tickStartTimestamp) {
+                const tickStartTimestamp = Number.parseInt(state.tickStartTimestamp)
+                const elapsed = Date.now() - tickStartTimestamp
+                const fakeDateNow = new Date(fakeDate.getTime() + elapsed)
+                input.setAttribute('value', formatLocalTime(fakeDateNow))
 
+            } else {
+                input.setAttribute('value', formatLocalTime(fakeDate))
+            }
+        }
+
+        updateTickToggleButtonState(state.clockIsRunning)
+    } catch (error) {
+        if (await isFileUrl(tabId)) {
+            setError('Failed to access page. Please make sure "Allow access to file URLs" is enabled in the extension settings.')
+            disableUi()
         } else {
-            input.setAttribute('value', formatLocalTime(fakeDate))
+            throw error
         }
     }
-
-    updateTickToggleButtonState(state.clockIsRunning)
 }).catch((error) => {
     setError('Time Travel cannot be used. ' + error)
-    input.disabled = true
-    tickToggleButton.disabled = true
-    resetButton.disabled = true
-    setButton.disabled = true
+    disableUi()
 })
 
 // ==================== set up event handlers ====================

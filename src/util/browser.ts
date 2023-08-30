@@ -8,6 +8,11 @@ export async function getActiveTabId(): Promise<number> {
     return tab.id
 }
 
+export async function isFileUrl(tabId: number): Promise<boolean> {
+    const tabDetails = await chrome.tabs.get(tabId)
+    return !!tabDetails.url?.startsWith('file://')
+}
+
 export async function injectFunction<Args extends [string], Result>(
     tabId: number,
     func: (...args: Args) => Result,
