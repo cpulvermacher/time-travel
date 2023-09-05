@@ -1,5 +1,5 @@
-import { getActiveTabId, injectFunction, isFileUrl, reloadTab } from '../util/browser'
-import { formatLocalTime, getContentScriptState, setBadgeAndTitle } from '../util/common'
+import { getActiveTabId, injectFunction, isFileUrl, registerContentScript, reloadTab } from '../util/browser'
+import { formatLocalTime, getContentScriptState, isContentScriptActive, setBadgeAndTitle } from '../util/common'
 import * as inject from '../util/inject'
 
 
@@ -17,48 +17,6 @@ function disableUi() {
     tickToggleButton.disabled = true
     resetButton.disabled = true
     setButton.disabled = true
-}
-
-/** registers content script, returns true if reload is needed*/
-async function registerContentScriptIfNeeded(tabId: number) {
-    const isScriptInjected = await injectFunction(tabId, inject.isContentScriptInjected, [''])
-    console.log('script detected:', isScriptInjected)
-    if (isScriptInjected)
-        return false
-
-    const contentScripts: chrome.scripting.RegisteredContentScript[] = [{
-        'id': 'replaceDate',
-        'js': [
-            'scripts/replace_date.js'
-        ],
-        'matches': [
-            '<all_urls>'
-        ],
-        'runAt': 'document_start',
-        'world': 'MAIN',
-        'allFrames': true,
-        'persistAcrossSessions': false,
-    }, {
-        'id': 'sendActive',
-        'js': [
-            'scripts/send_active.js'
-        ],
-        'matches': [
-            '<all_urls>'
-        ],
-        'runAt': 'document_start',
-        'world': 'ISOLATED',
-        'allFrames': true,
-        'persistAcrossSessions': false,
-    }]
-    const scripts = await chrome.scripting.getRegisteredContentScripts({ ids: contentScripts.map(script => script.id) })
-    if (scripts.length > 0) {
-        await chrome.scripting.updateContentScripts(contentScripts)
-    } else {
-        await chrome.scripting.registerContentScripts(contentScripts)
-    }
-
-    return true
 }
 
 function showReloadModal() {
@@ -85,8 +43,9 @@ async function setFakeDate(fakeDate: string) {
     const tabId = await getActiveTabId()
 
     let needsReload = false
-    if (fakeDate) {
-        needsReload = await registerContentScriptIfNeeded(tabId)
+    if (fakeDate && !await isContentScriptActive(tabId)) {
+        await registerContentScript()
+        needsReload = true
     }
 
     await injectFunction(tabId, inject.setFakeDate, [fakeDate])

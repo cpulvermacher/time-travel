@@ -4,7 +4,7 @@ import * as inject from './inject'
 export const defaultTitleText = 'Time Travel'
 
 type ContentScriptState = {
-    isScriptInjected: boolean
+    contentScriptActive: boolean
     fakeDate: string | null
     tickStartTimestamp: string | null
     clockIsRunning: boolean
@@ -34,26 +34,26 @@ export async function setBadgeAndTitle(tabId: number, state: ContentScriptState)
         const formattedFakeDate = formatLocalTime(new Date(state.fakeDate))
         const clockState = state.clockIsRunning ? 'ticking' : 'stopped'
         title += ` (${formattedFakeDate} - Clock ${clockState})`
-    } else if (state.isScriptInjected) {
+    } else if (state.contentScriptActive) {
         title += ' (Off)'
     }
     await setTitle(tabId, title)
 }
 
-export async function getContentScriptState(tabId: number): Promise<ContentScriptState> {
-    let isScriptInjected = false
-    let fakeDate: string | null = null
-    let tickStartTimestamp: string | null = null
+export async function isContentScriptActive(tabId: number) {
+    return !!await injectFunction(tabId, inject.isContentScriptActive, [''])
+}
 
-    isScriptInjected = !!await injectFunction(tabId, inject.isContentScriptInjected, [''])
-    fakeDate = await injectFunction(tabId, inject.getFakeDate, [''])
-    tickStartTimestamp = await injectFunction(tabId, inject.getTickStartTimestamp, [''])
+export async function getContentScriptState(tabId: number): Promise<ContentScriptState> {
+    const contentScriptActive = await isContentScriptActive(tabId)
+    const fakeDate = await injectFunction(tabId, inject.getFakeDate, [''])
+    const tickStartTimestamp = await injectFunction(tabId, inject.getTickStartTimestamp, [''])
 
     return {
-        isScriptInjected,
+        contentScriptActive,
         fakeDate,
         tickStartTimestamp: tickStartTimestamp,
-        clockIsRunning: isScriptInjected && !!fakeDate && !!tickStartTimestamp,
-        fakeDateActive: isScriptInjected && !!fakeDate
+        clockIsRunning: contentScriptActive && !!fakeDate && !!tickStartTimestamp,
+        fakeDateActive: contentScriptActive && !!fakeDate
     }
 }

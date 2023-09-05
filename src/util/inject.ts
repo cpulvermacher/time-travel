@@ -40,6 +40,7 @@ export function setTickStartTimestamp(nowTimestampStr: string) {
     }
 }
 
-export function isContentScriptInjected() {
+/** returns true if the content script was injected and activated after page reload */
+export function isContentScriptActive() {
     return window.__timeTravelCheckToggle != undefined
 }

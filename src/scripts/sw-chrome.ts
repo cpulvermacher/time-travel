@@ -14,7 +14,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
 chrome.runtime.onMessage.addListener((message, sender) => {
     if (message.msg == 'active' && sender.tab?.id) {
         const state = {
-            isScriptInjected: true,
+            contentScriptActive: true,
             fakeDate: message.fakeDate,
             tickStartTimestamp: message.tickStartTimestamp,
             clockIsRunning: message.isClockTicking,
