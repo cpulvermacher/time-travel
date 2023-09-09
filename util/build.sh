@@ -27,7 +27,7 @@ vite build -m "${MODE}"
 
 # copy extra assets
 mkdir dist/images/
-cp -a images/*.png dist/images/
+cp -a images/icon*.png dist/images/
 
 cat src/manifest.json | \
     sed "s/__VERSION_NAME__/$LONG_VERSION/g" | \
