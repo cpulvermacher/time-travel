@@ -47,9 +47,11 @@
         }
     }
 
-    function addProperties(props: object) {
+    /** set properties  on given prototype */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function addProperties(proto: any, props: object) {
         Reflect.ownKeys(props).forEach(key =>
-            Object.defineProperty(FakeIntlDateTimeFormat.prototype, key, {
+            Object.defineProperty(proto, key, {
                 configurable: true,
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 value: (props as any)[key]
@@ -134,7 +136,7 @@
     }
     function resolvedOptions(this: FakeIntlDateTimeFormat) { return this._originalObject.resolvedOptions() }
 
-    addProperties({
+    addProperties(FakeIntlDateTimeFormat.prototype, {
         format, formatRange, formatRangeToParts, formatToParts, resolvedOptions,
         [Symbol.toStringTag]: 'Intl.DateTimeFormat',
     })
