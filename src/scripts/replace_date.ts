@@ -120,10 +120,11 @@
     function formatToParts(this: FakeIntlDateTimeFormat, date?: Date | number): Intl.DateTimeFormatPart[] {
         return this._originalObject.formatToParts(date ?? maybeFakeNowDate())
     }
-    function formatRange(this: FakeIntlDateTimeFormat, startDate: Date | number | bigint, endDate: Date | number | bigint) {
+    type RangeDate = Date | number | bigint
+    function formatRange(this: FakeIntlDateTimeFormat, startDate: RangeDate, endDate: RangeDate) {
         return this._originalObject.formatRange(startDate, endDate)
     }
-    function formatRangeToParts(this: FakeIntlDateTimeFormat, startDate: Date | number | bigint, endDate: Date | number | bigint) {
+    function formatRangeToParts(this: FakeIntlDateTimeFormat, startDate: RangeDate, endDate: RangeDate) {
         return this._originalObject.formatRangeToParts(startDate, endDate)
     }
     function resolvedOptions(this: FakeIntlDateTimeFormat) { return this._originalObject.resolvedOptions() }
