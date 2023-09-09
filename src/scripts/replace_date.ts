@@ -147,9 +147,9 @@
     // ==================== toggle logic for FakeDate / FakeIntlDateTimeFormat ====================
 
     const timeTravelCheckToggle = () => {
-        const fakeDateActive = getFromStorage(FAKE_DATE_STORAGE_KEY) != null
-        console.log('toggling fake date', fakeDateActive ? 'on' : 'off', fakeDateActive || '')
-        if (fakeDateActive) {
+        const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
+        console.log(`toggling Time Travel (fake date: ${fakeDate})`)
+        if (fakeDate != null) {
             // eslint-disable-next-line no-global-assign
             Date = FakeDate as DateConstructor
             Intl.DateTimeFormat = FakeIntlDateTimeFormat as typeof Intl.DateTimeFormat
