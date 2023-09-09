@@ -18,7 +18,7 @@ export async function injectFunction<Args extends [string], Result>(
     tabId: number,
     func: (...args: Args) => Result,
     args: Args
-): Promise<NonNullable<chrome.scripting.Awaited<Result>> | null> {
+): Promise<chrome.scripting.Awaited<Result> | null> {
     const result = await chrome.scripting.executeScript({
         target: { tabId },
         func,
