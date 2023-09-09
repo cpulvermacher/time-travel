@@ -141,7 +141,7 @@
 
     const timeTravelCheckToggle = () => {
         const fakeDateActive = getFromStorage(FAKE_DATE_STORAGE_KEY) != null
-        console.log('toggle fake date', fakeDateActive, window.location.host)
+        console.log('toggling fake date', fakeDateActive ? 'on' : 'off', fakeDateActive || '')
         if (fakeDateActive) {
             // eslint-disable-next-line no-global-assign
             Date = FakeDate as DateConstructor
