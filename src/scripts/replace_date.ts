@@ -1,6 +1,7 @@
 (() => {
     console.log(`injected content-script (version ${__EXT_VERSION__}) for host ${window.location.host}`)
     if (window['__timeTravelCheckToggle'] !== undefined) {
+        // this can happen if multiple versions of the extension are installed
         console.log('content script was already injected, aborting.')
         return
     }
@@ -10,6 +11,7 @@
 
     // ==================== helper functions ====================
 
+    /** return key from storage, or null if unset */
     function getFromStorage(key: string): string | null {
         try {
             return window.sessionStorage.getItem(key)
@@ -19,6 +21,7 @@
         }
     }
 
+    /** return tick start time, or null if unset/invalid */
     function getTickStartTimestamp(): number | null {
         const startTimestamp = getFromStorage(TICK_START_STORAGE_KEY)
         if (startTimestamp == null)
@@ -31,7 +34,12 @@
         }
     }
 
-    function maybeFakeNowDate() {
+    /** return the current date/time we want the page to see.
+     *
+     * This will either be the real current time (extension off),
+     * or the fake time, stopped or ticking (extension on).
+     */
+    function maybeFakeNowDate(): Date {
         const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
         if (fakeDate !== null) {
             const fakeDateObject = new originalDate(fakeDate)

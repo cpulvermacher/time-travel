@@ -1,4 +1,6 @@
 // browser-specific APIs should only be used in this file
+
+/** get id for current tab, or throw */
 export async function getActiveTabId(): Promise<number> {
     const queryOptions = { active: true, currentWindow: true }
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
@@ -9,11 +11,13 @@ export async function getActiveTabId(): Promise<number> {
     return tab.id
 }
 
+/** does this tab have a file:// URL? (extension access disabled by default) */
 export async function isFileUrl(tabId: number): Promise<boolean> {
     const tabDetails = await chrome.tabs.get(tabId)
     return !!tabDetails.url?.startsWith('file://')
 }
 
+/** inject function into MAIN world */
 export async function injectFunction<Args extends [string], Result>(
     tabId: number,
     func: (...args: Args) => Result,
@@ -61,6 +65,7 @@ export async function registerContentScript() {
     }
 }
 
+/** set badge for icon */
 export async function setBadgeText(tabId: number | undefined, text: string) {
     await chrome.action.setBadgeBackgroundColor({ color: '#6060f4' })
     await chrome.action.setBadgeText({
@@ -69,6 +74,7 @@ export async function setBadgeText(tabId: number | undefined, text: string) {
     })
 }
 
+/** set icon tooltip title */
 export async function setTitle(tabId: number | undefined, title: string) {
     await chrome.action.setTitle({
         tabId,
@@ -76,6 +82,7 @@ export async function setTitle(tabId: number | undefined, title: string) {
     })
 }
 
+/** reload the current tab */
 export async function reloadTab() {
     const tabId = await getActiveTabId()
     await chrome.tabs.reload(tabId)
