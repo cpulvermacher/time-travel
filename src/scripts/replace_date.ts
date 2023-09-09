@@ -1,5 +1,10 @@
 (() => {
     console.log(`injected content-script (version ${__EXT_VERSION__}) for host ${window.location.host}`)
+    if (window['__timeTravelCheckToggle'] !== undefined) {
+        console.log('content script was already injected, aborting.')
+        return
+    }
+
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
     const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp'
 
