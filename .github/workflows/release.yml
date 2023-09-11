@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run lint
+    - run: npm run test
+    - run: npm run build
+    - uses: actions/upload-artifact@v3
+      with:
+        name: time-travel-${{ github.ref_name }}.zip
+        path: dist/*.zip
