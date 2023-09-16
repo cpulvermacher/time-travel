@@ -2,41 +2,48 @@
 
 <head>
     <title>Time and Date Demo (With Frames)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./demo.css" />
 </head>
 
-<body class="h-full bg-gray-700 flex flex-col items-center gap-10 p-10">
-    <div class="w-full">
-        <h1 class="mb-2 text-xl font-medium leading-tight text-neutral-200 dark:text-neutral-50">
-            iframe
-        </h1>
-        <iframe src="demo.html" class="block w-5/6"></iframe>
-    </div>
+<body>
+    <h2> iframe </h2>
+    <iframe src="demo.html"></iframe>
+    <h2> iframe (added with delay) </h2>
+    <div id="delayed-iframe"></div>
 
-    <div class="w-full">
-        <h1 class="mb-2 text-xl font-medium leading-tight text-neutral-200 dark:text-neutral-50">
-            iframe (sandbox with scripts + same-origin)
-        </h1>
-        <iframe src="demo.html" class="block w-5/6" sandbox="allow-scripts allow-same-origin"></iframe>
-    </div>
+    <script>
+        setTimeout(() => {
+            document.getElementById("delayed-iframe").innerHTML = '<iframe src="demo.html"></iframe>'
+        }, 1000);
+    </script>
 
-    <div class="w-full">
-        <h1 class="mb-2 text-xl font-medium leading-tight text-neutral-200 dark:text-neutral-50">
-            iframe (sandbox with scripts)
-        </h1>
-        <iframe src="demo.html" class="block w-5/6" sandbox="allow-scripts"></iframe>
-    </div>
+    <h2> iframe (sandbox with scripts + same-origin) </h2>
+    <iframe src="demo.html" sandbox="allow-scripts allow-same-origin"></iframe>
 
-    <div class="w-full">
-        <h1 class="mb-2 text-xl font-medium leading-tight text-neutral-200 dark:text-neutral-50">
-            iframe (dynamically created)
-        </h1>
-        <div id="dynamic-iframe"></div>
+    <h2> iframe (sandbox with scripts) </h2>
+    <iframe src="demo.html" sandbox="allow-scripts"></iframe>
 
-        <script>
-            document.getElementById("dynamic-iframe").innerHTML = '<iframe src="demo.html" class="block w-5/6"></iframe>'
-        </script>
-    </div>
+    <h2> iframe (dynamic content) </h2>
+    <div id="dynamic-iframe"></div>
+
+    <script>
+        const iframe = document.createElement('iframe');
+        iframe.src = 'about:blank';
+        iframe.srcdoc = `
+            <link rel="stylesheet" href="./demo.css" />
+            <div>
+                <h3> Current JavaScript Date & Time </h3>
+                <p id="now"></p>
+                <p id="nowIntl"></p>
+
+                <script>
+                    setInterval(() => {
+                        document.getElementById("now").textContent = new Date().toString().substring(0, 24)
+                        document.getElementById("nowIntl").textContent = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format()
+                    }, 1000)
+                <` + '/script></div>';
+        document.getElementById("dynamic-iframe").appendChild(iframe);
+    </script>
 </body>
 
 </html>

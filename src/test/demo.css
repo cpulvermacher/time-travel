@@ -1,0 +1,36 @@
+html {
+    background-color: #fff;
+}
+
+body {
+    color: #000;
+    font-family: Arial, Sans-Serif;
+    font-size: 1em;
+}
+
+h3 {
+    margin-bottom: 0;
+    border-bottom: 1px solid #AAA;
+}
+
+p {
+    margin-left: 10px;
+}
+
+a {
+    color: #046;
+}
+
+a:visited {
+    color: #555;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+iframe {
+    padding: 5px;
+    border: 1px solid #d3d3d3;
+    width: 80%;
+}

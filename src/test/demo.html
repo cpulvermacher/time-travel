@@ -2,17 +2,12 @@
 
 <head>
     <title>Time and Date Demo</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js" crossorigin="anonymous"
-        referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="demo.css" />
 </head>
 
-<body class="h-full bg-gray-50 flex flex-col items-center gap-10">
-    <div
-        class="block w-5/6 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-        <h1 class="mb-2 text-xl font-medium leading-tight text-neutral-800 dark:text-neutral-50">
-            Current JavaScript Date & Time
-        </h1>
+<body>
+    <div>
+        <h3> Current JavaScript Date & Time </h3>
         <p id="now"></p>
         <p id="nowIntl"></p>
 
@@ -22,20 +17,6 @@
                 document.getElementById("nowIntl").textContent = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format()
             }, 1000)
         </script>
-    </div>
-
-    <div
-        class="block w-5/6 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-
-        <h1 class="mb-2 text-xl font-medium leading-tight text-neutral-800 dark:text-neutral-50">
-            moment.js
-        </h1>
-        <p>moment():
-            <script> document.write(moment()); </script>
-        </p>
-        <p>endOf("day"):
-            <script> document.write(moment().endOf("day")); </script>
-        </p>
     </div>
 </body>
 
