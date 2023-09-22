@@ -166,6 +166,21 @@
             Date = originalDate
             Intl.DateTimeFormat = originalIntlDateTimeFormat
         }
+
+        // also check if we need to update any child iframes
+        const iframes = document.querySelectorAll<HTMLIFrameElement>('iframe')
+        iframes.forEach(iframe => {
+            try {
+                if (iframe.contentWindow?.__timeTravelCheckToggle) {
+                    iframe.contentWindow.__timeTravelCheckToggle()
+                } else {
+                    console.log('content script was not injected into iframe?', iframe.src)
+                }
+            } catch (error) {
+                // can happen for sandboxed or cross-origin frames
+                console.log('failed to access iframe', iframe.src, error)
+            }
+        })
     }
 
     timeTravelCheckToggle()
