@@ -1,9 +1,3 @@
-declare global {
-    interface Window {
-        __timeTravelCheckToggle?: () => void
-    }
-}
-
 // all functions here are meant to be injected into the target page
 
 export function getFakeDate() {

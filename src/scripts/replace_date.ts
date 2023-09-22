@@ -1,3 +1,5 @@
+declare const __EXT_VERSION__: string
+
 (() => {
     console.log(`injected content-script (version ${__EXT_VERSION__}) for host ${window.location.host}`)
     if (window['__timeTravelCheckToggle'] !== undefined) {

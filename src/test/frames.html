@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
     <title>Time and Date Demo (With Frames)</title>
@@ -7,25 +8,19 @@
 
 <body>
     <h2> iframe </h2>
-    <iframe src="demo.html"></iframe>
+    <iframe src="demo.html" title="normal-frame"></iframe>
+
     <h2> iframe (added with delay) </h2>
     <div id="delayed-iframe"></div>
 
     <script>
         setTimeout(() => {
-            document.getElementById("delayed-iframe").innerHTML = '<iframe src="demo.html"></iframe>'
+            document.getElementById("delayed-iframe").innerHTML = '<iframe src="demo.html" title="frame-with-delay"></iframe>'
         }, 1000);
     </script>
 
-    <h2> iframe (sandbox with scripts + same-origin) </h2>
-    <iframe src="demo.html" sandbox="allow-scripts allow-same-origin"></iframe>
-
-    <h2> iframe (sandbox with scripts) </h2>
-    <iframe src="demo.html" sandbox="allow-scripts"></iframe>
-
-    <h2> iframe (dynamic content) </h2>
+    <h2>iframe (dynamic content) </h2>
     <div id="dynamic-iframe"></div>
-
     <script>
         const iframe = document.createElement('iframe');
         iframe.src = 'about:blank';
@@ -44,6 +39,14 @@
                 <` + '/script></div>';
         document.getElementById("dynamic-iframe").appendChild(iframe);
     </script>
+
+    <h2>iframe (sandbox with scripts + same-origin) </h2>
+    <iframe src="demo.html" sandbox="allow-scripts allow-same-origin" title="frame-sandbox-same-origin"></iframe>
+
+    <h2>iframe (sandbox with scripts) </h2>
+    <p><strong>Known to not work</strong></p>
+    <iframe src="demo.html" sandbox="allow-scripts" title="frame-sandbox"></iframe>
+
 </body>
 
 </html>
