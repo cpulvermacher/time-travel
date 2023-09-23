@@ -1,3 +1,5 @@
+declare const __EXT_VERSION__: string
+
 (() => {
     console.log(`injected content-script (version ${__EXT_VERSION__}) for host ${window.location.host}`)
     if (window['__timeTravelCheckToggle'] !== undefined) {
@@ -174,7 +176,11 @@
                 if (iframe.contentWindow?.__timeTravelCheckToggle) {
                     iframe.contentWindow.__timeTravelCheckToggle()
                 } else {
-                    console.log('content script was not injected into iframe?', iframe.src)
+                    // no content script injected into this frame, switch Date object manually
+                    if (iframe.contentWindow) {
+                        iframe.contentWindow.Date = Date
+                        iframe.contentWindow.Intl.DateTimeFormat = Intl.DateTimeFormat
+                    }
                 }
             } catch (error) {
                 // can happen for sandboxed or cross-origin frames

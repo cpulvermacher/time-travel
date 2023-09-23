@@ -1,1 +1,0 @@
-declare const __EXT_VERSION__: string
