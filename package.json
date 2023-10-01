@@ -10,7 +10,7 @@
         "test": "vitest --run"
     },
     "devDependencies": {
-        "@types/chrome": "^0.0.245",
+        "@types/chrome": "^0.0.246",
         "@typescript-eslint/eslint-plugin": "^6.6.0",
         "eslint": "^8.49.0",
         "happy-dom": "^11.0.2",
