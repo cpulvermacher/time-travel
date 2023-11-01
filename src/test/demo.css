@@ -17,6 +17,10 @@ p {
     margin-left: 10px;
 }
 
+strong {
+    color:rgb(116, 4, 4);
+}
+
 a {
     color: #046;
 }
