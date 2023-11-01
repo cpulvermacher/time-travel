@@ -156,6 +156,30 @@ declare const __EXT_VERSION__: string
 
     // ==================== toggle logic for FakeDate / FakeIntlDateTimeFormat ====================
 
+    const propagateToIFrame = (iframe: HTMLIFrameElement): void => {
+        try {
+            if (iframe.contentWindow?.__timeTravelCheckToggle) {
+                iframe.contentWindow.__timeTravelCheckToggle()
+            } else {
+                // no content script injected into this frame, switch Date object manually
+                if (iframe.contentWindow) {
+                    iframe.contentWindow.Date = Date
+                    iframe.contentWindow.Intl.DateTimeFormat = Intl.DateTimeFormat
+                }
+            }
+        } catch (error) {
+            // can happen for sandboxed or cross-origin frames
+            console.log('failed to access iframe', iframe.src, error)
+        }
+    }
+
+    const iFrameObserver = new MutationObserver(() => {
+        const iframes = document.getElementsByTagName('iframe')
+        for (let i = 0; i < iframes.length; i++) {
+            propagateToIFrame(iframes[i])
+        }
+    })
+
     const timeTravelCheckToggle = () => {
         const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
         console.log(`toggling Time Travel (fake date: ${fakeDate})`)
@@ -163,30 +187,25 @@ declare const __EXT_VERSION__: string
             // eslint-disable-next-line no-global-assign
             Date = FakeDate as DateConstructor
             Intl.DateTimeFormat = FakeIntlDateTimeFormat as typeof Intl.DateTimeFormat
+
+            // propagate to any iframes that are added later and might not load content script automatically
+            // this is needed for the "dynamic content" case in frames.html
+            iFrameObserver.observe(document.documentElement, { childList: true, subtree: true })
         } else {
             // eslint-disable-next-line no-global-assign
             Date = originalDate
             Intl.DateTimeFormat = originalIntlDateTimeFormat
+
+            // stop listening for DOM changes
+            iFrameObserver.disconnect()
         }
 
         // also check if we need to update any child iframes
-        const iframes = document.querySelectorAll<HTMLIFrameElement>('iframe')
-        iframes.forEach(iframe => {
-            try {
-                if (iframe.contentWindow?.__timeTravelCheckToggle) {
-                    iframe.contentWindow.__timeTravelCheckToggle()
-                } else {
-                    // no content script injected into this frame, switch Date object manually
-                    if (iframe.contentWindow) {
-                        iframe.contentWindow.Date = Date
-                        iframe.contentWindow.Intl.DateTimeFormat = Intl.DateTimeFormat
-                    }
-                }
-            } catch (error) {
-                // can happen for sandboxed or cross-origin frames
-                console.log('failed to access iframe', iframe.src, error)
-            }
-        })
+        const iframes = document.getElementsByTagName('iframe')
+        for (let i = 0; i < iframes.length; i++) {
+            propagateToIFrame(iframes[i])
+        }
+
     }
 
     timeTravelCheckToggle()
