@@ -158,12 +158,13 @@ declare const __EXT_VERSION__: string
 
     const timeTravelCheckToggle = () => {
         const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
-        console.log(`toggling Time Travel (fake date: ${fakeDate})`)
         if (fakeDate != null) {
+            console.log(`Enabling Time Travel (fake date: ${fakeDate})`)
             // eslint-disable-next-line no-global-assign
             Date = FakeDate as DateConstructor
             Intl.DateTimeFormat = FakeIntlDateTimeFormat as typeof Intl.DateTimeFormat
         } else {
+            console.log('Disabling Time Travel')
             // eslint-disable-next-line no-global-assign
             Date = originalDate
             Intl.DateTimeFormat = originalIntlDateTimeFormat
