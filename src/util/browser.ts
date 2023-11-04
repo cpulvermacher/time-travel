@@ -40,6 +40,15 @@ export async function injectFunction<Args extends [string], Result>(
 
 /** registers/updates content script */
 export async function registerContentScript() {
+    async function registerOrUpdate(contentScripts: chrome.scripting.RegisteredContentScript[]) {
+        const scripts = await chrome.scripting.getRegisteredContentScripts({ ids: contentScripts.map(script => script.id) })
+        if (scripts.length > 0) {
+            await chrome.scripting.updateContentScripts(contentScripts)
+        } else {
+            await chrome.scripting.registerContentScripts(contentScripts)
+        }
+    }
+
     const contentScripts: chrome.scripting.RegisteredContentScript[] = [{
         'id': 'replaceDate',
         'js': ['scripts/replace_date.js'],
@@ -58,11 +67,14 @@ export async function registerContentScript() {
         'allFrames': false,
         'persistAcrossSessions': false,
     }]
-    const scripts = await chrome.scripting.getRegisteredContentScripts({ ids: contentScripts.map(script => script.id) })
-    if (scripts.length > 0) {
-        await chrome.scripting.updateContentScripts(contentScripts)
-    } else {
-        await chrome.scripting.registerContentScripts(contentScripts)
+
+    try {
+        await registerOrUpdate(contentScripts)
+    } catch (error) {
+        //matchOriginAsFallback needs Chrome 119+
+        console.log('Encountered error when trying to register content script (maybe Chrome < 119?). Retrying without `matchOriginAsFallback` option. Error was: ', error)
+        contentScripts.forEach(script => { delete script.matchOriginAsFallback })
+        await registerOrUpdate(contentScripts)
     }
 }
 
