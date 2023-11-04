@@ -47,6 +47,7 @@ export async function registerContentScript() {
         'matches': ['<all_urls>'],
         'runAt': 'document_start',
         'allFrames': true,
+        'matchOriginAsFallback': true,
         'persistAcrossSessions': false,
     }, {
         'id': 'sendActive',
@@ -54,7 +55,7 @@ export async function registerContentScript() {
         'world': 'ISOLATED',
         'matches': ['<all_urls>'],
         'runAt': 'document_start',
-        'allFrames': true,
+        'allFrames': false,
         'persistAcrossSessions': false,
     }]
     const scripts = await chrome.scripting.getRegisteredContentScripts({ ids: contentScripts.map(script => script.id) })
