@@ -29,7 +29,7 @@ vite build -m "${MODE}"
 mkdir dist/images/
 cp -a images/icon*.png dist/images/
 
-cat src/manifest.json | \
+cat src/manifest.v3.json | \
     sed "s/__VERSION_NAME__/$LONG_VERSION/g" | \
     sed "s/__VERSION__/$VERSION/g" \
     > dist/manifest.json
