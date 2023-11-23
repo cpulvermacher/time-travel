@@ -13,6 +13,7 @@ build() {
     TARGET=$1 # chrome / firefox
 
     mkdir -p "dist/${TARGET}"
+    export TARGET
     vite build -m "${MODE}" --outDir "../dist/${TARGET}"
 
     # copy extra assets

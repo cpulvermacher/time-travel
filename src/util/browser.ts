@@ -1,10 +1,16 @@
 // browser-specific APIs should only be used in this file
+declare const __TARGET__: 'chrome' | 'firefox'
+
+let browserApi = chrome
+if (__TARGET__ == 'firefox') {
+    browserApi = browser
+}
 
 /** get id for current tab, or throw */
 export async function getActiveTabId(): Promise<number> {
     const queryOptions = { active: true, currentWindow: true }
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
-    const [tab] = await chrome.tabs.query(queryOptions)
+    const [tab] = await browserApi.tabs.query(queryOptions)
     if (tab.id === undefined)
         throw new Error("Couldn't get active tab")
 
@@ -13,7 +19,7 @@ export async function getActiveTabId(): Promise<number> {
 
 /** does this tab have a file:// URL? (extension access disabled by default) */
 export async function isFileUrl(tabId: number): Promise<boolean> {
-    const tabDetails = await chrome.tabs.get(tabId)
+    const tabDetails = await browserApi.tabs.get(tabId)
     return !!tabDetails.url?.startsWith('file://')
 }
 
@@ -23,7 +29,7 @@ export async function injectFunction<Args extends [string], Result>(
     func: (...args: Args) => Result,
     args: Args
 ): Promise<chrome.scripting.Awaited<Result> | null> {
-    const result = await chrome.scripting.executeScript({
+    const result = await browserApi.scripting.executeScript({
         target: { tabId },
         func,
         args,
@@ -41,11 +47,11 @@ export async function injectFunction<Args extends [string], Result>(
 /** registers/updates content script */
 export async function registerContentScript() {
     async function registerOrUpdate(contentScripts: chrome.scripting.RegisteredContentScript[]) {
-        const scripts = await chrome.scripting.getRegisteredContentScripts({ ids: contentScripts.map(script => script.id) })
+        const scripts = await browserApi.scripting.getRegisteredContentScripts({ ids: contentScripts.map(script => script.id) })
         if (scripts.length > 0) {
-            await chrome.scripting.updateContentScripts(contentScripts)
+            await browserApi.scripting.updateContentScripts(contentScripts)
         } else {
-            await chrome.scripting.registerContentScripts(contentScripts)
+            await browserApi.scripting.registerContentScripts(contentScripts)
         }
     }
 
@@ -80,8 +86,8 @@ export async function registerContentScript() {
 
 /** set badge for icon */
 export async function setBadgeText(tabId: number | undefined, text: string) {
-    await chrome.action.setBadgeBackgroundColor({ color: '#6060f4' })
-    await chrome.action.setBadgeText({
+    await browserApi.action.setBadgeBackgroundColor({ color: '#6060f4' })
+    await browserApi.action.setBadgeText({
         tabId,
         text
     })
@@ -89,7 +95,7 @@ export async function setBadgeText(tabId: number | undefined, text: string) {
 
 /** set icon tooltip title */
 export async function setTitle(tabId: number | undefined, title: string) {
-    await chrome.action.setTitle({
+    await browserApi.action.setTitle({
         tabId,
         title
     })
@@ -98,5 +104,5 @@ export async function setTitle(tabId: number | undefined, title: string) {
 /** reload the current tab */
 export async function reloadTab() {
     const tabId = await getActiveTabId()
-    await chrome.tabs.reload(tabId)
+    await browserApi.tabs.reload(tabId)
 }
