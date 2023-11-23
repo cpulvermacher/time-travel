@@ -9,6 +9,42 @@ then
     exit 1
 fi
 
+build() {
+    TARGET=$1 # chrome / firefox
+
+    mkdir -p "dist/${TARGET}"
+    vite build -m "${MODE}" --outDir "../dist/${TARGET}"
+
+    # copy extra assets
+    mkdir "dist/${TARGET}/images/"
+    cp -a images/icon*.png "dist/${TARGET}/images/"
+
+    MANIFEST="src/manifest.v3.json"
+    if [ "$TARGET" = "firefox" ]
+    then
+        MANIFEST="src/manifest.v2.json"
+    fi
+
+    cat $MANIFEST | \
+        sed "s/__VERSION_NAME__/$LONG_VERSION/g" | \
+        sed "s/__VERSION__/$VERSION/g" \
+        > "dist/${TARGET}/manifest.json"
+
+
+    if [ "$MODE" = "production" ]
+    then
+        ZIP_NAME="../../time-travel-$LONG_VERSION.${TARGET}.zip"
+
+        rm -f "$ZIP_NAME"
+        cd "dist/${TARGET}"
+        zip -r "$ZIP_NAME" ./*
+        cd -
+
+        echo ""
+        echo "Created zip file: $ZIP_NAME"
+    fi
+}
+
 ROOT=$(dirname -- "$0")/..
 VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
 LONG_VERSION=$(git describe --tags | sed 's/^v//')
@@ -21,31 +57,9 @@ export LONG_VERSION
 cd "$ROOT"
 
 rm -rf dist
-mkdir dist
+build "chrome"
+build "firefox"
 
-vite build -m "${MODE}"
-
-# copy extra assets
-mkdir dist/images/
-cp -a images/icon*.png dist/images/
-
-cat src/manifest.v3.json | \
-    sed "s/__VERSION_NAME__/$LONG_VERSION/g" | \
-    sed "s/__VERSION__/$VERSION/g" \
-    > dist/manifest.json
-
-
-if [ "$MODE" = "production" ]
-then
-    ZIP_NAME="time-travel-$LONG_VERSION.zip"
-
-    rm -f "$ZIP_NAME"
-    cd dist/
-    zip -r "$ZIP_NAME" ./*
-
-    echo ""
-    echo "Created zip file: $ZIP_NAME"
-fi
 
 echo "========================================"
 echo "current version is $VERSION (version_name: $LONG_VERSION)."

@@ -1,0 +1,26 @@
+{
+    "manifest_version": 2,
+    "name": "Time Travel",
+    "description": "Spoof the current date and time seen by websites. Useful for debugging frontend apps that depend on the time.",
+    "version": "__VERSION__",
+    "minimum_chrome_version": "102",
+    "icons": {
+        "16": "images/icon-16.png",
+        "32": "images/icon-32.png",
+        "48": "images/icon-48.png",
+        "128": "images/icon-128.png"
+    },
+    "browser_action": {
+        "default_icon": {
+            "16": "images/icon-16.png",
+            "32": "images/icon-32.png",
+            "48": "images/icon-48.png",
+            "128": "images/icon-128.png"
+        },
+        "default_popup": "popup/popup.html"
+    },
+    "permissions": [
+        "activeTab",
+        "scripting"
+    ]
+}

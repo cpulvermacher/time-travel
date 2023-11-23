@@ -36,6 +36,13 @@ Get it from the Chrome Web Store: https://chrome.google.com/webstore/detail/time
 To build and use a local version:
 - Download this repository
 - Run `npm run dev` (or `npm run build` for a production version)
+
+### Chrome
 - Open chrome://extensions
 - Enable 'Developer Mode'
 - Click 'Load unpacked' and select the `dist/` directory
+
+### Firefox
+- Open about:debugging
+- Navigate to 'This Firefox'
+- Click 'Temporary Extensions' > 'Load Temporary Add-on...' and select the `dist/` directory
