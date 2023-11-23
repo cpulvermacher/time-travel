@@ -4,6 +4,7 @@ declare const __TARGET__: 'chrome' | 'firefox'
 let browserApi = chrome
 if (__TARGET__ == 'firefox') {
     browserApi = browser
+    browserApi.action = browser.browserAction
 }
 
 /** get id for current tab, or throw */
@@ -29,12 +30,17 @@ export async function injectFunction<Args extends [string], Result>(
     func: (...args: Args) => Result,
     args: Args
 ): Promise<chrome.scripting.Awaited<Result> | null> {
+    let extraOptions = {}
+    if (__TARGET__ == 'chrome') {
+        extraOptions = { world: 'MAIN' }
+    }
+
     const result = await browserApi.scripting.executeScript({
         target: { tabId },
         func,
         args,
-        world: 'MAIN',
         injectImmediately: true,
+        ...extraOptions
     })
 
     for (const value of result) {
@@ -55,23 +61,29 @@ export async function registerContentScript() {
         }
     }
 
+    let extraOptionsReplaceDate = {}
+    let extraOptionsSendActive = {}
+    if (__TARGET__ == 'chrome') {
+        extraOptionsReplaceDate = { world: 'MAIN' }
+        extraOptionsSendActive = { world: 'ISOLATED' }
+    }
     const contentScripts: chrome.scripting.RegisteredContentScript[] = [{
         'id': 'replaceDate',
         'js': ['scripts/replace_date.js'],
-        'world': 'MAIN',
         'matches': ['<all_urls>'],
         'runAt': 'document_start',
         'allFrames': true,
         'matchOriginAsFallback': true,
         'persistAcrossSessions': false,
+        ...extraOptionsReplaceDate
     }, {
         'id': 'sendActive',
         'js': ['scripts/send_active.js'],
-        'world': 'ISOLATED',
         'matches': ['<all_urls>'],
         'runAt': 'document_start',
         'allFrames': false,
         'persistAcrossSessions': false,
+        ...extraOptionsSendActive
     }]
 
     try {

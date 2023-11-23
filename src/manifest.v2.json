@@ -36,6 +36,7 @@
     ],
     "permissions": [
         "activeTab",
-        "scripting"
+        "scripting",
+        "<all_urls>"
     ]
 }
