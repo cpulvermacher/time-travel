@@ -6,4 +6,8 @@ declare global {
         Date: DateConstructor
         Intl: typeof Intl
     }
+
+    // set via vite.config.ts (from env vars set by build.sh)
+    const __EXT_VERSION__: string
+    const __TARGET__: 'chrome' | 'firefox'
 }

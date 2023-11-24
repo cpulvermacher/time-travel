@@ -1,7 +1,6 @@
 // browser-specific APIs should only be used in this file
-declare const __TARGET__: 'chrome' | 'firefox'
 
-let browserApi = chrome
+let browserApi: typeof chrome | typeof browser = chrome
 if (__TARGET__ == 'firefox') {
     browserApi = browser
     browserApi.action = browser.browserAction
@@ -37,6 +36,7 @@ export async function injectFunction<Args extends [string], Result>(
 
     const result = await browserApi.scripting.executeScript({
         target: { tabId },
+        //@ts-expect-error https://github.com/jsmnbom/definitelytyped-firefox-webext-browser/issues/46
         func,
         args,
         injectImmediately: true,

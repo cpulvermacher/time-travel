@@ -20,7 +20,8 @@
         "noEmit": true,
         "sourceMap": false,
         "types": [
-            "chrome"
+            "chrome",
+            "firefox-webext-browser"
         ]
     },
     "include": [
