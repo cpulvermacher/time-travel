@@ -103,6 +103,7 @@ const tickToggleButton = document.getElementById('tickToggleBtn') as HTMLButtonE
 input.setAttribute('value', formatLocalTime(new Date()))
 input.focus()
 input.setSelectionRange(-1, -1)
+window.scrollTo(0, 0) // firefox sometimes scrolls to the right on focus
 
 getActiveTabId().then(async (tabId) => {
     try {
