@@ -11,6 +11,7 @@ fi
 
 build() {
     TARGET=$1 # chrome / firefox
+    echo "Building for ${TARGET} (${MODE})..."
 
     mkdir -p "dist/${TARGET}"
     export TARGET

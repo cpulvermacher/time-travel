@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitest/config'
 
-const moduleNames = ['replace_date', 'send_active', 'sw-chrome']
+const moduleNames = ['replace_date', 'send_active', 'background']
 const tsEntryModules = moduleNames.map(name => `/scripts/${name}.ts`)
 export default defineConfig(({ mode }) => ({
     root: 'src',

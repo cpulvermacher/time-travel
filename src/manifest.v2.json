@@ -34,6 +34,13 @@
             "run_at": "document_start"
         }
     ],
+    "background": {
+        "scripts": [
+            "scripts/background.js"
+        ],
+        "persistent": false,
+        "type": "module"
+    },
     "permissions": [
         "activeTab",
         "scripting",

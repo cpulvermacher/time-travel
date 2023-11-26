@@ -57,3 +57,13 @@ export async function getContentScriptState(tabId: number): Promise<ContentScrip
         fakeDateActive: contentScriptActive && !!fakeDate
     }
 }
+
+export async function updateBadgeAndTitle(tabId: number) {
+    try {
+        const state = await getContentScriptState(tabId)
+        await setBadgeAndTitle(tabId, state)
+    } catch (e) {
+        //ignore errors
+        console.log(e)
+    }
+}

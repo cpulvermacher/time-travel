@@ -1,17 +1,23 @@
-import { getContentScriptState, setBadgeAndTitle } from '../util/common'
+import { setBadgeAndTitle, updateBadgeAndTitle } from '../util/common'
 
-chrome.tabs.onActivated.addListener((activeInfo) => {
+let browserApi: typeof chrome | typeof browser = chrome
+if (__TARGET__ == 'firefox') {
+    browserApi = browser
+    browserApi.action = browser.browserAction
+}
+
+browserApi.tabs.onActivated.addListener((activeInfo) => {
     updateBadgeAndTitle(activeInfo.tabId)
 })
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+browserApi.tabs.onUpdated.addListener((tabId, changeInfo) => {
     if (changeInfo.url == undefined)
         return // url unchanged, nothing to do
 
     updateBadgeAndTitle(tabId)
 })
 
-chrome.runtime.onMessage.addListener((message, sender) => {
+browserApi.runtime.onMessage.addListener((message, sender) => {
     if (message.msg == 'active' && sender.tab?.id) {
         const state = {
             contentScriptActive: true,
@@ -23,13 +29,3 @@ chrome.runtime.onMessage.addListener((message, sender) => {
         setBadgeAndTitle(sender.tab.id, state)
     }
 })
-
-async function updateBadgeAndTitle(tabId: number) {
-    try {
-        const state = await getContentScriptState(tabId)
-        await setBadgeAndTitle(tabId, state)
-    } catch (e) {
-        //ignore errors
-        console.log(e)
-    }
-}
