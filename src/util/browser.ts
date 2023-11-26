@@ -44,7 +44,7 @@ export async function injectFunction<Args extends [string], Result>(
     })
 
     for (const value of result) {
-        if (value.result)
+        if (value?.result)
             return value.result
     }
     return null
