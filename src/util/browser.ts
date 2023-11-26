@@ -64,7 +64,7 @@ export async function registerContentScript() {
     let extraOptionsReplaceDate = {}
     let extraOptionsSendActive = {}
     if (__TARGET__ == 'chrome') {
-        extraOptionsReplaceDate = { world: 'MAIN' }
+        extraOptionsReplaceDate = { world: 'MAIN', 'matchOriginAsFallback': true }
         extraOptionsSendActive = { world: 'ISOLATED' }
     }
     const contentScripts: chrome.scripting.RegisteredContentScript[] = [{
@@ -73,7 +73,6 @@ export async function registerContentScript() {
         'matches': ['<all_urls>'],
         'runAt': 'document_start',
         'allFrames': true,
-        'matchOriginAsFallback': true,
         'persistAcrossSessions': false,
         ...extraOptionsReplaceDate
     }, {
