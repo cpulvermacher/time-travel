@@ -176,6 +176,7 @@
     }
 
     if (__TARGET__ == 'chrome') {
+        // this content script runs in MAIN world, so call directly
         contentScript()
     } else {
         /* firefox prevents access to page script DOM object from content script and vice versa, with a few exceptions:
