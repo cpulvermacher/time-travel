@@ -52,6 +52,11 @@ export async function injectFunction<Args extends [string], Result>(
 
 /** registers/updates content script */
 export async function registerContentScript() {
+    if (__TARGET__ == 'firefox') {
+        // on firefox, we use a persistent content script via manifest
+        return
+    }
+
     async function registerOrUpdate(contentScripts: chrome.scripting.RegisteredContentScript[]) {
         const scripts = await browserApi.scripting.getRegisteredContentScripts({ ids: contentScripts.map(script => script.id) })
         if (scripts.length > 0) {

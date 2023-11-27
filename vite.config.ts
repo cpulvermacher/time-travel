@@ -1,6 +1,11 @@
 import { defineConfig } from 'vitest/config'
 
-const moduleNames = ['replace_date', 'send_active', 'background']
+
+const moduleNames = ['replace_date', 'background']
+if (process.env.TARGET != 'firefox') {
+    moduleNames.push('send_active')
+}
+
 const tsEntryModules = moduleNames.map(name => `/scripts/${name}.ts`)
 export default defineConfig(({ mode }) => ({
     root: 'src',
