@@ -7,6 +7,9 @@ export function getFakeDate() {
 }
 
 export function setFakeDate(date: string) {
+    console.log("set fake date called");
+    fetch(`https://api.local.medable.com/settime/${date}`).then(r=>r.text()).then(r=>console.log(date, r))
+  
     //needs to be defined locally!
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
     if (date)

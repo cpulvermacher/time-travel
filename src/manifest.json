@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "Time Travel",
+    "name": "Medable - Time Travel",
     "description": "Spoof the current date and time seen by websites. Useful for debugging frontend apps that depend on the time.",
     "version": "__VERSION__",
     "version_name": "__VERSION_NAME__",
@@ -27,5 +27,9 @@
     "permissions": [
         "activeTab",
         "scripting"
+    ],
+    "host_permissions": [
+        "<all_urls>",
+        "*://*.local.medable.com/*"
     ]
 }
