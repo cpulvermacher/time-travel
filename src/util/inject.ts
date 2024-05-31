@@ -9,13 +9,10 @@ export function getFakeDate() {
 export function setFakeDate(date: string) {
     //needs to be defined locally!
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
-    if (date)
-        window.sessionStorage.setItem(FAKE_DATE_STORAGE_KEY, date)
-    else
-        window.sessionStorage.removeItem(FAKE_DATE_STORAGE_KEY)
+    if (date) window.sessionStorage.setItem(FAKE_DATE_STORAGE_KEY, date)
+    else window.sessionStorage.removeItem(FAKE_DATE_STORAGE_KEY)
 
-    if (window.__timeTravelCheckToggle)
-        window.__timeTravelCheckToggle()
+    if (window.__timeTravelCheckToggle) window.__timeTravelCheckToggle()
 }
 
 export function getTickStartTimestamp(): string | null {

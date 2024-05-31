@@ -41,7 +41,7 @@ export async function setBadgeAndTitle(tabId: number, state: ContentScriptState)
 }
 
 export async function isContentScriptActive(tabId: number) {
-    return !!await injectFunction(tabId, inject.isContentScriptActive, [''])
+    return !!(await injectFunction(tabId, inject.isContentScriptActive, ['']))
 }
 
 export async function getContentScriptState(tabId: number): Promise<ContentScriptState> {
@@ -54,6 +54,6 @@ export async function getContentScriptState(tabId: number): Promise<ContentScrip
         fakeDate,
         tickStartTimestamp: tickStartTimestamp,
         clockIsRunning: contentScriptActive && !!fakeDate && !!tickStartTimestamp,
-        fakeDateActive: contentScriptActive && !!fakeDate
+        fakeDateActive: contentScriptActive && !!fakeDate,
     }
 }

@@ -6,7 +6,7 @@
     "scripts": {
         "build": "sh ./util/build.sh production",
         "dev": "sh ./util/build.sh dev",
-        "lint": "tsc && eslint *.ts src/",
+        "lint": "tsc && eslint *.ts src/ && prettier src --check",
         "test": "vitest --run"
     },
     "devDependencies": {
@@ -14,6 +14,7 @@
         "@typescript-eslint/eslint-plugin": "^7.5.0",
         "eslint": "^8.56.0",
         "happy-dom": "^14.7.1",
+        "prettier": "^3.2.5",
         "typescript": "^5.4.4",
         "vite": "^5.2.8",
         "vitest": "^1.4.0"

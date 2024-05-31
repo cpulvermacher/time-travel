@@ -1,6 +1,5 @@
 declare const __EXT_VERSION__: string
-
-(() => {
+;(() => {
     console.log(`injected content-script (version ${__EXT_VERSION__}) for host ${window.location.host}`)
     if (window['__timeTravelCheckToggle'] !== undefined) {
         // this can happen if multiple versions of the extension are installed
@@ -26,8 +25,7 @@ declare const __EXT_VERSION__: string
     /** return tick start time, or null if unset/invalid */
     function getTickStartTimestamp(): number | null {
         const startTimestamp = getFromStorage(TICK_START_STORAGE_KEY)
-        if (startTimestamp == null)
-            return null
+        if (startTimestamp == null) return null
 
         try {
             return Number.parseInt(startTimestamp)
@@ -60,11 +58,11 @@ declare const __EXT_VERSION__: string
     /** set properties  on given prototype */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function addProperties(proto: any, props: object) {
-        Reflect.ownKeys(props).forEach(key =>
+        Reflect.ownKeys(props).forEach((key) =>
             Object.defineProperty(proto, key, {
                 configurable: true,
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                value: (props as any)[key]
+                value: (props as any)[key],
             })
         )
     }
@@ -83,9 +81,10 @@ declare const __EXT_VERSION__: string
         seconds?: number,
         ms?: number
     ) {
-        if (!(this instanceof Date)) { //invoked without 'new'
+        if (!(this instanceof Date)) {
+            //invoked without 'new'
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return (new (FakeDate as any)()).toString()
+            return new (FakeDate as any)().toString()
         }
 
         if (yearOrObject === undefined) {
@@ -113,7 +112,7 @@ declare const __EXT_VERSION__: string
     //static methods
     FakeDate.parse = Date.parse
     FakeDate.UTC = Date.UTC
-    FakeDate.now = () => (new Date()).getTime()
+    FakeDate.now = () => new Date().getTime()
 
     // ==================== Intl.DateTimeFormat replacement ====================
 
@@ -122,10 +121,15 @@ declare const __EXT_VERSION__: string
     interface FakeIntlDateTimeFormat extends Intl.DateTimeFormat {
         _originalObject: Intl.DateTimeFormat
     }
-    function FakeIntlDateTimeFormat(this: FakeIntlDateTimeFormat | void, locale?: string | string[], options?: Intl.DateTimeFormatOptions) {
-        if (!(this instanceof Intl.DateTimeFormat)) { //invoked without 'new'
+    function FakeIntlDateTimeFormat(
+        this: FakeIntlDateTimeFormat | void,
+        locale?: string | string[],
+        options?: Intl.DateTimeFormatOptions
+    ) {
+        if (!(this instanceof Intl.DateTimeFormat)) {
+            //invoked without 'new'
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return (new (FakeIntlDateTimeFormat as any)(locale, options))
+            return new (FakeIntlDateTimeFormat as any)(locale, options)
         }
         this._originalObject = originalIntlDateTimeFormat(locale, options)
         return this
@@ -144,10 +148,16 @@ declare const __EXT_VERSION__: string
     function formatRangeToParts(this: FakeIntlDateTimeFormat, startDate: RangeDate, endDate: RangeDate) {
         return this._originalObject.formatRangeToParts(startDate, endDate)
     }
-    function resolvedOptions(this: FakeIntlDateTimeFormat) { return this._originalObject.resolvedOptions() }
+    function resolvedOptions(this: FakeIntlDateTimeFormat) {
+        return this._originalObject.resolvedOptions()
+    }
 
     addProperties(FakeIntlDateTimeFormat.prototype, {
-        format, formatRange, formatRangeToParts, formatToParts, resolvedOptions,
+        format,
+        formatRange,
+        formatRangeToParts,
+        formatToParts,
+        resolvedOptions,
         [Symbol.toStringTag]: 'Intl.DateTimeFormat',
     })
 

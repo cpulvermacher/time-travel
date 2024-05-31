@@ -10,7 +10,7 @@ body {
 
 h3 {
     margin-bottom: 0;
-    border-bottom: 1px solid #AAA;
+    border-bottom: 1px solid #aaa;
 }
 
 p {
@@ -18,7 +18,7 @@ p {
 }
 
 strong {
-    color:rgb(116, 4, 4);
+    color: rgb(116, 4, 4);
 }
 
 a {

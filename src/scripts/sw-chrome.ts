@@ -5,8 +5,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 })
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
-    if (changeInfo.url == undefined)
-        return // url unchanged, nothing to do
+    if (changeInfo.url == undefined) return // url unchanged, nothing to do
 
     updateBadgeAndTitle(tabId)
 })
@@ -18,7 +17,7 @@ chrome.runtime.onMessage.addListener((message, sender) => {
             fakeDate: message.fakeDate,
             tickStartTimestamp: message.tickStartTimestamp,
             clockIsRunning: message.isClockTicking,
-            fakeDateActive: true
+            fakeDateActive: true,
         }
         setBadgeAndTitle(sender.tab.id, state)
     }

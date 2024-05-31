@@ -2,11 +2,9 @@ import { getActiveTabId, injectFunction, isFileUrl, registerContentScript, reloa
 import { formatLocalTime, getContentScriptState, isContentScriptActive, setBadgeAndTitle } from '../util/common'
 import * as inject from '../util/inject'
 
-
 function setError(message: string) {
     const errorMsg = document.getElementById('errormsg')
-    if (!errorMsg)
-        return
+    if (!errorMsg) return
 
     errorMsg.innerText = message
     errorMsg.className = message ? 'error--visible' : 'error--hidden'
@@ -31,7 +29,6 @@ function showReloadModal() {
     const modalBackground = document.getElementById('modalBackground')
     modalBackground?.classList.add('modal-background--visible')
     reloadButton.focus()
-
 }
 
 async function setFakeDate(fakeDate: string) {
@@ -43,7 +40,7 @@ async function setFakeDate(fakeDate: string) {
     const tabId = await getActiveTabId()
 
     let needsReload = false
-    if (fakeDate && !await isContentScriptActive(tabId)) {
+    if (fakeDate && !(await isContentScriptActive(tabId))) {
         await registerContentScript()
         needsReload = true
     }
@@ -58,7 +55,6 @@ async function setFakeDate(fakeDate: string) {
     } else {
         window.close()
     }
-
 }
 
 /** toggles clock ticking state, returns true iff the clock was started */
@@ -87,12 +83,9 @@ async function resetTickStart(date: Date | null) {
 
 async function updateTickToggleButtonState(clockIsRunning: boolean) {
     const toggleBtn = document.getElementsByClassName('tick-state')[0]
-    if (clockIsRunning)
-        toggleBtn.classList.remove('tick-state--stopped')
-    else
-        toggleBtn.classList.add('tick-state--stopped')
+    if (clockIsRunning) toggleBtn.classList.remove('tick-state--stopped')
+    else toggleBtn.classList.add('tick-state--stopped')
 }
-
 
 // ==================== initialize popup state ====================
 const input = document.getElementById('fakeDateInput') as HTMLInputElement
@@ -104,35 +97,38 @@ input.setAttribute('value', formatLocalTime(new Date()))
 input.focus()
 input.setSelectionRange(-1, -1)
 
-getActiveTabId().then(async (tabId) => {
-    try {
-        const state = await getContentScriptState(tabId)
-        if (state.fakeDate) {
-            const fakeDate = new Date(Date.parse(state.fakeDate))
-            if (state.fakeDateActive && state.clockIsRunning && state.tickStartTimestamp) {
-                const tickStartTimestamp = Number.parseInt(state.tickStartTimestamp)
-                const elapsed = Date.now() - tickStartTimestamp
-                const fakeDateNow = new Date(fakeDate.getTime() + elapsed)
-                input.setAttribute('value', formatLocalTime(fakeDateNow))
+getActiveTabId()
+    .then(async (tabId) => {
+        try {
+            const state = await getContentScriptState(tabId)
+            if (state.fakeDate) {
+                const fakeDate = new Date(Date.parse(state.fakeDate))
+                if (state.fakeDateActive && state.clockIsRunning && state.tickStartTimestamp) {
+                    const tickStartTimestamp = Number.parseInt(state.tickStartTimestamp)
+                    const elapsed = Date.now() - tickStartTimestamp
+                    const fakeDateNow = new Date(fakeDate.getTime() + elapsed)
+                    input.setAttribute('value', formatLocalTime(fakeDateNow))
+                } else {
+                    input.setAttribute('value', formatLocalTime(fakeDate))
+                }
+            }
 
+            updateTickToggleButtonState(state.clockIsRunning)
+        } catch (error) {
+            if (await isFileUrl(tabId)) {
+                setError(
+                    'Failed to access page. Please make sure "Allow access to file URLs" is enabled in the extension settings.'
+                )
+                disableUi()
             } else {
-                input.setAttribute('value', formatLocalTime(fakeDate))
+                throw error
             }
         }
-
-        updateTickToggleButtonState(state.clockIsRunning)
-    } catch (error) {
-        if (await isFileUrl(tabId)) {
-            setError('Failed to access page. Please make sure "Allow access to file URLs" is enabled in the extension settings.')
-            disableUi()
-        } else {
-            throw error
-        }
-    }
-}).catch((error) => {
-    setError('Time Travel cannot be used. ' + error)
-    disableUi()
-})
+    })
+    .catch((error) => {
+        setError('Time Travel cannot be used. ' + error)
+        disableUi()
+    })
 
 // ==================== set up event handlers ====================
 input.onkeydown = async (event) => {
