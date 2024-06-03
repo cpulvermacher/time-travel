@@ -1,28 +1,28 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <script>
-    console.log('page initializing...', new Date().toString())
-  </script>
-  <title>Time and Date Demo</title>
-  <link rel="stylesheet" href="demo.css" />
-</head>
+    <head>
+        <script>
+            console.log('page initializing...', new Date().toString())
+        </script>
+        <title>Time and Date Demo</title>
+        <link rel="stylesheet" href="demo.css" />
+    </head>
 
-<body>
-  <div>
-    <h3>Current JavaScript Date & Time</h3>
-    <p id="now"></p>
-    <p id="nowIntl"></p>
-    
-    <script>
-      setInterval(() => {
-        document.getElementById('now').textContent = new Date().toString()
-        document.getElementById('nowIntl').textContent = new Intl.DateTimeFormat('en-US', {
-          dateStyle: 'full',
-          timeStyle: 'long',
-        }).format()
-      }, 1000)
-    </script>
-  </div>
-</body>
+    <body>
+        <div>
+            <h3>Current JavaScript Date & Time</h3>
+            <p id="now"></p>
+            <p id="nowIntl"></p>
+
+            <script>
+                setInterval(() => {
+                    document.getElementById('now').textContent = new Date().toString()
+                    document.getElementById('nowIntl').textContent = new Intl.DateTimeFormat('en-US', {
+                        dateStyle: 'full',
+                        timeStyle: 'long',
+                    }).format()
+                }, 1000)
+            </script>
+        </div>
+    </body>
 </html>
