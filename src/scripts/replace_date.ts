@@ -16,7 +16,7 @@ declare const __EXT_VERSION__: string
     function getFromStorage(key: string): string | null {
         try {
             return window.sessionStorage.getItem(key)
-        } catch (err) {
+        } catch {
             //in sandbox, we might not be able to access sessionStorage
             return null
         }
@@ -29,7 +29,7 @@ declare const __EXT_VERSION__: string
 
         try {
             return Number.parseInt(startTimestamp)
-        } catch (err) {
+        } catch {
             return null
         }
     }
