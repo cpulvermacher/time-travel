@@ -20,6 +20,8 @@
     },
     "rules": {
         "@typescript-eslint/no-non-null-assertion": "off",
+        "curly": "warn",
+        "eqeqeq": "warn",
         "indent": [
             "error",
             4
