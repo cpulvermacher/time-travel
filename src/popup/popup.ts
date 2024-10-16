@@ -117,7 +117,7 @@ getActiveTabId()
         } catch (error) {
             if (await isFileUrl(tabId)) {
                 setError(
-                    'Failed to access page. Please make sure "Allow access to file URLs" is enabled in the extension settings.'
+                    'To use Time Travel on local files, please enable "Allow access to file URLs" in the extension settings.'
                 )
                 disableUi()
             } else {
@@ -126,7 +126,7 @@ getActiveTabId()
         }
     })
     .catch((error) => {
-        setError('Time Travel cannot be used. ' + error)
+        setError('Time Travel cannot be used in the current tab. ' + error.message)
         disableUi()
     })
 
