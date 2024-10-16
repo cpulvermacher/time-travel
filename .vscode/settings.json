@@ -1,0 +1,11 @@
+{
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "typescript.format.semicolons": "remove",
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "always"
+    }
+}
