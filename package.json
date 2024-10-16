@@ -7,16 +7,17 @@
         "build": "sh ./util/build.sh production",
         "dev": "sh ./util/build.sh dev",
         "lint": "tsc && eslint *.ts src/ && prettier src --check",
+        "prettier": "prettier src --write",
         "test": "vitest --run"
     },
     "devDependencies": {
-        "@types/chrome": "^0.0.271",
-        "@typescript-eslint/eslint-plugin": "^8.6.0",
+        "@types/chrome": "^0.0.278",
+        "@typescript-eslint/eslint-plugin": "^8.9.0",
         "eslint": "^8.56.0",
         "happy-dom": "^15.7.4",
         "prettier": "^3.3.3",
         "typescript": "^5.5.4",
-        "vite": "^5.4.6",
-        "vitest": "^2.1.1"
+        "vite": "^5.4.9",
+        "vitest": "^2.1.3"
     }
 }
