@@ -11,6 +11,7 @@ You can use it to debug time-dependent frontend/JavaScript applications
 without having to change the system time.
 
 ## Usage
+- Switch to the tab where you want to to change the time
 - Click the extension icon in the toolbar.
 - Enter the date and time you want to set and confirm, e.g.:
   - "2023-04-27 12:40" (local time)
