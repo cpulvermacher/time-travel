@@ -16,6 +16,15 @@ export async function isFileUrl(tabId: number): Promise<boolean> {
     return !!tabDetails.url?.startsWith('file://')
 }
 
+/** does this tab have a Chrome Web Store URL? */
+export async function isExtensionGalleryUrl(tabId: number): Promise<boolean> {
+    const tabDetails = await chrome.tabs.get(tabId)
+    return (
+        !!tabDetails.url?.startsWith('https://chrome.google.com/webstore') ||
+        !!tabDetails.url?.startsWith('https://chromewebstore.google.com')
+    )
+}
+
 /** inject function into MAIN world */
 export async function injectFunction<Args extends [string], Result>(
     tabId: number,

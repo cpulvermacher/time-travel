@@ -1,4 +1,11 @@
-import { getActiveTabId, injectFunction, isFileUrl, registerContentScript, reloadTab } from '../util/browser'
+import {
+    getActiveTabId,
+    injectFunction,
+    isExtensionGalleryUrl,
+    isFileUrl,
+    registerContentScript,
+    reloadTab,
+} from '../util/browser'
 import { formatLocalTime, getContentScriptState, isContentScriptActive, setBadgeAndTitle } from '../util/common'
 import * as inject from '../util/inject'
 
@@ -118,6 +125,11 @@ getActiveTabId()
             if (await isFileUrl(tabId)) {
                 setError(
                     'To use Time Travel on local files, please enable "Allow access to file URLs" in the extension settings.'
+                )
+                disableUi()
+            } else if (await isExtensionGalleryUrl(tabId)) {
+                setError(
+                    'Time Travel cannot be used in the Chrome Web Store. Please switch to a different tab to change the time.'
                 )
                 disableUi()
             } else {
