@@ -183,7 +183,9 @@ describe('fake Date', () => {
             let utcDate: Date
 
             beforeEach(() => {
-                if (fakeDate) setFakeDate(fakeDate)
+                if (fakeDate) {
+                    setFakeDate(fakeDate)
+                }
                 date = new Date('2021-09-15T12:34:56.789')
                 utcDate = new Date('2021-09-15T12:34:56.789Z')
             })

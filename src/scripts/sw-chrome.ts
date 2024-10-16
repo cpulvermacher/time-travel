@@ -5,13 +5,15 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 })
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
-    if (changeInfo.url == undefined) return // url unchanged, nothing to do
+    if (changeInfo.url === undefined) {
+        return // url unchanged, nothing to do
+    }
 
     updateBadgeAndTitle(tabId)
 })
 
 chrome.runtime.onMessage.addListener((message, sender) => {
-    if (message.msg == 'active' && sender.tab?.id) {
+    if (message.msg === 'active' && sender.tab?.id) {
         const state = {
             contentScriptActive: true,
             fakeDate: message.fakeDate,

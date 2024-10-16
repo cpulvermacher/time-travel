@@ -11,7 +11,9 @@ import * as inject from '../util/inject'
 
 function setError(message: string) {
     const errorMsg = document.getElementById('errormsg')
-    if (!errorMsg) return
+    if (!errorMsg) {
+        return
+    }
 
     errorMsg.innerText = message
     errorMsg.className = message ? 'error--visible' : 'error--hidden'
@@ -90,8 +92,11 @@ async function resetTickStart(date: Date | null) {
 
 async function updateTickToggleButtonState(clockIsRunning: boolean) {
     const toggleBtn = document.getElementsByClassName('tick-state')[0]
-    if (clockIsRunning) toggleBtn.classList.remove('tick-state--stopped')
-    else toggleBtn.classList.add('tick-state--stopped')
+    if (clockIsRunning) {
+        toggleBtn.classList.remove('tick-state--stopped')
+    } else {
+        toggleBtn.classList.add('tick-state--stopped')
+    }
 }
 
 // ==================== initialize popup state ====================
@@ -144,7 +149,7 @@ getActiveTabId()
 
 // ==================== set up event handlers ====================
 input.onkeydown = async (event) => {
-    if (event.key == 'Enter') {
+    if (event.key === 'Enter') {
         event.preventDefault()
 
         setButton.click()

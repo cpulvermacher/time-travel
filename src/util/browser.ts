@@ -5,7 +5,9 @@ export async function getActiveTabId(): Promise<number> {
     const queryOptions = { active: true, currentWindow: true }
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
     const [tab] = await chrome.tabs.query(queryOptions)
-    if (tab.id === undefined) throw new Error("Couldn't get active tab")
+    if (tab.id === undefined) {
+        throw new Error("Couldn't get active tab")
+    }
 
     return tab.id
 }
@@ -40,7 +42,9 @@ export async function injectFunction<Args extends [string], Result>(
     })
 
     for (const value of result) {
-        if (value.result) return value.result
+        if (value.result) {
+            return value.result
+        }
     }
     return null
 }

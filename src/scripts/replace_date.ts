@@ -25,7 +25,9 @@ declare const __EXT_VERSION__: string
     /** return tick start time, or null if unset/invalid */
     function getTickStartTimestamp(): number | null {
         const startTimestamp = getFromStorage(TICK_START_STORAGE_KEY)
-        if (startTimestamp == null) return null
+        if (startTimestamp === null) {
+            return null
+        }
 
         try {
             return Number.parseInt(startTimestamp)
@@ -44,7 +46,7 @@ declare const __EXT_VERSION__: string
         if (fakeDate !== null) {
             const fakeDateObject = new originalDate(fakeDate)
             const startTimestamp = getTickStartTimestamp()
-            if (startTimestamp == null) {
+            if (startTimestamp === null) {
                 return fakeDateObject
             } else {
                 const elapsed = originalDate.now() - startTimestamp
@@ -168,7 +170,7 @@ declare const __EXT_VERSION__: string
 
     const timeTravelCheckToggle = () => {
         const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
-        if (fakeDate != null) {
+        if (fakeDate !== null) {
             console.log(`Enabling Time Travel (fake date: ${fakeDate})`)
             // eslint-disable-next-line no-global-assign
             Date = FakeDate as DateConstructor
