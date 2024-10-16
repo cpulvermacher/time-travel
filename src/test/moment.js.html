@@ -15,16 +15,16 @@
             <h3>moment.js compatibility test</h3>
             <p>
                 moment():
-                <script>
-                    document.write(moment())
-                </script>
+                <span id="moment"></span>
             </p>
             <p>
                 endOf("day"):
-                <script>
-                    document.write(moment().endOf('day'))
-                </script>
+                <span id="moment-end-of-day"></span>
             </p>
+            <script>
+                document.getElementById('moment').textContent = moment()
+                document.getElementById('moment-end-of-day').textContent = moment().endOf('day')
+            </script>
         </div>
     </body>
 </html>
