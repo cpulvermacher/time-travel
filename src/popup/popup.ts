@@ -138,7 +138,7 @@ getActiveTabId()
         }
     })
     .catch((error) => {
-        setError('Time Travel cannot be used in the current tab. ' + error.message)
+        setError('Time Travel cannot be used in the current tab.\n' + error.message)
         disableUi()
     })
 
