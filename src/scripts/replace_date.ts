@@ -36,27 +36,6 @@ declare const __EXT_VERSION__: string
         }
     }
 
-    /** return the current date/time we want the page to see.
-     *
-     * This will either be the real current time (extension off),
-     * or the fake time, stopped or ticking (extension on).
-     */
-    function maybeFakeNowDate(): Date {
-        const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
-        if (fakeDate !== null) {
-            const fakeDateObject = new originalDate(fakeDate)
-            const startTimestamp = getTickStartTimestamp()
-            if (startTimestamp === null) {
-                return fakeDateObject
-            } else {
-                const elapsed = originalDate.now() - startTimestamp
-                return new originalDate(fakeDateObject.getTime() + elapsed)
-            }
-        } else {
-            return new originalDate()
-        }
-    }
-
     /** set properties  on given prototype */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function addProperties(proto: any, props: object) {
@@ -71,50 +50,53 @@ declare const __EXT_VERSION__: string
 
     // ==================== Date replacement ====================
 
-    const originalDate = Date
-    // Date constructor, needs to be a function to allow both constructing (`new Date()`) and calling without new: `Date()`
-    function FakeDate(
-        this: Date | void,
-        yearOrObject?: number | string | Date,
-        monthIndex?: number,
-        date?: number,
-        hours?: number,
-        minutes?: number,
-        seconds?: number,
-        ms?: number
-    ) {
+    const OriginalDate = Date
+
+    /* eslint-disable no-global-assign */
+    class FakeDate extends Date {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        constructor(...args: any[]) {
+            if (args.length === 0) {
+                args = [FakeDate.now()]
+            }
+            // @ts-expect-error: let native Date handle the details
+            super(...args)
+        }
+
+        /** return the current date/time we want the page to see, in ms since epoch
+         *
+         * This will either be the real current time (extension off),
+         * or the fake time, stopped or ticking (extension on).
+         */
+        static now() {
+            const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
+            if (fakeDate) {
+                const fakeDateObject = new OriginalDate(fakeDate)
+                const startTimestamp = getTickStartTimestamp()
+                if (startTimestamp === null) {
+                    return fakeDateObject.getTime()
+                } else {
+                    const elapsed = OriginalDate.now() - startTimestamp
+                    return fakeDateObject.getTime() + elapsed
+                }
+            } else {
+                return OriginalDate.now()
+            }
+        }
+    }
+
+    function FakeDateConstructor(this: FakeDate | void) {
         if (!(this instanceof Date)) {
             //invoked without 'new'
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return new (FakeDate as any)().toString()
         }
 
-        if (yearOrObject === undefined) {
-            return maybeFakeNowDate()
-        } else if (monthIndex === undefined) {
-            return new originalDate(yearOrObject)
-        } else if (date === undefined) {
-            return new originalDate(yearOrObject as number, monthIndex)
-        } else if (hours === undefined) {
-            return new originalDate(yearOrObject as number, monthIndex, date)
-        } else if (minutes === undefined) {
-            return new originalDate(yearOrObject as number, monthIndex, date, hours)
-        } else if (seconds === undefined) {
-            return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes)
-        } else if (ms === undefined) {
-            return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds)
-        } else {
-            return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds, ms)
-        }
+        return this
     }
 
-    FakeDate.prototype = Date.prototype
-    FakeDate.prototype.constructor = FakeDate
-
-    //static methods
-    FakeDate.parse = Date.parse
-    FakeDate.UTC = Date.UTC
-    FakeDate.now = () => new Date().getTime()
+    // TODO doing this fixes only explicit calls to Date.prototype.constructor...
+    FakeDate.prototype.constructor = FakeDateConstructor
 
     // ==================== Intl.DateTimeFormat replacement ====================
 
@@ -181,7 +163,7 @@ declare const __EXT_VERSION__: string
         } else {
             console.log('Time Travel: Disabling')
             // eslint-disable-next-line no-global-assign
-            Date = originalDate
+            Date = OriginalDate
             Intl.DateTimeFormat = OriginalIntlDateTimeFormat
         }
     }
