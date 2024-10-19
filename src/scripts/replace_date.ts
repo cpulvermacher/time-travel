@@ -118,7 +118,7 @@ declare const __EXT_VERSION__: string
 
     // ==================== Intl.DateTimeFormat replacement ====================
 
-    const originalIntlDateTimeFormat = Intl.DateTimeFormat
+    const OriginalIntlDateTimeFormat = Intl.DateTimeFormat
 
     interface FakeIntlDateTimeFormat extends Intl.DateTimeFormat {
         _originalObject: Intl.DateTimeFormat
@@ -133,15 +133,23 @@ declare const __EXT_VERSION__: string
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return new (FakeIntlDateTimeFormat as any)(locale, options)
         }
-        this._originalObject = originalIntlDateTimeFormat(locale, options)
+        this._originalObject = OriginalIntlDateTimeFormat(locale, options)
+
+        // the native code implementation of these works even if called without a bound `this`, let's emulate that behaviour
+        this.format = format.bind(this)
+        this.formatToParts = formatToParts.bind(this)
+        this.formatRange = formatRange.bind(this)
+        this.formatRangeToParts = formatRangeToParts.bind(this)
+        this.resolvedOptions = resolvedOptions.bind(this)
+
         return this
     }
 
     function format(this: FakeIntlDateTimeFormat, date?: Date) {
-        return this._originalObject.format(date ?? maybeFakeNowDate())
+        return this._originalObject.format(date ?? new Date(FakeDate.now()))
     }
     function formatToParts(this: FakeIntlDateTimeFormat, date?: Date | number): Intl.DateTimeFormatPart[] {
-        return this._originalObject.formatToParts(date ?? maybeFakeNowDate())
+        return this._originalObject.formatToParts(date ?? new Date(FakeDate.now()))
     }
     type RangeDate = Date | number | bigint
     function formatRange(this: FakeIntlDateTimeFormat, startDate: RangeDate, endDate: RangeDate) {
@@ -155,11 +163,6 @@ declare const __EXT_VERSION__: string
     }
 
     addProperties(FakeIntlDateTimeFormat.prototype, {
-        format,
-        formatRange,
-        formatRangeToParts,
-        formatToParts,
-        resolvedOptions,
         [Symbol.toStringTag]: 'Intl.DateTimeFormat',
     })
 
@@ -179,7 +182,7 @@ declare const __EXT_VERSION__: string
             console.log('Disabling Time Travel')
             // eslint-disable-next-line no-global-assign
             Date = originalDate
-            Intl.DateTimeFormat = originalIntlDateTimeFormat
+            Intl.DateTimeFormat = OriginalIntlDateTimeFormat
         }
     }
 
