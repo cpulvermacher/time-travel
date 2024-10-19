@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Time and Date Demo</title>
+        <link rel="stylesheet" href="demo.css" />
+    </head>
+
+    <body>
+        <div>
+            <h3>@date-fns/tz compatibility test</h3>
+            <p>new TZDate(): <span id="tzdate"></span></p>
+            <p>new TZDate().withTimeZone('UTC'): <span id="tzdate-utc"></span></p>
+            <script type="module">
+                import { TZDate, TZDateMini } from 'https://cdn.jsdelivr.net/npm/@date-fns/tz@1.1.2/+esm'
+
+                const test = new TZDate()
+                console.warn('test instance check:', {
+                    // when Time Travel is active this is: true
+                    instanceOfDate: test instanceof Date,
+                    // when Time Travel is active this is: false!
+                    instanceOfTZDate: test instanceof TZDate,
+                    // when Time Travel is active this is: false!
+                    instanceOfTZDateMini: test instanceof TZDateMini,
+                })
+                console.log(test, test.__proto__)
+
+                document.getElementById('tzdate').textContent = test
+                document.getElementById('tzdate-utc').textContent = test.withTimeZone('UTC')
+            </script>
+        </div>
+    </body>
+</html>
