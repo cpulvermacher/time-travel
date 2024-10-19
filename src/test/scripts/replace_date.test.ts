@@ -474,6 +474,31 @@ describe('fake Date', () => {
                 expect(date.getUTCMilliseconds()).toEqual(123)
             })
 
+            it('can inherit from Date', () => {
+                class MyDate extends Date {
+                    constructor() {
+                        super()
+                    }
+                    myMethod() {
+                        return 'myMethod'
+                    }
+                }
+
+                const myDate = new MyDate()
+
+                // should be a (possibly fake) Date
+                expect(myDate instanceof Date).toBeTruthy()
+                if (fakeDate) {
+                    expect(myDate.toISOString()).toBe(fakeDate)
+                } else {
+                    expect(myDate.toISOString()).not.toBe(fakeDate)
+                }
+
+                // and also include the customization
+                expect(myDate instanceof MyDate).toBeTruthy()
+                expect(myDate.myMethod()).toEqual('myMethod')
+            })
+
             // static members
             it('UTC()', () => {
                 const ms = Date.UTC(1970, 0, 1, 0, 0, 3, 4)
