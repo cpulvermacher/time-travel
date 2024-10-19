@@ -178,7 +178,7 @@ describe('fake Date', () => {
 
     const values = [undefined, '2010-01-01T00:00:00.000Z']
     values.forEach((fakeDate) => {
-        describe(`fake date = ${fakeDate}`, () => {
+        describe(`fake date = ${fakeDate ?? 'OFF'}`, () => {
             let date: Date
             let utcDate: Date
 
@@ -492,6 +492,18 @@ describe('fake Date', () => {
                 )
 
                 expect(intlString).toMatch(/Wednesday, September 15, 2021 at 12:34:56\WPM/)
+            })
+
+            it('Intl.DateTimeFormat.format without class context', () => {
+                // assign without binding loses `this`
+                const format = new Intl.DateTimeFormat('en-GB', {
+                    timeZone: 'JST',
+                    hour: 'numeric',
+                    timeZoneName: 'longOffset',
+                }).format
+
+                // check it matches the configured format anyway
+                expect(format(date)).toMatch(/[0-9]* GMT\+09:00/)
             })
 
             it('Intl.DateTimeFormat.formatToParts', () => {
