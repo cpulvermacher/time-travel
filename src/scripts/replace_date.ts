@@ -1,6 +1,6 @@
 declare const __EXT_VERSION__: string
 ;(() => {
-    console.log(`injected content-script (version ${__EXT_VERSION__}) for host ${window.location.host}`)
+    console.log(`Time Travel: injected content-script (version ${__EXT_VERSION__}) for host ${window.location.host}`)
     if (window['__timeTravelCheckToggle'] !== undefined) {
         // this can happen if multiple versions of the extension are installed
         console.log('content script was already injected, aborting.')
@@ -174,12 +174,12 @@ declare const __EXT_VERSION__: string
     const timeTravelCheckToggle = () => {
         const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
         if (fakeDate !== null) {
-            console.log(`Enabling Time Travel (fake date: ${fakeDate})`)
+            console.log(`Time Travel: Enabling fake date: ${fakeDate}`)
             // eslint-disable-next-line no-global-assign
             Date = FakeDate as DateConstructor
             Intl.DateTimeFormat = FakeIntlDateTimeFormat as typeof Intl.DateTimeFormat
         } else {
-            console.log('Disabling Time Travel')
+            console.log('Time Travel: Disabling')
             // eslint-disable-next-line no-global-assign
             Date = originalDate
             Intl.DateTimeFormat = OriginalIntlDateTimeFormat
