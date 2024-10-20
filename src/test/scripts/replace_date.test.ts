@@ -474,6 +474,10 @@ describe('fake Date', () => {
                 expect(date.getUTCMilliseconds()).toEqual(123)
             })
 
+            it('Date objects are Date instances', () => {
+                expect(new Date() instanceof Date).toBeTruthy()
+            })
+
             it('can inherit from Date', () => {
                 class MyDate extends Date {
                     constructor() {
