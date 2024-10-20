@@ -6,7 +6,7 @@ import '../../scripts/replace_date'
 
 const testStartDate = new Date()
 
-describe('fake Date', () => {
+describe('replace_date', () => {
     afterEach(() => {
         window.sessionStorage.clear()
     })
