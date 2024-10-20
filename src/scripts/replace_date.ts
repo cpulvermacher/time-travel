@@ -41,7 +41,7 @@ declare const __EXT_VERSION__: string
      * This will either be the real current time (extension off),
      * or the fake time, stopped or ticking (extension on).
      */
-    function maybeFakeNowDate(): Date {
+    function fakeNowDate(): Date {
         const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
         if (fakeDate !== null) {
             const fakeDateObject = new OriginalDate(fakeDate)
@@ -80,7 +80,7 @@ declare const __EXT_VERSION__: string
         }
 
         if (args.length === 0) {
-            args = [maybeFakeNowDate()]
+            args = [fakeNowDate()]
         }
         // @ts-expect-error: let original Date constructor handle the arguments
         const returnDate = new OriginalDate(...args)
@@ -127,10 +127,10 @@ declare const __EXT_VERSION__: string
     }
 
     function format(this: FakeIntlDateTimeFormat, date?: Date) {
-        return this._originalObject.format(date ?? new Date(FakeDate.now()))
+        return this._originalObject.format(date ?? fakeNowDate())
     }
     function formatToParts(this: FakeIntlDateTimeFormat, date?: Date | number): Intl.DateTimeFormatPart[] {
-        return this._originalObject.formatToParts(date ?? new Date(FakeDate.now()))
+        return this._originalObject.formatToParts(date ?? fakeNowDate())
     }
     type RangeDate = Date | number | bigint
     function formatRange(this: FakeIntlDateTimeFormat, startDate: RangeDate, endDate: RangeDate) {
