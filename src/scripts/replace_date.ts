@@ -73,38 +73,17 @@ declare const __EXT_VERSION__: string
 
     const OriginalDate = Date
     // Date constructor, needs to be a function to allow both constructing (`new Date()`) and calling without new: `Date()`
-    function FakeDate(
-        yearOrObject?: number | string | Date,
-        monthIndex?: number,
-        date?: number,
-        hours?: number,
-        minutes?: number,
-        seconds?: number,
-        ms?: number
-    ) {
+    function FakeDate(...args: unknown[]) {
         if (!new.target) {
             // `Date()` invoked without 'new', return current time string
             return new Date().toString()
         }
 
-        let returnDate
-        if (yearOrObject === undefined) {
-            returnDate = maybeFakeNowDate()
-        } else if (monthIndex === undefined) {
-            returnDate = new OriginalDate(yearOrObject)
-        } else if (date === undefined) {
-            returnDate = new OriginalDate(yearOrObject as number, monthIndex)
-        } else if (hours === undefined) {
-            returnDate = new OriginalDate(yearOrObject as number, monthIndex, date)
-        } else if (minutes === undefined) {
-            returnDate = new OriginalDate(yearOrObject as number, monthIndex, date, hours)
-        } else if (seconds === undefined) {
-            returnDate = new OriginalDate(yearOrObject as number, monthIndex, date, hours, minutes)
-        } else if (ms === undefined) {
-            returnDate = new OriginalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds)
-        } else {
-            returnDate = new OriginalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds, ms)
+        if (args.length === 0) {
+            args = [maybeFakeNowDate()]
         }
+        // @ts-expect-error: let original Date constructor handle the arguments
+        const returnDate = new OriginalDate(...args)
 
         // for `new SomeClassDerivedFromDate()`, make sure we return something that is an instance of SomeClassDerivedFromDate
         Object.setPrototypeOf(returnDate, new.target.prototype)
