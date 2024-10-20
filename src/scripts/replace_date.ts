@@ -44,16 +44,16 @@ declare const __EXT_VERSION__: string
     function maybeFakeNowDate(): Date {
         const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
         if (fakeDate !== null) {
-            const fakeDateObject = new originalDate(fakeDate)
+            const fakeDateObject = new OriginalDate(fakeDate)
             const startTimestamp = getTickStartTimestamp()
             if (startTimestamp === null) {
                 return fakeDateObject
             } else {
-                const elapsed = originalDate.now() - startTimestamp
-                return new originalDate(fakeDateObject.getTime() + elapsed)
+                const elapsed = OriginalDate.now() - startTimestamp
+                return new OriginalDate(fakeDateObject.getTime() + elapsed)
             }
         } else {
-            return new originalDate()
+            return new OriginalDate()
         }
     }
 
@@ -71,7 +71,7 @@ declare const __EXT_VERSION__: string
 
     // ==================== Date replacement ====================
 
-    const originalDate = Date
+    const OriginalDate = Date
     // Date constructor, needs to be a function to allow both constructing (`new Date()`) and calling without new: `Date()`
     function FakeDate(
         this: Date | void,
@@ -89,32 +89,36 @@ declare const __EXT_VERSION__: string
             return new (FakeDate as any)().toString()
         }
 
+        let returnDate
         if (yearOrObject === undefined) {
-            return maybeFakeNowDate()
+            returnDate = maybeFakeNowDate()
         } else if (monthIndex === undefined) {
-            return new originalDate(yearOrObject)
+            returnDate = new OriginalDate(yearOrObject)
         } else if (date === undefined) {
-            return new originalDate(yearOrObject as number, monthIndex)
+            returnDate = new OriginalDate(yearOrObject as number, monthIndex)
         } else if (hours === undefined) {
-            return new originalDate(yearOrObject as number, monthIndex, date)
+            returnDate = new OriginalDate(yearOrObject as number, monthIndex, date)
         } else if (minutes === undefined) {
-            return new originalDate(yearOrObject as number, monthIndex, date, hours)
+            returnDate = new OriginalDate(yearOrObject as number, monthIndex, date, hours)
         } else if (seconds === undefined) {
-            return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes)
+            returnDate = new OriginalDate(yearOrObject as number, monthIndex, date, hours, minutes)
         } else if (ms === undefined) {
-            return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds)
+            returnDate = new OriginalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds)
         } else {
-            return new originalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds, ms)
+            returnDate = new OriginalDate(yearOrObject as number, monthIndex, date, hours, minutes, seconds, ms)
         }
+
+        // for `new SomeClassDerivedFromDate()`, make sure we return something that is an instance of SomeClassDerivedFromDate
+        Object.setPrototypeOf(returnDate, new.target.prototype)
+
+        return returnDate
     }
-
-    FakeDate.prototype = Date.prototype
-    FakeDate.prototype.constructor = FakeDate
-
-    //static methods
-    FakeDate.parse = Date.parse
-    FakeDate.UTC = Date.UTC
+    // static properties
+    Object.setPrototypeOf(FakeDate, OriginalDate)
     FakeDate.now = () => new Date().getTime()
+
+    //instance properties
+    Object.setPrototypeOf(FakeDate.prototype, OriginalDate.prototype)
 
     // ==================== Intl.DateTimeFormat replacement ====================
 
@@ -181,7 +185,7 @@ declare const __EXT_VERSION__: string
         } else {
             console.log('Time Travel: Disabling')
             // eslint-disable-next-line no-global-assign
-            Date = originalDate
+            Date = OriginalDate
             Intl.DateTimeFormat = OriginalIntlDateTimeFormat
         }
     }
