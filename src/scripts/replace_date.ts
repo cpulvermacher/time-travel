@@ -74,7 +74,6 @@ declare const __EXT_VERSION__: string
     const OriginalDate = Date
     // Date constructor, needs to be a function to allow both constructing (`new Date()`) and calling without new: `Date()`
     function FakeDate(
-        this: Date | void,
         yearOrObject?: number | string | Date,
         monthIndex?: number,
         date?: number,
@@ -83,10 +82,9 @@ declare const __EXT_VERSION__: string
         seconds?: number,
         ms?: number
     ) {
-        if (!(this instanceof Date)) {
-            //invoked without 'new'
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return new (FakeDate as any)().toString()
+        if (!new.target) {
+            // `Date()` invoked without 'new', return current time string
+            return new Date().toString()
         }
 
         let returnDate
