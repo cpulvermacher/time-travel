@@ -57,18 +57,6 @@ declare const __EXT_VERSION__: string
         }
     }
 
-    /** set properties  on given prototype */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function addProperties(proto: any, props: object) {
-        Reflect.ownKeys(props).forEach((key) =>
-            Object.defineProperty(proto, key, {
-                configurable: true,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                value: (props as any)[key],
-            })
-        )
-    }
-
     // ==================== Date replacement ====================
 
     const OriginalDate = Date
@@ -142,12 +130,10 @@ declare const __EXT_VERSION__: string
         return this._originalObject.resolvedOptions()
     }
 
-    addProperties(FakeIntlDateTimeFormat.prototype, {
-        [Symbol.toStringTag]: 'Intl.DateTimeFormat',
-    })
+    FakeIntlDateTimeFormat.prototype[Symbol.toStringTag] = 'Intl.DateTimeFormat'
 
-    //static methods
-    FakeIntlDateTimeFormat.supportedLocalesOf = Intl.DateTimeFormat.supportedLocalesOf
+    // static properties
+    Object.setPrototypeOf(FakeIntlDateTimeFormat, Intl.DateTimeFormat)
 
     // ==================== toggle logic for FakeDate / FakeIntlDateTimeFormat ====================
 
