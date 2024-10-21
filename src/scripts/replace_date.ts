@@ -3,7 +3,7 @@ declare const __EXT_VERSION__: string
     console.log(`Time Travel: injected content-script (version ${__EXT_VERSION__}) for host ${window.location.host}`)
     if (window['__timeTravelCheckToggle'] !== undefined) {
         // this can happen if multiple versions of the extension are installed
-        console.log('content script was already injected, aborting.')
+        console.log('Time Travel: content script was already injected, aborting.')
         return
     }
 
