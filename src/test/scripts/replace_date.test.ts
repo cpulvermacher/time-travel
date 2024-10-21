@@ -595,9 +595,9 @@ describe('replace_date', () => {
             })
 
             it('Intl.DateTimeFormat.prototype[@@toStringTag]', () => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                expect((Intl.DateTimeFormat.prototype as any)[Symbol.toStringTag]).toBe('Intl.DateTimeFormat')
-                expect(new Intl.DateTimeFormat().toString()).toBe('[object Intl.DateTimeFormat]')
+                const format = new Intl.DateTimeFormat()
+                expect(Object.getPrototypeOf(format)[Symbol.toStringTag]).toBe('Intl.DateTimeFormat')
+                expect(format.toString()).toBe('[object Intl.DateTimeFormat]')
             })
 
             it('Intl.DateTimeFormat.supportedLocalesOf', () => {
