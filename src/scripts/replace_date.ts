@@ -105,14 +105,13 @@ declare const __EXT_VERSION__: string
         _originalObject: Intl.DateTimeFormat
     }
     function FakeIntlDateTimeFormat(
-        this: FakeIntlDateTimeFormat | void,
+        this: FakeIntlDateTimeFormat,
         locale?: string | string[],
         options?: Intl.DateTimeFormatOptions
     ) {
-        if (!(this instanceof Intl.DateTimeFormat)) {
+        if (!new.target) {
             //invoked without 'new'
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return new (FakeIntlDateTimeFormat as any)(locale, options)
+            return new Intl.DateTimeFormat(locale, options)
         }
         this._originalObject = OriginalIntlDateTimeFormat(locale, options)
 
