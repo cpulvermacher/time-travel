@@ -523,6 +523,30 @@ describe('replace_date', () => {
                 expect(intlString).toMatch(/Wednesday, September 15, 2021 at 12:34:56\WPM/)
             })
 
+            it('Intl.DateTimeFormat objects are instances of Intl.DateTimeFormat', () => {
+                const formatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' })
+                expect(formatter instanceof Intl.DateTimeFormat).toBeTruthy()
+            })
+
+            it('can inherit from Intl.DateTimeFormat', () => {
+                class MyDateTimeFormat extends Intl.DateTimeFormat {
+                    constructor() {
+                        super('en-US', { dateStyle: 'full', timeStyle: 'medium' })
+                    }
+                    myMethod() {
+                        return 'myMethod'
+                    }
+                }
+
+                const myFormatter = new MyDateTimeFormat()
+
+                expect(myFormatter instanceof Intl.DateTimeFormat).toBeTruthy()
+
+                // and also include the customization
+                expect(myFormatter instanceof MyDateTimeFormat).toBeTruthy()
+                expect(myFormatter.myMethod()).toEqual('myMethod')
+            })
+
             it('Intl.DateTimeFormat.format without class context', () => {
                 // assign without binding loses `this`
                 const format = new Intl.DateTimeFormat('en-GB', {
