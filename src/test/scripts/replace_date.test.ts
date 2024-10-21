@@ -6,7 +6,7 @@ import '../../scripts/replace_date'
 
 const testStartDate = new Date()
 
-describe('fake Date', () => {
+describe('replace_date', () => {
     afterEach(() => {
         window.sessionStorage.clear()
     })
@@ -178,7 +178,7 @@ describe('fake Date', () => {
 
     const values = [undefined, '2010-01-01T00:00:00.000Z']
     values.forEach((fakeDate) => {
-        describe(`fake date = ${fakeDate}`, () => {
+        describe(`fake date = ${fakeDate ?? 'OFF'}`, () => {
             let date: Date
             let utcDate: Date
 
@@ -474,6 +474,35 @@ describe('fake Date', () => {
                 expect(date.getUTCMilliseconds()).toEqual(123)
             })
 
+            it('Date objects are Date instances', () => {
+                expect(new Date() instanceof Date).toBeTruthy()
+            })
+
+            it('can inherit from Date', () => {
+                class MyDate extends Date {
+                    constructor() {
+                        super()
+                    }
+                    myMethod() {
+                        return 'myMethod'
+                    }
+                }
+
+                const myDate = new MyDate()
+
+                // should be a (possibly fake) Date
+                expect(myDate instanceof Date).toBeTruthy()
+                if (fakeDate) {
+                    expect(myDate.toISOString()).toBe(fakeDate)
+                } else {
+                    expect(myDate.toISOString()).not.toBe(fakeDate)
+                }
+
+                // and also include the customization
+                expect(myDate instanceof MyDate).toBeTruthy()
+                expect(myDate.myMethod()).toEqual('myMethod')
+            })
+
             // static members
             it('UTC()', () => {
                 const ms = Date.UTC(1970, 0, 1, 0, 0, 3, 4)
@@ -492,6 +521,42 @@ describe('fake Date', () => {
                 )
 
                 expect(intlString).toMatch(/Wednesday, September 15, 2021 at 12:34:56\WPM/)
+            })
+
+            it('Intl.DateTimeFormat objects are instances of Intl.DateTimeFormat', () => {
+                const formatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' })
+                expect(formatter instanceof Intl.DateTimeFormat).toBeTruthy()
+            })
+
+            it('can inherit from Intl.DateTimeFormat', () => {
+                class MyDateTimeFormat extends Intl.DateTimeFormat {
+                    constructor() {
+                        super('en-US', { dateStyle: 'full', timeStyle: 'medium' })
+                    }
+                    myMethod() {
+                        return 'myMethod'
+                    }
+                }
+
+                const myFormatter = new MyDateTimeFormat()
+
+                expect(myFormatter instanceof Intl.DateTimeFormat).toBeTruthy()
+
+                // and also include the customization
+                expect(myFormatter instanceof MyDateTimeFormat).toBeTruthy()
+                expect(myFormatter.myMethod()).toEqual('myMethod')
+            })
+
+            it('Intl.DateTimeFormat.format without class context', () => {
+                // assign without binding loses `this`
+                const format = new Intl.DateTimeFormat('en-GB', {
+                    timeZone: 'JST',
+                    hour: 'numeric',
+                    timeZoneName: 'longOffset',
+                }).format
+
+                // check it matches the configured format anyway
+                expect(format(date)).toMatch(/[0-9]* GMT\+09:00/)
             })
 
             it('Intl.DateTimeFormat.formatToParts', () => {
@@ -530,9 +595,9 @@ describe('fake Date', () => {
             })
 
             it('Intl.DateTimeFormat.prototype[@@toStringTag]', () => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                expect((Intl.DateTimeFormat.prototype as any)[Symbol.toStringTag]).toBe('Intl.DateTimeFormat')
-                expect(new Intl.DateTimeFormat().toString()).toBe('[object Intl.DateTimeFormat]')
+                const format = new Intl.DateTimeFormat()
+                expect(Object.getPrototypeOf(format)[Symbol.toStringTag]).toBe('Intl.DateTimeFormat')
+                expect(format.toString()).toBe('[object Intl.DateTimeFormat]')
             })
 
             it('Intl.DateTimeFormat.supportedLocalesOf', () => {
