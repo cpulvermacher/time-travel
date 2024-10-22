@@ -480,11 +480,17 @@ describe('replace_date', () => {
 
             it('can inherit from Date', () => {
                 class MyDate extends Date {
+                    value: string
+
                     constructor() {
                         super()
+                        this.value = 'value'
                     }
-                    myMethod() {
-                        return 'myMethod'
+                    method() {
+                        return 'method'
+                    }
+                    static staticMethod() {
+                        return 'staticMethod'
                     }
                 }
 
@@ -500,7 +506,9 @@ describe('replace_date', () => {
 
                 // and also include the customization
                 expect(myDate instanceof MyDate).toBeTruthy()
-                expect(myDate.myMethod()).toEqual('myMethod')
+                expect(myDate.method()).toEqual('method')
+                expect(myDate.value).toEqual('value')
+                expect(MyDate.staticMethod()).toEqual('staticMethod')
             })
 
             // static members
