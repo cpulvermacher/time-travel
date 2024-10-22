@@ -57,6 +57,18 @@ declare const __EXT_VERSION__: string
         }
     }
 
+    /** copy all own properties from source to target, except 'constructor'
+     *
+     * This includes both own properties and symbols, enumerable or not.
+     */
+    function copyOwnProperties<T extends object>(source: T, target: T): void {
+        Reflect.ownKeys(source)
+            .filter((key) => key !== 'constructor')
+            .forEach((key) => {
+                target[key as keyof T] = source[key as keyof T]
+            })
+    }
+
     // ==================== Date replacement ====================
 
     const OriginalDate = Date
@@ -82,8 +94,10 @@ declare const __EXT_VERSION__: string
     Object.setPrototypeOf(FakeDate, OriginalDate)
     FakeDate.now = () => new Date().getTime()
 
-    //instance properties
-    Object.setPrototypeOf(FakeDate.prototype, OriginalDate.prototype)
+    // for instance properties, _copy_ them from the original Date prototype
+    // this is necessary for e.g. @date-fns/tz, which iterates over Object.getOwnPropertyNames(Date.prototype)
+    // see also https://github.com/cpulvermacher/time-travel/issues/41
+    copyOwnProperties(OriginalDate.prototype, FakeDate.prototype)
 
     // ==================== Intl.DateTimeFormat replacement ====================
 
