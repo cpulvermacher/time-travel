@@ -607,4 +607,20 @@ describe('replace_date', () => {
             })
         })
     })
+
+    /**
+     * e.g. @date-fns/tz iterates over all ownProperties of Date.prototype
+     *
+     * @see https://github.com/date-fns/tz/blob/213903702d7c5fcd4f01479ba7370fe917195a65/src/date/mini.js#L70
+     * @see https://github.com/cpulvermacher/time-travel/issues/41
+     */
+    it('Date should still have the same ownProperties when time travel is enabled', () => {
+        setFakeDate('')
+        const origProperties = Object.getOwnPropertyNames(Date.prototype)
+        expect(Date.name).toBe('Date')
+
+        setFakeDate('1970-01-01T00:00:00.123Z')
+        expect(Date.name).toBe('FakeDate')
+        expect(Object.getOwnPropertyNames(Date.prototype)).toStrictEqual(origProperties)
+    })
 })
