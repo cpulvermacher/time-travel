@@ -631,4 +631,15 @@ describe('replace_date', () => {
         expect(Date.name).toBe('FakeDate')
         expect(Object.getOwnPropertyNames(Date.prototype)).toStrictEqual(origProperties)
     })
+
+    it('getTimezoneOffset should return same value as original Date', () => {
+        setFakeDate('')
+        const dateString = '2010-07-01T00:00:00.000Z'
+        const originalOffset = new Date(dateString).getTimezoneOffset()
+        expect(isFinite(originalOffset)).toBeTruthy()
+
+        setFakeDate('2010-01-01T00:00:00.000Z')
+        //should be the same value for the same dateString
+        expect(new Date(dateString).getTimezoneOffset()).toBe(originalOffset)
+    })
 })
