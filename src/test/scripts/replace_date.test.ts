@@ -6,7 +6,7 @@ import '../../scripts/replace_date'
 
 const testStartDate = new Date()
 
-describe('fake Date', () => {
+describe('replace_date', () => {
     afterEach(() => {
         window.sessionStorage.clear()
     })
@@ -178,7 +178,7 @@ describe('fake Date', () => {
 
     const values = [undefined, '2010-01-01T00:00:00.000Z']
     values.forEach((fakeDate) => {
-        describe(`fake date = ${fakeDate}`, () => {
+        describe(`fake date = ${fakeDate ?? 'OFF'}`, () => {
             let date: Date
             let utcDate: Date
 
@@ -474,6 +474,43 @@ describe('fake Date', () => {
                 expect(date.getUTCMilliseconds()).toEqual(123)
             })
 
+            it('Date objects are Date instances', () => {
+                expect(new Date() instanceof Date).toBeTruthy()
+            })
+
+            it('can inherit from Date', () => {
+                class MyDate extends Date {
+                    value: string
+
+                    constructor() {
+                        super()
+                        this.value = 'value'
+                    }
+                    method() {
+                        return 'method'
+                    }
+                    static staticMethod() {
+                        return 'staticMethod'
+                    }
+                }
+
+                const myDate = new MyDate()
+
+                // should be a (possibly fake) Date
+                expect(myDate instanceof Date).toBeTruthy()
+                if (fakeDate) {
+                    expect(myDate.toISOString()).toBe(fakeDate)
+                } else {
+                    expect(myDate.toISOString()).not.toBe(fakeDate)
+                }
+
+                // and also include the customization
+                expect(myDate instanceof MyDate).toBeTruthy()
+                expect(myDate.method()).toEqual('method')
+                expect(myDate.value).toEqual('value')
+                expect(MyDate.staticMethod()).toEqual('staticMethod')
+            })
+
             // static members
             it('UTC()', () => {
                 const ms = Date.UTC(1970, 0, 1, 0, 0, 3, 4)
@@ -492,6 +529,42 @@ describe('fake Date', () => {
                 )
 
                 expect(intlString).toMatch(/Wednesday, September 15, 2021 at 12:34:56\WPM/)
+            })
+
+            it('Intl.DateTimeFormat objects are instances of Intl.DateTimeFormat', () => {
+                const formatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' })
+                expect(formatter instanceof Intl.DateTimeFormat).toBeTruthy()
+            })
+
+            it('can inherit from Intl.DateTimeFormat', () => {
+                class MyDateTimeFormat extends Intl.DateTimeFormat {
+                    constructor() {
+                        super('en-US', { dateStyle: 'full', timeStyle: 'medium' })
+                    }
+                    myMethod() {
+                        return 'myMethod'
+                    }
+                }
+
+                const myFormatter = new MyDateTimeFormat()
+
+                expect(myFormatter instanceof Intl.DateTimeFormat).toBeTruthy()
+
+                // and also include the customization
+                expect(myFormatter instanceof MyDateTimeFormat).toBeTruthy()
+                expect(myFormatter.myMethod()).toEqual('myMethod')
+            })
+
+            it('Intl.DateTimeFormat.format without class context', () => {
+                // assign without binding loses `this`
+                const format = new Intl.DateTimeFormat('en-GB', {
+                    timeZone: 'JST',
+                    hour: 'numeric',
+                    timeZoneName: 'longOffset',
+                }).format
+
+                // check it matches the configured format anyway
+                expect(format(date)).toMatch(/[0-9]* GMT\+09:00/)
             })
 
             it('Intl.DateTimeFormat.formatToParts', () => {
@@ -530,9 +603,9 @@ describe('fake Date', () => {
             })
 
             it('Intl.DateTimeFormat.prototype[@@toStringTag]', () => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                expect((Intl.DateTimeFormat.prototype as any)[Symbol.toStringTag]).toBe('Intl.DateTimeFormat')
-                expect(new Intl.DateTimeFormat().toString()).toBe('[object Intl.DateTimeFormat]')
+                const format = new Intl.DateTimeFormat()
+                expect(Object.getPrototypeOf(format)[Symbol.toStringTag]).toBe('Intl.DateTimeFormat')
+                expect(format.toString()).toBe('[object Intl.DateTimeFormat]')
             })
 
             it('Intl.DateTimeFormat.supportedLocalesOf', () => {
@@ -541,5 +614,32 @@ describe('fake Date', () => {
                 expect(supportedLocales).toContain('en')
             })
         })
+    })
+
+    /**
+     * e.g. @date-fns/tz iterates over all ownProperties of Date.prototype
+     *
+     * @see https://github.com/date-fns/tz/blob/213903702d7c5fcd4f01479ba7370fe917195a65/src/date/mini.js#L70
+     * @see https://github.com/cpulvermacher/time-travel/issues/41
+     */
+    it('Date should still have the same ownProperties when time travel is enabled', () => {
+        setFakeDate('')
+        const origProperties = Object.getOwnPropertyNames(Date.prototype)
+        expect(Date.name).toBe('Date')
+
+        setFakeDate('1970-01-01T00:00:00.123Z')
+        expect(Date.name).toBe('FakeDate')
+        expect(Object.getOwnPropertyNames(Date.prototype)).toStrictEqual(origProperties)
+    })
+
+    it('getTimezoneOffset should return same value as original Date', () => {
+        setFakeDate('')
+        const dateString = '2010-07-01T00:00:00.000Z'
+        const originalOffset = new Date(dateString).getTimezoneOffset()
+        expect(isFinite(originalOffset)).toBeTruthy()
+
+        setFakeDate('2010-01-01T00:00:00.000Z')
+        //should be the same value for the same dateString
+        expect(new Date(dateString).getTimezoneOffset()).toBe(originalOffset)
     })
 })
