@@ -41,10 +41,15 @@ function showReloadModal() {
 }
 
 async function setFakeDate(fakeDate: string) {
+    // also allow the user to enter a timestamp in milliseconds directly
+    if (fakeDate && Number.isInteger(+fakeDate)) {
+        fakeDate = new Date(Number.parseInt(fakeDate)).toISOString()
+    }
     if (fakeDate && isNaN(Date.parse(fakeDate))) {
-        setError('Invalid format! Try "2023-03-25 12:40", "2023-03-25T12:40Z" (UTC) or "2023-03-25" (midnight).')
+        setError('Invalid format! Try "2023-03-25 12:40", "2023-03-25T12:40Z" (UTC), "2023-03-25T12:40.000+1130" or "2023-03-25" (midnight) or number of milliseconds.')
         return
     }
+
 
     const tabId = await getActiveTabId()
 
