@@ -46,10 +46,11 @@ async function setFakeDate(fakeDate: string) {
         fakeDate = new Date(Number.parseInt(fakeDate)).toISOString()
     }
     if (fakeDate && isNaN(Date.parse(fakeDate))) {
-        setError('Invalid format! Try "2023-03-25 12:40", "2023-03-25T12:40Z" (UTC), "2023-03-25T12:40.000+1130" or "2023-03-25" (midnight) or number of milliseconds.')
+        setError(
+            'Invalid format! Try "2023-03-25 12:40", "2023-03-25T12:40Z" (UTC), "2023-03-25T12:40.000+1130" or "2023-03-25" (midnight) or number of milliseconds.'
+        )
         return
     }
-
 
     const tabId = await getActiveTabId()
 
