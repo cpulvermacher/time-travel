@@ -47,7 +47,7 @@ async function setFakeDate(fakeDate: string) {
     }
     if (fakeDate && isNaN(Date.parse(fakeDate))) {
         setError(
-            'Invalid format! Try "2023-03-25 12:40", "2023-03-25T12:40Z" (UTC), "2023-03-25T12:40.000+1130" or "2023-03-25" (midnight) or number of milliseconds.'
+            'Invalid format! Try "2023-03-25 12:40", "2023-03-25" (midnight), "2023-03-25T12:40Z" (UTC), "2023-03-25T12:40:00.120+1130" or number of milliseconds since January 1, 1970.'
         )
         return
     }
