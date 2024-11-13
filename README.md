@@ -16,7 +16,10 @@ without having to change the system time.
 - Enter the date and time you want to set and confirm, e.g.:
   - "2023-04-27 12:40" (local time)
   - "2023-04-27" (midnight local time)
-  - "2023-04-27T12:40Z" (UTC)
+  - "2023-04-27T12:40Z" (set local equivalent for given UTC time)
+  - "2023-04-27T12:40+1130" (set local equivalent for time with +11:30 timezone offset)
+  - "2023-03-25T12:40:00.120" (local time with milliseconds)
+  - "1731493140025" (UNIX timestamp)
 - When first activating the extension on a tab, click Reload when prompted.
 - 🎉 Any JavaScript `Date` object in the current tab now returns the fake date/time you set.
 
