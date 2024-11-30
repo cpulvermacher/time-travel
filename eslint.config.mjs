@@ -31,7 +31,7 @@ export default [{
 
     languageOptions: {
         parser: tsParser,
-        ecmaVersion: 6,
+        ecmaVersion: "latest",
         sourceType: "module",
     },
 
