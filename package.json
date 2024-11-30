@@ -11,13 +11,13 @@
         "test": "vitest --run"
     },
     "devDependencies": {
-        "@types/chrome": "^0.0.280",
-        "@typescript-eslint/eslint-plugin": "^8.13.0",
-        "eslint": "^8.56.0",
-        "happy-dom": "^15.11.0",
-        "prettier": "^3.3.3",
+        "@types/chrome": "^0.0.287",
+        "@typescript-eslint/eslint-plugin": "^8.16.0",
+        "eslint": "^9.16.0",
+        "happy-dom": "^15.11.7",
+        "prettier": "^3.4.1",
         "typescript": "^5.5.4",
-        "vite": "^5.4.10",
-        "vitest": "^2.1.4"
+        "vite": "^6.0.1",
+        "vitest": "^2.1.6"
     }
 }
