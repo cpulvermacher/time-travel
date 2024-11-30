@@ -6,9 +6,8 @@
 [![Status](https://flat.badgen.net/github/checks/cpulvermacher/time-travel)](https://github.com/cpulvermacher/time-travel/actions/workflows/node.js.yml)
 [![License](https://flat.badgen.net/github/license/cpulvermacher/time-travel)](./LICENSE)
 
-A Chrome extension to change the current date and time seen by websites.
-You can use it to debug time-dependent frontend/JavaScript applications
-without having to change the system time.
+A Chrome extension to change the current JavaScript date and time seen by websites.
+You can use it to debug time-dependent frontend applications without having to change the system time.
 
 ## Usage
 - Switch to the tab where you want to to change the time
