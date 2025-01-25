@@ -8,7 +8,8 @@
         "dev": "sh ./util/build.sh dev",
         "lint": "tsc && eslint *.mts src/ && prettier src --check",
         "prettier": "prettier src --write",
-        "test": "vitest --run"
+        "test": "vitest --run",
+        "checkall": "npm run test && npm run lint && npm run build"
     },
     "devDependencies": {
         "@types/chrome": "^0.0.299",
