@@ -6,17 +6,21 @@
     "scripts": {
         "build": "sh ./util/build.sh production",
         "dev": "sh ./util/build.sh dev",
-        "lint": "tsc && eslint *.mts src/ && prettier src --check",
+        "lint": "tsc && eslint *.mts src/ && prettier src --check && svelte-check --tsconfig ./tsconfig.json",
         "prettier": "prettier src --write",
         "test": "vitest --run",
         "checkall": "npm run test && npm run lint && npm run build"
     },
     "devDependencies": {
+        "@sveltejs/vite-plugin-svelte": "^5.0.3",
+        "@tsconfig/svelte": "^5.0.4",
         "@types/chrome": "^0.0.301",
         "@typescript-eslint/eslint-plugin": "^8.23.0",
         "eslint": "^9.19.0",
         "happy-dom": "^17.0.0",
         "prettier": "^3.4.2",
+        "svelte": "^5.19.9",
+        "svelte-check": "^4.1.4",
         "typescript": "^5.5.4",
         "vite": "^6.1.0",
         "vitest": "^3.0.5"
