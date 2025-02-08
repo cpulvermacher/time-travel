@@ -8,12 +8,12 @@
     let showReloadModal = $state(false)
     let disabled = $state(false)
     let clockIsRunning = $state(false)
-    let input = $state('')
+    let fakeDate = $state('')
 
     getInitialState()
         .then((result) => {
             clockIsRunning = result.clockIsRunning
-            input = result.fakeDate ?? formatLocalTime(new Date())
+            fakeDate = result.fakeDate ?? formatLocalTime(new Date())
         })
         .catch((error) => {
             errorMsg = error.message
@@ -34,7 +34,7 @@
     async function toggleClockRunning() {
         try {
             clockIsRunning = await toggleTick()
-            await setFakeDate(input)
+            await setFakeDate(fakeDate)
         } catch (e) {
             errorMsg = 'Toggling clock failed: ' + e
             clockIsRunning = false
@@ -51,7 +51,7 @@
     }
     async function changeDate() {
         try {
-            const needReload = await setAndEnable(input)
+            const needReload = await setAndEnable(fakeDate)
             if (needReload) {
                 showReloadModal = true
             }
@@ -68,7 +68,7 @@
             <input
                 {disabled}
                 {onkeydown}
-                bind:value={input}
+                bind:value={fakeDate}
                 use:focus
                 type="text"
                 size="28"
