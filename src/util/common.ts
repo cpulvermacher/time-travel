@@ -1,7 +1,11 @@
 import { injectFunction, setBadgeText, setTitle } from './browser'
 import * as inject from './inject'
 
-export const defaultTitleText = 'Time Travel'
+declare const __EXT_VERSION__: string
+declare const __MODE__: 'dev' | 'production'
+
+const defaultTitleText = 'Time Travel'
+const devVersion = __MODE__ === 'dev' ? `\nVersion: ${__EXT_VERSION__}` : ''
 
 type ContentScriptState = {
     contentScriptActive: boolean
@@ -37,6 +41,7 @@ export async function setBadgeAndTitle(tabId: number, state: ContentScriptState)
     } else if (state.contentScriptActive) {
         title += ' (Off)'
     }
+    title += devVersion
     await setTitle(tabId, title)
 }
 
