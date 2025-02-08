@@ -1,7 +1,7 @@
-import { getContentScriptState, setBadgeAndTitle } from '../util/common'
+import { getContentScriptState, setBadgeAndTitle, type ActivationMessage } from '../util/common'
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
-    updateBadgeAndTitle(activeInfo.tabId)
+    void updateBadgeAndTitle(activeInfo.tabId)
 })
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
@@ -9,10 +9,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
         return // url unchanged, nothing to do
     }
 
-    updateBadgeAndTitle(tabId)
+    void updateBadgeAndTitle(tabId)
 })
 
-chrome.runtime.onMessage.addListener((message, sender) => {
+chrome.runtime.onMessage.addListener((message: ActivationMessage, sender) => {
     if (message.msg === 'active' && sender.tab?.id) {
         const state = {
             contentScriptActive: true,
@@ -21,7 +21,7 @@ chrome.runtime.onMessage.addListener((message, sender) => {
             clockIsRunning: message.isClockTicking,
             fakeDateActive: true,
         }
-        setBadgeAndTitle(sender.tab.id, state)
+        void setBadgeAndTitle(sender.tab.id, state)
     }
 })
 

@@ -91,6 +91,7 @@ describe('replace_date', () => {
         const fakeDate = '1970-01-01T00:00:00.123Z'
         setFakeDate(fakeDate)
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
         const dateStr = Date.prototype.constructor()
 
         expect(dateStr).toBe(new Date().toString())
@@ -100,6 +101,7 @@ describe('replace_date', () => {
         const fakeDate = '1970-01-01T00:00:00.123Z'
         setFakeDate(fakeDate)
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
         const dateStr = Date.prototype.constructor(9999999)
 
         expect(dateStr).toBe(new Date().toString())
@@ -557,6 +559,7 @@ describe('replace_date', () => {
 
             it('Intl.DateTimeFormat.format without class context', () => {
                 // assign without binding loses `this`
+                // eslint-disable-next-line @typescript-eslint/unbound-method
                 const format = new Intl.DateTimeFormat('en-GB', {
                     timeZone: 'JST',
                     hour: 'numeric',
@@ -594,17 +597,20 @@ describe('replace_date', () => {
             })
 
             it('Intl.DateTimeFormat.prototype.constructor', () => {
+                // eslint-disable-next-line  @typescript-eslint/no-unsafe-call
                 const object = Intl.DateTimeFormat.prototype.constructor('en-US', {
                     dateStyle: 'full',
                     timeStyle: 'medium',
-                })
+                }) as Intl.DateTimeFormat
 
                 expect(object.format(date)).toMatch(/Wednesday, September 15, 2021 at 12:34:56\WPM/)
             })
 
             it('Intl.DateTimeFormat.prototype[@@toStringTag]', () => {
                 const format = new Intl.DateTimeFormat()
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 expect(Object.getPrototypeOf(format)[Symbol.toStringTag]).toBe('Intl.DateTimeFormat')
+                // eslint-disable-next-line @typescript-eslint/no-base-to-string
                 expect(format.toString()).toBe('[object Intl.DateTimeFormat]')
             })
 

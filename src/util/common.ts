@@ -15,6 +15,13 @@ type ContentScriptState = {
     fakeDateActive: boolean
 }
 
+export type ActivationMessage = {
+    msg: 'active'
+    fakeDate: string
+    tickStartTimestamp: string | null
+    isClockTicking: boolean
+}
+
 /** Returns date in format "YYYY-MM-DD hh:mm" in local time, or "Invalid Date" if invalid */
 export function formatLocalTime(date: Date): string {
     if (isNaN(date.getTime())) {

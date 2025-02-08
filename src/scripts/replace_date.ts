@@ -86,7 +86,7 @@ declare const __EXT_VERSION__: string
         const returnDate = new OriginalDate(...args)
 
         // for `new SomeClassDerivedFromDate()`, make sure we return something that is an instance of SomeClassDerivedFromDate
-        Object.setPrototypeOf(returnDate, new.target.prototype)
+        Object.setPrototypeOf(returnDate, new.target.prototype as object)
 
         return returnDate
     }
@@ -144,6 +144,7 @@ declare const __EXT_VERSION__: string
         return this._originalObject.resolvedOptions()
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     FakeIntlDateTimeFormat.prototype[Symbol.toStringTag] = 'Intl.DateTimeFormat'
 
     // static properties
