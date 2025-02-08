@@ -30,7 +30,6 @@
         node.focus()
         node.setSelectionRange(-1, -1)
     }
-
     async function toggleClockRunning() {
         try {
             clockIsRunning = await toggleTick()
@@ -40,7 +39,6 @@
             clockIsRunning = false
         }
     }
-
     async function reset() {
         try {
             await setFakeDate('')
@@ -94,7 +92,6 @@
         >
     </div>
 </main>
-
 <ReloadModal visible={showReloadModal} />
 
 <style>

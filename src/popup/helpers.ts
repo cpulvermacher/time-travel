@@ -52,7 +52,7 @@ export async function setAndEnable(fakeDate: string): Promise<boolean> {
 }
 
 /** toggles clock ticking state, returns true iff the clock was started */
-export async function toggleTick() {
+export async function toggleTick(): Promise<boolean> {
     const tabId = await getActiveTabId()
     const state = await getContentScriptState(tabId)
 
@@ -64,7 +64,8 @@ export async function toggleTick() {
     return !state.clockIsRunning
 }
 
-export async function resetTickStart(date: Date | null) {
+/** set/reset the clock-tick start time to the given date */
+export async function resetTickStart(date: Date | null): Promise<void> {
     const tabId = await getActiveTabId()
 
     if (date === null) {
@@ -75,7 +76,8 @@ export async function resetTickStart(date: Date | null) {
     }
 }
 
-export async function getInitialState() {
+/** get current state of content script. Throws on permission errors */
+export async function getInitialState(): Promise<{ fakeDate?: string; clockIsRunning: boolean }> {
     const tabId = await getActiveTabId()
     try {
         let initialFakeDate
