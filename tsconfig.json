@@ -18,6 +18,7 @@
         "moduleResolution": "bundler",
         "resolveJsonModule": true,
         "isolatedModules": false,
+        "verbatimModuleSyntax": true,
         "noEmit": true,
         "sourceMap": false,
         "types": [
