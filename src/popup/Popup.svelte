@@ -16,7 +16,7 @@
             fakeDate = result.fakeDate ?? formatLocalTime(new Date())
         })
         .catch((error) => {
-            errorMsg = error.message
+            errorMsg = error instanceof Error ? error.message : 'Could not get initial state'
             disabled = true
         })
 
@@ -35,7 +35,7 @@
             clockIsRunning = await toggleTick()
             await setFakeDate(fakeDate)
         } catch (e) {
-            errorMsg = 'Toggling clock failed: ' + e
+            errorMsg = 'Toggling clock failed: ' + (e instanceof Error ? e.message : '')
             clockIsRunning = false
         }
     }
@@ -44,7 +44,7 @@
             await setFakeDate('')
             await resetTickStart(null)
         } catch (e) {
-            errorMsg = 'Reset failed: ' + e
+            errorMsg = 'Reset failed: ' + (e instanceof Error ? e.message : '')
         }
     }
     async function changeDate() {
@@ -54,7 +54,7 @@
                 showReloadModal = true
             }
         } catch (e) {
-            errorMsg = 'Could not set date: ' + e
+            errorMsg = 'Could not set date: ' + (e instanceof Error ? e.message : '')
         }
     }
 </script>
