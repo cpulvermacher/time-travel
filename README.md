@@ -20,7 +20,7 @@ You can use it to debug time-dependent frontend applications without having to c
   - "2023-03-25T12:40:00.120" (local time with milliseconds)
   - "1731493140025" (UNIX timestamp)
 - When first activating the extension on a tab, click Reload when prompted.
-- 🎉 Any JavaScript `Date` object in the current tab now returns the fake date/time you set.
+- 🎉 Any JavaScript `Date` or `Intl.DateTimeFormat` in the current tab now returns the fake date/time you set.
 
 To restore the system time, click the extension icon and press Reset.
 
