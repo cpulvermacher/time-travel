@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => ({
         target: 'chrome96',
         minify: false,
         rollupOptions: {
-            input: tsEntryModules.concat(['/popup/popup.html']),
+            input: tsEntryModules.concat(['/popup/main.html']),
             output: {
                 entryFileNames: (assetInfo) => {
                     if (moduleNames.includes(assetInfo.name)) {
