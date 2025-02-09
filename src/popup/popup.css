@@ -1,11 +1,21 @@
 :root {
     --primary-color: #6060f4;
+    --text-color: #494949;
 }
 
 html,
 body {
     min-height: 90px;
     min-width: fit-content;
+
+    color: var(--text-color);
+    background-color: white;
+
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -20,10 +30,18 @@ button {
     padding: 5px 10px;
 }
 
+input {
+    width: 20ch;
+    margin-top: 5px;
+    color: var(--text-color);
+    background: white;
+}
+
 button {
     height: 27px;
     background: white;
     color: var(--primary-color);
+    transition: filter 0.2s ease-in;
 }
 
 button:disabled {
@@ -31,10 +49,9 @@ button:disabled {
     color: #9f9f9f !important;
 }
 
-input {
-    width: 20ch;
-    margin-top: 5px;
-    background: white;
+button:not(:disabled):hover {
+    filter: drop-shadow(0 0 2px var(--primary-color));
+    cursor: pointer;
 }
 
 input:focus,
