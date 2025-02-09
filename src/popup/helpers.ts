@@ -104,12 +104,10 @@ export async function getInitialState(): Promise<{ fakeDate?: string; clockIsRun
                 'To use Time Travel on local files, please enable "Allow access to file URLs" in the extension settings.'
             )
         } else if (await isExtensionGalleryUrl(tabId)) {
-            throw new Error(
-                'Time Travel cannot be used in the Chrome Web Store. Please switch to a different tab to change the time.'
-            )
+            throw new Error('Time Travel cannot be used in the Chrome Web Store.')
         } else {
             const message = error instanceof Error ? error.message : ''
-            throw new Error('Time Travel cannot be used in the current tab.\n' + message)
+            throw new Error('Time Travel cannot be used in the current tab: ' + message)
         }
     }
 }
