@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import {
     getActiveTabId,
     injectFunction,
@@ -78,6 +79,14 @@ export async function resetTickStart(date: Date | null): Promise<void> {
 
 /** get current state of content script. Throws on permission errors */
 export async function getInitialState(): Promise<{ fakeDate?: string; clockIsRunning: boolean }> {
+    if (import.meta.env.DEV) {
+        //return dummy state for testing
+        return {
+            fakeDate: '2005-06-07 08:09',
+            clockIsRunning: false,
+        }
+    }
+
     const tabId = await getActiveTabId()
     try {
         let initialFakeDate
