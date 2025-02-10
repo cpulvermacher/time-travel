@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { DatePicker } from '@svelte-plugins/datepicker'
     import { resetTickStart, setAndEnable, setFakeDate, toggleTick } from './helpers'
     import Message from './Message.svelte'
     import ReloadModal from './ReloadModal.svelte'
@@ -13,6 +14,10 @@
     let showReloadModal = $state(false)
     let clockIsRunning = $state(initialState.clockIsRunning)
     let fakeDate = $state(initialState.fakeDate)
+
+    let isOpen = $state(false)
+    let startDate = $state(new Date(initialState.fakeDate)) //TODO check how this should work really
+    const toggleDatePicker = () => (isOpen = !isOpen)
 
     function onkeydown(event: KeyboardEvent) {
         if (event.key === 'Enter') {
@@ -60,15 +65,18 @@
     <div class="row">
         <label>
             Date and time to set:
-            <input
-                {onkeydown}
-                bind:value={fakeDate}
-                use:focus
-                type="text"
-                size="28"
-                maxlength="28"
-                spellcheck="false"
-            />
+            <DatePicker bind:isOpen bind:startDate enableFutureDates>
+                <input
+                    {onkeydown}
+                    onclick={toggleDatePicker}
+                    bind:value={fakeDate}
+                    use:focus
+                    type="text"
+                    size="28"
+                    maxlength="28"
+                    spellcheck="false"
+                />
+            </DatePicker>
         </label>
         <button
             onclick={toggleClockRunning}
