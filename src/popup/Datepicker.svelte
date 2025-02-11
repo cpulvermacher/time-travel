@@ -124,7 +124,7 @@
         --datepicker-calendar-header-month-nav-background-hover: #f5f5f5;
         --datepicker-calendar-header-month-nav-border: 0;
         --datepicker-calendar-header-month-nav-cursor: pointer;
-        --datepicker-calendar-header-month-nav-border-radius: 10px;
+        --datepicker-calendar-header-month-nav-border-radius: 3px;
         --datepicker-calendar-header-month-nav-color: var(--datepicker-color);
         --datepicker-calendar-header-month-nav-cursor: pointer;
         --datepicker-calendar-header-month-nav-font-size: var(--datepicker-font-size-large);
@@ -241,7 +241,7 @@
         --datepicker-calendar-day-background-hover: #f5f5f5;
         --datepicker-calendar-day-border: 1px solid transparent;
         --datepicker-calendar-day-border: 1px solid transparent;
-        --datepicker-calendar-day-border-radius: 100%;
+        --datepicker-calendar-day-border-radius: 3px;
         --datepicker-calendar-day-color: #232a32;
         --datepicker-calendar-day-color-disabled: #b9bdc1;
         --datepicker-calendar-day-color-hover: #232a32;
@@ -299,11 +299,10 @@
    * Calendar Range Selected
    */
         --datepicker-calendar-range-selected-background: var(--datepicker-state-active);
-        --datepicker-calendar-range-selected-border-radius: 20px;
+        --datepicker-calendar-range-selected-border-radius: 3px;
         --datepicker-calendar-range-selected-color: #fff;
         --datepicker-calendar-range-selected-font-weight: var(--datepicker-font-weight-medium);
-
-        --datepicker-calendar-range-selected-start-border-radius: 20px;
+        --datepicker-calendar-range-selected-start-border-radius: 3px;
 
         /**
    * Calendar Range Hover
