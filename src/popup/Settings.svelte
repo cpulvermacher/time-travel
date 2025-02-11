@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { DatePicker } from '@svelte-plugins/datepicker'
+    import Datepicker from './Datepicker.svelte'
     import { resetTickStart, setAndEnable, setFakeDate, toggleTick } from './helpers'
     import Message from './Message.svelte'
     import ReloadModal from './ReloadModal.svelte'
@@ -65,7 +65,7 @@
     <div class="row">
         <label>
             Date and time to set:
-            <DatePicker bind:isOpen bind:startDate enableFutureDates>
+            <Datepicker bind:startDate bind:isOpen>
                 <input
                     {onkeydown}
                     onclick={toggleDatePicker}
@@ -76,7 +76,7 @@
                     maxlength="28"
                     spellcheck="false"
                 />
-            </DatePicker>
+            </Datepicker>
         </label>
         <button
             onclick={toggleClockRunning}
