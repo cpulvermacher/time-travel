@@ -1,7 +1,7 @@
 <script lang="ts">
     import { DatePicker } from '@svelte-plugins/datepicker'
     import { tick } from 'svelte'
-    import { overwriteYYYYMMDD } from '../util/common'
+    import { formatLocalTime, overwriteYYYYMMDD } from '../util/common'
 
     interface Props {
         fakeDate: string
@@ -26,6 +26,16 @@
     async function toggleDatePicker() {
         isOpen = !isOpen
         if (isOpen) {
+            // when opening the date picker, allow editing the current date entered
+            let inputDateTimestamp = new Date(fakeDate).getTime()
+            if (isNaN(inputDateTimestamp)) {
+                // if date in input field is invalid, reset
+                const newDate = new Date()
+                fakeDate = formatLocalTime(newDate)
+                inputDateTimestamp = newDate.getTime()
+            }
+            pickerDate = inputDateTimestamp
+
             inputRef.focus()
             await tick() // wait for next DOM update
             inputRef.setSelectionRange(0, 10)
