@@ -14,6 +14,10 @@
 </DatePicker>
 
 <style>
+    :global(.datepicker button) {
+        /* Reset button styles */
+        height: unset;
+    }
     :global(.datepicker[data-picker-theme='theme']) {
         /**
    * Common Variables
@@ -32,7 +36,7 @@
 
         --datepicker-color: #6060f4;
 
-        --datepicker-font-family: 'Rubik', sans-serif;
+        --datepicker-font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 
         --datepicker-font-size-jumbo: 1.75rem;
         --datepicker-font-size-xxxlarge: 1.5rem;
@@ -80,7 +84,7 @@
         --datepicker-container-border-radius: 12px;
         --datepicker-container-box-shadow: 0 1px 20px rgba(0, 0, 0, 0.1);
         --datepicker-container-font-family: var(--datepicker-font-family);
-        --datepicker-container-left: 0;
+        --datepicker-container-left: -20px;
         --datepicker-container-position: absolute;
         --datepicker-container-top: 105%;
         --datepicker-container-width: fit-content;
@@ -93,7 +97,7 @@
         --datepicker-calendar-padding: var(--datepicker-padding-base) var(--datepicker-padding-large)
             var(--datepicker-padding-xlarge);
         --datepicker-calendar-position: relative;
-        --datepicker-calendar-width: 310px;
+        --datepicker-calendar-width: 240px;
 
         --datepicker-calendar-split-border: 1px solid var(--datepicker-border-color);
 
@@ -105,7 +109,7 @@
         --datepicker-calendar-header-display: flex;
         --datepicker-calendar-header-font-size: var(--datepicker-font-size-large);
         --datepicker-calendar-header-justify-content: space-between;
-        --datepicker-calendar-header-margin: 0 0 var(--datepicker-margin-xlarge) 0;
+        --datepicker-calendar-header-margin: 0;
         --datepicker-calendar-header-padding: var(--datepicker-padding-large) var(--datepicker-padding-base);
         --datepicker-calendar-header-user-select: none;
 
