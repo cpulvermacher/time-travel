@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => ({
         emptyOutDir: true,
         target: 'chrome102',
         minify: false,
+        cssMinify: true,
         rollupOptions: {
             input: tsEntryModules.concat(['/popup/main.html']),
             output: {
