@@ -1,16 +1,57 @@
 <script lang="ts">
     import { DatePicker } from '@svelte-plugins/datepicker'
+    import { tick } from 'svelte'
+    import { overwriteYYYYMMDD } from '../util/common'
 
     interface Props {
-        isOpen: boolean
-        startDate: Date
-        children?: () => any
+        fakeDate: string
+        onEnterKey?: () => void
     }
-    let { isOpen = $bindable(), startDate = $bindable(), children }: Props = $props()
+    let { fakeDate = $bindable(), onEnterKey }: Props = $props()
+    let isOpen = $state(false)
+    // Note: the datepicker internally works with timestamps in UTC.
+    let pickerDate = $state(new Date(fakeDate).getTime())
+    let inputRef: HTMLInputElement
+
+    function onkeydown(event: KeyboardEvent) {
+        if (event.key === 'Enter' && onEnterKey) {
+            event.preventDefault()
+            onEnterKey()
+        }
+    }
+    function focus(node: HTMLInputElement) {
+        node.focus()
+        node.setSelectionRange(-1, -1)
+    }
+    function toggleDatePicker() {
+        isOpen = !isOpen
+        if (isOpen) {
+            inputRef.setSelectionRange(0, 10)
+        }
+    }
+    async function onDateChange() {
+        const newDate = new Date(pickerDate)
+        fakeDate = overwriteYYYYMMDD(fakeDate, newDate)
+
+        //focus time part
+        inputRef.focus()
+        await tick() // wait for next DOM update
+        inputRef.setSelectionRange(11, 16)
+    }
 </script>
 
-<DatePicker bind:isOpen bind:startDate enableFutureDates includeFont={false} theme="theme">
-    {@render children?.()}
+<DatePicker bind:isOpen bind:startDate={pickerDate} {onDateChange} enableFutureDates includeFont={false} theme="theme">
+    <input
+        {onkeydown}
+        onclick={toggleDatePicker}
+        bind:value={fakeDate}
+        use:focus
+        bind:this={inputRef}
+        type="text"
+        size="28"
+        maxlength="28"
+        spellcheck="false"
+    />
 </DatePicker>
 
 <style>

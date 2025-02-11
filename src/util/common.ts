@@ -32,6 +32,12 @@ export function formatLocalTime(date: Date): string {
     return d.toISOString().slice(0, 16).replace('T', ' ')
 }
 
+/** For a date in format "YYYY-MM-DD hh:mm", returns a new date string in the same format, with the date part replaced by the given date */
+export function overwriteYYYYMMDD(dateString: string, newDate: Date): string {
+    const newDateString = formatLocalTime(newDate)
+    return newDateString.slice(0, 11) + dateString.slice(11)
+}
+
 export async function setBadgeAndTitle(tabId: number, state: ContentScriptState) {
     let badgeText = ''
     if (state.fakeDateActive) {
