@@ -51,6 +51,9 @@
             errorMsg = 'Could not set date: ' + (e instanceof Error ? e.message : '')
         }
     }
+
+    const playIcon = '\u23F5'
+    const stopIcon = '\u23F9'
 </script>
 
 <main>
@@ -73,7 +76,7 @@
             title="Start/stop progressing clock from given value"
             aria-label="Start/stop progressing clock from given value"
         >
-            <span class="tick-state {clockIsRunning ? '' : 'stopped'}"></span>
+            <span class="tick-state">{clockIsRunning ? stopIcon : playIcon}</span>
         </button>
     </div>
     <Message message={errorMsg} />
@@ -116,12 +119,5 @@
         transform: translate(-50%, -50%);
         font-size: x-large;
         line-height: 26px;
-    }
-
-    .tick-state.stopped::before {
-        content: '\23F5';
-    }
-    .tick-state:not(.stopped)::before {
-        content: '\23F9';
     }
 </style>
