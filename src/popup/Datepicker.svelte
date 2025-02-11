@@ -121,7 +121,7 @@
    * Calendar Header Month Navigation
    */
         --datepicker-calendar-header-month-nav-background: transparent;
-        --datepicker-calendar-header-month-nav-background-hover: #f5f5f5;
+        --datepicker-calendar-header-month-nav-background-hover: transparent;
         --datepicker-calendar-header-month-nav-border: 0;
         --datepicker-calendar-header-month-nav-cursor: pointer;
         --datepicker-calendar-header-month-nav-border-radius: 3px;
@@ -238,7 +238,7 @@
    * Calendar Day
    */
         --datepicker-calendar-day-align-items: center;
-        --datepicker-calendar-day-background-hover: #f5f5f5;
+        --datepicker-calendar-day-background-hover: transparent;
         --datepicker-calendar-day-border: 1px solid transparent;
         --datepicker-calendar-day-border: 1px solid transparent;
         --datepicker-calendar-day-border-radius: 20px;
@@ -287,10 +287,10 @@
         /**
    * Calendar Range Start & End
    */
-        --datepicker-calendar-range-start-box-shadow: inset -20px 0 0 var(--datepicker-state-hover);
-        --datepicker-calendar-range-end-box-shadow: inset 20px 0 0 var(--datepicker-state-hover);
-        --datepicker-calendar-range-start-box-shadow-selected: inset -20px 0 0 #eceff1;
-        --datepicker-calendar-range-end-box-shadow-selected: inset 20px 0 0 #eceff1;
+        --datepicker-calendar-range-start-box-shadow: none;
+        --datepicker-calendar-range-end-box-shadow: none;
+        --datepicker-calendar-range-start-box-shadow-selected: none;
+        --datepicker-calendar-range-end-box-shadow-selected: none;
 
         --datepicker-calendar-range-start-end-background: #f5f5f5;
         --datepicker-calendar-range-start-end-color: #232a32;
@@ -308,7 +308,7 @@
    * Calendar Range Hover
    */
         --datepicker-calendar-range-included-background: #eceff1;
-        --datepicker-calendar-range-included-box-shadow: inset 20px 0 0 #eceff1;
+        --datepicker-calendar-range-included-box-shadow: none;
         --datepicker-calendar-range-included-color: #232a32;
         --datepicker-calendar-range-included-font-weight: var(--datepicker-font-weight-base);
         --datepicker-calendar-range-included-height: var(--datepicker-calendar-day-height);
