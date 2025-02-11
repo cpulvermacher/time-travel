@@ -130,16 +130,12 @@
         --datepicker-calendar-header-month-nav-text-align: center;
         --datepicker-calendar-header-month-nav-width: 32px;
 
-        --datepicker-calendar-header-month-nav-icon-next-background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAACLSURBVHgB7ZTLCYAwEERHbcASUpIlaAd2YDoxlmIX3ixFEwwYQQL5kCWwD94ph5mwywIMUzmLlYRBe1lXENBrT+oSgktwiepLNJ63EWkl3AOltBMCkHh/kEv5F9SCGN8IzKntEYfAdwQb0kYaHO4uoUJBBIdzOAoiKMMNQ47wDvEceA7Zrp3BMLVyA56LVFYQOkngAAAAAElFTkSuQmCC')
-            no-repeat center center;
         --datepicker-calendar-header-month-nav-icon-next-background-size: 16px 16px;
         --datepicker-calendar-header-month-nav-icon-next-filter: invert(0);
         --datepicker-calendar-header-month-nav-icon-next-height: 16px;
         --datepicker-calendar-header-month-nav-icon-next-margin: auto;
         --datepicker-calendar-header-month-nav-icon-next-width: 16px;
 
-        --datepicker-calendar-header-month-nav-icon-prev-background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAACKSURBVHgB7ZbBDYAgDEW/xgEcgZHcQDYRJ5ER3EhHcAPtAQMHQwIiSNKXvAMH+CUNDQDDVM5kLMJCnsYBmXHDN1IgIxzO4QIZ+Ty8gT9cOuuZ3BHHQa4hGxTszVOpnoJaFMbXAk2OzvpNC+7zojYVewFcBBdRVRE9CqCR4EvWIR4JO5iC5jzD/IoLU/FXPXheCj0AAAAASUVORK5CYII=')
-            no-repeat center center;
         --datepicker-calendar-header-month-nav-icon-prev-background-size: 16px 16px;
         --datepicker-calendar-header-month-nav-icon-prev-filter: invert(0);
         --datepicker-calendar-header-month-nav-icon-prev-height: 16px;
@@ -176,58 +172,17 @@
         --datepicker-calendar-header-year-nav-width: 12px;
         --datepicker-calendar-header-year-nav-icon-font-size: 13px;
 
-        --datepicker-calendar-header-year-nav-icon-next-background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAABuSURBVHgB7c7BCYAwDIXhBy7gKB2hm9Vx3UJzqCASRWOTHvo+yDG8HyAiGt2Ef7LcLLeigyK31SsIdh4Pj9DGwyKu40u9kAht/OAe8TTuHvFm3C3iy3jziGQYv4vIMMjGcS0iwSjBWN/on4hoADu88UW4KXFVfgAAAABJRU5ErkJggg==')
-            no-repeat center center;
         --datepicker-calendar-header-year-nav-icon-next-background-size: 12px 12px;
         --datepicker-calendar-header-year-nav-icon-next-display: block;
         --datepicker-calendar-header-year-nav-icon-next-filter: invert(0);
         --datepicker-calendar-header-year-nav-icon-next-height: 12px;
         --datepicker-calendar-header-year-nav-icon-next-width: 12px;
 
-        --datepicker-calendar-header-year-nav-icon-prev-background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAB3SURBVHgB7dTRCYAwDATQAxdwlI6QzZpx3UIrKJSC1aS2fngP7kvi3VcBIqK/m26+S8qcssBHWu5Dynokwi5m9wIHyX5gHRGL2wAndYwoyxWN1DDi9XLLiG7lT0Z0L6+NGFZ+NWJoeW2EYjD9svy0PzACIiJqsAHF2EaCcjFGaQAAAABJRU5ErkJggg==')
-            no-repeat center center;
         --datepicker-calendar-header-year-nav-icon-prev-background-size: 12px 12px;
         --datepicker-calendar-header-year-nav-icon-prev-display: block;
         --datepicker-calendar-header-year-nav-icon-prev-filter: invert(0);
         --datepicker-calendar-header-year-nav-icon-prev-height: 12px;
         --datepicker-calendar-header-year-nav-icon-prev-width: 12px;
-
-        /**
-   * Presets
-   */
-        --datepicker-presets-border: 1px solid var(--datepicker-border-color);
-        --datepicker-presets-padding: 24px;
-        --datepicker-presets-minwidth: 180px;
-        --datepicker-presets-maxwidth: 200px;
-
-        /**
-   * Presets Button
-   */
-        --datepicker-presets-button-background: transparent;
-        --datepicker-presets-button-background-hover: var(--datepicker-state-hover);
-        --datepicker-presets-button-background-active: var(--datepicker-state-active);
-
-        --datepicker-presets-button-border: 0;
-        --datepicker-presets-button-border-radius: 40px;
-        --datepicker-presets-button-border-radius-active: 20px;
-
-        --datepicker-presets-button-color: var(--datepicker-color);
-        --datepicker-presets-button-color-active: #fff;
-        --datepicker-presets-button-color-hover: var(--datepicker-color);
-        --datepicker-presets-button-color-focus: var(--datepicker-color);
-
-        --datepicker-presets-button-cursor: pointer;
-        --datepicker-presets-button-cursor-active: default;
-
-        --datepicker-presets-button-font-family: var(--datepicker-font-family);
-        --datepicker-presets-button-font-size: var(--datepicker-font-size-base);
-        --datepicker-presets-button-font-weight-active: var(--datepicker-font-weight-medium);
-        --datepicker-presets-button-outline-focus: 5px auto -webkit-focus-ring-color;
-
-        --datepicker-presets-button-margin: var(--datepicker-margin-small) 0;
-        --datepicker-presets-button-padding: calc(var(--datepicker-padding-base) + 2px) var(--datepicker-padding-large);
-        --datepicker-presets-button-text-align: left;
-        --datepicker-presets-button-zindex-focus: 10;
 
         /**
    * Timepicker Container
@@ -313,7 +268,6 @@
         --datepicker-calendar-today-border: 1px solid #232a32;
         --datepicker-calendar-today-cursor: default;
         --datepicker-calendar-today-font-weight: var(--datepicker-font-weight-bold);
-
         /**
    * Calendar Range
    */
@@ -341,17 +295,17 @@
    * Calendar Range Selected
    */
         --datepicker-calendar-range-selected-background: var(--datepicker-state-active);
-        --datepicker-calendar-range-selected-border-radius: 10px;
+        --datepicker-calendar-range-selected-border-radius: 20px;
         --datepicker-calendar-range-selected-color: #fff;
         --datepicker-calendar-range-selected-font-weight: var(--datepicker-font-weight-medium);
 
-        --datepicker-calendar-range-selected-start-border-radius: 10px;
+        --datepicker-calendar-range-selected-start-border-radius: 20px;
 
         /**
    * Calendar Range Hover
    */
         --datepicker-calendar-range-included-background: #eceff1;
-        --datepicker-calendar-range-included-box-shadow: inset 10px 0 0 #eceff1;
+        --datepicker-calendar-range-included-box-shadow: inset 20px 0 0 #eceff1;
         --datepicker-calendar-range-included-color: #232a32;
         --datepicker-calendar-range-included-font-weight: var(--datepicker-font-weight-base);
         --datepicker-calendar-range-included-height: var(--datepicker-calendar-day-height);
