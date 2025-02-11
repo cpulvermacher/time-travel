@@ -22,14 +22,39 @@ export type ActivationMessage = {
     isClockTicking: boolean
 }
 
-/** Returns date in format "YYYY-MM-DD hh:mm" in local time, or "Invalid Date" if invalid */
-export function formatLocalTime(date: Date): string {
+export type FormatOptions = {
+    fullPrecision: boolean
+}
+
+/** Returns date in format "YYYY-MM-DD hh:mm" in local time, or "Invalid Date" if invalid
+ *
+ * If options.fullPrecision is true, returns seconds and milliseconds if they are non-zero
+ */
+export function formatLocalTime(date: Date, options?: FormatOptions): string {
     if (isNaN(date.getTime())) {
         return 'Invalid Date'
     }
 
     const d = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-    return d.toISOString().slice(0, 16).replace('T', ' ')
+    const isoString = d.toISOString().replace('T', ' ')
+    if (options?.fullPrecision) {
+        if (d.getMilliseconds() !== 0) {
+            return isoString.slice(0, 23)
+        }
+        if (d.getSeconds() !== 0) {
+            return isoString.slice(0, 19)
+        }
+    }
+    return isoString.slice(0, 16)
+}
+
+/** For a date in format "YYYY-MM-DD hh:mm...", returns a new date string in the same format, with the date part replaced by the given date */
+export function overwriteDatePart(dateString: string, newDate: Date): string {
+    const newDateString = formatLocalTime(newDate).slice(0, 10)
+    if (dateString.length <= 11) {
+        return newDateString
+    }
+    return newDateString + dateString.slice(10)
 }
 
 export async function setBadgeAndTitle(tabId: number, state: ContentScriptState) {

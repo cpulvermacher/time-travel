@@ -15,20 +15,6 @@
     let clockIsRunning = $state(initialState.clockIsRunning)
     let fakeDate = $state(initialState.fakeDate)
 
-    let isOpen = $state(false)
-    let startDate = $state(new Date(initialState.fakeDate)) //TODO check how this should work really
-    const toggleDatePicker = () => (isOpen = !isOpen)
-
-    function onkeydown(event: KeyboardEvent) {
-        if (event.key === 'Enter') {
-            event.preventDefault()
-            changeDate()
-        }
-    }
-    function focus(node: HTMLInputElement) {
-        node.focus()
-        node.setSelectionRange(-1, -1)
-    }
     async function toggleClockRunning() {
         try {
             clockIsRunning = await toggleTick()
@@ -65,18 +51,7 @@
     <div class="row">
         <label>
             Date and time to set:
-            <Datepicker bind:startDate bind:isOpen>
-                <input
-                    {onkeydown}
-                    onclick={toggleDatePicker}
-                    bind:value={fakeDate}
-                    use:focus
-                    type="text"
-                    size="28"
-                    maxlength="28"
-                    spellcheck="false"
-                />
-            </Datepicker>
+            <Datepicker bind:fakeDate onEnterKey={changeDate} />
         </label>
         <button
             onclick={toggleClockRunning}

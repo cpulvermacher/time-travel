@@ -1,19 +1,89 @@
 <script lang="ts">
     import { DatePicker } from '@svelte-plugins/datepicker'
+    import { tick } from 'svelte'
+    import { formatLocalTime, overwriteDatePart } from '../util/common'
 
     interface Props {
-        isOpen: boolean
-        startDate: Date
-        children?: () => any
+        fakeDate: string
+        onEnterKey?: () => void
     }
-    let { isOpen = $bindable(), startDate = $bindable(), children }: Props = $props()
+    let { fakeDate = $bindable(), onEnterKey }: Props = $props()
+    let isOpen = $state(false)
+    // Note: the datepicker internally works with timestamps in UTC.
+    let pickerDate = $state(new Date(fakeDate).getTime())
+    let inputRef: HTMLInputElement
+
+    function onkeydown(event: KeyboardEvent) {
+        if (event.key === 'Enter' && onEnterKey) {
+            event.preventDefault()
+            onEnterKey()
+        }
+    }
+    function focus(node: HTMLInputElement) {
+        node.focus()
+        node.setSelectionRange(-1, -1)
+    }
+    async function toggleDatePicker() {
+        isOpen = !isOpen
+        if (isOpen) {
+            // when opening the date picker, force to standard format and allow editing the current date entered
+            let inputDateTimestamp = new Date(fakeDate).getTime()
+            if (isNaN(inputDateTimestamp)) {
+                // if date in input field is invalid, reset
+                const newDate = new Date()
+                fakeDate = formatLocalTime(newDate)
+                inputDateTimestamp = newDate.getTime()
+            } else {
+                fakeDate = formatLocalTime(new Date(fakeDate), { fullPrecision: true })
+            }
+            pickerDate = inputDateTimestamp
+
+            inputRef.focus()
+            await tick() // wait for next DOM update
+            inputRef.setSelectionRange(0, 10)
+        }
+    }
+    async function onDateChange() {
+        const newDate = new Date(pickerDate)
+        fakeDate = overwriteDatePart(fakeDate, newDate)
+
+        inputRef.focus()
+        await tick() // wait for next DOM update
+        inputRef.setSelectionRange(11, -1) // select hh:mm (and everything afterwards)
+    }
 </script>
 
-<DatePicker bind:isOpen bind:startDate enableFutureDates includeFont={false} theme="theme">
-    {@render children?.()}
+<DatePicker bind:isOpen bind:startDate={pickerDate} {onDateChange} enableFutureDates includeFont={false} theme="theme">
+    <input
+        {onkeydown}
+        bind:value={fakeDate}
+        use:focus
+        bind:this={inputRef}
+        type="text"
+        size="28"
+        maxlength="28"
+        spellcheck="false"
+    />
+    <button onclick={toggleDatePicker} title="Choose date" aria-label="Choose date" class="calendar-icon"></button>
 </DatePicker>
 
 <style>
+    input {
+        padding-left: 21px;
+    }
+    .calendar-icon {
+        position: absolute;
+        left: 5px;
+        top: 11px;
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAEmSURBVHgB7ZcPzcIwEMUfXz4BSCgKwAGgACRMAg6YBBxsOMABOAAHFAXgAK5Z2Y6lHbfQ8SfpL3lZaY/1rb01N+BHUKSMNBfEJjZWISA56Uo6C2KvVpkgFn9oRx9vICFtUT1JKO3tvRtZdjBxXQs+YY+1FenIfuesPUGVVLzfRWKvmrSzbbN19wS+kAb2+sCEuUxrYzkbe4YvCVM2Vr5NPAkVa+van7Wn38U95uTpN5TJ/A8ZKemAakmbmJJGpI0gVmwA0huieFItjG19DgTHtwIZhCfZq3ztCuzQYh+FKBSvusjAGs8PnLYkLgMf34JoIBqIBqKBaIAb0Kw9RlhMCTbzzPWAqYq7LsuPaGDUsYmznaOk5zChUJTNQ4TFVMkrOL4HPsoNn26PxROHCggAAAAASUVORK5CYII=)
+            no-repeat center center;
+        background-size: 14px 14px;
+        height: 14px;
+        width: 14px;
+        border: none;
+        padding: 0;
+    }
+
     /* Reset button styles */
     :global(.datepicker button) {
         height: unset;
