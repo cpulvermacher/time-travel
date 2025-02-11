@@ -14,10 +14,14 @@
 </DatePicker>
 
 <style>
+    /* Reset button styles */
     :global(.datepicker button) {
-        /* Reset button styles */
         height: unset;
     }
+    :global(.datepicker button:focus) {
+        outline: none;
+    }
+
     :global(.datepicker[data-picker-theme='theme']) {
         /**
    * Common Variables
