@@ -18,7 +18,10 @@
     async function toggleClockRunning() {
         try {
             clockIsRunning = await toggleTick()
-            await setFakeDate(fakeDate)
+            const needReload = await setFakeDate(fakeDate)
+            if (needReload) {
+                showReloadModal = true
+            }
         } catch (e) {
             errorMsg = 'Toggling clock failed: ' + (e instanceof Error ? e.message : '')
             clockIsRunning = false
