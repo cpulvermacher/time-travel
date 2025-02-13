@@ -44,7 +44,7 @@
             inputRef.setSelectionRange(0, 10)
         }
     }
-    async function onDateChange() {
+    async function acceptPickerDate() {
         const newDate = new Date(pickerDate)
         fakeDate = overwriteDatePart(fakeDate, newDate)
 
@@ -52,14 +52,32 @@
         await tick() // wait for next DOM update
         inputRef.setSelectionRange(11, -1) // select hh:mm (and everything afterwards)
     }
+
+    function onInput() {
+        if (isOpen) {
+            // update pickerDate when input field is edited
+            let inputDateTimestamp = new Date(fakeDate).getTime()
+            if (!isNaN(inputDateTimestamp)) {
+                pickerDate = inputDateTimestamp
+            }
+        }
+    }
 </script>
 
-<DatePicker bind:isOpen bind:startDate={pickerDate} {onDateChange} enableFutureDates includeFont={false} theme="theme">
+<DatePicker
+    bind:isOpen
+    bind:startDate={pickerDate}
+    onDateChange={acceptPickerDate}
+    enableFutureDates
+    includeFont={false}
+    theme="theme"
+>
     <input
         {onkeydown}
         bind:value={fakeDate}
         use:focus
         bind:this={inputRef}
+        oninput={onInput}
         type="text"
         size="28"
         maxlength="28"
