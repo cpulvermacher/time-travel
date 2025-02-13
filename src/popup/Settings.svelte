@@ -27,14 +27,6 @@
             clockIsRunning = false
         }
     }
-    async function reset() {
-        try {
-            await setFakeDate('')
-            await resetTickStart(null)
-        } catch (e) {
-            errorMsg = 'Reset failed: ' + (e instanceof Error ? e.message : '')
-        }
-    }
     async function changeDate() {
         try {
             const needReload = await setAndEnable(fakeDate)
@@ -43,6 +35,14 @@
             }
         } catch (e) {
             errorMsg = 'Could not set date: ' + (e instanceof Error ? e.message : '')
+        }
+    }
+    async function reset() {
+        try {
+            await setFakeDate('')
+            await resetTickStart(null)
+        } catch (e) {
+            errorMsg = 'Reset failed: ' + (e instanceof Error ? e.message : '')
         }
     }
 

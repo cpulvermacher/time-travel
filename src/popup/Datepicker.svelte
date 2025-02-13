@@ -10,7 +10,7 @@
     let { fakeDate = $bindable(), onEnterKey }: Props = $props()
     let isOpen = $state(false)
     // Note: the datepicker internally works with timestamps in UTC.
-    let pickerDate = $state(new Date(fakeDate).getTime())
+    let pickerDate = $state(Date.parse(fakeDate))
     let inputRef: HTMLInputElement
 
     function onkeydown(event: KeyboardEvent) {
@@ -28,7 +28,7 @@
         isOpen = !isOpen
         if (isOpen) {
             // when opening the date picker, force to standard format and allow editing the current date entered
-            let inputDateTimestamp = new Date(fakeDate).getTime()
+            let inputDateTimestamp = Date.parse(fakeDate)
             if (isNaN(inputDateTimestamp)) {
                 // if date in input field is invalid, reset
                 const newDate = new Date()
@@ -52,11 +52,10 @@
         await tick() // wait for next DOM update
         inputRef.setSelectionRange(11, -1) // select hh:mm (and everything afterwards)
     }
-
     function onInput() {
         if (isOpen) {
             // update pickerDate when input field is edited
-            let inputDateTimestamp = new Date(fakeDate).getTime()
+            let inputDateTimestamp = Date.parse(fakeDate)
             if (!isNaN(inputDateTimestamp)) {
                 pickerDate = inputDateTimestamp
             }
