@@ -14,18 +14,18 @@
     "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^5.0.3",
         "@tsconfig/svelte": "^5.0.4",
-        "@types/chrome": "^0.0.301",
-        "eslint": "^9.19.0",
-        "happy-dom": "^17.0.0",
-        "prettier": "^3.4.2",
+        "@types/chrome": "^0.0.304",
+        "eslint": "^9.20.1",
+        "happy-dom": "^17.1.0",
+        "prettier": "^3.5.1",
         "svelte-check": "^4.1.4",
-        "typescript": "^5.5.4",
-        "typescript-eslint": "^8.23.0",
+        "typescript": "^5.7.3",
+        "typescript-eslint": "^8.24.0",
         "vite": "^6.1.0",
         "vitest": "^3.0.5"
     },
     "dependencies": {
-        "svelte": "^5.19.9",
+        "svelte": "^5.20.0",
         "@svelte-plugins/datepicker": "^1.0.11"
     }
 }
