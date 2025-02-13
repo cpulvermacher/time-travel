@@ -69,8 +69,16 @@
 
 <style>
     input {
+        width: 20ch;
+        padding: 5px;
         padding-left: 21px;
+        margin-top: 5px;
+        color: var(--text-color);
+        background: white;
+        border: 1px solid #9f9f9f;
+        border-radius: 3px;
     }
+
     .calendar-icon {
         position: absolute;
         left: 5px;

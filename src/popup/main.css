@@ -24,22 +24,11 @@ body {
     margin: 0;
 }
 
-input,
 button {
+    height: 27px;
     border: 1px solid #9f9f9f;
     border-radius: 3px;
     padding: 5px 10px;
-}
-
-input {
-    width: 20ch;
-    margin-top: 5px;
-    color: var(--text-color);
-    background: white;
-}
-
-button {
-    height: 27px;
     background: white;
     color: var(--primary-color);
     transition: filter 0.2s ease-in;
