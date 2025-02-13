@@ -16,6 +16,7 @@
     function onkeydown(event: KeyboardEvent) {
         if (event.key === 'Enter' && onEnterKey) {
             event.preventDefault()
+            isOpen = false
             onEnterKey()
         }
     }
