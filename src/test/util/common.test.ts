@@ -13,7 +13,7 @@ describe('overwriteDatePart', () => {
     })
 
     it('ignores time part of new date', () => {
-        const date = new Date('2033-01-22 12:34:56.789')
+        const date = new Date('2033-01-22 21:42:56.789')
         expect(overwriteDatePart('2025-02-10 12:34', date)).toBe('2033-01-22 12:34')
     })
 })
@@ -38,6 +38,7 @@ describe('formatLocalTime', () => {
         const formattedDate = formatLocalTime(date)
         expect(new Date(formattedDate).getTime()).toBe(date.getTime())
     })
+
     it('fullPrecision: outputs as much precision as required', () => {
         const options = { fullPrecision: true }
         expect(formatLocalTime(new Date('2025-02-10 12:34:55.123'), options)).toBe('2025-02-10 12:34:55.123')
