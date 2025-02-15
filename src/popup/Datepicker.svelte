@@ -285,24 +285,6 @@
         --datepicker-calendar-header-year-nav-icon-prev-width: 12px;
 
         /**
-   * Timepicker Container
-   */
-        --datepicker-timepicker-container-align-items: center;
-        --datepicker-timepicker-container-display: flex;
-        --datepicker-timepicker-container-justify-content: space-around;
-        --datepicker-timepicker-container-margin-bottom: var(--datepicker-margin-xlarge);
-
-        /**
-   * Timepicker Input
-   */
-        --datepicker-timepicker-input-border: 1px solid var(--datepicker-border-color);
-        --datepicker-timepicker-input-border-radius: var(--datepicker-border-radius-base);
-        --datepicker-timepicker-input-display: block;
-        --datepicker-timepicker-input-font-family: var(--datepicker-font-family);
-        --datepicker-timepicker-input-margin: 0 auto;
-        --datepicker-timepicker-input-padding: var(--datepicker-padding-small) var(--datepicker-padding-base);
-
-        /**
    * Calendar DOW (Days of Week)
    */
         --datepicker-calendar-dow-color: #8b9198;
