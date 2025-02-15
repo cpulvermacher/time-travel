@@ -41,7 +41,8 @@
 
             inputRef.focus()
             await tick() // wait for next DOM update
-            inputRef.setSelectionRange(0, 10)
+            const dateAndTimeSeparator = fakeDate.indexOf(' ')
+            inputRef.setSelectionRange(0, dateAndTimeSeparator) // select yyyy-MM-dd
         }
     }
     async function acceptPickerDate() {
@@ -50,7 +51,8 @@
 
         inputRef.focus()
         await tick() // wait for next DOM update
-        inputRef.setSelectionRange(11, -1) // select hh:mm (and everything afterwards)
+        const dateAndTimeSeparator = fakeDate.indexOf(' ')
+        inputRef.setSelectionRange(dateAndTimeSeparator + 1, -1) // select hh:mm (and everything afterwards)
     }
     function onInput() {
         if (isOpen) {
