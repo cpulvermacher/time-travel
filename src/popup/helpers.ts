@@ -102,7 +102,7 @@ export async function getInitialState(): Promise<{ fakeDate?: string; clockIsRun
                 const fakeDateNow = new Date(fakeDate.getTime() + elapsed)
                 initialFakeDate = formatLocalTime(fakeDateNow)
             } else {
-                initialFakeDate = formatLocalTime(fakeDate)
+                initialFakeDate = state.fakeDate
             }
         }
 
