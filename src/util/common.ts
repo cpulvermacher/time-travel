@@ -35,17 +35,31 @@ export function formatLocalTime(date: Date, options?: FormatOptions): string {
         return 'Invalid Date'
     }
 
-    const d = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-    const isoString = d.toISOString().replace('T', ' ')
+    // negative years (=before 1BCE) need to be padded with extra digits for Date() to parse them
+    const yyyy =
+        date.getFullYear() >= 0
+            ? String(date.getFullYear()).padStart(4, '0')
+            : '-' + String(-date.getFullYear()).padStart(6, '0')
+    let dateStr =
+        yyyy +
+        '-' +
+        String(date.getMonth() + 1).padStart(2, '0') +
+        '-' +
+        String(date.getDate()).padStart(2, '0') +
+        ' ' +
+        String(date.getHours()).padStart(2, '0') +
+        ':' +
+        String(date.getMinutes()).padStart(2, '0')
+
     if (options?.fullPrecision) {
-        if (d.getMilliseconds() !== 0) {
-            return isoString.slice(0, 23)
+        if (date.getSeconds() !== 0 || date.getMilliseconds() !== 0) {
+            dateStr += ':' + String(date.getSeconds()).padStart(2, '0')
         }
-        if (d.getSeconds() !== 0) {
-            return isoString.slice(0, 19)
+        if (date.getMilliseconds() !== 0) {
+            dateStr += '.' + String(date.getMilliseconds()).padStart(3, '0')
         }
     }
-    return isoString.slice(0, 16)
+    return dateStr
 }
 
 /** For a date in format "YYYY-MM-DD hh:mm...", returns a new date string in the same format, with the date part replaced by the given date */
