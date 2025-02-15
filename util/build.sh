@@ -40,9 +40,9 @@ if [ "$MODE" = "production" ]
 then
     ZIP_NAME="time-travel-$LONG_VERSION.zip"
 
-    rm -f "$ZIP_NAME"
+    rm -f "../$ZIP_NAME"
     cd dist/
-    zip -r "$ZIP_NAME" ./*
+    zip -r "../$ZIP_NAME" ./*
 
     echo ""
     echo "Created zip file: $ZIP_NAME"
