@@ -6,16 +6,19 @@ import {
     isFileUrl,
     registerContentScript,
 } from '../util/browser'
-import { formatLocalTime, getContentScriptState, isContentScriptActive, setBadgeAndTitle } from '../util/common'
+import {
+    formatLocalTime,
+    getContentScriptState,
+    isContentScriptActive,
+    parseDate,
+    setBadgeAndTitle,
+} from '../util/common'
 import * as inject from '../util/inject'
 
 /** sets fake date, returns whether page needs reload for content script to be injected */
-export async function setFakeDate(fakeDate: string): Promise<boolean> {
-    // also allow the user to enter a timestamp in milliseconds directly
-    if (fakeDate && Number.isInteger(+fakeDate)) {
-        fakeDate = new Date(Number.parseInt(fakeDate)).toISOString()
-    }
-    if (fakeDate && isNaN(Date.parse(fakeDate))) {
+export async function setFakeDate(dateString: string): Promise<boolean> {
+    const fakeDate = parseDate(dateString)
+    if (fakeDate === null) {
         throw new Error(
             'Invalid format! Try "2023-03-25 12:40", "2023-03-25" (midnight), "2023-03-25T12:40Z" (UTC), "2023-03-25T12:40:00.120+1130" or number of milliseconds since January 1, 1970.'
         )

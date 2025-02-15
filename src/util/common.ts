@@ -71,6 +71,20 @@ export function overwriteDatePart(dateString: string, newDate: Date): string {
     return newDateString + dateString.slice(10)
 }
 
+/** Tries parsing a date string, returns a valid date string or null if invalid.
+ *
+ * If the string is a UNIX timestamp, it is converted into an ISO string instead.
+ */
+export function parseDate(date: string): string | null {
+    if (date && Number.isInteger(+date)) {
+        date = new Date(Number.parseInt(date)).toISOString()
+    }
+    if (date && isNaN(Date.parse(date))) {
+        return null
+    }
+    return date
+}
+
 export async function setBadgeAndTitle(tabId: number, state: ContentScriptState) {
     let badgeText = ''
     if (state.fakeDateActive) {
