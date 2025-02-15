@@ -14,7 +14,7 @@ https://github.com/user-attachments/assets/9851f855-36ca-419a-b743-fc5d1b2499d5
 - Open the tab you want to change the time in.
 - Click the Extensions icon in the toolbar, then click Time Travel.
 - Edit the date and time in the input field directly, or click the calendar icon to choose the date visually.
-- Confirm with `Enter` or by clicking the "Change Date" button. When first activating the extension on a tab, the page needs to be reloaded once to apply the changes.
+- Confirm with `Enter` or by clicking the "Change Date" button. When first activating the extension on a tab, the page needs to be reloaded once to apply the changes. (Only in Chrome)
 - Any JavaScript `Date` or `Intl.DateTimeFormat` in the current tab now returns the fake date/time you set.
 
 To restore the system time, click the extension icon and press Reset.
@@ -34,13 +34,12 @@ Press the play (▶) button to make the fake clock tick forward at a normal rate
 ## Features
 - Fakes date and time for all methods of `Date` and `Intl.DateTimeFormat` objects.
 - Time can be stopped and resumed.
-- Minimal permissions, only affects current tab after clicking the extension icon.
+- Minimal permissions, only affects current tab after clicking the extension icon. (Only in Chrome)
 
 ## Limitations
 - Only JavaScript is affected by the extension.
 - Some functionality or animations may behave strangely if the clock is stopped. Try resuming the clock via the ▶ button in that case.
 - The extension does not work in iframes with the `sandbox` attribute.
-- No support for Firefox (yet)
 
 ## Installation
 For Chrome, Edge, and other Chromium-based browsers, install the extension from the Chrome Web Store: https://chrome.google.com/webstore/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg
@@ -49,5 +48,12 @@ For Chrome, Edge, and other Chromium-based browsers, install the extension from 
 To build and use a local version:
 - Clone this repository and run `npm install`.
 - Run `npm run dev` (or `npm run build` for a production version).
+
+### Chrome
 - Open chrome://extensions and enable 'Developer Mode'.
-- Click 'Load unpacked' and select the `dist/` directory
+- Click 'Load unpacked' and select the `dist/chrome` directory
+
+### Firefox
+- Open about:debugging
+- Navigate to 'This Firefox'
+- Click 'Temporary Extensions' > 'Load Temporary Add-on...' and select `dist/firefox/manifest.json`.
