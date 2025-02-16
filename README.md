@@ -8,6 +8,8 @@
 
 A Chrome extension to fake the current date and time in JavaScript `Date` or `Intl.DateTimeFormat` objects, to help you debug time-dependent frontend applications without having to change the system time.
 
+![Demo](./images/demo.gif)
+
 ## Usage
 - Open the tab you want to change the time in.
 - Click the Extensions icon in the toolbar, then click Time Travel.
