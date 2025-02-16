@@ -8,12 +8,23 @@ body {
     font-size: 1em;
 }
 
+main {
+    margin: 0 auto;
+    padding: 10px;
+    max-width: 500px;
+}
+
 h3 {
     margin-bottom: 0;
     border-bottom: 1px solid #aaa;
 }
+h4 {
+    margin-bottom: 0;
+    color: #aaa;
+}
 
 p {
+    margin-top: 4px;
     margin-left: 10px;
 }
 

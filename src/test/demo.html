@@ -1,17 +1,16 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <script>
-            console.log('page initializing...', new Date().toString())
-        </script>
-        <title>Time and Date Demo</title>
+        <title>Time Travel Demo</title>
         <link rel="stylesheet" href="demo.css" />
     </head>
 
     <body>
-        <div>
+        <main>
             <h3>Current JavaScript Date & Time</h3>
+            <h4>Date</h4>
             <p id="now"></p>
+            <h4>Intl.DateTimeFormat</h4>
             <p id="nowIntl"></p>
 
             <script>
@@ -23,6 +22,6 @@
                     }).format()
                 }, 1000)
             </script>
-        </div>
+        </main>
     </body>
 </html>
