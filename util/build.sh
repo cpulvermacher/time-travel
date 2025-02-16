@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 set -eu
 
 MODE=$1
@@ -46,17 +46,24 @@ cat dist/chrome/manifest.json | \
     jq --argfile ffspecific "src/manifest.firefox.json" '. + $ffspecific' \
     > dist/firefox/manifest.json
 
+create_zip() {
+    ZIP_NAME="$1"
+    TARGET_DIR="$2"
 
-if [ "$MODE" = "production" ]
-then
-    ZIP_NAME="time-travel-$LONG_VERSION.zip"
-
-    rm -f "../$ZIP_NAME"
-    cd dist/
-    zip -r "../$ZIP_NAME" ./*
+    ZIP_PATH="../../$ZIP_NAME"
+    rm -f "$ZIP_PATH"
+    cd "$TARGET_DIR"
+    zip -r "$ZIP_PATH" ./*
+    cd -
 
     echo ""
     echo "Created zip file: $ZIP_NAME"
+}
+
+if [ "$MODE" = "production" ]
+then
+    create_zip "time-travel-$LONG_VERSION-chrome.zip" dist/chrome
+    create_zip "time-travel-$LONG_VERSION-firefox.zip" dist/firefox
 fi
 
 echo "========================================"
