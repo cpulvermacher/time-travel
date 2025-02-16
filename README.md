@@ -21,13 +21,13 @@ When the fake time is turned on, the clock is paused by default.
 Press the play (▶) button to make the fake clock tick forward at a normal rate, press stop (⏹) to pause the clock.
 
 ### Example Dates and Formats
-- `2023-04-27 12:40` (local time)
-- `2023-04-27` (midnight UTC)
-- `2025-03-30 00:59:55` (assuming your system timezone is Europe/London(GMT), 5 seconds before a one-hour jump to 2a.m. to summer time)
-- `2023-04-27T12:40Z` (set local equivalent for given UTC time)
-- `2023-04-27T12:40+1130` (set local equivalent for time with +11:30 timezone offset. Note that actual time zone is not changed)
-- `2023-03-25T12:40:00.120` (local time with milliseconds)
-- `1731493140025` (UNIX timestamp)
+- `2023-04-27 12:40` - Local time
+- `2023-04-27` - Midnight UTC
+- `2025-03-30 00:59:55` - Assuming your system timezone is Europe/London (GMT), 5 seconds before a one-hour jump to 2 a.m. (summer time)
+- `2023-04-27T12:40Z` - Set local equivalent for given UTC time
+- `2023-04-27T12:40+1130` - Set local equivalent for time with +11:30 timezone offset. Note that actual time zone is not changed
+- `2023-03-25T12:40:00.120` - Local time with milliseconds
+- `1731493140025` - UNIX timestamp
 
 ## Features
 - Fakes date and time for all methods of `Date` and `Intl.DateTimeFormat` objects.
