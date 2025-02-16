@@ -43,7 +43,7 @@ mkdir -p dist/firefox
 cp -r dist/chrome/* dist/firefox/
 cat dist/chrome/manifest.json | \
     jq '.background.scripts = [.background.service_worker] | del(.background.service_worker) | del(.version_name) ' | \
-    jq --argfile ffspecific "src/manifest.firefox.json" '. + $ffspecific' \
+    jq '. * input' - "src/manifest.firefox.json" \
     > dist/firefox/manifest.json
 
 create_zip() {
