@@ -8,7 +8,7 @@
 
 A Chrome extension to fake the current date and time in JavaScript `Date` or `Intl.DateTimeFormat` objects, to help you debug time-dependent frontend applications without having to change the system time.
 
-![Demo](./images/demo.gif)
+https://github.com/user-attachments/assets/9851f855-36ca-419a-b743-fc5d1b2499d5
 
 ## Usage
 - Open the tab you want to change the time in.
