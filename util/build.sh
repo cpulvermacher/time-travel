@@ -22,18 +22,29 @@ export LONG_VERSION
 cd "$ROOT"
 
 rm -rf dist
-mkdir dist
 
+################## Chrome build ###################
+
+mkdir -p dist/chrome
 vite build -m "${MODE}"
 
 # copy extra assets
-mkdir dist/images/
-cp -a images/icon*.png dist/images/
+mkdir dist/chrome/images/
+cp -a images/icon*.png dist/chrome/images/
 
 cat src/manifest.json | \
     sed "s/__VERSION_NAME__/$LONG_VERSION/g" | \
     sed "s/__VERSION__/$VERSION/g" \
-    > dist/manifest.json
+    > dist/chrome/manifest.json
+
+### Create Firefox version using Chrome as base ###
+
+mkdir -p dist/firefox
+cp -r dist/chrome/* dist/firefox/
+cat dist/chrome/manifest.json | \
+    jq '.background.scripts = [.background.service_worker] | del(.background.service_worker) | del(.version_name) ' | \
+    jq --argfile ffspecific "src/manifest.firefox.json" '. + $ffspecific' \
+    > dist/firefox/manifest.json
 
 
 if [ "$MODE" = "production" ]

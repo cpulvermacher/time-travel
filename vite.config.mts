@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => ({
         pure: mode === 'production' ? ['console.log'] : [],
     },
     build: {
-        outDir: '../dist',
+        outDir: '../dist/chrome',
         emptyOutDir: true,
         target: 'chrome102',
         minify: false,

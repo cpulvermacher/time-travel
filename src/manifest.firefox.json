@@ -1,0 +1,18 @@
+{
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "time@travel",
+            "strict_min_version": "128.0"
+        }
+    },
+    "content_scripts": [
+        {
+            "matches": ["http://*/*", "https://*/*", "file://*/*"],
+            "js": ["scripts/replace_date.js"],
+            "all_frames": true,
+            "match_about_blank": true,
+            "run_at": "document_start",
+            "world": "MAIN"
+        }
+    ]
+}
