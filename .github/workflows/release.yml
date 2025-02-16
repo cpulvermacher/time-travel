@@ -25,3 +25,18 @@ jobs:
       with:
         name: time-travel-${{ github.ref_name }}
         path: dist/
+  upload-cws:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: time-travel-${{ github.ref_name }}
+        path: upload-cws/
+    - name: Upload to Chrome Web Store
+      env:
+        CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+        REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+        EXTENSION_ID: jfdbpgcmmenmelcghpbbkldkcfiejcjg
+      run: chrome-webstore-upload upload --source upload-cws/time-travel-${{ github.ref_name }}.zip

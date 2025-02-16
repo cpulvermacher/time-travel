@@ -15,6 +15,7 @@
         "@sveltejs/vite-plugin-svelte": "^5.0.3",
         "@tsconfig/svelte": "^5.0.4",
         "@types/chrome": "^0.0.304",
+        "chrome-webstore-upload-cli": "^3.3.1",
         "eslint": "^9.20.1",
         "happy-dom": "^17.1.0",
         "prettier": "^3.5.1",
@@ -25,7 +26,7 @@
         "vitest": "^3.0.5"
     },
     "dependencies": {
-        "svelte": "^5.20.0",
-        "@svelte-plugins/datepicker": "^1.0.11"
+        "@svelte-plugins/datepicker": "^1.0.11",
+        "svelte": "^5.20.0"
     }
 }
