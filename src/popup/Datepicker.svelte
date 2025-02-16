@@ -184,7 +184,7 @@
         --datepicker-container-border-radius: 12px;
         --datepicker-container-box-shadow: 0 1px 20px rgba(0, 0, 0, 0.1);
         --datepicker-container-font-family: var(--datepicker-font-family);
-        --datepicker-container-left: -20px;
+        --datepicker-container-left: -14px;
         --datepicker-container-position: absolute;
         --datepicker-container-top: 105%;
         --datepicker-container-width: fit-content;
