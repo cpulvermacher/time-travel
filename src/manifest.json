@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Time Travel",
-    "description": "Spoof the current date and time seen by websites. Useful for debugging frontend apps that depend on the time.",
+    "description": "Fake the current date and time in JavaScript `Date` or `Intl.DateTimeFormat` objects to help you debug time-dependent frontend applications without having to change the system time.",
     "version": "__VERSION__",
     "version_name": "__VERSION_NAME__",
     "minimum_chrome_version": "102",

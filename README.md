@@ -6,8 +6,7 @@
 [![Status](https://flat.badgen.net/github/checks/cpulvermacher/time-travel)](https://github.com/cpulvermacher/time-travel/actions/workflows/node.js.yml)
 [![License](https://flat.badgen.net/github/license/cpulvermacher/time-travel)](./LICENSE)
 
-A Chrome extension to fake the current date returned by JavaScript `Date` or `Intl.DateTimeFormat` objects.
-You can use it to debug time-dependent frontend applications without having to change the system time.
+A Chrome extension to fake the current date and time in JavaScript `Date` or `Intl.DateTimeFormat` objects, to help you debug time-dependent frontend applications without having to change the system time.
 
 ## Usage
 - Open the tab you want to change the time in.
