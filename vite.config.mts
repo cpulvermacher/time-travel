@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => ({
     build: {
         outDir: '../dist/chrome',
         emptyOutDir: true,
-        target: 'chrome102',
+        target: ['chrome102', 'firefox128'],
         minify: false,
         cssMinify: true,
         rollupOptions: {
