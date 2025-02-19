@@ -67,6 +67,11 @@
     $effect(() => {
         void isOpen //trigger on opening/closing datepicker
         document.documentElement.style.height = `${document.body.scrollHeight}px`
+
+        // Hack to force a full redraw, as Firefox 128 may not redraw the popup correctly after resizing
+        setTimeout(() => {
+            document.body.style.transform = isOpen ? 'rotate(0.01deg)' : 'none'
+        }, 30)
     })
 </script>
 
