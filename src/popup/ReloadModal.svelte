@@ -19,7 +19,9 @@
     }
 </script>
 
-<div class={['background', { visible }]}></div>
+{#if visible}
+    <div class={'background'}></div>
+{/if}
 <div class={['modal', { visible }]}>
     <p class="modal__text">Almost ready! Please reload the page for the changes to take effect.</p>
     <button bind:this={buttonRef} onclick={reload}>Reload</button>
@@ -33,21 +35,24 @@
         width: 150%;
         height: 100%;
         background: radial-gradient(#8080fd, var(--primary-color));
-        transform: rotate(90deg);
         transform-origin: bottom right;
-        transition: transform 0.3s ease-in;
+        animation: rotateIn 0.3s ease-in;
     }
 
-    .background.visible {
-        transform: rotate(0deg);
+    @keyframes rotateIn {
+        from {
+            transform: rotate(90deg);
+        }
+        to {
+            transform: rotate(0deg);
+        }
     }
 
     .modal {
         position: fixed;
-        top: 150%;
+        top: 0;
         left: 0;
         width: 100%;
-        height: 100%;
         max-height: 0;
         transition: opacity 1s;
         opacity: 0;
@@ -59,7 +64,7 @@
     }
 
     .modal.visible {
-        top: 0;
+        height: 100%;
         max-height: initial;
         opacity: 1;
     }

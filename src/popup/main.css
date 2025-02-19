@@ -8,11 +8,14 @@ body {
     min-height: 90px;
     min-width: 210px;
     width: fit-content;
+    max-width: 244px;
+    margin: 0;
 
     color: var(--text-color);
     background-color: white;
 
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-size: 12px;
     line-height: 1.5;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -25,6 +28,8 @@ body {
 }
 
 button {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1;
     height: 27px;
     border: 1px solid #9f9f9f;
     border-radius: 3px;

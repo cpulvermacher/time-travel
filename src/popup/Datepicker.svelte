@@ -99,7 +99,9 @@
 
 <style>
     input {
-        width: 20ch;
+        width: 176px;
+        height: 27px;
+        box-sizing: border-box;
         padding: 5px;
         padding-left: 21px;
         margin-top: 5px;
