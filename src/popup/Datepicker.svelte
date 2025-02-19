@@ -347,7 +347,7 @@
         --datepicker-calendar-day-margin-bottom: 1px;
         --datepicker-calendar-day-padding: var(--datepicker-padding-base);
         --datepicker-calendar-day-text-align: center;
-        --datepicker-calendar-day-width: 20px;
+        --datepicker-calendar-day-width: 31px;
         --datepicker-calendar-day-zindex-focus: 12;
 
         /**
