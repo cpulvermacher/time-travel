@@ -61,6 +61,13 @@
             }
         }
     }
+
+    // force resize of popup when datepicker is opened/closed.
+    // This isn't needed on Chrome, but firefox maintains the original height without this
+    $effect(() => {
+        void isOpen //trigger on opening/closing datepicker
+        document.documentElement.style.height = `${document.body.scrollHeight}px`
+    })
 </script>
 
 <DatePicker
