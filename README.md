@@ -2,11 +2,12 @@
 
 [![Latest Release](https://flat.badgen.net/github/release/cpulvermacher/time-travel)](https://github.com/cpulvermacher/time-travel/releases)
 [![Chrome Web Store](https://flat.badgen.net/chrome-web-store/v/jfdbpgcmmenmelcghpbbkldkcfiejcjg)](https://chrome.google.com/webstore/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg)
+[![Mozilla Add-on Version](https://img.shields.io/amo/v/timetravel?style=flat-square)](https://addons.mozilla.org/en-US/firefox/addon/timetravel/)
 [![Installs](https://flat.badgen.net/chrome-web-store/users/jfdbpgcmmenmelcghpbbkldkcfiejcjg)](https://chrome.google.com/webstore/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg)
 [![Status](https://flat.badgen.net/github/checks/cpulvermacher/time-travel)](https://github.com/cpulvermacher/time-travel/actions/workflows/node.js.yml)
 [![License](https://flat.badgen.net/github/license/cpulvermacher/time-travel)](./LICENSE)
 
-A Chrome extension to fake the current date and time in JavaScript `Date` or `Intl.DateTimeFormat` objects, to help you debug time-dependent frontend applications without having to change the system time.
+A browser extension to fake the current date and time in JavaScript `Date` or `Intl.DateTimeFormat` objects, to help you debug time-dependent frontend applications without having to change the system time.
 
 https://github.com/user-attachments/assets/9851f855-36ca-419a-b743-fc5d1b2499d5
 
@@ -14,7 +15,7 @@ https://github.com/user-attachments/assets/9851f855-36ca-419a-b743-fc5d1b2499d5
 - Open the tab you want to change the time in.
 - Click the Extensions icon in the toolbar, then click Time Travel.
 - Edit the date and time in the input field directly, or click the calendar icon to choose the date visually.
-- Confirm with `Enter` or by clicking the "Change Date" button. When first activating the extension on a tab, the page needs to be reloaded once to apply the changes. (Only in Chrome)
+- Confirm with `Enter` or by clicking the "Change Date" button. In chrome, when first activating the extension on a tab, the page needs to be reloaded once to apply the changes.
 - Any JavaScript `Date` or `Intl.DateTimeFormat` in the current tab now returns the fake date/time you set.
 
 To restore the system time, click the extension icon and press Reset.
@@ -43,6 +44,8 @@ Press the play (▶) button to make the fake clock tick forward at a normal rate
 
 ## Installation
 For Chrome, Edge, and other Chromium-based browsers, install the extension from the Chrome Web Store: https://chrome.google.com/webstore/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg
+
+For Firefox, install it from: https://addons.mozilla.org/en-US/firefox/addon/timetravel/
 
 ## Development
 To build and use a local version:
