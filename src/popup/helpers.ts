@@ -2,6 +2,7 @@
 import {
     getActiveTabId,
     injectFunction,
+    isAboutUrl,
     isExtensionGalleryUrl,
     isFileUrl,
     registerContentScript,
@@ -117,6 +118,8 @@ export async function getInitialState(): Promise<{ fakeDate?: string; clockIsRun
             )
         } else if (await isExtensionGalleryUrl(tabId)) {
             throw new Error('Time Travel cannot be used in the Chrome Web Store.')
+        } else if (await isAboutUrl(tabId)) {
+            throw new Error('Time Travel cannot be used in the current tab.')
         } else {
             const message = error instanceof Error ? error.message : ''
             throw new Error('Time Travel cannot be used in the current tab: ' + message)

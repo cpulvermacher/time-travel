@@ -27,6 +27,12 @@ export async function isExtensionGalleryUrl(tabId: number): Promise<boolean> {
     )
 }
 
+/** does this tab have an about: URL? (these fail in interesting ways) */
+export async function isAboutUrl(tabId: number): Promise<boolean> {
+    const tabDetails = await chrome.tabs.get(tabId)
+    return !!tabDetails.url?.startsWith('about:')
+}
+
 /** inject function into MAIN world */
 export async function injectFunction<Args extends [string], Result>(
     tabId: number,
