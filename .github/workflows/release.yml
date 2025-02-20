@@ -21,14 +21,20 @@ jobs:
     - run: npm run lint
     - run: npm run test
     - run: npm run build
-    - uses: actions/upload-artifact@v4
+    - name: Create Chrome artifact
+      uses: actions/upload-artifact@v4
       with:
-        name: time-travel-${{ github.ref_name }}
-        path: dist/
+        name: time-travel-${{ github.ref_name }}-chrome
+        path: dist/chrome
+    - name: Create Firefox artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: time-travel-${{ github.ref_name }}-firefox
+        path: dist/firefox
     - name: Upload to Chrome Web Store
       env:
         CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
         CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
         REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
         EXTENSION_ID: jfdbpgcmmenmelcghpbbkldkcfiejcjg
-      run: cd dist/ && npx chrome-webstore-upload upload
+      run: cd dist/chrome && npx chrome-webstore-upload upload
