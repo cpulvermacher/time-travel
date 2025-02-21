@@ -42,4 +42,4 @@ jobs:
       env:
         WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
         WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
-      run: cd dist/firefox && npx web-ext sign --channel listed --upload-source-code ../../time-travel-${{ github.ref_name }}-src.zip && ls -l web-ext-artifacts
+      run: cd dist/firefox && npx web-ext sign --channel listed --upload-source-code ../../time-travel-*-src.zip && ls -l web-ext-artifacts
