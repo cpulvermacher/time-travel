@@ -26,11 +26,6 @@ jobs:
       with:
         name: time-travel-${{ github.ref_name }}-chrome
         path: dist/chrome
-    - name: Create Firefox artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: time-travel-${{ github.ref_name }}-firefox
-        path: dist/firefox
     - name: Upload to Chrome Web Store
       env:
         CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
@@ -42,4 +37,9 @@ jobs:
       env:
         WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
         WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
-      run: cd dist/firefox && npx web-ext sign --channel listed --upload-source-code ../../time-travel-*-src.zip && ls -l web-ext-artifacts
+      run: cd dist/firefox && npx web-ext sign --channel listed --upload-source-code ../../time-travel-*-src.zip
+    - name: Create Firefox artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: time-travel-${{ github.ref_name }}-firefox
+        path: dist/firefox/web-ext-artifacts
