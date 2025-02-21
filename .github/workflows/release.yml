@@ -38,3 +38,8 @@ jobs:
         REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
         EXTENSION_ID: jfdbpgcmmenmelcghpbbkldkcfiejcjg
       run: cd dist/chrome && npx chrome-webstore-upload upload
+    - name: Upload to AMO
+      env:
+        WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
+        WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+      run: cd dist/firefox && npx web-ext sign --channel listed && ls -l web-ext-artifacts
