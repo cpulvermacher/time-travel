@@ -1,17 +1,15 @@
 <script lang="ts">
+    import type { Action } from 'svelte/action'
     import { reloadTab } from '../util/browser'
 
     interface Props {
         visible: boolean
     }
     const { visible }: Props = $props()
-    let buttonRef: HTMLButtonElement
 
-    $effect(() => {
-        if (visible) {
-            buttonRef.focus()
-        }
-    })
+    const focusButton: Action = (node) => {
+        node.focus()
+    }
 
     async function reload() {
         await reloadTab()
@@ -21,11 +19,11 @@
 
 {#if visible}
     <div class={'background'}></div>
+    <div class={['modal', { visible }]}>
+        <p class="modal__text">Almost ready! Please reload the page for the changes to take effect.</p>
+        <button use:focusButton onclick={reload}>Reload</button>
+    </div>
 {/if}
-<div class={['modal', { visible }]}>
-    <p class="modal__text">Almost ready! Please reload the page for the changes to take effect.</p>
-    <button bind:this={buttonRef} onclick={reload}>Reload</button>
-</div>
 
 <style>
     .background {
