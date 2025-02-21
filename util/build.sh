@@ -47,23 +47,28 @@ cat dist/chrome/manifest.json | \
     > dist/firefox/manifest.json
 
 create_zip() {
-    ZIP_NAME="$1"
+    ZIP_PATH="$1"
     TARGET_DIR="$2"
 
-    ZIP_PATH="../../$ZIP_NAME"
     rm -f "$ZIP_PATH"
     cd "$TARGET_DIR"
     zip -r "$ZIP_PATH" ./*
     cd -
 
     echo ""
-    echo "Created zip file: $ZIP_NAME"
+    echo "Created zip file: $ZIP_PATH"
 }
 
 if [ "$MODE" = "production" ]
 then
-    create_zip "time-travel-$LONG_VERSION-chrome.zip" dist/chrome
-    create_zip "time-travel-$LONG_VERSION-firefox.zip" dist/firefox
+    create_zip "$PWD/time-travel-$LONG_VERSION-chrome.zip" dist/chrome
+    create_zip "$PWD/time-travel-$LONG_VERSION-firefox.zip" dist/firefox
+
+    # create a source code bundle by cloning the repo and zipping it
+    TMP_DIR=$(mktemp -d)
+    git clone . "$TMP_DIR/time-travel-$LONG_VERSION"
+    create_zip "$PWD/time-travel-$LONG_VERSION-src.zip" "$TMP_DIR/time-travel-$LONG_VERSION"
+    rm -rf "$TMP_DIR"
 fi
 
 echo "========================================"
