@@ -1,5 +1,7 @@
 <script lang="ts">
     import type { Action } from 'svelte/action'
+    import { quartIn } from 'svelte/easing'
+    import { fade } from 'svelte/transition'
     import { reloadTab } from '../util/browser'
 
     interface Props {
@@ -18,8 +20,8 @@
 </script>
 
 {#if visible}
-    <div class={'background'}></div>
-    <div class={['modal', { visible }]}>
+    <div class="background"></div>
+    <div class="modal" transition:fade={{ duration: 500, easing: quartIn }}>
         <p class="modal__text">Almost ready! Please reload the page for the changes to take effect.</p>
         <button use:focusButton onclick={reload}>Reload</button>
     </div>
@@ -51,20 +53,13 @@
         top: 0;
         left: 0;
         width: 100%;
-        max-height: 0;
-        transition: opacity 1s;
-        opacity: 0;
+        height: 100%;
+        max-height: initial;
 
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-    }
-
-    .modal.visible {
-        height: 100%;
-        max-height: initial;
-        opacity: 1;
     }
 
     .modal__text {
