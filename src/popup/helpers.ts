@@ -46,6 +46,10 @@ export async function setFakeDate(dateString: string): Promise<boolean> {
 
 /** sets fake date & enables it, returns whether page needs reload for content script to be injected */
 export async function setAndEnable(fakeDate: string): Promise<boolean> {
+    if (import.meta.env.DEV) {
+        return true
+    }
+
     const tabId = await getActiveTabId()
     const state = await getContentScriptState(tabId)
     if (state.tickStartTimestamp) {
