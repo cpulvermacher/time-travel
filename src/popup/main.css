@@ -36,7 +36,7 @@ button {
     border-radius: 3px;
     padding: 5px 10px;
     background: white;
-    color: var(--primary-color);
+    color: var(--text-color);
     transition: filter 0.2s ease-in;
 }
 
