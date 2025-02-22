@@ -1,5 +1,6 @@
 dist/
 node_modules/
 .vite/
+images/archive/
 
 *.zip
