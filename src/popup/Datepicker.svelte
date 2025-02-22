@@ -123,13 +123,13 @@
         border: none;
         padding: 0;
     }
+    .calendar-icon:focus-visible {
+        outline: 2px solid var(--primary-color);
+    }
 
     /* Reset button styles */
     :global(.datepicker button) {
         height: unset;
-    }
-    :global(.datepicker button:focus) {
-        outline: none;
     }
 
     :global(.datepicker[data-picker-theme='theme']) {
