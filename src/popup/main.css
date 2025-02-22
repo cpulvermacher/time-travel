@@ -1,6 +1,7 @@
 :root {
     --primary-color: #6060f4;
     --text-color: #494949;
+    --border-color: #c2c2c2;
 }
 
 html,
@@ -31,7 +32,7 @@ button {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1;
     height: 27px;
-    border: 1px solid #9f9f9f;
+    border: 1px solid var(--border-color);
     border-radius: 3px;
     padding: 5px 10px;
     background: white;

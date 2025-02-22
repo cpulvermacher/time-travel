@@ -107,7 +107,7 @@
         margin-top: 5px;
         color: var(--text-color);
         background: white;
-        border: 1px solid #9f9f9f;
+        border: 1px solid var(--border-color);
         border-radius: 3px;
     }
 

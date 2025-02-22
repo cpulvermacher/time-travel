@@ -51,7 +51,7 @@
         border-radius: 40px;
         cursor: pointer;
         transition: all 0.3s;
-        border: 1px solid #9f9f9f;
+        border: 1px solid var(--border-color);
     }
     input:checked + .toggle-bg {
         background-color: var(--primary-color);
