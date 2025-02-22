@@ -3,6 +3,7 @@
     import { resetTickStart, setAndEnable, setFakeDate, toggleTick } from './helpers'
     import Message from './Message.svelte'
     import ReloadModal from './ReloadModal.svelte'
+    import Toggle from './Toggle.svelte'
 
     interface Props {
         fakeDate: string
@@ -56,15 +57,8 @@
             Date and time to set:
             <Datepicker bind:fakeDate onEnterKey={changeDate} />
         </label>
-        <button
-            onclick={toggleClockRunning}
-            class="tick-toggle-btn"
-            title="Start/stop progressing clock from given value"
-            aria-label="Start/stop progressing clock from given value"
-        >
-            <span class="tick-state">{clockIsRunning ? stopIcon : playIcon}</span>
-        </button>
     </div>
+    <Toggle bind:checked={clockIsRunning} label="Progress time" description="Clock will progress from fake time" />
     <Message message={errorMsg} />
     <div class="row">
         <button onclick={reset} title="Stop faking time and reset">Reset</button>
