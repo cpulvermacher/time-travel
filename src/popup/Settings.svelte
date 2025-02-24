@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Background from './Background.svelte'
     import Datepicker from './Datepicker.svelte'
     import { resetTickStart, setAndEnable, setFakeDate, toggleTick } from './helpers'
     import Message from './Message.svelte'
@@ -58,6 +59,7 @@
     }
 </script>
 
+<Background desaturated={!isEnabled} rotating={!isEnabled || clockIsRunning} />
 <main>
     <div class="row">
         <label>
