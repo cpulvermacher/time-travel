@@ -72,8 +72,8 @@
         height: 12px;
         background-color: white;
         border-radius: 50%;
-        filter: drop-shadow(0 3px 1px rgba(0, 0, 0, 0.3));
-        transition: transform 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+        filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.3));
+        transition: transform 0.2s cubic-bezier(0.54, 0.38, 0.06, 1.62);
     }
     input:checked + .toggle-bg .slider {
         transform: translateX(16px);
