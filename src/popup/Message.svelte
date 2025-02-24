@@ -10,7 +10,7 @@
 <style>
     .error.visible {
         padding: 5px;
-        color: #893b3b;
-        border: 1px solid #893b3b;
+        color: var(--error-color);
+        border: 1px solid var(--error-color);
     }
 </style>
