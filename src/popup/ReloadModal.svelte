@@ -4,11 +4,6 @@
     import { fade } from 'svelte/transition'
     import { reloadTab } from '../util/browser'
 
-    interface Props {
-        visible: boolean
-    }
-    const { visible }: Props = $props()
-
     const focusButton: Action = (node) => {
         node.focus()
     }
@@ -19,13 +14,11 @@
     }
 </script>
 
-{#if visible}
-    <div class="background"></div>
-    <div class="modal" transition:fade={{ duration: 500, easing: quartIn }}>
-        <p class="modal__text">Almost ready! Please reload the page for the changes to take effect.</p>
-        <button use:focusButton onclick={reload}>Reload</button>
-    </div>
-{/if}
+<div class="background"></div>
+<div class="modal" transition:fade={{ duration: 500, easing: quartIn }}>
+    <p class="modal__text">Almost ready! Please reload the page for the changes to take effect.</p>
+    <button use:focusButton onclick={reload}>Reload</button>
+</div>
 
 <style>
     .background {

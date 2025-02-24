@@ -76,7 +76,9 @@
     />
     <Toggle bind:checked={isEnabled} onChange={onEnableChange} label="Enable Fake Date" />
 </main>
-<ReloadModal visible={showReloadModal} />
+{#if showReloadModal}
+    <ReloadModal />
+{/if}
 
 <style>
     main {
