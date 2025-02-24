@@ -38,9 +38,6 @@ export async function setFakeDate(dateString: string): Promise<boolean> {
     const state = await getContentScriptState(tabId)
     await setBadgeAndTitle(tabId, state)
 
-    if (!needsReload) {
-        window.close()
-    }
     return needsReload
 }
 
