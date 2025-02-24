@@ -18,12 +18,15 @@ jobs:
       with:
         fetch-depth: 0
         fetch-tags: true
+    - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4
+      with:
+        version: 9
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run lint
-    - run: npm run test --if-present
-    - run: npm run dev --if-present
+        cache: 'pnpm'
+    - run: pnpm i
+    - run: pnpm lint
+    - run: pnpm test --if-present
+    - run: pnpm dev --if-present

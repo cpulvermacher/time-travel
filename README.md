@@ -49,8 +49,8 @@ For Firefox, install it from: https://addons.mozilla.org/en-US/firefox/addon/tim
 
 ## Development
 To build and use a local version:
-- Clone this repository and run `npm install`.
-- Run `npm run dev` (or `npm run build` for a production version).
+- Clone this repository and run `pnpm install`.
+- Run `pnpm dev` (or `pnpm build` for a production version).
 
 ### Chrome
 - Open chrome://extensions and enable 'Developer Mode'.

@@ -9,7 +9,7 @@
         "lint": "tsc && eslint *.mts src/ && prettier src --check && svelte-check --tsconfig ./tsconfig.json",
         "prettier": "prettier src --write",
         "test": "vitest --run",
-        "checkall": "npm run test && npm run lint && npm run build"
+        "checkall": "pnpm test && pnpm lint && pnpm build"
     },
     "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^5.0.3",
