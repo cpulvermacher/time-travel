@@ -28,5 +28,6 @@ jobs:
         cache: 'pnpm'
     - run: pnpm i
     - run: pnpm lint
+    - run: pnpm audit --production
     - run: pnpm test --if-present
     - run: pnpm dev --if-present
