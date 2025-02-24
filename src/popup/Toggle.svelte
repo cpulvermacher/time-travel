@@ -3,14 +3,19 @@
         label?: string
         description?: string
         checked: boolean
+        onChange?: (checked: boolean) => void
     }
-    let { label, description, checked = $bindable() }: Props = $props()
+    let { label, description, checked = $bindable(), onChange }: Props = $props()
+
+    function onchange() {
+        onChange?.(checked)
+    }
 </script>
 
 <label class="toggle">
     <div class="row">
         <div class="label">{label}</div>
-        <input type="checkbox" bind:checked />
+        <input type="checkbox" bind:checked {onchange} />
         <div class="toggle-bg">
             <span class="slider"></span>
         </div>

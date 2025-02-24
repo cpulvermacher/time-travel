@@ -6,6 +6,7 @@
     import Toggle from './Toggle.svelte'
 
     interface Props {
+        isEnabled: boolean
         fakeDate: string
         clockIsRunning: boolean
     }
@@ -15,20 +16,17 @@
     let showReloadModal = $state(false)
     let clockIsRunning = $state(initialState.clockIsRunning)
     let fakeDate = $state(initialState.fakeDate)
+    let isEnabled = $state(initialState.isEnabled)
 
     async function toggleClockRunning() {
         try {
-            clockIsRunning = await toggleTick()
-            const needReload = await setFakeDate(fakeDate)
-            if (needReload) {
-                showReloadModal = true
-            }
+            await toggleTick()
+            await setFakeDate(fakeDate)
         } catch (e) {
             errorMsg = 'Toggling clock failed: ' + (e instanceof Error ? e.message : '')
-            clockIsRunning = false
         }
     }
-    async function changeDate() {
+    async function applyAndEnable() {
         try {
             const needReload = await setAndEnable(fakeDate)
             if (needReload) {
@@ -46,24 +44,35 @@
             errorMsg = 'Reset failed: ' + (e instanceof Error ? e.message : '')
         }
     }
-
-    const playIcon = '\u23F5'
-    const stopIcon = '\u23F9'
+    function onClockToggle() {
+        if (isEnabled) {
+            toggleClockRunning()
+        }
+    }
+    function onEnableChange(enabled: boolean) {
+        if (enabled) {
+            applyAndEnable()
+        } else {
+            reset()
+        }
+    }
 </script>
 
 <main>
     <div class="row">
         <label>
             Date and time to set:
-            <Datepicker bind:fakeDate onEnterKey={changeDate} />
+            <Datepicker bind:fakeDate onEnterKey={applyAndEnable} />
         </label>
     </div>
-    <Toggle bind:checked={clockIsRunning} label="Progress time" description="Clock will progress from fake time" />
     <Message message={errorMsg} />
-    <div class="row">
-        <button onclick={reset} title="Stop faking time and reset">Reset</button>
-        <button onclick={changeDate} class="primary" title="Change time to the value entered">Change Date</button>
-    </div>
+    <Toggle
+        bind:checked={clockIsRunning}
+        onChange={onClockToggle}
+        label="Progress time"
+        description="Clock will progress from fake time"
+    />
+    <Toggle bind:checked={isEnabled} onChange={onEnableChange} label="Enable Fake Date" />
 </main>
 <ReloadModal visible={showReloadModal} />
 
@@ -80,24 +89,5 @@
         justify-content: space-between;
         gap: 10px;
         align-items: flex-end;
-    }
-    .primary {
-        background: var(--primary-color);
-        color: white;
-    }
-
-    .tick-toggle-btn {
-        min-width: 27px;
-        width: 27px;
-        position: relative;
-    }
-
-    .tick-state {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: x-large;
-        line-height: 26px;
     }
 </style>

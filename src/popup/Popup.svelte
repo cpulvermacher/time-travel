@@ -9,6 +9,7 @@
 {#await promise then initialState}
     <Settings
         fakeDate={initialState.fakeDate ?? formatLocalTime(new Date())}
+        isEnabled={!!initialState.fakeDate}
         clockIsRunning={initialState.clockIsRunning}
     />
 {:catch error}
