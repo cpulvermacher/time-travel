@@ -45,6 +45,10 @@
             errorMsg = 'Reset failed: ' + (e instanceof Error ? e.message : '')
         }
     }
+    function onEnterKey() {
+        isEnabled = true
+        applyAndEnable()
+    }
     function onClockToggle() {
         if (isEnabled) {
             toggleClockRunning()
@@ -64,7 +68,7 @@
     <div class="row">
         <label>
             Date and time to set:
-            <Datepicker bind:fakeDate onEnterKey={applyAndEnable} />
+            <Datepicker bind:fakeDate {onEnterKey} />
         </label>
     </div>
     <Message message={errorMsg} />
