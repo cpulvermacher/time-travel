@@ -11,9 +11,14 @@
     let isOpen = $state(true)
     // Note: the datepicker internally works with timestamps in UTC.
     let pickerDate = $state(Date.parse(fakeDate))
+    let isValid = $derived(parseDate(fakeDate) !== null)
     let inputRef: HTMLInputElement
 
     function onkeydown(event: KeyboardEvent) {
+        if (!isValid) {
+            return
+        }
+
         if (event.key === 'Enter' && onEnterKey) {
             event.preventDefault()
             onEnterKey()
@@ -33,24 +38,14 @@
         inputRef.setSelectionRange(dateAndTimeSeparator + 1, -1) // select hh:mm (and everything afterwards)
     }
     function onInput() {
-        if (isOpen) {
-            // update pickerDate when input field is edited
-            let inputDateTimestamp = Date.parse(fakeDate)
-            if (!isNaN(inputDateTimestamp)) {
-                pickerDate = inputDateTimestamp
-            }
-        }
-    }
-
-    // update pickerDate on input changes
-    $effect(() => {
         const inputDate = parseDate(fakeDate)
         if (inputDate === null) {
             // if date in input field is invalid, skip
             return
         }
         pickerDate = new Date(inputDate).getTime()
-    })
+    }
+
     //force picker into open state
     $effect(() => {
         if (!isOpen) isOpen = true
@@ -76,6 +71,7 @@
             size="28"
             maxlength="28"
             spellcheck="false"
+            class={{ error: !isValid }}
         />
     </DatePicker>
 </div>
@@ -94,6 +90,22 @@
         background: white;
         border: 1px solid var(--border-color);
         border-radius: 3px;
+    }
+    input.error {
+        border: 2px solid var(--error-color);
+        outline: none;
+        animation: pulse 1s;
+    }
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 var(--error-color);
+        }
+        70% {
+            box-shadow: 0 0 0 5px rgba(255, 0, 0, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+        }
     }
 
     /* Reset button styles */

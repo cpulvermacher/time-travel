@@ -1,8 +1,9 @@
 <script lang="ts">
+    import { parseDate } from '../util/common'
     import Background from './Background.svelte'
     import Datepicker from './Datepicker.svelte'
+    import ErrorModal from './ErrorModal.svelte'
     import { resetTickStart, setAndEnable, setFakeDate, toggleTick } from './helpers'
-    import Message from './Message.svelte'
     import ReloadModal from './ReloadModal.svelte'
     import Toggle from './Toggle.svelte'
 
@@ -18,6 +19,7 @@
     let clockIsRunning = $state(initialState.clockIsRunning)
     let fakeDate = $state(initialState.fakeDate)
     let isEnabled = $state(initialState.isEnabled)
+    let isDateValid = $derived(parseDate(fakeDate) !== null)
 
     async function toggleClockRunning() {
         try {
@@ -29,6 +31,7 @@
     }
     async function applyAndEnable() {
         try {
+            //TODO missing clock state
             const needReload = await setAndEnable(fakeDate)
             if (needReload) {
                 showReloadModal = true
@@ -71,17 +74,20 @@
             <Datepicker bind:fakeDate {onEnterKey} />
         </label>
     </div>
-    <Message message={errorMsg} />
     <Toggle
         bind:checked={clockIsRunning}
+        disabled={!isDateValid}
         onChange={onClockToggle}
         label="Progress time"
         description="Clock will progress from fake time"
     />
-    <Toggle bind:checked={isEnabled} onChange={onEnableChange} label="Enable Fake Date" />
+    <Toggle bind:checked={isEnabled} disabled={!isDateValid} onChange={onEnableChange} label="Enable Fake Date" />
 </main>
 {#if showReloadModal}
     <ReloadModal />
+{/if}
+{#if errorMsg}
+    <ErrorModal text={errorMsg} />
 {/if}
 
 <style>

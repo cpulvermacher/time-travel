@@ -3,9 +3,10 @@
         label?: string
         description?: string
         checked: boolean
+        disabled?: boolean
         onChange?: (checked: boolean) => void
     }
-    let { label, description, checked = $bindable(), onChange }: Props = $props()
+    let { label, description, checked = $bindable(), disabled, onChange }: Props = $props()
 
     function onchange() {
         onChange?.(checked)
@@ -15,7 +16,7 @@
 <label class="toggle">
     <div class="row">
         <div class="label">{label}</div>
-        <input type="checkbox" bind:checked {onchange} />
+        <input type="checkbox" bind:checked {onchange} {disabled} />
         <div class="toggle-bg">
             <span class="slider"></span>
         </div>
@@ -67,6 +68,10 @@
     }
     input:focus-visible + .toggle-bg {
         outline: 2px solid var(--primary-color);
+    }
+    input:disabled + .toggle-bg {
+        background-color: #d9d9d9;
+        border-color: var(--border-color);
     }
 
     .slider {
