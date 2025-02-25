@@ -1,7 +1,7 @@
 <script lang="ts">
     import { DatePicker } from '@svelte-plugins/datepicker'
     import { tick } from 'svelte'
-    import { overwriteDatePart, parseDate } from '../util/common'
+    import { formatLocalTime, overwriteDatePart, parseDate } from '../util/common'
 
     interface Props {
         fakeDate: string
@@ -30,7 +30,11 @@
     }
     async function acceptPickerDate() {
         const newDate = new Date(pickerDate)
-        fakeDate = overwriteDatePart(fakeDate, newDate)
+        if (parseDate(fakeDate) === null) {
+            fakeDate = formatLocalTime(newDate)
+        } else {
+            fakeDate = overwriteDatePart(fakeDate, newDate)
+        }
 
         inputRef.focus()
         await tick() // wait for next DOM update
