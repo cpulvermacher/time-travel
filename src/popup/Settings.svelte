@@ -20,6 +20,7 @@
     let fakeDate = $state(initialState.fakeDate)
     let isEnabled = $state(initialState.isEnabled)
     let isDateValid = $derived(parseDate(fakeDate) !== null)
+    let effectiveDate = $state(initialState.isEnabled ? new Date(initialState.fakeDate) : undefined)
 
     async function toggleClockRunning() {
         try {
@@ -50,6 +51,7 @@
     }
     function onEnterKey() {
         isEnabled = true
+        effectiveDate = new Date(fakeDate)
         applyAndEnable()
     }
     function onClockToggle() {
@@ -59,14 +61,16 @@
     }
     function onEnableChange(enabled: boolean) {
         if (enabled) {
+            effectiveDate = new Date(fakeDate)
             applyAndEnable()
         } else {
+            effectiveDate = undefined
             reset()
         }
     }
 </script>
 
-<Background desaturated={!isEnabled} rotating={!isEnabled || clockIsRunning} />
+<Background {effectiveDate} />
 <main>
     <div class="row">
         <label>
