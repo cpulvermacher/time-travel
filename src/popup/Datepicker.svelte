@@ -57,28 +57,33 @@
     })
 </script>
 
-<DatePicker
-    bind:isOpen
-    bind:startDate={pickerDate}
-    onDateChange={acceptPickerDate}
-    enableFutureDates
-    includeFont={false}
-    theme="theme"
->
-    <input
-        {onkeydown}
-        bind:value={fakeDate}
-        use:focus
-        bind:this={inputRef}
-        oninput={onInput}
-        type="text"
-        size="28"
-        maxlength="28"
-        spellcheck="false"
-    />
-</DatePicker>
+<div class="container">
+    <DatePicker
+        bind:isOpen
+        bind:startDate={pickerDate}
+        onDateChange={acceptPickerDate}
+        enableFutureDates
+        includeFont={false}
+        theme="theme"
+    >
+        <input
+            {onkeydown}
+            bind:value={fakeDate}
+            use:focus
+            bind:this={inputRef}
+            oninput={onInput}
+            type="text"
+            size="28"
+            maxlength="28"
+            spellcheck="false"
+        />
+    </DatePicker>
+</div>
 
 <style>
+    .container {
+        height: 260px; /** DatePicker height for 6 weeks */
+    }
     input {
         width: 100%;
         height: 27px;
@@ -161,7 +166,7 @@
         --datepicker-container-border: none;
         --datepicker-container-box-shadow: none;
         --datepicker-container-font-family: var(--datepicker-font-family);
-        --datepicker-container-left: -14px;
+        --datepicker-container-left: -15px;
         --datepicker-container-position: relative;
         --datepicker-container-top: 0;
         --datepicker-container-width: 210px;
@@ -223,7 +228,7 @@
    * Calendar Header Text
    */
         --datepicker-calendar-header-text-align-items: center;
-        --datepicker-calendar-header-text-color: var(--datepicker-color);
+        --datepicker-calendar-header-text-color: var(--text-color);
         --datepicker-calendar-header-text-display: flex;
         --datepicker-calendar-header-text-font-size: inherit;
         --datepicker-calendar-header-text-font-weight: var(--datepicker-font-weight-medium);
