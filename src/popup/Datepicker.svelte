@@ -1,14 +1,14 @@
 <script lang="ts">
     import { DatePicker } from '@svelte-plugins/datepicker'
     import { tick } from 'svelte'
-    import { formatLocalTime, overwriteDatePart, parseDate } from '../util/common'
+    import { overwriteDatePart, parseDate } from '../util/common'
 
     interface Props {
         fakeDate: string
         onEnterKey?: () => void
     }
     let { fakeDate = $bindable(), onEnterKey }: Props = $props()
-    let isOpen = $state(false)
+    let isOpen = $state(true)
     // Note: the datepicker internally works with timestamps in UTC.
     let pickerDate = $state(Date.parse(fakeDate))
     let inputRef: HTMLInputElement
@@ -16,32 +16,12 @@
     function onkeydown(event: KeyboardEvent) {
         if (event.key === 'Enter' && onEnterKey) {
             event.preventDefault()
-            isOpen = false
             onEnterKey()
         }
     }
     function focus(node: HTMLInputElement) {
         node.focus()
         node.setSelectionRange(-1, -1)
-    }
-    async function toggleDatePicker() {
-        isOpen = !isOpen
-        if (isOpen) {
-            // when opening the date picker, force to standard format and allow editing the current date entered
-            const inputDate = parseDate(fakeDate)
-            if (inputDate === null) {
-                // if date in input field is invalid, reset
-                fakeDate = formatLocalTime(new Date())
-            } else {
-                fakeDate = formatLocalTime(new Date(inputDate), { fullPrecision: true })
-            }
-            pickerDate = new Date(fakeDate).getTime()
-
-            inputRef.focus()
-            await tick() // wait for next DOM update
-            const dateAndTimeSeparator = fakeDate.indexOf(' ')
-            inputRef.setSelectionRange(0, dateAndTimeSeparator) // select yyyy-MM-dd
-        }
     }
     async function acceptPickerDate() {
         const newDate = new Date(pickerDate)
@@ -62,16 +42,18 @@
         }
     }
 
-    // force resize of popup when datepicker is opened/closed.
-    // This isn't needed on Chrome, but firefox maintains the original height without this
+    // update pickerDate on input changes
     $effect(() => {
-        void isOpen //trigger on opening/closing datepicker
-        document.documentElement.style.height = `${document.body.scrollHeight}px`
-
-        // Hack to force a full redraw, as Firefox 128 may not redraw the popup correctly after resizing
-        setTimeout(() => {
-            document.body.style.transform = isOpen ? 'rotate(0.01deg)' : 'none'
-        }, 30)
+        const inputDate = parseDate(fakeDate)
+        if (inputDate === null) {
+            // if date in input field is invalid, skip
+            return
+        }
+        pickerDate = new Date(inputDate).getTime()
+    })
+    //force picker into open state
+    $effect(() => {
+        if (!isOpen) isOpen = true
     })
 </script>
 
@@ -94,37 +76,19 @@
         maxlength="28"
         spellcheck="false"
     />
-    <button onclick={toggleDatePicker} title="Choose date" aria-label="Choose date" class="calendar-icon"></button>
 </DatePicker>
 
 <style>
     input {
-        width: 176px;
+        width: 100%;
         height: 27px;
         box-sizing: border-box;
-        padding: 5px;
-        padding-left: 21px;
+        padding: 5px 10px;
         margin-top: 5px;
         color: var(--text-color);
         background: white;
         border: 1px solid var(--border-color);
         border-radius: 3px;
-    }
-
-    .calendar-icon {
-        position: absolute;
-        left: 5px;
-        top: 11px;
-        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAEmSURBVHgB7ZcPzcIwEMUfXz4BSCgKwAGgACRMAg6YBBxsOMABOAAHFAXgAK5Z2Y6lHbfQ8SfpL3lZaY/1rb01N+BHUKSMNBfEJjZWISA56Uo6C2KvVpkgFn9oRx9vICFtUT1JKO3tvRtZdjBxXQs+YY+1FenIfuesPUGVVLzfRWKvmrSzbbN19wS+kAb2+sCEuUxrYzkbe4YvCVM2Vr5NPAkVa+van7Wn38U95uTpN5TJ/A8ZKemAakmbmJJGpI0gVmwA0huieFItjG19DgTHtwIZhCfZq3ztCuzQYh+FKBSvusjAGs8PnLYkLgMf34JoIBqIBqKBaIAb0Kw9RlhMCTbzzPWAqYq7LsuPaGDUsYmznaOk5zChUJTNQ4TFVMkrOL4HPsoNn26PxROHCggAAAAASUVORK5CYII=)
-            no-repeat center center;
-        background-size: 14px 14px;
-        height: 14px;
-        width: 14px;
-        border: none;
-        padding: 0;
-    }
-    .calendar-icon:focus-visible {
-        outline: 2px solid var(--primary-color);
     }
 
     /* Reset button styles */
@@ -193,16 +157,15 @@
         /**
    * Container
    */
-        --datepicker-container-background: #fff;
-        --datepicker-container-border: 1px solid var(--datepicker-border-color);
-        --datepicker-container-border-radius: 12px;
-        --datepicker-container-box-shadow: 0 1px 20px rgba(0, 0, 0, 0.1);
+        --datepicker-container-background: none;
+        --datepicker-container-border: none;
+        --datepicker-container-box-shadow: none;
         --datepicker-container-font-family: var(--datepicker-font-family);
         --datepicker-container-left: -14px;
-        --datepicker-container-position: absolute;
-        --datepicker-container-top: 105%;
-        --datepicker-container-width: fit-content;
-        --datepicker-container-zindex: 99;
+        --datepicker-container-position: relative;
+        --datepicker-container-top: 0;
+        --datepicker-container-width: 210px;
+        --datepicker-container-zindex: 0;
 
         /**
    * Calendar
