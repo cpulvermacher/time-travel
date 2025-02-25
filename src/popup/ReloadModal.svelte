@@ -14,8 +14,8 @@
     }
 </script>
 
-<div class="background"></div>
-<div class="modal" transition:fade={{ duration: 500, easing: quartIn }}>
+<div class="background" transition:fade={{ duration: 300, easing: quartIn }}></div>
+<div class="modal" transition:fade={{ duration: 300, easing: quartIn }}>
     <p class="modal__text">Almost ready! Please reload the page for the changes to take effect.</p>
     <button use:focusButton onclick={reload}>Reload</button>
 </div>
@@ -24,21 +24,11 @@
     .background {
         position: absolute;
         top: 0;
-        left: -50%;
-        width: 150%;
+        left: 0;
+        width: 100%;
         height: 100%;
-        background: radial-gradient(#8080fd, var(--primary-color));
-        transform-origin: bottom right;
-        animation: rotateIn 0.3s ease-in;
-    }
-
-    @keyframes rotateIn {
-        from {
-            transform: rotate(90deg);
-        }
-        to {
-            transform: rotate(0deg);
-        }
+        background: #ffffffe0;
+        backdrop-filter: blur(5px);
     }
 
     .modal {
@@ -56,7 +46,6 @@
     }
 
     .modal__text {
-        color: white;
         padding: 10px;
     }
 </style>
