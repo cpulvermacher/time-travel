@@ -15,7 +15,7 @@
 
 <label class="toggle">
     <div class="row">
-        <div class="label">{label}</div>
+        <div class={['label', { disabled }]}>{label}</div>
         <input type="checkbox" bind:checked {onchange} {disabled} />
         <div class="toggle-bg">
             <span class="slider"></span>
@@ -36,8 +36,14 @@
         justify-content: space-between;
         align-items: center;
     }
+    .label {
+        transition: color 0.3s ease-in-out;
+    }
+    .label.disabled {
+        color: var(--secondary-text-color);
+    }
     .description {
-        color: #9f9f9f;
+        color: var(--secondary-text-color);
         font-size: 0.9em;
     }
 

@@ -1,6 +1,7 @@
 :root {
     --primary-color: #6060f4;
     --text-color: #494949;
+    --secondary-text-color: #9f9f9f;
     --border-color: #dcdcdc;
     --error-color: #8f4242;
 }
@@ -41,7 +42,7 @@ button {
 
 button:disabled {
     background: white !important;
-    color: #9f9f9f !important;
+    color: var(--secondary-text-color) !important;
 }
 
 button:not(:disabled):hover {
