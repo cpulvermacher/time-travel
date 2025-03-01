@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => ({
     test: {
         environment: 'happy-dom',
     },
-    server: { open: '/popup/main.html' },
+    server: { open: 'test/popup.html' },
     esbuild: {
         pure: mode === 'production' ? ['console.log'] : [],
     },
