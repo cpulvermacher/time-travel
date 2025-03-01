@@ -74,6 +74,7 @@
             <Datepicker bind:fakeDate {onEnterKey} />
         </label>
     </div>
+    <hr />
     <Toggle
         bind:checked={clockIsRunning}
         disabled={!isDateValid}
@@ -103,5 +104,11 @@
         justify-content: space-between;
         gap: 10px;
         align-items: flex-end;
+    }
+
+    hr {
+        width: 90%;
+        border: none;
+        border-top: 1px solid var(--border-color);
     }
 </style>
