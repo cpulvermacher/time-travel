@@ -285,7 +285,7 @@
         /**
    * Calendar DOW (Days of Week)
    */
-        --datepicker-calendar-dow-color: #8b9198;
+        --datepicker-calendar-dow-color: var(--secondary-text-color);
         --datepicker-calendar-dow-font-size: var(--datepicker-font-size-base);
         --datepicker-calendar-dow-font-weight: var(--datepicker-font-weight-medium);
         --datepicker-calendar-dow-margin-bottom: var(--datepicker-margin-large);
@@ -318,9 +318,9 @@
         --datepicker-calendar-day-border: 1px solid transparent;
         --datepicker-calendar-day-border: 1px solid transparent;
         --datepicker-calendar-day-border-radius: 20px;
-        --datepicker-calendar-day-color: #232a32;
+        --datepicker-calendar-day-color: var(--text-color);
         --datepicker-calendar-day-color-disabled: #b9bdc1;
-        --datepicker-calendar-day-color-hover: #232a32;
+        --datepicker-calendar-day-color-hover: var(--text-color);
         --datepicker-calendar-day-cursor: pointer;
         --datepicker-calendar-day-cursor-disabled: default;
         --datepicker-calendar-day-display: flex;
