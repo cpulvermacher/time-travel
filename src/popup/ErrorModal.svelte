@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { quartIn } from 'svelte/easing'
-    import { fade } from 'svelte/transition'
+    import Modal from './Modal.svelte'
 
     interface Props {
         text: string
@@ -8,27 +7,12 @@
     const { text }: Props = $props()
 </script>
 
-<div class="modal" transition:fade={{ duration: 500, easing: quartIn }}>
+<Modal>
     <button class="close" onclick={() => window.close()}>✕</button>
     <p class="modal__text">{text}</p>
-</div>
+</Modal>
 
 <style>
-    .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        max-height: initial;
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: white;
-    }
-
     .close {
         position: absolute;
         border: none;
