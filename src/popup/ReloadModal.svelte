@@ -12,13 +12,19 @@
         await reloadTab()
         window.close()
     }
+    function show(node: HTMLDialogElement) {
+        node.showModal()
+    }
+    function oncancel(event: Event) {
+        event.preventDefault()
+    }
 </script>
 
 <div class="background" transition:fade={{ duration: 300, easing: quartIn }}></div>
-<div class="modal" transition:fade={{ duration: 300, easing: quartIn }}>
+<dialog use:show {oncancel} class="modal" transition:fade={{ duration: 300, easing: quartIn }}>
     <p class="modal__text">Almost ready! Please reload the page for the changes to take effect.</p>
     <button use:focusButton onclick={reload}>Reload</button>
-</div>
+</dialog>
 
 <style>
     .background {
@@ -38,11 +44,21 @@
         width: 100%;
         height: 100%;
         max-height: initial;
+        max-width: none;
+        background: none;
+        border: none;
+        margin: 0;
+        padding: 0;
 
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        color: var(--text-color);
+    }
+
+    ::backdrop {
+        display: none;
     }
 
     .modal__text {
