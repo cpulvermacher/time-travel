@@ -96,9 +96,9 @@ export async function getInitialState(): Promise<{ fakeDate?: string; clockIsRun
     try {
         let initialFakeDate
         const state = await getContentScriptState(tabId)
-        if (state.fakeDate) {
+        if (state.fakeDateActive && state.fakeDate) {
             const fakeDate = new Date(Date.parse(state.fakeDate))
-            if (state.fakeDateActive && state.clockIsRunning && state.tickStartTimestamp) {
+            if (state.clockIsRunning && state.tickStartTimestamp) {
                 const tickStartTimestamp = Number.parseInt(state.tickStartTimestamp)
                 const elapsed = Date.now() - tickStartTimestamp
                 const fakeDateNow = new Date(fakeDate.getTime() + elapsed)
