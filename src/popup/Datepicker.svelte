@@ -192,8 +192,7 @@
    * Calendar
    */
         --datepicker-calendar-border: 0;
-        --datepicker-calendar-padding: var(--datepicker-padding-base) var(--datepicker-padding-large)
-            var(--datepicker-padding-xlarge);
+        --datepicker-calendar-padding: 0 var(--datepicker-padding-large);
         --datepicker-calendar-position: relative;
         --datepicker-calendar-width: 240px;
 

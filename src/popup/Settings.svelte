@@ -49,7 +49,7 @@
             errorMsg = 'Reset failed: ' + (e instanceof Error ? e.message : '')
         }
     }
-    function onEnterKey() {
+    function onApply() {
         isEnabled = true
         effectiveDate = new Date(fakeDate)
         applyAndEnable()
@@ -75,8 +75,13 @@
     <div class="row">
         <label>
             Date and time to set:
-            <Datepicker bind:fakeDate {onEnterKey} />
+            <Datepicker bind:fakeDate onEnterKey={onApply} />
         </label>
+    </div>
+    <div class="row right-aligned">
+        <button disabled={!isDateValid || new Date(fakeDate).getTime() === effectiveDate?.getTime()} onclick={onApply}>
+            Change Date
+        </button>
     </div>
     <hr />
     <Toggle
@@ -108,6 +113,9 @@
         justify-content: space-between;
         gap: 10px;
         align-items: flex-end;
+    }
+    .row.right-aligned {
+        justify-content: flex-end;
     }
 
     hr {

@@ -37,7 +37,7 @@ button {
     padding: 5px 10px;
     background: white;
     color: var(--text-color);
-    transition: filter 0.2s ease-in;
+    transition: all 0.3s ease-in;
 }
 
 button:disabled {
