@@ -16,16 +16,16 @@
     .close {
         position: absolute;
         border: none;
-        top: 0;
-        right: 0;
-        padding: 10px;
-        width: 35px;
-        height: 35px;
+        top: 2px;
+        right: 2px;
+        padding: 5px;
+        width: 30px;
+        height: 30px;
         font-size: 1.5em;
     }
 
     .modal__text {
         color: var(--error-color);
-        padding: 10px;
+        margin: 15px 0;
     }
 </style>

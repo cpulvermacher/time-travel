@@ -28,28 +28,33 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: #ffffffe0;
+        background: rgba(255, 255, 255, 0.3);
         backdrop-filter: blur(5px);
     }
 
     .modal {
         position: fixed;
-        top: 0;
+        top: 50%;
         left: 0;
+        transform: translateY(-50%);
         width: 100%;
-        height: 100%;
-        max-height: initial;
-        max-width: none;
-        background: none;
+        height: fit-content;
+        max-width: 100%;
+        max-height: 90%;
         border: none;
+        box-sizing: border-box;
         margin: 0;
-        padding: 0;
+        padding: 20px 10px;
 
         display: flex;
+        gap: 20px;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         color: var(--text-color);
+        background: rgba(255, 255, 255, 0.8);
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
     }
 
     ::backdrop {

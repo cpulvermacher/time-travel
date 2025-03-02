@@ -20,6 +20,6 @@
 
 <style>
     .modal__text {
-        padding: 10px;
+        margin: 0;
     }
 </style>
