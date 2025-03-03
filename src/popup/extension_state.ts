@@ -83,7 +83,7 @@ export async function resetTickStart(date: Date | null): Promise<void> {
 }
 
 /** get current state of content script. Throws on permission errors */
-export async function getInitialState(): Promise<{ fakeDate?: string; clockIsRunning: boolean }> {
+export async function getState(): Promise<{ fakeDate?: string; clockIsRunning: boolean }> {
     if (import.meta.env.DEV) {
         //return dummy state for testing
         return {

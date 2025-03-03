@@ -1,9 +1,9 @@
 <script lang="ts">
     import { formatLocalTime } from '../util/common'
-    import { getInitialState } from './helpers'
+    import { getState } from './extension_state'
     import Settings from './Settings.svelte'
 
-    const promise = getInitialState()
+    const promise = getState()
 </script>
 
 {#await promise then initialState}

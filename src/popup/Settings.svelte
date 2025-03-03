@@ -3,7 +3,7 @@
     import Background from './Background.svelte'
     import Datepicker from './Datepicker.svelte'
     import ErrorModal from './ErrorModal.svelte'
-    import { resetTickStart, setAndEnable, setFakeDate, toggleTick } from './helpers'
+    import { resetTickStart, setAndEnable, setFakeDate, toggleTick } from './extension_state'
     import ReloadModal from './ReloadModal.svelte'
     import Toggle from './Toggle.svelte'
 
