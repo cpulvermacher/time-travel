@@ -1,25 +1,5 @@
 // all functions here are meant to be injected into the target page
 
-function overrideClearSessionStorage() {
-    //needs to be defined locally!
-    const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
-    const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp'
-
-    sessionStorage.clear = function () {
-        const fakeDate = sessionStorage.getItem(FAKE_DATE_STORAGE_KEY)
-        const tickStart = sessionStorage.getItem(TICK_START_STORAGE_KEY)
-
-        sessionStorage.clear()
-
-        if (fakeDate) {
-            sessionStorage.setItem(FAKE_DATE_STORAGE_KEY, fakeDate)
-        }
-        if (tickStart) {
-            sessionStorage.setItem(TICK_START_STORAGE_KEY, tickStart)
-        }
-    }
-}
-
 export function getFakeDate() {
     //needs to be defined locally!
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
@@ -27,7 +7,6 @@ export function getFakeDate() {
 }
 
 export function setFakeDate(date: string) {
-    overrideClearSessionStorage()
     //needs to be defined locally!
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
     if (date) {
