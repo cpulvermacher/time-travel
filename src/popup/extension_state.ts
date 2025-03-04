@@ -47,33 +47,18 @@ export async function setAndEnable(fakeDate: string): Promise<boolean> {
         return true
     }
 
-    const tabId = await getActiveTabId()
-    const state = await getContentScriptState(tabId)
-    if (state.tickStartTimestamp) {
-        // we want to start from the new faked date, without any offset
-        await resetTickStart(new Date())
-    }
-
     return await setFakeDate(fakeDate)
 }
 
 /** set clock ticking state. `setClockState(true)` also resets the start time to now. */
 export async function setClockState(advanceClock: boolean): Promise<void> {
-    if (advanceClock) {
-        await resetTickStart(new Date())
-    } else {
-        await resetTickStart(null)
-    }
-}
-
-/** set/reset the clock-tick start time to the given date */
-export async function resetTickStart(date: Date | null): Promise<void> {
     const tabId = await getActiveTabId()
 
-    if (date === null) {
+    if (!advanceClock) {
         await injectFunction(tabId, inject.setTickStartTimestamp, [''])
     } else {
-        const nowTimestampStr = date.getTime().toString()
+        const now = new Date()
+        const nowTimestampStr = now.getTime().toString()
         await injectFunction(tabId, inject.setTickStartTimestamp, [nowTimestampStr])
     }
 }
