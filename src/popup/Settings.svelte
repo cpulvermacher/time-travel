@@ -3,7 +3,7 @@
     import Background from './Background.svelte'
     import Datepicker from './Datepicker.svelte'
     import ErrorModal from './ErrorModal.svelte'
-    import { setAndEnable, setClockState, setFakeDate } from './extension_state'
+    import { setClockState, setFakeDate } from './extension_state'
     import ReloadModal from './ReloadModal.svelte'
     import Toggle from './Toggle.svelte'
 
@@ -32,7 +32,7 @@
     async function applyAndEnable() {
         try {
             await setClockState(clockIsRunning)
-            const needReload = await setAndEnable(fakeDate)
+            const needReload = await setFakeDate(fakeDate)
             if (needReload) {
                 showReloadModal = true
             }

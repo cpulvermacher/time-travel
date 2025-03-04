@@ -16,8 +16,12 @@ import {
 } from '../util/common'
 import * as inject from '../util/inject'
 
-/** sets fake date, returns whether page needs reload for content script to be injected */
+/** sets & enables fake date, returns whether page needs reload for content script to be injected */
 export async function setFakeDate(dateString: string): Promise<boolean> {
+    if (import.meta.env.DEV) {
+        return true
+    }
+
     const fakeDate = parseDate(dateString)
     if (fakeDate === null) {
         throw new Error(
@@ -39,15 +43,6 @@ export async function setFakeDate(dateString: string): Promise<boolean> {
     await setBadgeAndTitle(tabId, state)
 
     return needsReload
-}
-
-/** sets fake date & enables it, returns whether page needs reload for content script to be injected */
-export async function setAndEnable(fakeDate: string): Promise<boolean> {
-    if (import.meta.env.DEV) {
-        return true
-    }
-
-    return await setFakeDate(fakeDate)
 }
 
 /** set clock ticking state. `setClockState(true)` also resets the start time to now. */
