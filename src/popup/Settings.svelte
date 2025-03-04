@@ -3,7 +3,7 @@
     import Background from './Background.svelte'
     import Datepicker from './Datepicker.svelte'
     import ErrorModal from './ErrorModal.svelte'
-    import { resetTickStart, setAndEnable, setFakeDate, toggleTick } from './extension_state'
+    import { setAndEnable, setClockState, setFakeDate } from './extension_state'
     import ReloadModal from './ReloadModal.svelte'
     import Toggle from './Toggle.svelte'
 
@@ -22,17 +22,16 @@
     let isDateValid = $derived(parseDate(fakeDate) !== null)
     let effectiveDate = $state(initialState.isEnabled ? new Date(initialState.fakeDate) : undefined)
 
-    async function toggleClockRunning() {
+    async function updateClockState() {
         try {
-            await toggleTick()
-            await setFakeDate(fakeDate)
+            await setClockState(clockIsRunning)
         } catch (e) {
             errorMsg = 'Toggling clock failed: ' + (e instanceof Error ? e.message : '')
         }
     }
     async function applyAndEnable() {
         try {
-            //TODO missing clock state
+            await setClockState(clockIsRunning)
             const needReload = await setAndEnable(fakeDate)
             if (needReload) {
                 showReloadModal = true
@@ -44,7 +43,7 @@
     async function reset() {
         try {
             await setFakeDate('')
-            await resetTickStart(null)
+            await setClockState(false)
         } catch (e) {
             errorMsg = 'Reset failed: ' + (e instanceof Error ? e.message : '')
         }
@@ -56,7 +55,7 @@
     }
     function onClockToggle() {
         if (isEnabled) {
-            toggleClockRunning()
+            updateClockState()
         }
     }
     function onEnableChange(enabled: boolean) {
