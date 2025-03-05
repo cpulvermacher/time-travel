@@ -12,7 +12,6 @@
         onEnterKey?: () => void
     }
     let { fakeDate = $bindable(), onEnterKey }: Props = $props()
-    let isOpen = $state(true)
     // Note: the datepicker internally works with timestamps in UTC.
     let pickerDate = $state(Date.parse(fakeDate))
     let isValid = $derived(parseDate(fakeDate) !== null)
@@ -53,20 +52,16 @@
         }
         pickerDate = new Date(inputDate).getTime()
     }
-
-    //force picker into open state
-    $effect(() => {
-        if (!isOpen) isOpen = true
-    })
 </script>
 
 <div class="container">
     <DatePicker
-        bind:isOpen
         bind:startDate={pickerDate}
         onDateChange={acceptPickerDate}
         enableFutureDates
         {startOfWeek}
+        isOpen={true}
+        alwaysShow={true}
         includeFont={false}
         theme="theme"
     >
