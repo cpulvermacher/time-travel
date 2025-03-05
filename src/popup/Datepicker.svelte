@@ -2,6 +2,10 @@
     import { DatePicker } from '@svelte-plugins/datepicker'
     import { tick } from 'svelte'
     import { formatLocalTime, overwriteDatePart, parseDate } from '../util/common'
+    import { getFirstDayOfWeek } from '../util/i18n'
+
+    // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
+    const startOfWeek = getFirstDayOfWeek(navigator.language) % 7
 
     interface Props {
         fakeDate: string
@@ -62,6 +66,7 @@
         bind:startDate={pickerDate}
         onDateChange={acceptPickerDate}
         enableFutureDates
+        {startOfWeek}
         includeFont={false}
         theme="theme"
     >
