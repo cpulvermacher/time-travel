@@ -6,19 +6,26 @@
     interface Props {
         children: Snippet
         onClose?: () => void
+        closeOnCancel?: boolean
     }
-    const { children, onClose }: Props = $props()
+    const { children, onClose, closeOnCancel }: Props = $props()
 
     function show(node: HTMLDialogElement) {
         node.showModal()
     }
     function oncancel(event: Event) {
+        // cancel can be cancelled
+        // in Chrome pressing Esc multiple times will close the dialog anyway,
+        // but since Esc closes the popup first we don't need to worry about that
         event.preventDefault()
+        if (closeOnCancel) {
+            onClose?.()
+        }
     }
 </script>
 
 <div class="background" transition:fade={{ duration: 300, easing: quartIn }}></div>
-<dialog use:show {oncancel} class="modal" transition:fade={{ duration: 300, easing: quartIn }}>
+<dialog use:show {oncancel} onclose={onClose} class="modal" transition:fade={{ duration: 300, easing: quartIn }}>
     {#if onClose}
         <button class="close" onclick={onClose}>✕</button>
     {/if}
