@@ -5,8 +5,9 @@
 
     interface Props {
         children: Snippet
+        onClose?: () => void
     }
-    const { children }: Props = $props()
+    const { children, onClose }: Props = $props()
 
     function show(node: HTMLDialogElement) {
         node.showModal()
@@ -18,6 +19,9 @@
 
 <div class="background" transition:fade={{ duration: 300, easing: quartIn }}></div>
 <dialog use:show {oncancel} class="modal" transition:fade={{ duration: 300, easing: quartIn }}>
+    {#if onClose}
+        <button class="close" onclick={onClose}>✕</button>
+    {/if}
     {@render children?.()}
 </dialog>
 
@@ -59,5 +63,16 @@
 
     ::backdrop {
         display: none;
+    }
+
+    .close {
+        position: absolute;
+        border: none;
+        top: 2px;
+        right: 2px;
+        padding: 5px;
+        width: 30px;
+        height: 30px;
+        font-size: 1.5em;
     }
 </style>
