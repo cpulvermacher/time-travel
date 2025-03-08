@@ -7,8 +7,10 @@
     }
     const { onClick, children }: Props = $props()
 
+    // Not using <button> to allow using it as a secondary action in a <label>
+    // (without being triggered when the label is clicked)
     function onkeydown(event: KeyboardEvent) {
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault()
             event.stopPropagation()
             onClick()
