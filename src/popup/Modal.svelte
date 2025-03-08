@@ -22,9 +22,37 @@
             onClose?.()
         }
     }
+    function onDialogClick(event: MouseEvent) {
+        if (!closeOnCancel) {
+            return
+        }
+
+        const target = event.target as HTMLElement
+        if (target.tagName !== 'DIALOG') {
+            return
+        }
+        const dialogRect = target.getBoundingClientRect()
+
+        const isOutsideClick =
+            event.clientX < dialogRect.left ||
+            event.clientX > dialogRect.right ||
+            event.clientY < dialogRect.top ||
+            event.clientY > dialogRect.bottom
+        if (isOutsideClick) {
+            event.preventDefault()
+            onClose?.()
+        }
+    }
 </script>
 
-<dialog use:show {oncancel} onclose={onClose} class="modal" transition:fade={{ duration: 300, easing: quartIn }}>
+<dialog
+    use:show
+    {oncancel}
+    onclose={onClose}
+    onclick={onDialogClick}
+    class="modal"
+    transition:fade={{ duration: 300, easing: quartIn }}
+>
     {#if onClose}
         <button class="close" onclick={onClose}>✕</button>
     {/if}
