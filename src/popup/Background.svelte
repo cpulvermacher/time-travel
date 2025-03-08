@@ -71,7 +71,7 @@
         transition: filter 3s;
     }
     .background.desaturated {
-        filter: saturate(0) brightness(1.3) blur(35px);
+        filter: saturate(0) brightness(1.4) blur(35px);
     }
     .background.spinBackwards {
         transition:
@@ -84,6 +84,5 @@
             filter 3s,
             transform var(--spin-duration) ease-in-out;
         transform: rotate(calc(360deg * var(--num-spins)));
-        /* animation: fade-in-out var(--spin-duration) ease-in-out; */
     }
 </style>
