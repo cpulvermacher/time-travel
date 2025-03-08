@@ -24,7 +24,6 @@
     }
 </script>
 
-<div class="background" transition:fade={{ duration: 300, easing: quartIn }}></div>
 <dialog use:show {oncancel} onclose={onClose} class="modal" transition:fade={{ duration: 300, easing: quartIn }}>
     {#if onClose}
         <button class="close" onclick={onClose}>✕</button>
@@ -33,16 +32,6 @@
 </dialog>
 
 <style>
-    .background {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.3);
-        backdrop-filter: blur(5px);
-    }
-
     .modal {
         position: fixed;
         top: 50%;
@@ -69,7 +58,8 @@
     }
 
     ::backdrop {
-        display: none;
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(5px);
     }
 
     .close {
