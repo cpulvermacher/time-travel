@@ -1,9 +1,11 @@
 <script lang="ts">
     import { parseDate } from '../util/common'
     import Background from './Background.svelte'
+    import DateFormatInfo from './DateFormatInfo.svelte'
     import Datepicker from './Datepicker.svelte'
     import ErrorModal from './ErrorModal.svelte'
     import { setClockState, setFakeDate } from './extension_state'
+    import LinkButton from './LinkButton.svelte'
     import ReloadModal from './ReloadModal.svelte'
     import Toggle from './Toggle.svelte'
 
@@ -21,6 +23,7 @@
     let isEnabled = $state(initialState.isEnabled)
     let isDateValid = $derived(parseDate(fakeDate) !== null)
     let effectiveDate = $state(initialState.isEnabled ? new Date(initialState.fakeDate) : undefined)
+    let showFormatHelp = $state(false)
 
     async function updateClockState() {
         try {
@@ -73,7 +76,7 @@
 <main>
     <div class="row">
         <label>
-            Date and time to set:
+            Date and time to set <LinkButton onClick={() => (showFormatHelp = true)}>(?)</LinkButton>:
             <Datepicker bind:fakeDate onEnterKey={onApply} />
         </label>
     </div>
@@ -92,6 +95,10 @@
     />
     <Toggle bind:checked={isEnabled} disabled={!isDateValid} onChange={onEnableChange} label="Enable Fake Date" />
 </main>
+
+{#if showFormatHelp}
+    <DateFormatInfo onClose={() => (showFormatHelp = false)} />
+{/if}
 {#if showReloadModal}
     <ReloadModal />
 {/if}
