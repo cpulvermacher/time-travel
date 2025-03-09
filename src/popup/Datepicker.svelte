@@ -74,6 +74,7 @@
             type="text"
             size="28"
             maxlength="28"
+            placeholder={formatLocalTime(new Date())}
             spellcheck="false"
             class={{ error: !isValid }}
         />
