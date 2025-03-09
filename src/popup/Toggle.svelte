@@ -27,6 +27,7 @@
 <style>
     .toggle {
         display: flex;
+        min-height: 2em;
         flex-direction: column;
         user-select: none;
     }
