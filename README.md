@@ -14,14 +14,14 @@ https://github.com/user-attachments/assets/9851f855-36ca-419a-b743-fc5d1b2499d5
 ## Usage
 - Open the tab you want to change the time in.
 - Click the Extensions icon in the toolbar, then click Time Travel.
-- Edit the date and time in the input field directly, or click the calendar icon to choose the date visually.
-- Confirm with `Enter` or by clicking the "Change Date" button. In chrome, when first activating the extension on a tab, the page needs to be reloaded once to apply the changes.
+- Choose a date from the calendar and edit the time if necessary, or enter a date & time directly (see examples below)
+- Confirm with `Enter` or by clicking the "Change Date" button. In Chrome, when first activating the extension on a tab, the page needs to be reloaded once to apply the changes.
 - Any JavaScript `Date` or `Intl.DateTimeFormat` in the current tab now returns the fake date/time you set.
 
-To restore the system time, click the extension icon and press Reset.
+To restore the system time, click the extension icon and switch off the "Enable Fake Date" toggle.
 
-When the fake time is turned on, the clock is paused by default.
-Press the play (▶) button to make the fake clock tick forward at a normal rate, press stop (⏹) to pause the clock.
+When the fake date is enabled, the clock is not stopped by default.
+You can stop the clock by switching on the "Stop Clock" toggle. The fake date will be reset to the last value you set.
 
 ### Example Dates and Formats
 - `2023-04-27 12:40` - Local time
@@ -35,11 +35,12 @@ Press the play (▶) button to make the fake clock tick forward at a normal rate
 ## Features
 - Fakes date and time for all methods of `Date` and `Intl.DateTimeFormat` objects.
 - Time can be stopped and resumed.
-- Minimal permissions, only affects current tab after clicking the extension icon. (Only in Chrome)
+- Only affects current tab after clicking the extension icon.
+- Minimal permissions (Only in Chrome)
 
 ## Limitations
 - Only JavaScript is affected by the extension.
-- Some functionality or animations may behave strangely if the clock is stopped. Try resuming the clock via the ▶ button in that case.
+- Some functionality or animations may behave strangely if the clock is stopped.
 - The extension does not work in iframes with the `sandbox` attribute.
 
 ## Installation
