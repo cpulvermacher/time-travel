@@ -45,11 +45,11 @@ export async function setFakeDate(dateString: string): Promise<boolean> {
     return needsReload
 }
 
-/** set clock ticking state. `setClockState(true)` also resets the start time to now. */
-export async function setClockState(advanceClock: boolean): Promise<void> {
+/** set clock ticking state. `setClockState(false)` also resets the start time to now. */
+export async function setClockState(stopClock: boolean): Promise<void> {
     const tabId = await getActiveTabId()
 
-    if (!advanceClock) {
+    if (stopClock) {
         await injectFunction(tabId, inject.setTickStartTimestamp, [''])
     } else {
         const now = new Date()
@@ -64,7 +64,7 @@ export async function getState(): Promise<{ fakeDate?: string; clockIsRunning: b
         //return dummy state for testing
         return {
             fakeDate: '2005-06-07 08:09',
-            clockIsRunning: false,
+            clockIsRunning: true,
         }
     }
 

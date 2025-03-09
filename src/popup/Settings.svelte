@@ -18,7 +18,7 @@
 
     let errorMsg = $state<string>()
     let showReloadModal = $state(false)
-    let clockIsRunning = $state(initialState.clockIsRunning)
+    let isClockStopped = $state(initialState.isEnabled && !initialState.clockIsRunning)
     let fakeDate = $state(initialState.fakeDate)
     let isEnabled = $state(initialState.isEnabled)
     let isDateValid = $derived(parseDate(fakeDate) !== null)
@@ -27,14 +27,14 @@
 
     async function updateClockState() {
         try {
-            await setClockState(clockIsRunning)
+            await setClockState(isClockStopped)
         } catch (e) {
             errorMsg = 'Toggling clock failed: ' + (e instanceof Error ? e.message : '')
         }
     }
     async function applyAndEnable() {
         try {
-            await setClockState(clockIsRunning)
+            await setClockState(isClockStopped)
             const needReload = await setFakeDate(fakeDate)
             if (needReload) {
                 showReloadModal = true
@@ -46,7 +46,7 @@
     async function reset() {
         try {
             await setFakeDate('')
-            await setClockState(false)
+            await setClockState(true)
         } catch (e) {
             errorMsg = 'Reset failed: ' + (e instanceof Error ? e.message : '')
         }
@@ -86,13 +86,7 @@
         </button>
     </div>
     <hr />
-    <Toggle
-        bind:checked={clockIsRunning}
-        disabled={!isDateValid}
-        onChange={onClockToggle}
-        label="Progress time"
-        description="Clock will progress from fake time"
-    />
+    <Toggle bind:checked={isClockStopped} disabled={!isDateValid} onChange={onClockToggle} label="Stop Clock" />
     <Toggle bind:checked={isEnabled} disabled={!isDateValid} onChange={onEnableChange} label="Enable Fake Date" />
 </main>
 

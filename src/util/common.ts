@@ -96,7 +96,7 @@ export async function setBadgeAndTitle(tabId: number, state: ContentScriptState)
     let title = defaultTitleText
     if (state.fakeDateActive && state.fakeDate) {
         const formattedFakeDate = formatLocalTime(new Date(state.fakeDate))
-        const clockState = state.clockIsRunning ? 'ticking' : 'stopped'
+        const clockState = state.clockIsRunning ? 'running' : 'stopped'
         title += ` (${formattedFakeDate} - Clock ${clockState})`
     } else if (state.contentScriptActive) {
         title += ' (Off)'
