@@ -28,7 +28,9 @@ body {
     margin: 0;
 }
 
-p, ul, dl {
+p,
+ul,
+dl {
     margin: 0;
     padding: 0;
 }
