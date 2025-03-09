@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatLocalTime, overwriteDatePart } from '../../util/common'
+import { formatLocalTime, overwriteDatePart, parseDate } from '../../util/common'
 
 describe('overwriteDatePart', () => {
     it('updates date part while preserving format if possible', () => {
@@ -77,5 +77,31 @@ describe('formatLocalTime', () => {
         expect(formatLocalTime(new Date('2025-02-10 12:34:55'), full)).toBe('2025-02-10 12:34:55')
         expect(formatLocalTime(new Date('2025-02-10 12:34'), full)).toBe('2025-02-10 12:34')
         expect(formatLocalTime(new Date('2025-02-10 00:00'), full)).toBe('2025-02-10 00:00')
+    })
+})
+
+describe('parseDate', () => {
+    it('parses various date formats and returns same string', () => {
+        expect(parseDate('2025-02-27 12:40')).toBe('2025-02-27 12:40')
+        expect(parseDate('2025-02-27')).toBe('2025-02-27')
+        expect(parseDate('27 Feb 2025 12:40')).toBe('27 Feb 2025 12:40')
+        expect(parseDate('2025-03-30 00:59:55')).toBe('2025-03-30 00:59:55')
+        expect(parseDate('2025-04-27T12:40Z')).toBe('2025-04-27T12:40Z')
+        expect(parseDate('2025-02-25T12:40:00.120')).toBe('2025-02-25T12:40:00.120')
+    })
+
+    it('parses UNIX timestamps', () => {
+        expect(parseDate('1731493140025')).toBe('2024-11-13T10:19:00.025Z')
+        expect(parseDate('01')).toBe('1970-01-01T00:00:00.001Z')
+    })
+
+    it('returns null for invalid dates', () => {
+        expect(parseDate('abcdefgh')).toBe(null)
+        expect(parseDate('2025-02-32')).toBe(null)
+    })
+
+    it('accepts empty string', () => {
+        // can be used to clear the fake date
+        expect(parseDate('')).toBe('')
     })
 })

@@ -51,10 +51,22 @@
             errorMsg = 'Reset failed: ' + (e instanceof Error ? e.message : '')
         }
     }
+
     function onApply() {
-        isEnabled = true
-        effectiveDate = new Date(fakeDate)
-        applyAndEnable()
+        const parsedDate = parseDate(fakeDate)
+        if (parsedDate === null) {
+            return
+        }
+
+        if (parsedDate === '') {
+            isEnabled = false
+            effectiveDate = undefined
+            reset()
+        } else {
+            isEnabled = true
+            effectiveDate = new Date(parsedDate)
+            applyAndEnable()
+        }
     }
     function onClockToggle() {
         if (isEnabled) {
@@ -62,8 +74,13 @@
         }
     }
     function onEnableChange(enabled: boolean) {
+        const parsedDate = parseDate(fakeDate)
+        if (parsedDate === null) {
+            return
+        }
+
         if (enabled) {
-            effectiveDate = new Date(fakeDate)
+            effectiveDate = new Date(parsedDate)
             applyAndEnable()
         } else {
             effectiveDate = undefined
@@ -81,7 +98,10 @@
         </label>
     </div>
     <div class="row right-aligned">
-        <button disabled={!isDateValid || new Date(fakeDate).getTime() === effectiveDate?.getTime()} onclick={onApply}>
+        <button
+            disabled={!isDateValid || new Date(parseDate(fakeDate) || '').getTime() === effectiveDate?.getTime()}
+            onclick={onApply}
+        >
             Change Date
         </button>
     </div>
