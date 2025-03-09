@@ -11,7 +11,7 @@ type ContentScriptState = {
     contentScriptActive: boolean
     fakeDate: string | null
     tickStartTimestamp: string | null
-    clockIsRunning: boolean
+    isClockStopped: boolean
     fakeDateActive: boolean
 }
 
@@ -19,7 +19,7 @@ export type ActivationMessage = {
     msg: 'active'
     fakeDate: string
     tickStartTimestamp: string | null
-    isClockTicking: boolean
+    isClockStopped: boolean
 }
 
 export type FormatOptions = {
@@ -96,7 +96,7 @@ export async function setBadgeAndTitle(tabId: number, state: ContentScriptState)
     let title = defaultTitleText
     if (state.fakeDateActive && state.fakeDate) {
         const formattedFakeDate = formatLocalTime(new Date(state.fakeDate))
-        const clockState = state.clockIsRunning ? 'running' : 'stopped'
+        const clockState = state.isClockStopped ? 'stopped' : 'running'
         title += ` (${formattedFakeDate} - Clock ${clockState})`
     } else if (state.contentScriptActive) {
         title += ' (Off)'
@@ -118,7 +118,7 @@ export async function getContentScriptState(tabId: number): Promise<ContentScrip
         contentScriptActive,
         fakeDate,
         tickStartTimestamp: tickStartTimestamp,
-        clockIsRunning: contentScriptActive && !!fakeDate && !!tickStartTimestamp,
+        isClockStopped: contentScriptActive && !!fakeDate && !tickStartTimestamp,
         fakeDateActive: contentScriptActive && !!fakeDate,
     }
 }

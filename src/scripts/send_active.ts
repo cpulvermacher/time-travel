@@ -12,7 +12,7 @@ try {
             msg: 'active',
             fakeDate,
             tickStartTimestamp,
-            isClockTicking: !!tickStartTimestamp,
+            isClockStopped: !tickStartTimestamp,
         })
     }
 } catch (exception) {

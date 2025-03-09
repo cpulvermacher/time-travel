@@ -10,7 +10,7 @@
     <Settings
         fakeDate={initialState.fakeDate ?? formatLocalTime(new Date())}
         isEnabled={!!initialState.fakeDate}
-        clockIsRunning={initialState.clockIsRunning}
+        isClockStopped={initialState.isClockStopped}
     />
 {:catch error}
     <p>{error instanceof Error ? error.message : 'Could not get initial state'}</p>

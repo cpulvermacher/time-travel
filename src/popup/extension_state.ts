@@ -59,12 +59,12 @@ export async function setClockState(stopClock: boolean): Promise<void> {
 }
 
 /** get current state of content script. Throws on permission errors */
-export async function getState(): Promise<{ fakeDate?: string; clockIsRunning: boolean }> {
+export async function getState(): Promise<{ fakeDate?: string; isClockStopped: boolean }> {
     if (import.meta.env.DEV) {
         //return dummy state for testing
         return {
             fakeDate: '2005-06-07 08:09',
-            clockIsRunning: true,
+            isClockStopped: false,
         }
     }
 
@@ -74,7 +74,7 @@ export async function getState(): Promise<{ fakeDate?: string; clockIsRunning: b
         const state = await getContentScriptState(tabId)
         if (state.fakeDateActive && state.fakeDate) {
             const fakeDate = new Date(Date.parse(state.fakeDate))
-            if (state.clockIsRunning && state.tickStartTimestamp) {
+            if (!state.isClockStopped && state.tickStartTimestamp) {
                 const tickStartTimestamp = Number.parseInt(state.tickStartTimestamp)
                 const elapsed = Date.now() - tickStartTimestamp
                 const fakeDateNow = new Date(fakeDate.getTime() + elapsed)
@@ -86,7 +86,7 @@ export async function getState(): Promise<{ fakeDate?: string; clockIsRunning: b
 
         return {
             fakeDate: initialFakeDate,
-            clockIsRunning: state.clockIsRunning,
+            isClockStopped: state.isClockStopped,
         }
     } catch (error) {
         if (await isFileUrl(tabId)) {

@@ -12,13 +12,13 @@
     interface Props {
         isEnabled: boolean
         fakeDate: string
-        clockIsRunning: boolean
+        isClockStopped: boolean
     }
     const initialState: Props = $props()
 
     let errorMsg = $state<string>()
     let showReloadModal = $state(false)
-    let isClockStopped = $state(initialState.isEnabled && !initialState.clockIsRunning)
+    let isClockStopped = $state(initialState.isClockStopped)
     let fakeDate = $state(initialState.fakeDate)
     let isEnabled = $state(initialState.isEnabled)
     let isDateValid = $derived(parseDate(fakeDate) !== null)
