@@ -59,7 +59,7 @@
 
 <style>
     .background {
-        position: absolute;
+        position: fixed;
         z-index: -1;
         top: -50%;
         left: -50%;
