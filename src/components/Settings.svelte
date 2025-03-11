@@ -145,5 +145,6 @@
         width: 90%;
         border: none;
         border-top: 1px solid var(--border-color);
+        margin: 0 auto;
     }
 </style>
