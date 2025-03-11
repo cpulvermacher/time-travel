@@ -1,10 +1,10 @@
 <script lang="ts">
+    import { setClockState, setFakeDate } from '../popup/extension_state'
     import { parseDate } from '../util/common'
     import Background from './Background.svelte'
     import DateFormatInfo from './DateFormatInfo.svelte'
     import Datepicker from './Datepicker.svelte'
     import ErrorModal from './ErrorModal.svelte'
-    import { setClockState, setFakeDate } from './extension_state'
     import LinkButton from './LinkButton.svelte'
     import ReloadModal from './ReloadModal.svelte'
     import Toggle from './Toggle.svelte'

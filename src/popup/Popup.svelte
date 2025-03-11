@@ -1,7 +1,7 @@
 <script lang="ts">
+    import Settings from '../components/Settings.svelte'
     import { formatLocalTime } from '../util/common'
     import { getState } from './extension_state'
-    import Settings from './Settings.svelte'
 
     const promise = getState()
 </script>
