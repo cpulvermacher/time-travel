@@ -33,11 +33,7 @@
     }
     async function acceptPickerDate() {
         const newDate = new Date(pickerDate)
-        if (parseDate(fakeDate) === null) {
-            fakeDate = formatLocalTime(newDate)
-        } else {
-            fakeDate = overwriteDatePart(fakeDate, newDate)
-        }
+        fakeDate = overwriteDatePart(fakeDate, newDate)
 
         inputRef.focus()
         await tick() // wait for next DOM update
