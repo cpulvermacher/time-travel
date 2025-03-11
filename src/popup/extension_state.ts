@@ -37,10 +37,13 @@ export async function setFakeDate(dateString: string): Promise<boolean> {
 
     await injectFunction(tabId, inject.setFakeDate, [fakeDate])
 
+    return needsReload
+}
+
+export async function updateExtensionIcon() {
+    const tabId = await getActiveTabId()
     const state = await getContentScriptState(tabId)
     await setBadgeAndTitle(tabId, state)
-
-    return needsReload
 }
 
 /** set clock ticking state. `setClockState(false)` also resets the start time to now. */

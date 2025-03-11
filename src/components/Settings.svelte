@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { setClockState, setFakeDate } from '../popup/extension_state'
+    import { setClockState, setFakeDate, updateExtensionIcon } from '../popup/extension_state'
     import { parseDate } from '../util/common'
     import Background from './Background.svelte'
     import DateFormatInfo from './DateFormatInfo.svelte'
@@ -28,6 +28,7 @@
     async function updateClockState() {
         try {
             await setClockState(isClockStopped)
+            await updateExtensionIcon()
         } catch (e) {
             errorMsg = 'Toggling clock failed: ' + (e instanceof Error ? e.message : '')
         }
@@ -39,6 +40,7 @@
             if (needReload) {
                 showReloadModal = true
             }
+            await updateExtensionIcon()
         } catch (e) {
             errorMsg = 'Could not set date: ' + (e instanceof Error ? e.message : '')
         }
@@ -47,6 +49,7 @@
         try {
             await setFakeDate('')
             await setClockState(true)
+            await updateExtensionIcon()
         } catch (e) {
             errorMsg = 'Reset failed: ' + (e instanceof Error ? e.message : '')
         }
