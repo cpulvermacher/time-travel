@@ -58,9 +58,7 @@ To build and use a local version:
 - Click 'Load unpacked' and select the `dist/chrome` directory
 
 ### Firefox
-Change into dist/firefox and start `npx web-ext run` to start a new Firefox instance with the extension loaded.
-
-Or, manually
+Start a new Firefox instance with the extension loaded using `(cd dist/firefox; npx web-ext run)`, or install manually via:
 - Open about:debugging
 - Navigate to 'This Firefox'
 - Click 'Temporary Extensions' > 'Load Temporary Add-on...' and select `dist/firefox/manifest.json`.
