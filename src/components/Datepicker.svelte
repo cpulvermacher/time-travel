@@ -179,19 +179,19 @@
         --datepicker-container-border: none;
         --datepicker-container-box-shadow: none;
         --datepicker-container-font-family: var(--datepicker-font-family);
-        --datepicker-container-left: -15px;
         --datepicker-container-position: relative;
-        --datepicker-container-top: 0;
-        --datepicker-container-width: 210px;
-        --datepicker-container-zindex: 0;
+        --datepicker-container-left: auto;
+        --datepicker-container-top: auto;
+        --datepicker-container-width: auto;
+        --datepicker-container-zindex: auto;
 
         /**
    * Calendar
    */
         --datepicker-calendar-border: 0;
-        --datepicker-calendar-padding: 0 var(--datepicker-padding-large);
+        --datepicker-calendar-padding: 0;
         --datepicker-calendar-position: relative;
-        --datepicker-calendar-width: 240px;
+        --datepicker-calendar-width: auto;
 
         --datepicker-calendar-split-border: 1px solid var(--datepicker-border-color);
 
@@ -327,7 +327,7 @@
         --datepicker-calendar-day-margin-bottom: 1px;
         --datepicker-calendar-day-padding: var(--datepicker-padding-base);
         --datepicker-calendar-day-text-align: center;
-        --datepicker-calendar-day-width: 31px;
+        --datepicker-calendar-day-width: auto;
         --datepicker-calendar-day-zindex-focus: 12;
 
         /**

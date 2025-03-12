@@ -8,11 +8,8 @@
 
 html,
 body {
-    min-height: 90px;
-    min-width: 210px;
-    width: fit-content;
-    max-width: 244px;
     margin: 0;
+    padding: 0;
 
     color: var(--text-color);
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -24,6 +21,7 @@ body {
 }
 
 body {
+    min-width: 210px;
     padding: 15px;
     margin: 0;
 }
@@ -33,6 +31,10 @@ ul,
 dl {
     margin: 0;
     padding: 0;
+}
+
+label {
+    width: 100%;
 }
 
 button {
