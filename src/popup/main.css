@@ -4,6 +4,8 @@
     --secondary-text-color: #9f9f9f;
     --border-color: #dcdcdc;
     --error-color: #8f4242;
+    --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    --main-font-size: 0.875em;
 }
 
 html,
@@ -12,8 +14,8 @@ body {
     padding: 0;
 
     color: var(--text-color);
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    font-size: 12px;
+    font-family: var(--font-family);
+    font-size: var(--main-font-size);
     line-height: 1.5;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -22,8 +24,19 @@ body {
 
 body {
     min-width: 210px;
+    width: fit-content;
     padding: 15px;
     margin: 0;
+}
+
+@media (min-width: 600px) {
+    :root {
+        --main-font-size: 1em;
+    }
+
+    body {
+        width: auto;
+    }
 }
 
 p,
@@ -37,8 +50,13 @@ label {
     width: 100%;
 }
 
+input,
 button {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-family: var(--font-family);
+    font-size: var(--main-font-size);
+}
+
+button {
     line-height: 1;
     height: 27px;
     border: 1px solid var(--border-color);

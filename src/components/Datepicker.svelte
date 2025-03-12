@@ -132,14 +132,14 @@
 
         --datepicker-color: #6060f4;
 
-        --datepicker-font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+        --datepicker-font-family: var(--font-family);
 
         --datepicker-font-size-jumbo: 1.75rem;
         --datepicker-font-size-xxxlarge: 1.5rem;
         --datepicker-font-size-xxlarge: 1.375rem;
         --datepicker-font-size-xlarge: 1.25rem;
         --datepicker-font-size-large: 1.125rem;
-        --datepicker-font-size-base: 12px;
+        --datepicker-font-size-base: 1rem;
         --datepicker-font-size-medium: 0.89rem;
         --datepicker-font-size-small: 0.75rem;
         --datepicker-font-size-xsmall: 0.625rem;
