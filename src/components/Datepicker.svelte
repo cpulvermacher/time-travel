@@ -79,7 +79,7 @@
 
 <style>
     .container {
-        height: 240px; /** input + DatePicker height for 6 weeks */
+        min-height: 245px; /** height of input plus DatePicker for 6 weeks to avoid jumps*/
     }
     input {
         width: 100%;
