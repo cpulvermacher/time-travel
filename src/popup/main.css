@@ -5,17 +5,22 @@
     --border-color: #dcdcdc;
     --error-color: #8f4242;
     --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    --main-font-size: 0.875em;
 }
 
 html,
-body {
+body,
+p,
+ul,
+dl {
     margin: 0;
     padding: 0;
+}
 
+html {
+    background-color: white;
     color: var(--text-color);
     font-family: var(--font-family);
-    font-size: var(--main-font-size);
+    font-size: 0.8em;
     line-height: 1.5;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -26,24 +31,16 @@ body {
     min-width: 210px;
     width: fit-content;
     padding: 15px;
-    margin: 0;
 }
 
 @media (min-width: 600px) {
-    :root {
-        --main-font-size: 1em;
+    html {
+        font-size: 1em;
     }
 
     body {
         width: auto;
     }
-}
-
-p,
-ul,
-dl {
-    margin: 0;
-    padding: 0;
 }
 
 label {
@@ -53,7 +50,7 @@ label {
 input,
 button {
     font-family: var(--font-family);
-    font-size: var(--main-font-size);
+    font-size: 1rem;
 }
 
 button {

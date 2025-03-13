@@ -27,13 +27,13 @@
 <style>
     .toggle {
         display: flex;
-        min-height: 2em;
+        min-height: 1.2lh;
         flex-direction: column;
         user-select: none;
     }
     .row {
         display: flex;
-        gap: 0.5em;
+        gap: 0.5rem;
         justify-content: space-between;
         align-items: center;
     }
@@ -45,7 +45,7 @@
     }
     .description {
         color: var(--secondary-text-color);
-        font-size: 0.9em;
+        font-size: 0.9rem;
     }
 
     .toggle input {
