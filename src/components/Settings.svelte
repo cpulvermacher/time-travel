@@ -30,7 +30,7 @@
             await setClockState(isClockStopped)
             await updateExtensionIcon()
         } catch (e) {
-            errorMsg = 'Toggling clock failed: ' + (e instanceof Error ? e.message : '')
+            setError('Toggling clock failed: ', e)
         }
     }
     async function applyAndEnable() {
@@ -42,7 +42,7 @@
             }
             await updateExtensionIcon()
         } catch (e) {
-            errorMsg = 'Could not set date: ' + (e instanceof Error ? e.message : '')
+            setError('Could not set date: ', e)
         }
     }
     async function reset() {
@@ -51,8 +51,11 @@
             await setClockState(true)
             await updateExtensionIcon()
         } catch (e) {
-            errorMsg = 'Reset failed: ' + (e instanceof Error ? e.message : '')
+            setError('Reset failed: ', e)
         }
+    }
+    function setError(msg: string, err: unknown) {
+        errorMsg = msg + (err instanceof Error ? err.message : '')
     }
 
     function onApply() {
