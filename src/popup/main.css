@@ -58,10 +58,9 @@ button {
 
 button {
     line-height: 1;
-    height: 27px;
     border: 1px solid var(--border-color);
     border-radius: 3px;
-    padding: 5px 10px;
+    padding: 7px 10px;
     background: white;
     color: var(--text-color);
     transition: all 0.3s ease-in;
