@@ -14,6 +14,5 @@
 <style>
     .modal__text {
         color: var(--error-color);
-        margin: 15px 0;
     }
 </style>

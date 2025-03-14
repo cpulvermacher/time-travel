@@ -50,7 +50,7 @@
     {oncancel}
     onclose={onClose}
     onclick={onDialogClick}
-    class="modal"
+    class="modal {onClose ? 'closable' : ''}"
     transition:fade={{ duration: 300, easing: quartIn }}
 >
     {#if onClose}
@@ -72,7 +72,7 @@
         border: none;
         box-sizing: border-box;
         margin: 0;
-        padding: 20px 10px;
+        padding: 25px 10px;
 
         display: flex;
         gap: 20px;
@@ -84,6 +84,9 @@
         border-top: 1px solid var(--border-color);
         border-bottom: 1px solid var(--border-color);
     }
+    .modal.closable {
+        padding: 30px 10px;
+    }
 
     ::backdrop {
         background: rgba(255, 255, 255, 0.3);
@@ -92,6 +95,7 @@
 
     .close {
         position: absolute;
+        background: transparent;
         border: none;
         top: 2px;
         right: 2px;

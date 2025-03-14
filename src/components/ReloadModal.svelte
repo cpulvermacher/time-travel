@@ -14,12 +14,9 @@
 </script>
 
 <Modal>
-    <p class="modal__text">Almost ready! Please reload the page for the changes to take effect.</p>
+    <p>Almost ready! Please reload the page for the changes to take effect.</p>
     <button use:focusButton onclick={reload}>Reload</button>
 </Modal>
 
 <style>
-    .modal__text {
-        margin: 0;
-    }
 </style>
