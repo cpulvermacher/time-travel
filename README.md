@@ -14,13 +14,13 @@ https://github.com/user-attachments/assets/9851f855-36ca-419a-b743-fc5d1b2499d5
 ## Usage
 - Open the tab you want to change the time in.
 - Click the Extensions icon in the toolbar, then click Time Travel.
-- Choose a date from the calendar and edit the time if necessary, or enter a date & time directly (see examples below)
+- Choose a date from the calendar and edit the time if necessary, or enter a date and time directly (see examples below).
 - Confirm with `Enter` or by clicking the "Change Date" button. In Chrome, when first activating the extension on a tab, the page needs to be reloaded once to apply the changes.
-- Any JavaScript `Date` or `Intl.DateTimeFormat` in the current tab now returns the fake date/time you set.
+- Any JavaScript `Date` or `Intl.DateTimeFormat` in the current tab now returns the fake date/time you set. Other tabs and origins are not affected.
 
 To restore the system time, click the extension icon and switch off the "Enable Fake Date" toggle.
 
-When the fake date is enabled, the clock is not stopped by default.
+When the fake date is enabled, the clock runs forward from the configured time.
 You can stop the clock by switching on the "Stop Clock" toggle. The fake date will be reset to the last value you set.
 
 ### Example Dates and Formats
@@ -36,7 +36,7 @@ You can stop the clock by switching on the "Stop Clock" toggle. The fake date wi
 - Fakes date and time for all methods of `Date` and `Intl.DateTimeFormat` objects.
 - Time can be stopped and resumed.
 - Only affects current tab after clicking the extension icon.
-- Minimal permissions (Only in Chrome)
+- Minimal permissions (in Chrome)
 
 ## Limitations
 - Only JavaScript is affected by the extension.
