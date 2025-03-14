@@ -92,8 +92,8 @@
         border-radius: 3px;
     }
     input.error {
-        border: 2px solid var(--error-color);
-        outline: none;
+        border-color: var(--error-color);
+        outline: 1px solid var(--error-color);
         animation: pulse 1s;
     }
     @keyframes pulse {
