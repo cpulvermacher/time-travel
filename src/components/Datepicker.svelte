@@ -108,11 +108,6 @@
         }
     }
 
-    /* Reset button styles */
-    :global(.datepicker button) {
-        height: unset;
-    }
-
     :global(.datepicker[data-picker-theme='theme']) {
         /**
    * Common Variables
