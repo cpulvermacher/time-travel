@@ -146,7 +146,7 @@
         --datepicker-font-weight-bold: 700;
         --datepicker-font-weight-black: 900;
 
-        --datepicker-spacing: 5px;
+        --datepicker-spacing: 4px;
 
         --datepicker-margin-xsmall: calc(var(--datepicker-spacing) / 4);
         --datepicker-margin-small: calc(var(--datepicker-spacing) / 2);
@@ -305,8 +305,7 @@
    */
         --datepicker-calendar-day-align-items: center;
         --datepicker-calendar-day-background-hover: transparent;
-        --datepicker-calendar-day-border: 1px solid transparent;
-        --datepicker-calendar-day-border: 1px solid transparent;
+        --datepicker-calendar-day-border: none;
         --datepicker-calendar-day-border-radius: 20px;
         --datepicker-calendar-day-color: var(--text-color);
         --datepicker-calendar-day-color-disabled: #b9bdc1;
@@ -314,14 +313,14 @@
         --datepicker-calendar-day-cursor: pointer;
         --datepicker-calendar-day-cursor-disabled: default;
         --datepicker-calendar-day-display: flex;
-        --datepicker-calendar-day-height: 20px;
+        --datepicker-calendar-day-height: auto;
+        --datepicker-calendar-day-width: auto;
         --datepicker-calendar-day-justify-content: center;
         --datepicker-calendar-day-font-family: var(--datepicker-font-family);
         --datepicker-calendar-day-font-size: var(--datepicker-font-size-base);
         --datepicker-calendar-day-margin-bottom: 1px;
         --datepicker-calendar-day-padding: var(--datepicker-padding-base);
         --datepicker-calendar-day-text-align: center;
-        --datepicker-calendar-day-width: auto;
         --datepicker-calendar-day-zindex-focus: 12;
 
         /**
@@ -335,7 +334,7 @@
    * Calendar Today
    */
         --datepicker-calendar-today-background: transparent;
-        --datepicker-calendar-today-border: 1px solid #232a32;
+        --datepicker-calendar-today-border: none;
         --datepicker-calendar-today-cursor: default;
         --datepicker-calendar-today-font-weight: var(--datepicker-font-weight-bold);
         /**
