@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => ({
         target: ['chrome109', 'firefox128'],
         minify: false,
         cssMinify: true,
+        modulePreload: false /* we don't need to preload things */,
         rollupOptions: {
             input: tsEntryModules.concat(['/popup/main.html']),
             output: {
