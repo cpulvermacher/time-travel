@@ -1,21 +1,26 @@
 :root {
     --primary-color: #6060f4;
     --text-color: #494949;
+    --secondary-text-color: #9f9f9f;
+    --border-color: #dcdcdc;
+    --error-color: #8f4242;
+    --font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
 html,
-body {
-    min-height: 90px;
-    min-width: 210px;
-    width: fit-content;
-    max-width: 244px;
+body,
+p,
+ul,
+dl {
     margin: 0;
+    padding: 0;
+}
 
-    color: var(--text-color);
+html {
     background-color: white;
-
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    font-size: 12px;
+    color: var(--text-color);
+    font-family: var(--font-family);
+    font-size: 0.8em;
     line-height: 1.5;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -23,25 +28,47 @@ body {
 }
 
 body {
+    /* Chrome overrides font family and size on body, so we need to set it here */
+    font-family: var(--font-family);
+    font-size: 1rem;
+    min-width: 210px;
+    width: fit-content;
     padding: 15px;
-    margin: 0;
+}
+
+@media (min-width: 600px) {
+    html {
+        font-size: 1em;
+    }
+
+    body {
+        width: auto;
+    }
+}
+
+label {
+    width: 100%;
+}
+
+input,
+button {
+    font-family: var(--font-family);
+    font-size: 1rem;
 }
 
 button {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1;
-    height: 27px;
-    border: 1px solid #9f9f9f;
+    border: 1px solid var(--border-color);
     border-radius: 3px;
-    padding: 5px 10px;
+    padding: 7px 10px;
     background: white;
-    color: var(--primary-color);
-    transition: filter 0.2s ease-in;
+    color: var(--text-color);
+    transition: all 0.3s ease-in;
 }
 
 button:disabled {
     background: white !important;
-    color: #9f9f9f !important;
+    color: var(--secondary-text-color) !important;
 }
 
 button:not(:disabled):hover {

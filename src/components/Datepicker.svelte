@@ -2,46 +2,34 @@
     import { DatePicker } from '@svelte-plugins/datepicker'
     import { tick } from 'svelte'
     import { formatLocalTime, overwriteDatePart, parseDate } from '../util/common'
+    import { getFirstDayOfWeek } from '../util/i18n'
+
+    // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
+    const startOfWeek = getFirstDayOfWeek(navigator.language) % 7
 
     interface Props {
         fakeDate: string
         onEnterKey?: () => void
     }
     let { fakeDate = $bindable(), onEnterKey }: Props = $props()
-    let isOpen = $state(false)
     // Note: the datepicker internally works with timestamps in UTC.
     let pickerDate = $state(Date.parse(fakeDate))
+    let isValid = $derived(parseDate(fakeDate) !== null)
     let inputRef: HTMLInputElement
 
     function onkeydown(event: KeyboardEvent) {
+        if (!isValid) {
+            return
+        }
+
         if (event.key === 'Enter' && onEnterKey) {
             event.preventDefault()
-            isOpen = false
             onEnterKey()
         }
     }
     function focus(node: HTMLInputElement) {
         node.focus()
         node.setSelectionRange(-1, -1)
-    }
-    async function toggleDatePicker() {
-        isOpen = !isOpen
-        if (isOpen) {
-            // when opening the date picker, force to standard format and allow editing the current date entered
-            const inputDate = parseDate(fakeDate)
-            if (inputDate === null) {
-                // if date in input field is invalid, reset
-                fakeDate = formatLocalTime(new Date())
-            } else {
-                fakeDate = formatLocalTime(new Date(inputDate), { fullPrecision: true })
-            }
-            pickerDate = new Date(fakeDate).getTime()
-
-            inputRef.focus()
-            await tick() // wait for next DOM update
-            const dateAndTimeSeparator = fakeDate.indexOf(' ')
-            inputRef.setSelectionRange(0, dateAndTimeSeparator) // select yyyy-MM-dd
-        }
     }
     async function acceptPickerDate() {
         const newDate = new Date(pickerDate)
@@ -53,83 +41,71 @@
         inputRef.setSelectionRange(dateAndTimeSeparator + 1, -1) // select hh:mm (and everything afterwards)
     }
     function onInput() {
-        if (isOpen) {
-            // update pickerDate when input field is edited
-            let inputDateTimestamp = Date.parse(fakeDate)
-            if (!isNaN(inputDateTimestamp)) {
-                pickerDate = inputDateTimestamp
-            }
+        const inputDate = parseDate(fakeDate)
+        if (inputDate === null) {
+            // if date in input field is invalid, skip
+            return
         }
+        pickerDate = new Date(inputDate).getTime()
     }
-
-    // force resize of popup when datepicker is opened/closed.
-    // This isn't needed on Chrome, but firefox maintains the original height without this
-    $effect(() => {
-        void isOpen //trigger on opening/closing datepicker
-        document.documentElement.style.height = `${document.body.scrollHeight}px`
-
-        // Hack to force a full redraw, as Firefox 128 may not redraw the popup correctly after resizing
-        setTimeout(() => {
-            document.body.style.transform = isOpen ? 'rotate(0.01deg)' : 'none'
-        }, 30)
-    })
 </script>
 
-<DatePicker
-    bind:isOpen
-    bind:startDate={pickerDate}
-    onDateChange={acceptPickerDate}
-    enableFutureDates
-    includeFont={false}
-    theme="theme"
->
-    <input
-        {onkeydown}
-        bind:value={fakeDate}
-        use:focus
-        bind:this={inputRef}
-        oninput={onInput}
-        type="text"
-        size="28"
-        maxlength="28"
-        spellcheck="false"
-    />
-    <button onclick={toggleDatePicker} title="Choose date" aria-label="Choose date" class="calendar-icon"></button>
-</DatePicker>
+<div class="container">
+    <DatePicker
+        bind:startDate={pickerDate}
+        onDateChange={acceptPickerDate}
+        enableFutureDates
+        {startOfWeek}
+        isOpen={true}
+        alwaysShow={true}
+        includeFont={false}
+        theme="theme"
+    >
+        <input
+            {onkeydown}
+            bind:value={fakeDate}
+            use:focus
+            bind:this={inputRef}
+            oninput={onInput}
+            type="text"
+            size="28"
+            maxlength="28"
+            placeholder={formatLocalTime(new Date())}
+            spellcheck="false"
+            class={{ error: !isValid }}
+        />
+    </DatePicker>
+</div>
 
 <style>
+    .container {
+        min-height: 245px; /** height of input plus DatePicker for 6 weeks to avoid jumps*/
+    }
     input {
-        width: 176px;
-        height: 27px;
+        width: 100%;
         box-sizing: border-box;
-        padding: 5px;
-        padding-left: 21px;
+        padding: 5px 10px;
         margin-top: 5px;
         color: var(--text-color);
         background: white;
-        border: 1px solid #9f9f9f;
+        border: 1px solid var(--border-color);
         border-radius: 3px;
     }
-
-    .calendar-icon {
-        position: absolute;
-        left: 5px;
-        top: 11px;
-        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAEmSURBVHgB7ZcPzcIwEMUfXz4BSCgKwAGgACRMAg6YBBxsOMABOAAHFAXgAK5Z2Y6lHbfQ8SfpL3lZaY/1rb01N+BHUKSMNBfEJjZWISA56Uo6C2KvVpkgFn9oRx9vICFtUT1JKO3tvRtZdjBxXQs+YY+1FenIfuesPUGVVLzfRWKvmrSzbbN19wS+kAb2+sCEuUxrYzkbe4YvCVM2Vr5NPAkVa+van7Wn38U95uTpN5TJ/A8ZKemAakmbmJJGpI0gVmwA0huieFItjG19DgTHtwIZhCfZq3ztCuzQYh+FKBSvusjAGs8PnLYkLgMf34JoIBqIBqKBaIAb0Kw9RlhMCTbzzPWAqYq7LsuPaGDUsYmznaOk5zChUJTNQ4TFVMkrOL4HPsoNn26PxROHCggAAAAASUVORK5CYII=)
-            no-repeat center center;
-        background-size: 14px 14px;
-        height: 14px;
-        width: 14px;
-        border: none;
-        padding: 0;
+    input.error {
+        border-color: var(--error-color);
+        outline: 1px solid var(--error-color);
+        animation: pulse 1s;
     }
-    .calendar-icon:focus-visible {
-        outline: 2px solid var(--primary-color);
-    }
-
-    /* Reset button styles */
-    :global(.datepicker button) {
-        height: unset;
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 var(--error-color);
+        }
+        70% {
+            box-shadow: 0 0 0 5px rgba(255, 0, 0, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+        }
     }
 
     :global(.datepicker[data-picker-theme='theme']) {
@@ -138,26 +114,26 @@
    */
         --datepicker-border-color: #e8e9ea;
 
-        --datepicker-border-radius-small: 0.125rem;
+        /* --datepicker-border-radius-small: 0.125rem;
         --datepicker-border-radius-base: 0.25rem;
         --datepicker-border-radius-large: 0.5rem;
         --datepicker-border-radius-xlarge: 0.75rem;
         --datepicker-border-radius-xxlarge: 1rem;
-        --datepicker-border-radius-xxxlarge: 1.125rem;
+        --datepicker-border-radius-xxxlarge: 1.125rem; */
 
         --datepicker-state-active: #6060f4;
         --datepicker-state-hover: #e7f7fc;
 
         --datepicker-color: #6060f4;
 
-        --datepicker-font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+        --datepicker-font-family: var(--font-family);
 
-        --datepicker-font-size-jumbo: 1.75rem;
+        --datepicker-font-size-base: 1rem;
+        /* --datepicker-font-size-jumbo: 1.75rem;
         --datepicker-font-size-xxxlarge: 1.5rem;
         --datepicker-font-size-xxlarge: 1.375rem;
         --datepicker-font-size-xlarge: 1.25rem;
         --datepicker-font-size-large: 1.125rem;
-        --datepicker-font-size-base: 12px;
         --datepicker-font-size-medium: 0.89rem;
         --datepicker-font-size-small: 0.75rem;
         --datepicker-font-size-xsmall: 0.625rem;
@@ -168,9 +144,9 @@
         --datepicker-font-weight-base: 400;
         --datepicker-font-weight-medium: 500;
         --datepicker-font-weight-bold: 700;
-        --datepicker-font-weight-black: 900;
+        --datepicker-font-weight-black: 900; */
 
-        --datepicker-spacing: 5px;
+        --datepicker-spacing: 4px;
 
         --datepicker-margin-xsmall: calc(var(--datepicker-spacing) / 4);
         --datepicker-margin-small: calc(var(--datepicker-spacing) / 2);
@@ -193,25 +169,23 @@
         /**
    * Container
    */
-        --datepicker-container-background: #fff;
-        --datepicker-container-border: 1px solid var(--datepicker-border-color);
-        --datepicker-container-border-radius: 12px;
-        --datepicker-container-box-shadow: 0 1px 20px rgba(0, 0, 0, 0.1);
+        --datepicker-container-background: none;
+        --datepicker-container-border: none;
+        --datepicker-container-box-shadow: none;
         --datepicker-container-font-family: var(--datepicker-font-family);
-        --datepicker-container-left: -14px;
-        --datepicker-container-position: absolute;
-        --datepicker-container-top: 105%;
-        --datepicker-container-width: fit-content;
-        --datepicker-container-zindex: 99;
+        --datepicker-container-position: relative;
+        --datepicker-container-left: auto;
+        --datepicker-container-top: auto;
+        --datepicker-container-width: auto;
+        --datepicker-container-zindex: auto;
 
         /**
    * Calendar
    */
         --datepicker-calendar-border: 0;
-        --datepicker-calendar-padding: var(--datepicker-padding-base) var(--datepicker-padding-large)
-            var(--datepicker-padding-xlarge);
+        --datepicker-calendar-padding: 0;
         --datepicker-calendar-position: relative;
-        --datepicker-calendar-width: 240px;
+        --datepicker-calendar-width: auto;
 
         --datepicker-calendar-split-border: 1px solid var(--datepicker-border-color);
 
@@ -260,7 +234,7 @@
    * Calendar Header Text
    */
         --datepicker-calendar-header-text-align-items: center;
-        --datepicker-calendar-header-text-color: var(--datepicker-color);
+        --datepicker-calendar-header-text-color: var(--text-color);
         --datepicker-calendar-header-text-display: flex;
         --datepicker-calendar-header-text-font-size: inherit;
         --datepicker-calendar-header-text-font-weight: var(--datepicker-font-weight-medium);
@@ -301,7 +275,7 @@
         /**
    * Calendar DOW (Days of Week)
    */
-        --datepicker-calendar-dow-color: #8b9198;
+        --datepicker-calendar-dow-color: var(--secondary-text-color);
         --datepicker-calendar-dow-font-size: var(--datepicker-font-size-base);
         --datepicker-calendar-dow-font-weight: var(--datepicker-font-weight-medium);
         --datepicker-calendar-dow-margin-bottom: var(--datepicker-margin-large);
@@ -331,23 +305,22 @@
    */
         --datepicker-calendar-day-align-items: center;
         --datepicker-calendar-day-background-hover: transparent;
-        --datepicker-calendar-day-border: 1px solid transparent;
-        --datepicker-calendar-day-border: 1px solid transparent;
+        --datepicker-calendar-day-border: none;
         --datepicker-calendar-day-border-radius: 20px;
-        --datepicker-calendar-day-color: #232a32;
+        --datepicker-calendar-day-color: var(--text-color);
         --datepicker-calendar-day-color-disabled: #b9bdc1;
-        --datepicker-calendar-day-color-hover: #232a32;
+        --datepicker-calendar-day-color-hover: var(--text-color);
         --datepicker-calendar-day-cursor: pointer;
         --datepicker-calendar-day-cursor-disabled: default;
         --datepicker-calendar-day-display: flex;
-        --datepicker-calendar-day-height: 20px;
+        --datepicker-calendar-day-height: auto;
+        --datepicker-calendar-day-width: auto;
         --datepicker-calendar-day-justify-content: center;
         --datepicker-calendar-day-font-family: var(--datepicker-font-family);
         --datepicker-calendar-day-font-size: var(--datepicker-font-size-base);
         --datepicker-calendar-day-margin-bottom: 1px;
         --datepicker-calendar-day-padding: var(--datepicker-padding-base);
         --datepicker-calendar-day-text-align: center;
-        --datepicker-calendar-day-width: 31px;
         --datepicker-calendar-day-zindex-focus: 12;
 
         /**
@@ -361,7 +334,7 @@
    * Calendar Today
    */
         --datepicker-calendar-today-background: transparent;
-        --datepicker-calendar-today-border: 1px solid #232a32;
+        --datepicker-calendar-today-border: none;
         --datepicker-calendar-today-cursor: default;
         --datepicker-calendar-today-font-weight: var(--datepicker-font-weight-bold);
         /**

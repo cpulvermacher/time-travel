@@ -39,7 +39,7 @@ declare const __EXT_VERSION__: string
     /** return the current date/time we want the page to see.
      *
      * This will either be the real current time (extension off),
-     * or the fake time, stopped or ticking (extension on).
+     * or the fake time, stopped or running (extension on).
      */
     function fakeNowDate(): Date {
         const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)

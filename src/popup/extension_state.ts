@@ -16,13 +16,15 @@ import {
 } from '../util/common'
 import * as inject from '../util/inject'
 
-/** sets fake date, returns whether page needs reload for content script to be injected */
+/** sets & enables fake date, returns whether page needs reload for content script to be injected */
 export async function setFakeDate(dateString: string): Promise<boolean> {
+    if (import.meta.env.DEV) {
+        return true
+    }
+
     const fakeDate = parseDate(dateString)
     if (fakeDate === null) {
-        throw new Error(
-            'Invalid format! Try "2023-03-25 12:40", "2023-03-25" (midnight), "2023-03-25T12:40Z" (UTC), "2023-03-25T12:40:00.120+1130" or number of milliseconds since January 1, 1970.'
-        )
+        throw new Error('Invalid date format!')
     }
 
     const tabId = await getActiveTabId()
@@ -35,63 +37,35 @@ export async function setFakeDate(dateString: string): Promise<boolean> {
 
     await injectFunction(tabId, inject.setFakeDate, [fakeDate])
 
-    const state = await getContentScriptState(tabId)
-    await setBadgeAndTitle(tabId, state)
-
-    if (!needsReload) {
-        window.close()
-    }
     return needsReload
 }
 
-/** sets fake date & enables it, returns whether page needs reload for content script to be injected */
-export async function setAndEnable(fakeDate: string): Promise<boolean> {
-    if (import.meta.env.DEV) {
-        return true
-    }
-
+export async function updateExtensionIcon() {
     const tabId = await getActiveTabId()
     const state = await getContentScriptState(tabId)
-    if (state.tickStartTimestamp) {
-        // we want to start from the new faked date, without any offset
-        await resetTickStart(new Date())
-    }
-
-    return await setFakeDate(fakeDate)
+    await setBadgeAndTitle(tabId, state)
 }
 
-/** toggles clock ticking state, returns true iff the clock was started */
-export async function toggleTick(): Promise<boolean> {
-    const tabId = await getActiveTabId()
-    const state = await getContentScriptState(tabId)
-
-    if (state.clockIsRunning) {
-        await resetTickStart(null)
-    } else {
-        await resetTickStart(new Date())
-    }
-    return !state.clockIsRunning
-}
-
-/** set/reset the clock-tick start time to the given date */
-export async function resetTickStart(date: Date | null): Promise<void> {
+/** set clock ticking state. `setClockState(false)` also resets the start time to now. */
+export async function setClockState(stopClock: boolean): Promise<void> {
     const tabId = await getActiveTabId()
 
-    if (date === null) {
+    if (stopClock) {
         await injectFunction(tabId, inject.setTickStartTimestamp, [''])
     } else {
-        const nowTimestampStr = date.getTime().toString()
+        const now = new Date()
+        const nowTimestampStr = now.getTime().toString()
         await injectFunction(tabId, inject.setTickStartTimestamp, [nowTimestampStr])
     }
 }
 
 /** get current state of content script. Throws on permission errors */
-export async function getInitialState(): Promise<{ fakeDate?: string; clockIsRunning: boolean }> {
+export async function getState(): Promise<{ fakeDate?: string; isClockStopped: boolean }> {
     if (import.meta.env.DEV) {
         //return dummy state for testing
         return {
             fakeDate: '2005-06-07 08:09',
-            clockIsRunning: false,
+            isClockStopped: false,
         }
     }
 
@@ -99,9 +73,9 @@ export async function getInitialState(): Promise<{ fakeDate?: string; clockIsRun
     try {
         let initialFakeDate
         const state = await getContentScriptState(tabId)
-        if (state.fakeDate) {
+        if (state.fakeDateActive && state.fakeDate) {
             const fakeDate = new Date(Date.parse(state.fakeDate))
-            if (state.fakeDateActive && state.clockIsRunning && state.tickStartTimestamp) {
+            if (!state.isClockStopped && state.tickStartTimestamp) {
                 const tickStartTimestamp = Number.parseInt(state.tickStartTimestamp)
                 const elapsed = Date.now() - tickStartTimestamp
                 const fakeDateNow = new Date(fakeDate.getTime() + elapsed)
@@ -113,7 +87,7 @@ export async function getInitialState(): Promise<{ fakeDate?: string; clockIsRun
 
         return {
             fakeDate: initialFakeDate,
-            clockIsRunning: state.clockIsRunning,
+            isClockStopped: state.isClockStopped,
         }
     } catch (error) {
         if (await isFileUrl(tabId)) {

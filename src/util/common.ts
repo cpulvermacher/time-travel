@@ -11,7 +11,7 @@ type ContentScriptState = {
     contentScriptActive: boolean
     fakeDate: string | null
     tickStartTimestamp: string | null
-    clockIsRunning: boolean
+    isClockStopped: boolean
     fakeDateActive: boolean
 }
 
@@ -19,7 +19,7 @@ export type ActivationMessage = {
     msg: 'active'
     fakeDate: string
     tickStartTimestamp: string | null
-    isClockTicking: boolean
+    isClockStopped: boolean
 }
 
 export type FormatOptions = {
@@ -62,13 +62,29 @@ export function formatLocalTime(date: Date, options?: FormatOptions): string {
     return dateStr
 }
 
-/** For a date in format "YYYY-MM-DD hh:mm...", returns a new date string in the same format, with the date part replaced by the given date */
-export function overwriteDatePart(dateString: string, newDate: Date): string {
-    const newDateString = formatLocalTime(newDate).slice(0, 10)
-    if (dateString.length <= 11) {
-        return newDateString
+/** Returns a date string in format "YYYY-MM-DD hh:mm..." using the date from `newDate`, and the time from `dateTimeString`.
+ *
+ * Precision of time part is preserved, but includes at least hours and minutes.
+ * `newDate` is interpreted as local time, and the returned string will be in local time.
+ */
+export function overwriteDatePart(dateTimeString: string, newDate: Date): string {
+    const parsedDateTime = parseDate(dateTimeString)
+    const timeRegex = /\d{1,2}:\d{1,2}/
+    if (parsedDateTime === null || !timeRegex.test(parsedDateTime)) {
+        newDate.setHours(0)
+        newDate.setMinutes(0)
+        newDate.setSeconds(0)
+        newDate.setMilliseconds(0)
+        return formatLocalTime(newDate)
     }
-    return newDateString + dateString.slice(10)
+
+    const timePart = new Date(parsedDateTime)
+    newDate.setHours(timePart.getHours())
+    newDate.setMinutes(timePart.getMinutes())
+    newDate.setSeconds(timePart.getSeconds())
+    newDate.setMilliseconds(timePart.getMilliseconds())
+
+    return formatLocalTime(newDate, { fullPrecision: true })
 }
 
 /** Tries parsing a date string, returns a valid date string or null if invalid.
@@ -96,7 +112,7 @@ export async function setBadgeAndTitle(tabId: number, state: ContentScriptState)
     let title = defaultTitleText
     if (state.fakeDateActive && state.fakeDate) {
         const formattedFakeDate = formatLocalTime(new Date(state.fakeDate))
-        const clockState = state.clockIsRunning ? 'ticking' : 'stopped'
+        const clockState = state.isClockStopped ? 'stopped' : 'running'
         title += ` (${formattedFakeDate} - Clock ${clockState})`
     } else if (state.contentScriptActive) {
         title += ' (Off)'
@@ -118,7 +134,7 @@ export async function getContentScriptState(tabId: number): Promise<ContentScrip
         contentScriptActive,
         fakeDate,
         tickStartTimestamp: tickStartTimestamp,
-        clockIsRunning: contentScriptActive && !!fakeDate && !!tickStartTimestamp,
+        isClockStopped: contentScriptActive && !!fakeDate && !tickStartTimestamp,
         fakeDateActive: contentScriptActive && !!fakeDate,
     }
 }

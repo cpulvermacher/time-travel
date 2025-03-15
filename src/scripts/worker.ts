@@ -18,7 +18,7 @@ chrome.runtime.onMessage.addListener((message: ActivationMessage, sender) => {
             contentScriptActive: true,
             fakeDate: message.fakeDate,
             tickStartTimestamp: message.tickStartTimestamp,
-            clockIsRunning: message.isClockTicking,
+            isClockStopped: message.isClockStopped,
             fakeDateActive: true,
         }
         void setBadgeAndTitle(sender.tab.id, state)
