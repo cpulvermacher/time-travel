@@ -1,5 +1,6 @@
 declare const __EXT_VERSION__: string
 ;(() => {
+    
     console.log(`Time Travel: injected content-script (version ${__EXT_VERSION__}) for host ${window.location.host}`)
     if (window['__timeTravelCheckToggle'] !== undefined) {
         // this can happen if multiple versions of the extension are installed
@@ -9,6 +10,24 @@ declare const __EXT_VERSION__: string
 
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
     const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp'
+
+    function overrideClearSessionStorage() {
+        const originalClear = sessionStorage.clear.bind(sessionStorage);
+        window.sessionStorage.clear = function () {
+            const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
+            const tickStart = getFromStorage(TICK_START_STORAGE_KEY)
+
+            originalClear();
+
+            if (fakeDate) {
+                window.sessionStorage.setItem(FAKE_DATE_STORAGE_KEY, fakeDate)
+            }
+            if (tickStart) {
+                window.sessionStorage.setItem(TICK_START_STORAGE_KEY, tickStart)
+            }
+        }
+    }
+    overrideClearSessionStorage()
 
     // ==================== helper functions ====================
 
