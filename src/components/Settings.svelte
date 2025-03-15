@@ -94,10 +94,6 @@
         }
     }
     function hasDateChanged(): boolean {
-        if (!isDateValid) {
-            return false
-        }
-
         const newFakeDate = new Date(parseDate(fakeDate) || '')
         return newFakeDate.getTime() !== effectiveDate?.getTime()
     }
@@ -112,7 +108,7 @@
         </label>
     </div>
     <div class="row right-aligned">
-        <button disabled={!hasDateChanged()} onclick={onApply}> Change Date </button>
+        <button disabled={!isDateValid || !hasDateChanged()} onclick={onApply}> Change Date </button>
     </div>
     <hr />
     <Toggle bind:checked={isClockStopped} disabled={!isDateValid} onChange={onClockToggle} label="Stop Clock" />
