@@ -1,7 +1,5 @@
 <script lang="ts">
     import type { Snippet } from 'svelte'
-    import { quartIn } from 'svelte/easing'
-    import { fade } from 'svelte/transition'
 
     interface Props {
         children: Snippet
@@ -45,14 +43,7 @@
     }
 </script>
 
-<dialog
-    use:show
-    {oncancel}
-    onclose={onClose}
-    onclick={onDialogClick}
-    class="modal {onClose ? 'closable' : ''}"
-    transition:fade={{ duration: 300, easing: quartIn }}
->
+<dialog use:show {oncancel} onclose={onClose} onclick={onDialogClick} class="modal {onClose ? 'closable' : ''}">
     {#if onClose}
         <button class="close" onclick={onClose}>✕</button>
     {/if}
@@ -83,6 +74,7 @@
         background: rgba(255, 255, 255, 0.8);
         border-top: 1px solid var(--border-color);
         border-bottom: 1px solid var(--border-color);
+        animation: fade-in 0.3s ease-in;
     }
     .modal.closable {
         padding: 30px 10px;
@@ -103,5 +95,14 @@
         width: 30px;
         height: 30px;
         font-size: 1.5em;
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
     }
 </style>
