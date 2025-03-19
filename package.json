@@ -4,12 +4,13 @@
     "license": "MIT",
     "private": "true",
     "scripts": {
-        "build": "sh ./util/build.sh production",
+        "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide && sh ./util/build.sh production",
         "dev": "sh ./util/build.sh dev",
         "lint": "tsc && eslint *.mts src/ && prettier src --check && svelte-check --tsconfig ./tsconfig.json",
         "prettier": "prettier src --write",
         "test": "vitest --run",
-        "checkall": "pnpm test && pnpm lint && pnpm build"
+        "checkall": "pnpm test && pnpm lint && pnpm build",
+        "machine-translate": "inlang machine translate --project project.inlang"
     },
     "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^5.0.3",
@@ -24,7 +25,9 @@
         "typescript-eslint": "^8.26.1",
         "vite": "^6.2.1",
         "vitest": "^3.0.8",
-        "web-ext": "^8.4.0"
+        "web-ext": "^8.4.0",
+        "@inlang/paraglide-js": "2.0.1",
+        "@inlang/cli": "^3.0.0"
     },
     "dependencies": {
         "@svelte-plugins/datepicker": "^1.0.11",
