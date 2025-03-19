@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { m } from '../paraglide/messages.js'
     import { setClockState, setFakeDate, updateExtensionIcon } from '../popup/extension_state'
     import { parseDate } from '../util/common'
     import Background from './Background.svelte'
@@ -30,7 +31,7 @@
             await setClockState(isClockStopped)
             await updateExtensionIcon()
         } catch (e) {
-            setError('Toggling clock failed: ', e)
+            setError(m.error_toggle_clock_failed(), e)
         }
     }
     async function applyAndEnable() {
@@ -42,7 +43,7 @@
             }
             await updateExtensionIcon()
         } catch (e) {
-            setError('Could not set date: ', e)
+            setError(m.error_setting_date_failed(), e)
         }
     }
     async function reset() {
@@ -51,7 +52,7 @@
             await setClockState(true)
             await updateExtensionIcon()
         } catch (e) {
-            setError('Reset failed: ', e)
+            setError(m.error_reset_failed(), e)
         }
     }
     function setError(msg: string, err: unknown) {
@@ -103,16 +104,27 @@
 <main>
     <div class="row">
         <label>
-            Date and time to set <LinkButton onClick={() => (showFormatHelp = true)}>(?)</LinkButton>:
+            {m.datetime_input_label()}
+            <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>:
             <Datepicker bind:fakeDate onEnterKey={onApply} />
         </label>
     </div>
     <div class="row right-aligned">
-        <button disabled={!isDateValid || !hasDateChanged()} onclick={onApply}> Change Date </button>
+        <button disabled={!isDateValid || !hasDateChanged()} onclick={onApply}>{m.change_date_btn()}</button>
     </div>
     <hr />
-    <Toggle bind:checked={isClockStopped} disabled={!isDateValid} onChange={onClockToggle} label="Stop Clock" />
-    <Toggle bind:checked={isEnabled} disabled={!isDateValid} onChange={onEnableChange} label="Enable Fake Date" />
+    <Toggle
+        bind:checked={isClockStopped}
+        disabled={!isDateValid}
+        onChange={onClockToggle}
+        label={m.helpful_each_hedgehog_fold()}
+    />
+    <Toggle
+        bind:checked={isEnabled}
+        disabled={!isDateValid}
+        onChange={onEnableChange}
+        label={m.wacky_strong_cow_sing()}
+    />
 </main>
 
 {#if showFormatHelp}
