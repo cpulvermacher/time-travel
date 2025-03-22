@@ -3,7 +3,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
     {
-        ignores: ['out', 'dist', '**/*.d.ts',]
+        ignores: ['out', 'dist', '**/*.d.ts', 'src/paraglide']
     },
     eslint.configs.recommended,
     ...tseslint.configs.recommendedTypeChecked,

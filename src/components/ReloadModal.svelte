@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { Action } from 'svelte/action'
+    import { m } from '../paraglide/messages'
     import { reloadTab } from '../util/browser'
     import Modal from './Modal.svelte'
 
@@ -14,8 +15,8 @@
 </script>
 
 <Modal>
-    <p>Almost ready! Please reload the page for the changes to take effect.</p>
-    <button use:focusButton onclick={reload}>Reload</button>
+    <p>{m.please_reload_message()}</p>
+    <button use:focusButton onclick={reload}>{m.reload_btn()}</button>
 </Modal>
 
 <style>
