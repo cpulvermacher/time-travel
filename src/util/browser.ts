@@ -127,3 +127,12 @@ export async function reloadTab() {
     const tabId = await getActiveTabId()
     await chrome.tabs.reload(tabId)
 }
+
+/** get the browser UI language */
+export function getUILanguage(): string {
+    if (typeof chrome !== 'undefined' && chrome?.i18n !== undefined) {
+        return chrome.i18n.getUILanguage()
+    }
+
+    return navigator.language
+}

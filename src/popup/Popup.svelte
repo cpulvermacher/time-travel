@@ -1,7 +1,12 @@
 <script lang="ts">
     import Settings from '../components/Settings.svelte'
+    import { overwriteGetLocale } from '../paraglide/runtime'
+    import { getUILanguage } from '../util/browser'
     import { formatLocalTime } from '../util/common'
+    import { getTranslationLocale } from '../util/i18n'
     import { getState } from './extension_state'
+
+    overwriteGetLocale(() => getTranslationLocale(getUILanguage()))
 
     const promise = getState()
 </script>

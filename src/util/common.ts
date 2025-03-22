@@ -1,5 +1,7 @@
 import { m } from '../paraglide/messages'
-import { injectFunction, setBadgeText, setTitle } from './browser'
+import { overwriteGetLocale } from '../paraglide/runtime'
+import { getUILanguage, injectFunction, setBadgeText, setTitle } from './browser'
+import { getTranslationLocale } from './i18n'
 import * as inject from './inject'
 
 declare const __EXT_VERSION__: string
@@ -103,6 +105,8 @@ export function parseDate(date: string): string | null {
 }
 
 export async function setBadgeAndTitle(tabId: number, state: ContentScriptState) {
+    overwriteGetLocale(() => getTranslationLocale(getUILanguage()))
+
     let badgeText = ''
     if (state.fakeDateActive) {
         badgeText = 'ON'
