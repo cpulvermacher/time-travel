@@ -1,0 +1,6 @@
+{
+    "extensionDescription": {
+        "message": "JavaScript DateまたはIntl.DateTimeFormatオブジェクトの現在の日付と時刻を偽装します。",
+        "description": "description shown in browser UI"
+    }
+}
