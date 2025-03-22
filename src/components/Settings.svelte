@@ -117,13 +117,13 @@
         bind:checked={isClockStopped}
         disabled={!isDateValid}
         onChange={onClockToggle}
-        label={m.helpful_each_hedgehog_fold()}
+        label={m.stop_time_toggle()}
     />
     <Toggle
         bind:checked={isEnabled}
         disabled={!isDateValid}
         onChange={onEnableChange}
-        label={m.wacky_strong_cow_sing()}
+        label={m.enable_fake_date_toggle()}
     />
 </main>
 
