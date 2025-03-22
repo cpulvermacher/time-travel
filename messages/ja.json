@@ -30,5 +30,8 @@
     "september": "9月",
     "october": "10月",
     "november": "11月",
-    "december": "12月"
+    "december": "12月",
+    "icon_title_stopped": "({fakeDate} - 時間が停止中)",
+    "icon_title_running": "({fakeDate} - 時間が動作中)",
+    "icon_title_off": "（オフ）"
 }

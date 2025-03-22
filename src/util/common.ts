@@ -1,3 +1,4 @@
+import { m } from '../paraglide/messages'
 import { injectFunction, setBadgeText, setTitle } from './browser'
 import * as inject from './inject'
 
@@ -112,10 +113,11 @@ export async function setBadgeAndTitle(tabId: number, state: ContentScriptState)
     let title = defaultTitleText
     if (state.fakeDateActive && state.fakeDate) {
         const formattedFakeDate = formatLocalTime(new Date(state.fakeDate))
-        const clockState = state.isClockStopped ? 'stopped' : 'running'
-        title += ` (${formattedFakeDate} - Clock ${clockState})`
+
+        const titleArgs = { fakeDate: formattedFakeDate }
+        title += ' ' + (state.isClockStopped ? m.icon_title_stopped(titleArgs) : m.icon_title_running(titleArgs))
     } else if (state.contentScriptActive) {
-        title += ' (Off)'
+        title += ' ' + m.icon_title_off()
     }
     title += devVersion
     await setTitle(tabId, title)

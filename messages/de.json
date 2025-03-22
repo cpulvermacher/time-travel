@@ -28,5 +28,8 @@
     "september": "September",
     "october": "Oktober",
     "november": "November",
-    "december": "Dezember"
+    "december": "Dezember",
+    "icon_title_stopped": "({fakeDate} - Uhr angehalten)",
+    "icon_title_running": "({fakeDate} - Uhr läuft)",
+    "icon_title_off": "(Off)"
 }
