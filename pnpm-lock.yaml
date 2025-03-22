@@ -19,7 +19,7 @@ importers:
         specifier: ^3.0.0
         version: 3.0.5
       '@inlang/paraglide-js':
-        specifier: 2.0.1
+        specifier: ^2.0.1
         version: 2.0.1
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.0.3
@@ -2866,6 +2866,10 @@ snapshots:
     dependencies:
       acorn: 8.14.0
 
+  acorn-jsx@5.3.2(acorn@8.14.1):
+    dependencies:
+      acorn: 8.14.1
+
   acorn@8.14.0: {}
 
   acorn@8.14.1: {}
@@ -3399,8 +3403,8 @@ snapshots:
 
   espree@9.6.1:
     dependencies:
-      acorn: 8.14.0
-      acorn-jsx: 5.3.2(acorn@8.14.0)
+      acorn: 8.14.1
+      acorn-jsx: 5.3.2(acorn@8.14.1)
       eslint-visitor-keys: 3.4.3
 
   esprima@4.0.1: {}
