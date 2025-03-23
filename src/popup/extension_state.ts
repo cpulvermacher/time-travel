@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+import { m } from '../paraglide/messages'
 import {
     getActiveTabId,
     injectFunction,
@@ -91,16 +92,14 @@ export async function getState(): Promise<{ fakeDate?: string; isClockStopped: b
         }
     } catch (error) {
         if (await isFileUrl(tabId)) {
-            throw new Error(
-                'To use Time Travel on local files, please enable "Allow access to file URLs" in the extension settings.'
-            )
+            throw new Error(m.permission_error_file_url())
         } else if (await isExtensionGalleryUrl(tabId)) {
-            throw new Error('Time Travel cannot be used in the Chrome Web Store.')
+            throw new Error(m.permission_error_extension_gallery())
         } else if (await isAboutUrl(tabId)) {
-            throw new Error('Time Travel cannot be used in the current tab.')
+            throw new Error(m.permission_error_generic())
         } else {
             const message = error instanceof Error ? error.message : ''
-            throw new Error('Time Travel cannot be used in the current tab: ' + message)
+            throw new Error(m.permission_error_generic_with_message({ message }))
         }
     }
 }

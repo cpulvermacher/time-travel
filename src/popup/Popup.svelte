@@ -1,5 +1,6 @@
 <script lang="ts">
     import Settings from '../components/Settings.svelte'
+    import { m } from '../paraglide/messages'
     import { overwriteGetLocale } from '../paraglide/runtime'
     import { getUILanguage } from '../util/browser'
     import { formatLocalTime } from '../util/common'
@@ -19,5 +20,5 @@
     />
 {:catch error}
     <p>{error instanceof Error ? error.message : 'Could not get initial state'}</p>
-    <p>Please switch to a different tab to change the time.</p>
+    <p>{m.permission_error_please_change_tab()}</p>
 {/await}
