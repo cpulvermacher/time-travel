@@ -4,7 +4,6 @@
     "permission_error_extension_gallery": "Time Travel cannot be used in the Chrome Web Store.",
     "permission_error_generic": "Time Travel cannot be used in the current tab.",
     "permission_error_generic_with_message": "Time Travel cannot be used in the current tab: {message}",
-    "permission_error_fallback": "Could not determine current state.",
     "permission_error_please_change_tab": "Please switch to a different tab to change the time.",
     "datetime_input_label": "Date and time to set",
     "format_help_link": "(?)",

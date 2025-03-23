@@ -4,7 +4,6 @@
     "permission_error_extension_gallery": "Time TravelはChrome Web Storeで使用できません。",
     "permission_error_generic": "現在のタブではTime Travelを使用できません。",
     "permission_error_generic_with_message": "現在のタブではTime Travelを使用できません: {message}",
-    "permission_error_fallback": "現在の状態を判断できませんでした。",
     "permission_error_please_change_tab": "日時を変更するには、別のタブに切り替えてください。",
     "datetime_input_label": "設定する日時",
     "format_help_link": "(?)",
