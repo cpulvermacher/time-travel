@@ -105,7 +105,7 @@
     <div class="row">
         <label>
             {m.datetime_input_label()}
-            <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>:
+            <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
             <Datepicker bind:fakeDate onEnterKey={onApply} />
         </label>
     </div>
