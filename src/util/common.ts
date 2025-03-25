@@ -1,4 +1,7 @@
-import { injectFunction, setBadgeText, setTitle } from './browser'
+import { m } from '../paraglide/messages'
+import { overwriteGetLocale } from '../paraglide/runtime'
+import { getUILanguage, injectFunction, setBadgeText, setTitle } from './browser'
+import { getTranslationLocale } from './i18n'
 import * as inject from './inject'
 
 declare const __EXT_VERSION__: string
@@ -102,6 +105,8 @@ export function parseDate(date: string): string | null {
 }
 
 export async function setBadgeAndTitle(tabId: number, state: ContentScriptState) {
+    overwriteGetLocale(() => getTranslationLocale(getUILanguage()))
+
     let badgeText = ''
     if (state.fakeDateActive) {
         badgeText = 'ON'
@@ -112,10 +117,11 @@ export async function setBadgeAndTitle(tabId: number, state: ContentScriptState)
     let title = defaultTitleText
     if (state.fakeDateActive && state.fakeDate) {
         const formattedFakeDate = formatLocalTime(new Date(state.fakeDate))
-        const clockState = state.isClockStopped ? 'stopped' : 'running'
-        title += ` (${formattedFakeDate} - Clock ${clockState})`
+
+        const titleArgs = { fakeDate: formattedFakeDate }
+        title += ' ' + (state.isClockStopped ? m.icon_title_stopped(titleArgs) : m.icon_title_running(titleArgs))
     } else if (state.contentScriptActive) {
-        title += ' (Off)'
+        title += ' ' + m.icon_title_off()
     }
     title += devVersion
     await setTitle(tabId, title)

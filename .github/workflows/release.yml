@@ -21,9 +21,9 @@ jobs:
         node-version: '20.x'
         cache: 'pnpm'
     - run: pnpm i
-    - run: pnpm lint
     - run: pnpm test
     - run: pnpm build
+    - run: pnpm lint
     - name: Create Chrome artifact
       uses: actions/upload-artifact@v4
       with:

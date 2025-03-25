@@ -1,10 +1,18 @@
+import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { defineConfig } from 'vitest/config'
 
 const moduleNames = ['replace_date', 'send_active', 'worker']
 const tsEntryModules = moduleNames.map((name) => `/scripts/${name}.ts`)
 export default defineConfig(({ mode }) => ({
-    plugins: [svelte()],
+    plugins: [
+        svelte(),
+        paraglideVitePlugin({
+            project: './project.inlang',
+            outdir: './src/paraglide',
+            strategy: ['preferredLanguage', 'baseLocale'],
+        }),
+    ],
     root: 'src',
     test: {
         environment: 'happy-dom',

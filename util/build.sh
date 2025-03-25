@@ -31,6 +31,7 @@ vite build -m "${MODE}"
 # copy extra assets
 mkdir dist/chrome/images/
 cp -a images/icon*.png dist/chrome/images/
+cp -a src/_locales dist/chrome/_locales
 
 cat src/manifest.json | \
     sed "s/__VERSION_NAME__/$LONG_VERSION/g" | \

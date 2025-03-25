@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { m } from '../paraglide/messages'
     import Modal from './Modal.svelte'
 
     interface Props {
@@ -9,11 +10,11 @@
 
 <Modal {onClose} closeOnCancel={true}>
     <p>
-        You can enter date and time in any format supported by <code>Date.parse()</code> as well as UNIX timestamps:
+        {@html m.dateformat_info()}
     </p>
     <ul>
         <li>2025-02-27 12:40</li>
-        <li>2025-02-27 (midnight UTC)</li>
+        <li>2025-02-27 {m.dateformat_info_midnight_utc()}</li>
         <li>27 Feb 2025 12:40</li>
         <li>2025-03-30 00:59:55</li>
         <li>2025-04-27T12:40Z</li>

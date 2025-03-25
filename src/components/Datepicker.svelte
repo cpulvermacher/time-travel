@@ -1,11 +1,13 @@
 <script lang="ts">
     import { DatePicker } from '@svelte-plugins/datepicker'
     import { tick } from 'svelte'
+    import { m } from '../paraglide/messages'
+    import { getUILanguage } from '../util/browser'
     import { formatLocalTime, overwriteDatePart, parseDate } from '../util/common'
     import { getFirstDayOfWeek } from '../util/i18n'
 
     // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
-    const startOfWeek = getFirstDayOfWeek(navigator.language) % 7
+    const startOfWeek = getFirstDayOfWeek(getUILanguage()) % 7
 
     interface Props {
         fakeDate: string
@@ -55,6 +57,29 @@
         bind:startDate={pickerDate}
         onDateChange={acceptPickerDate}
         enableFutureDates
+        dowLabels={[
+            m.dow_sunday(),
+            m.dow_monday(),
+            m.dow_tuesday(),
+            m.dow_wednesday(),
+            m.dow_thursday(),
+            m.dow_friday(),
+            m.dow_saturday(),
+        ]}
+        monthLabels={[
+            m.january(),
+            m.february(),
+            m.march(),
+            m.april(),
+            m.may(),
+            m.june(),
+            m.july(),
+            m.august(),
+            m.september(),
+            m.october(),
+            m.november(),
+            m.december(),
+        ]}
         {startOfWeek}
         isOpen={true}
         alwaysShow={true}

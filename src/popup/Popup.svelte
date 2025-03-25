@@ -1,7 +1,13 @@
 <script lang="ts">
     import Settings from '../components/Settings.svelte'
+    import { m } from '../paraglide/messages'
+    import { overwriteGetLocale } from '../paraglide/runtime'
+    import { getUILanguage } from '../util/browser'
     import { formatLocalTime } from '../util/common'
+    import { getTranslationLocale } from '../util/i18n'
     import { getState } from './extension_state'
+
+    overwriteGetLocale(() => getTranslationLocale(getUILanguage()))
 
     const promise = getState()
 </script>
@@ -13,6 +19,6 @@
         isClockStopped={initialState.isClockStopped}
     />
 {:catch error}
-    <p>{error instanceof Error ? error.message : 'Could not get initial state'}</p>
-    <p>Please switch to a different tab to change the time.</p>
+    <p>{error instanceof Error ? error.message : ''}</p>
+    <p>{m.permission_error_please_change_tab()}</p>
 {/await}

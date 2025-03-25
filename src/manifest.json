@@ -1,9 +1,10 @@
 {
     "manifest_version": 3,
     "name": "Time Travel",
-    "description": "Fake the current date and time in JavaScript Date or Intl.DateTimeFormat objects.",
+    "description": "__MSG_extensionDescription__",
     "version": "__VERSION__",
     "version_name": "__VERSION_NAME__",
+    "default_locale": "en",
     "minimum_chrome_version": "109",
     "icons": {
         "16": "images/icon-16.png",

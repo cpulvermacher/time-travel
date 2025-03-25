@@ -1,3 +1,14 @@
+import type { Locale } from '../paraglide/runtime'
+
+export function getTranslationLocale(language: string): Locale {
+    if (language.startsWith('de')) {
+        return 'de'
+    } else if (language.startsWith('ja')) {
+        return 'ja'
+    }
+    return 'en'
+}
+
 /** get the first day of the week (1=Monday, 7: Sunday) */
 export function getFirstDayOfWeek(lang: string): number {
     // Chrome supports `getWeekInfo()` since version 130

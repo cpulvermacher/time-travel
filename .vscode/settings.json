@@ -10,5 +10,6 @@
     },
     "editor.codeActionsOnSave": {
         "source.organizeImports": "always"
-    }
+    },
+    "files.insertFinalNewline": true
 }
