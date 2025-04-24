@@ -9,7 +9,7 @@
     "format_help_link": "(?)",
     "change_date_btn": "日時を変更",
     "stop_time_toggle": "時計を停止する",
-    "enable_fake_date_toggle": "偽の日時を有効にする",
+    "enable_fake_date_toggle": "仮想日時を有効にする",
     "error_toggle_clock_failed": "時計の開始/停止に失敗しました。 ",
     "error_setting_date_failed": "日時の設定に失敗しました。 ",
     "error_reset_failed": "リセットに失敗しました。 ",
