@@ -15,22 +15,22 @@
     "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^5.0.3",
         "@tsconfig/svelte": "^5.0.4",
-        "@types/chrome": "^0.0.315",
+        "@types/chrome": "^0.0.319",
         "chrome-webstore-upload-cli": "^3.3.1",
-        "eslint": "^9.25.0",
-        "happy-dom": "^17.4.4",
+        "eslint": "^9.26.0",
+        "happy-dom": "^17.4.6",
         "prettier": "^3.5.3",
-        "svelte-check": "^4.1.6",
+        "svelte-check": "^4.1.7",
         "typescript": "^5.8.3",
-        "typescript-eslint": "^8.30.1",
-        "vite": "^6.3.2",
-        "vitest": "^3.1.1",
-        "web-ext": "^8.5.0",
+        "typescript-eslint": "^8.31.1",
+        "vite": "^6.3.4",
+        "vitest": "^3.1.2",
+        "web-ext": "^8.6.0",
         "@inlang/paraglide-js": "^2.0.12",
         "@inlang/cli": "^3.0.11"
     },
     "dependencies": {
         "@svelte-plugins/datepicker": "^1.0.11",
-        "svelte": "^5.28.1"
+        "svelte": "^5.28.2"
     }
 }
