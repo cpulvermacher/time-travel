@@ -136,3 +136,36 @@ export function getUILanguage(): string {
 
     return navigator.language
 }
+
+/** get synchronized storage if available, local otherwise */
+function getSettingsStorage(): chrome.storage.StorageArea | undefined {
+    if (typeof chrome !== 'undefined' && chrome?.storage !== undefined) {
+        return chrome.storage.sync || chrome.storage.local
+    }
+    return undefined
+}
+
+/** save a setting */
+export async function saveSetting<T>(key: string, value: T): Promise<void> {
+    try {
+        await getSettingsStorage()?.set({ [key]: value })
+    } catch (error) {
+        // this shouldn't be fatal
+        console.error('Error saving setting:', error)
+    }
+}
+
+/** load a setting */
+export async function loadSetting<T>(key: string, defaultValue: T): Promise<T> {
+    try {
+        const result = await getSettingsStorage()?.get([key])
+        if (result && key in result) {
+            return result[key] as T
+        } else {
+            return defaultValue
+        }
+    } catch (error) {
+        console.error('Error loading setting:', error)
+        return defaultValue
+    }
+}

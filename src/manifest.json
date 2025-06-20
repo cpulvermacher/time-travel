@@ -25,7 +25,7 @@
         },
         "default_popup": "popup/main.html"
     },
-    "permissions": ["activeTab", "scripting"],
+    "permissions": ["activeTab", "scripting", "storage"],
     "content_security_policy": {
         "extension_pages": "default-src 'self'; img-src 'self' data:;"
     }
