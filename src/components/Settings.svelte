@@ -1,7 +1,7 @@
 <script lang="ts">
     import { m } from '../paraglide/messages.js'
     import { setClockState, setFakeDate, updateExtensionIcon } from '../popup/extension_state'
-    import { reloadTab } from '../util/browser.js'
+    import { loadSetting, reloadTab, saveSetting } from '../util/browser.js'
     import { parseDate } from '../util/common'
     import Background from './Background.svelte'
     import DateFormatInfo from './DateFormatInfo.svelte'
@@ -27,6 +27,12 @@
     let isDateValid = $derived(parseDate(fakeDate) !== null)
     let effectiveDate = $state(initialState.isEnabled ? new Date(initialState.fakeDate) : undefined)
     let showFormatHelp = $state(false)
+
+    $effect(() => {
+        loadSetting('autoReload', false).then((value) => {
+            autoReload = value
+        })
+    })
 
     async function updateClockState() {
         try {
@@ -90,12 +96,8 @@
         }
     }
     function onAutoReloadToggle(value: boolean) {
-        //TODO: save this setting in storage
         autoReload = value
-    }
-    async function reload() {
-        await reloadTab()
-        window.close()
+        saveSetting('autoReload', value)
     }
     function onEnableChange(enabled: boolean) {
         const parsedDate = parseDate(fakeDate)
