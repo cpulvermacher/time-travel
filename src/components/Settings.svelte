@@ -124,6 +124,7 @@
         disabled={!isDateValid}
         onChange={onEnableChange}
         label={m.enable_fake_date_toggle()}
+        bold
     />
 </main>
 
