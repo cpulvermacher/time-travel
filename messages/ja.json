@@ -38,5 +38,6 @@
     "december": "12月",
     "icon_title_stopped": "({fakeDate} - 時計が停止中)",
     "icon_title_running": "({fakeDate} - 時計が作動中)",
-    "icon_title_off": "（オフ）"
+    "icon_title_off": "（オフ）",
+    "enable_auto_reload": "自動再読み込みする"
 }

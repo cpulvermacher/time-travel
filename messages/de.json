@@ -36,5 +36,6 @@
     "december": "Dezember",
     "icon_title_stopped": "({fakeDate} - Uhr angehalten)",
     "icon_title_running": "({fakeDate} - Uhr läuft)",
-    "icon_title_off": "(Off)"
+    "icon_title_off": "(Off)",
+    "enable_auto_reload": "Automatisch neu laden"
 }

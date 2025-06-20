@@ -1,6 +1,7 @@
 <script lang="ts">
     import { m } from '../paraglide/messages.js'
     import { setClockState, setFakeDate, updateExtensionIcon } from '../popup/extension_state'
+    import { reloadTab } from '../util/browser.js'
     import { parseDate } from '../util/common'
     import Background from './Background.svelte'
     import DateFormatInfo from './DateFormatInfo.svelte'
@@ -20,6 +21,7 @@
     let errorMsg = $state<string>()
     let showReloadModal = $state(false)
     let isClockStopped = $state(initialState.isClockStopped)
+    let autoReload = $state(false)
     let fakeDate = $state(initialState.fakeDate)
     let isEnabled = $state(initialState.isEnabled)
     let isDateValid = $derived(parseDate(fakeDate) !== null)
@@ -30,6 +32,7 @@
         try {
             await setClockState(isClockStopped)
             await updateExtensionIcon()
+            // Note: no need to reload the tab here, stop/resume applies immediately
         } catch (e) {
             setError(m.error_toggle_clock_failed(), e)
         }
@@ -38,10 +41,13 @@
         try {
             await setClockState(isClockStopped)
             const needReload = await setFakeDate(fakeDate)
-            if (needReload) {
+            if (needReload && !autoReload) {
                 showReloadModal = true
             }
             await updateExtensionIcon()
+            if (autoReload) {
+                await reloadTab()
+            }
         } catch (e) {
             setError(m.error_setting_date_failed(), e)
         }
@@ -51,6 +57,9 @@
             await setFakeDate('')
             await setClockState(true)
             await updateExtensionIcon()
+            if (autoReload) {
+                await reloadTab()
+            }
         } catch (e) {
             setError(m.error_reset_failed(), e)
         }
@@ -79,6 +88,14 @@
         if (isEnabled) {
             updateClockState()
         }
+    }
+    function onAutoReloadToggle(value: boolean) {
+        //TODO: save this setting in storage
+        autoReload = value
+    }
+    async function reload() {
+        await reloadTab()
+        window.close()
     }
     function onEnableChange(enabled: boolean) {
         const parsedDate = parseDate(fakeDate)
@@ -119,6 +136,7 @@
         onChange={onClockToggle}
         label={m.stop_time_toggle()}
     />
+    <Toggle bind:checked={autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
     <Toggle
         bind:checked={isEnabled}
         disabled={!isDateValid}
