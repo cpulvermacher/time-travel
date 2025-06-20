@@ -4,7 +4,7 @@
     "license": "MIT",
     "private": "true",
     "scripts": {
-        "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide && sh ./util/build.sh production",
+        "build": "sh ./util/build.sh production",
         "dev": "sh ./util/build.sh dev",
         "lint": "tsc && eslint *.mts src/ && prettier src --check && svelte-check --tsconfig ./tsconfig.json",
         "prettier": "prettier src --write",
