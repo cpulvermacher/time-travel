@@ -6,6 +6,7 @@ import {
     isAboutUrl,
     isExtensionGalleryUrl,
     isFileUrl,
+    loadSetting,
     registerContentScript,
 } from '../util/browser'
 import {
@@ -61,12 +62,14 @@ export async function setClockState(stopClock: boolean): Promise<void> {
 }
 
 /** get current state of content script. Throws on permission errors */
-export async function getState(): Promise<{ fakeDate?: string; isClockStopped: boolean }> {
+export async function getState(): Promise<{ fakeDate?: string; isClockStopped: boolean; autoReload: boolean }> {
+    const autoReload = await loadSetting('autoReload', false)
     if (import.meta.env.DEV) {
         //return dummy state for testing
         return {
             fakeDate: '2005-06-07 08:09',
             isClockStopped: false,
+            autoReload,
         }
     }
 
@@ -89,6 +92,7 @@ export async function getState(): Promise<{ fakeDate?: string; isClockStopped: b
         return {
             fakeDate: initialFakeDate,
             isClockStopped: state.isClockStopped,
+            autoReload,
         }
     } catch (error) {
         if (await isFileUrl(tabId)) {

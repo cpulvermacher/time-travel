@@ -17,6 +17,7 @@
         fakeDate={initialState.fakeDate ?? formatLocalTime(new Date())}
         isEnabled={!!initialState.fakeDate}
         isClockStopped={initialState.isClockStopped}
+        autoReload={initialState.autoReload}
     />
 {:catch error}
     <p>{error instanceof Error ? error.message : ''}</p>
