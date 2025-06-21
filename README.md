@@ -35,6 +35,7 @@ You can stop the clock by switching on the "Stop Clock" toggle. The fake date wi
 ## Features
 - Fakes date and time for all methods of `Date` and `Intl.DateTimeFormat` objects.
 - Time can be stopped and resumed.
+- Option to automatically reload page after changing date.
 - Only affects current tab after clicking the extension icon.
 - Minimal permissions (in Chrome)
 
