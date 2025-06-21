@@ -134,8 +134,8 @@
     }
 
     /* for Japanese, add a suffix to the year*/
-    .container :global {
-        :lang(ja) .datepicker header span div:not(.years)::after {
+    :lang(ja) :global {
+        .datepicker header span div:not(.years)::after {
             content: '年';
         }
     }
