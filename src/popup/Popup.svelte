@@ -9,6 +9,8 @@
 
     overwriteGetLocale(() => getTranslationLocale(getUILanguage()))
 
+    document.documentElement.lang = getTranslationLocale(getUILanguage())
+
     const promise = getState()
 </script>
 
