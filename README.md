@@ -63,3 +63,7 @@ Start a new Firefox instance with the extension loaded using `(cd dist/firefox; 
 - Open about:debugging
 - Navigate to 'This Firefox'
 - Click 'Temporary Extensions' > 'Load Temporary Add-on...' and select `dist/firefox/manifest.json`.
+
+## Contributing
+
+Contributions are welcome! If you have ideas, bug reports, or want to help improve Time Travel, please open an issue or submit a pull request on [GitHub](https://github.com/cpulvermacher/time-travel).
