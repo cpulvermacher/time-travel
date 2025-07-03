@@ -91,9 +91,8 @@
             updateClockState()
         }
     }
-    function onAutoReloadToggle(value: boolean) {
-        autoReload = value
-        saveSetting('autoReload', value)
+    function onAutoReloadToggle() {
+        saveSetting('autoReload', autoReload)
     }
     function onEnableChange(enabled: boolean) {
         const parsedDate = parseDate(fakeDate)
