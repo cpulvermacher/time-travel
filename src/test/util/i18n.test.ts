@@ -2,13 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { getFirstDayOfWeek } from '../../util/i18n'
 
 describe('getFirstDayOfWeek', () => {
-    it("DOM doesn't support getWeekInfo", () => {
-        // just a check for the DOM support in tests.
-        // Right now we're only checking our fallback mechanism in case getWeekInfo is not supported.
-        const locale = new Intl.Locale('en-US')
-        expect('getWeekInfo' in locale).toBe(false)
-    })
-
     it('returns Monday where applicable', () => {
         expect(getFirstDayOfWeek('ca')).toBe(1)
         expect(getFirstDayOfWeek('cs')).toBe(1)
@@ -34,6 +27,14 @@ describe('getFirstDayOfWeek', () => {
         expect(getFirstDayOfWeek('zh-HK')).toBe(7)
         expect(getFirstDayOfWeek('zh-SG')).toBe(7)
         expect(getFirstDayOfWeek('zh-TW')).toBe(7)
-        expect(getFirstDayOfWeek('anything-really')).toBe(7)
+
+        //check if we're testing actual getWeekInfo support or our fallback
+        const locale = new Intl.Locale('en-US')
+        const domSupportsGetWeekInfo = 'getWeekInfo' in locale
+        if (domSupportsGetWeekInfo) {
+            expect(getFirstDayOfWeek('anything-really')).toBe(1)
+        } else {
+            expect(getFirstDayOfWeek('anything-really')).toBe(7)
+        }
     })
 })
