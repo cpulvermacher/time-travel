@@ -5,11 +5,17 @@
         title: string
         children: Snippet
         open?: boolean
+        onToggle?: (open: boolean) => void
     }
-    const { title, children, open }: Props = $props()
+    const { title, children, open, onToggle }: Props = $props()
 </script>
 
-<details {open}>
+<details
+    {open}
+    ontoggle={(event) => {
+        onToggle?.((event.target as HTMLDetailsElement).open)
+    }}
+>
     <summary>
         {title}
         <svg class="icon" width="16" height="16" viewBox="0 0 16 16">

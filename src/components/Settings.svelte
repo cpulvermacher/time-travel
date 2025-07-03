@@ -1,6 +1,6 @@
 <script lang="ts">
     import { m } from '../paraglide/messages.js'
-    import { setClockState, setFakeDate, updateExtensionIcon } from '../popup/extension_state'
+    import { setClockState, setFakeDate, updateExtensionIcon, type Settings } from '../popup/extension_state'
     import { reloadTab, saveSetting } from '../util/browser.js'
     import { parseDate } from '../util/common'
     import Accordion from './Accordion.svelte'
@@ -15,15 +15,13 @@
     interface Props {
         isEnabled: boolean
         fakeDate: string
-        isClockStopped: boolean
-        autoReload: boolean
+        settings: Settings
     }
     const initialState: Props = $props()
 
     let errorMsg = $state<string>()
     let showReloadModal = $state(false)
-    let isClockStopped = $state(initialState.isClockStopped)
-    let autoReload = $state(initialState.autoReload)
+    let settings = $state(initialState.settings)
     let fakeDate = $state(initialState.fakeDate)
     let isEnabled = $state(initialState.isEnabled)
     let isDateValid = $derived(parseDate(fakeDate) !== null)
@@ -32,7 +30,7 @@
 
     async function updateClockState() {
         try {
-            await setClockState(isClockStopped)
+            await setClockState(settings.stopClock)
             await updateExtensionIcon()
             // Note: no need to reload the tab here, stop/resume applies immediately
         } catch (e) {
@@ -41,13 +39,13 @@
     }
     async function applyAndEnable() {
         try {
-            await setClockState(isClockStopped)
+            await setClockState(settings.stopClock)
             const needReload = await setFakeDate(fakeDate)
-            if (needReload && !autoReload) {
+            if (needReload && !settings.autoReload) {
                 showReloadModal = true
             }
             await updateExtensionIcon()
-            if (autoReload) {
+            if (settings.autoReload) {
                 await reloadTab()
             }
         } catch (e) {
@@ -59,7 +57,7 @@
             await setFakeDate('')
             await setClockState(true)
             await updateExtensionIcon()
-            if (autoReload) {
+            if (settings.autoReload) {
                 await reloadTab()
             }
         } catch (e) {
@@ -86,13 +84,17 @@
             applyAndEnable()
         }
     }
+    function onAdvancedSettingsToggle(open: boolean) {
+        saveSetting('advancedSettingsOpen', open)
+    }
     function onClockToggle() {
         if (isEnabled) {
             updateClockState()
         }
+        saveSetting('stopClock', settings.stopClock)
     }
     function onAutoReloadToggle() {
-        saveSetting('autoReload', autoReload)
+        saveSetting('autoReload', settings.autoReload)
     }
     function onEnableChange(enabled: boolean) {
         const parsedDate = parseDate(fakeDate)
@@ -134,14 +136,14 @@
         onChange={onEnableChange}
         label={m.enable_fake_date_toggle()}
     />
-    <Accordion title={m.advanced_settings()}>
+    <Accordion title={m.advanced_settings()} open={settings.advancedSettingsOpen} onToggle={onAdvancedSettingsToggle}>
         <Toggle
-            bind:checked={isClockStopped}
+            bind:checked={settings.stopClock}
             disabled={!isDateValid}
             onChange={onClockToggle}
             label={m.stop_time_toggle()}
         />
-        <Toggle bind:checked={autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
+        <Toggle bind:checked={settings.autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
     </Accordion>
 </main>
 

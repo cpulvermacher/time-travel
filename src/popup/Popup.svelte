@@ -17,9 +17,8 @@
 {#await promise then initialState}
     <Settings
         fakeDate={initialState.fakeDate ?? formatLocalTime(new Date())}
-        isEnabled={!!initialState.fakeDate}
-        isClockStopped={initialState.isClockStopped}
-        autoReload={initialState.autoReload}
+        isEnabled={!!initialState.isEnabled}
+        settings={initialState.settings}
     />
 {:catch error}
     <p>{error instanceof Error ? error.message : ''}</p>

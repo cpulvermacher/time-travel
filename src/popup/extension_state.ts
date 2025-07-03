@@ -61,15 +61,34 @@ export async function setClockState(stopClock: boolean): Promise<void> {
     }
 }
 
-/** get current state of content script. Throws on permission errors */
-export async function getState(): Promise<{ fakeDate?: string; isClockStopped: boolean; autoReload: boolean }> {
+export type InitialState = {
+    isEnabled: boolean
+    fakeDate?: string
+    settings: Settings
+}
+
+export type Settings = {
+    autoReload: boolean
+    stopClock: boolean // tab state if time travel is active, stored setting if inactive
+    advancedSettingsOpen: boolean
+}
+
+/** get current state of extension. Throws on permission errors */
+export async function getState(): Promise<InitialState> {
     const autoReload = await loadSetting('autoReload', false)
+    const stopClock = await loadSetting('stopClock', false)
+    const advancedSettingsOpen = await loadSetting('advancedSettingsOpen', false)
+
     if (import.meta.env.DEV) {
         //return dummy state for testing
         return {
+            isEnabled: true,
             fakeDate: '2005-06-07 08:09',
-            isClockStopped: false,
-            autoReload,
+            settings: {
+                autoReload,
+                stopClock,
+                advancedSettingsOpen,
+            },
         }
     }
 
@@ -88,11 +107,16 @@ export async function getState(): Promise<{ fakeDate?: string; isClockStopped: b
                 initialFakeDate = state.fakeDate
             }
         }
+        const isEnabled = !!initialFakeDate
 
         return {
+            isEnabled,
             fakeDate: initialFakeDate,
-            isClockStopped: state.isClockStopped,
-            autoReload,
+            settings: {
+                autoReload,
+                stopClock: isEnabled ? state.isClockStopped : stopClock,
+                advancedSettingsOpen,
+            },
         }
     } catch (error) {
         if (await isFileUrl(tabId)) {

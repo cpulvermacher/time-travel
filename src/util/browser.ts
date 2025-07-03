@@ -145,8 +145,11 @@ function getSettingsStorage(): chrome.storage.StorageArea | undefined {
     return undefined
 }
 
+export type SettingName = 'stopClock' | 'autoReload' | 'advancedSettingsOpen'
+
 /** save a setting */
-export async function saveSetting<T>(key: string, value: T): Promise<void> {
+export async function saveSetting<T>(key: SettingName, value: T): Promise<void> {
+    console.log('saving', key, value)
     try {
         await getSettingsStorage()?.set({ [key]: value })
     } catch (error) {
@@ -156,7 +159,7 @@ export async function saveSetting<T>(key: string, value: T): Promise<void> {
 }
 
 /** load a setting */
-export async function loadSetting<T>(key: string, defaultValue: T): Promise<T> {
+export async function loadSetting<T>(key: SettingName, defaultValue: T): Promise<T> {
     try {
         const result = await getSettingsStorage()?.get([key])
         if (result && key in result) {
