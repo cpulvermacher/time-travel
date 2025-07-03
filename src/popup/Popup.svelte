@@ -21,17 +21,7 @@
         isClockStopped={initialState.isClockStopped}
         autoReload={initialState.autoReload}
     />
-    {#if import.meta.env.DEV}
-        <p class="dummy-mode">dummy mode</p>
-    {/if}
 {:catch error}
     <p>{error instanceof Error ? error.message : ''}</p>
     <p>{m.permission_error_please_change_tab()}</p>
 {/await}
-
-<style>
-    .dummy-mode {
-        color: red;
-        font-weight: bold;
-    }
-</style>

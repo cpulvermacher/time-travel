@@ -120,6 +120,7 @@
         <label>
             {m.datetime_input_label()}
             <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
+            {#if import.meta.env.DEV}<span class="mock-active">[mock]</span>{/if}
             <Datepicker bind:fakeDate onEnterKey={onApply} />
         </label>
     </div>
@@ -159,6 +160,10 @@
         flex-direction: column;
         justify-content: space-between;
         gap: 10px;
+    }
+    .mock-active {
+        color: red;
+        font-weight: bold;
     }
 
     .row {
