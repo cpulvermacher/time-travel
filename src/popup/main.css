@@ -33,7 +33,6 @@ body {
     font-size: 1rem;
     min-width: 210px;
     width: fit-content;
-    padding: 15px;
 }
 
 @media (min-width: 400px) {

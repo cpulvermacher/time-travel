@@ -37,5 +37,6 @@
     "icon_title_stopped": "({fakeDate} - Uhr angehalten)",
     "icon_title_running": "({fakeDate} - Uhr läuft)",
     "icon_title_off": "(Off)",
-    "enable_auto_reload": "Automatisch neu laden"
+    "enable_auto_reload": "Automatisch neu laden",
+    "advanced_settings": "Erweiterte Einstellungen"
 }

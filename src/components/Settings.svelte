@@ -129,19 +129,30 @@
     </div>
     <hr />
     <Toggle
-        bind:checked={isClockStopped}
-        disabled={!isDateValid}
-        onChange={onClockToggle}
-        label={m.stop_time_toggle()}
-    />
-    <Toggle bind:checked={autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
-    <Toggle
         bind:checked={isEnabled}
         disabled={!isDateValid}
         onChange={onEnableChange}
         label={m.enable_fake_date_toggle()}
-        bold
     />
+    <details class="advanced-section">
+        <summary>
+            {m.advanced_settings()}
+            <svg class="advanced-icon" width="16" height="16" viewBox="0 0 16 16">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" fill="none" />
+            </svg>
+        </summary>
+        <!-- TODO: extract this-->
+        <!-- TODO: save open/close state -->
+        <div class="advanced-content">
+            <Toggle
+                bind:checked={isClockStopped}
+                disabled={!isDateValid}
+                onChange={onClockToggle}
+                label={m.stop_time_toggle()}
+            />
+            <Toggle bind:checked={autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
+        </div>
+    </details>
 </main>
 
 {#if showFormatHelp}
@@ -160,6 +171,7 @@
         flex-direction: column;
         justify-content: space-between;
         gap: 10px;
+        padding: 8px 15px;
     }
     .mock-active {
         color: red;
@@ -181,5 +193,28 @@
         border: none;
         border-top: 1px solid var(--border-color);
         margin: 0 auto;
+    }
+
+    .advanced-section {
+        width: 100%;
+        color: var(--text-color);
+    }
+    .advanced-section summary {
+        cursor: pointer;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        user-select: none;
+    }
+    .advanced-section[open] .advanced-icon {
+        transform: scaleY(-1);
+    }
+    .advanced-content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-top: 10px;
+        padding-left: 5px;
     }
 </style>
