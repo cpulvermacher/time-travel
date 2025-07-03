@@ -13,7 +13,8 @@
     <summary>
         {title}
         <svg class="icon" width="16" height="16" viewBox="0 0 16 16">
-            <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" fill="none" />
+            <path d="M4 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" />
+            <path d="M4 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" />
         </svg>
     </summary>
     <div class="content">
