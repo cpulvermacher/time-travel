@@ -149,7 +149,6 @@ export type SettingName = 'stopClock' | 'autoReload' | 'advancedSettingsOpen'
 
 /** save a setting */
 export async function saveSetting<T>(key: SettingName, value: T): Promise<void> {
-    console.log('saving', key, value)
     try {
         await getSettingsStorage()?.set({ [key]: value })
     } catch (error) {
