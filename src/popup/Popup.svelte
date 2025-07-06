@@ -25,11 +25,16 @@
         settings={initialState.settings}
     />
 {:catch error}
-    <p>{error instanceof Error ? error.message : ''}</p>
-    <p>{m.permission_error_please_change_tab()}</p>
+    <div class="error">
+        <p>{error instanceof Error ? error.message : ''}</p>
+        <p>{m.permission_error_please_change_tab()}</p>
+    </div>
 {/await}
 
 <style>
+    .error {
+        padding: 15px;
+    }
     .loading-container {
         width: 100%;
         height: 40px;
