@@ -14,7 +14,11 @@
     const promise = getState()
 </script>
 
-{#await promise then initialState}
+{#await promise}
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+    </div>
+{:then initialState}
     <Settings
         fakeDate={initialState.fakeDate ?? formatLocalTime(new Date())}
         isEnabled={!!initialState.isEnabled}
@@ -24,3 +28,40 @@
     <p>{error instanceof Error ? error.message : ''}</p>
     <p>{m.permission_error_please_change_tab()}</p>
 {/await}
+
+<style>
+    .loading-container {
+        width: 100%;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loading-spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top-color: var(--primary-color);
+        animation:
+            spin 1s linear infinite,
+            fadeIn 1s ease;
+        animation-fill-mode: forwards;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
