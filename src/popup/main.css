@@ -31,7 +31,7 @@ body {
     /* Chrome overrides font family and size on body, so we need to set it here */
     font-family: var(--font-family);
     font-size: 1rem;
-    min-width: 210px;
+    min-width: 240px;
     width: fit-content;
 }
 
