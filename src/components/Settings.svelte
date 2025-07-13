@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { m } from '../paraglide/messages.js'
+    import { m } from '../paraglide/messages'
     import { setClockState, setFakeDate, updateExtensionIcon, type Settings } from '../popup/extension_state'
-    import { reloadTab, saveSetting } from '../util/browser.js'
+    import { reloadTab, saveSetting } from '../util/browser'
     import { parseDate } from '../util/common'
     import Accordion from './Accordion.svelte'
     import Background from './Background.svelte'
