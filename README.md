@@ -45,9 +45,10 @@ You can stop the clock by switching on the "Stop Clock" toggle. The fake date wi
 - The extension does not work in iframes with the `sandbox` attribute.
 
 ## Installation
-For Chrome, Edge, and other Chromium-based browsers, install the extension from the Chrome Web Store: https://chrome.google.com/webstore/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg
+This extension is compatible with Chromium-based browsers (version 109+) and Firefox (version 128+).
 
-For Firefox, install it from: https://addons.mozilla.org/en-US/firefox/addon/timetravel/
+For Chrome, Opera, Edge, and other Chromium-based browsers, install the extension from the Chrome Web Store: https://chrome.google.com/webstore/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg
+For Firefox (Desktop or Android), install it from: https://addons.mozilla.org/en-US/firefox/addon/timetravel/
 
 ## Development
 To build and use a local version:
