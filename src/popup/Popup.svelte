@@ -35,6 +35,10 @@
     .error {
         padding: 15px;
     }
+    .error > p {
+        max-width: 350px;
+    }
+
     .loading-container {
         width: 100%;
         height: 40px;
