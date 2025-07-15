@@ -284,7 +284,33 @@ describe('replace_date', () => {
             it('new Date(NaN)', () => {
                 date = new Date(NaN)
                 expect(date.valueOf()).toBe(NaN)
+                expect(() => date.toISOString()).toThrow('Invalid time value')
                 expect(date.toString()).toBe('Invalid Date')
+                expect(date.toDateString()).toBe('Invalid Date')
+                expect(date.toTimeString()).toBe('Invalid Date')
+                expect(date.toLocaleString()).toBe('Invalid Date')
+                expect(date.toLocaleDateString()).toBe('Invalid Date')
+                expect(date.toLocaleTimeString()).toBe('Invalid Date')
+
+                expect(date.getFullYear()).toBe(NaN)
+                expect(date.getMonth()).toBe(NaN)
+                expect(date.getDate()).toBe(NaN)
+                expect(date.getDay()).toBe(NaN)
+                expect(date.getHours()).toBe(NaN)
+                expect(date.getMinutes()).toBe(NaN)
+                expect(date.getSeconds()).toBe(NaN)
+                expect(date.getMilliseconds()).toBe(NaN)
+                expect(date.getTime()).toBe(NaN)
+                expect(date.getTimezoneOffset()).toBe(NaN)
+
+                expect(date.getUTCFullYear()).toBe(NaN)
+                expect(date.getUTCMonth()).toBe(NaN)
+                expect(date.getUTCDate()).toBe(NaN)
+                expect(date.getUTCDay()).toBe(NaN)
+                expect(date.getUTCHours()).toBe(NaN)
+                expect(date.getUTCMinutes()).toBe(NaN)
+                expect(date.getUTCSeconds()).toBe(NaN)
+                expect(date.getUTCMilliseconds()).toBe(NaN)
             })
 
             it('valueOf()', () => {
