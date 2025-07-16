@@ -40,5 +40,5 @@
     "icon_title_running": "({fakeDate} - 時計が作動中)",
     "icon_title_off": "（オフ）",
     "enable_auto_reload": "自動再読み込みする",
-    "advanced_settings": "詳細設定"
+    "advanced_settings": "詳細"
 }
