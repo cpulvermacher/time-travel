@@ -15,6 +15,7 @@
     "error_reset_failed": "Zurücksetzen fehlgeschlagen: ",
     "please_reload_message": "Fast fertig! Bitte laden Sie die Seite neu, um die Änderungen zu übernehmen.",
     "reload_btn": "Neu laden",
+    "dateformat_info": "Datum und Uhrzeit können in jedem von <code>Date.parse()</code> unterstützten Format sowie als UNIX-Zeitstempel eingegeben werden:",
     "dow_sunday": "So",
     "dow_monday": "Mo",
     "dow_tuesday": "Di",
