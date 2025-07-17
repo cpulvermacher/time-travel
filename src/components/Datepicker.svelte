@@ -24,7 +24,29 @@
             return
         }
 
-        if (event.key === 'Enter' && onEnterKey) {
+        if (event.key === 'ArrowDown') {
+            event.preventDefault()
+            if (event.ctrlKey) {
+                adjustSeconds(-60 * 60)
+            } else if (event.shiftKey) {
+                adjustSeconds(-10 * 60)
+            } else if (event.altKey) {
+                adjustSeconds(-1)
+            } else {
+                adjustSeconds(-60)
+            }
+        } else if (event.key === 'ArrowUp') {
+            event.preventDefault()
+            if (event.ctrlKey) {
+                adjustSeconds(60 * 60)
+            } else if (event.shiftKey) {
+                adjustSeconds(10 * 60)
+            } else if (event.altKey) {
+                adjustSeconds(1)
+            } else {
+                adjustSeconds(60)
+            }
+        } else if (event.key === 'Enter' && onEnterKey) {
             event.preventDefault()
             onEnterKey()
         }
@@ -49,6 +71,12 @@
             return
         }
         pickerDate = new Date(inputDate).getTime()
+    }
+    function adjustSeconds(seconds: number) {
+        // adjust UTC timestamp
+        const fakeDateTimestamp = Date.parse(fakeDate)
+        pickerDate = fakeDateTimestamp + seconds * 1000
+        fakeDate = formatLocalTime(new Date(pickerDate), { fullPrecision: true })
     }
 </script>
 
