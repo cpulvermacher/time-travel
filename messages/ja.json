@@ -16,7 +16,6 @@
     "please_reload_message": "設定した日時を反映するには、ページを再読み込みしてください。",
     "reload_btn": "再読み込み",
     "dateformat_info": "日時は<code>Date.parse()</code>でサポートされている形式やUNIXタイムスタンプで入力できます。",
-    "dateformat_info_midnight_utc": "（UTCの午前0時）",
     "dow_sunday": "日",
     "dow_monday": "月",
     "dow_tuesday": "火",

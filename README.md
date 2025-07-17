@@ -25,7 +25,6 @@ You can stop the clock by switching on the "Stop Clock" toggle. The fake date wi
 
 ### Example Dates and Formats
 - `2025-04-27 12:40` - Local time
-- `2025-04-27` - Midnight UTC
 - `2025-03-30 00:59:55` - Assuming your system timezone is Europe/London (GMT), 5 seconds before a one-hour jump to 2 a.m. (summer time)
 - `2025-04-27T12:40Z` - Set local equivalent for given UTC time
 - `2025-04-27T12:40+1130` - Set local equivalent for time with +11:30 timezone offset. Note that actual time zone is not changed

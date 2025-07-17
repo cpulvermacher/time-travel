@@ -15,7 +15,6 @@
     "error_reset_failed": "Failed to reset: ",
     "please_reload_message": "Almost ready! Please reload the page to apply the changes.",
     "dateformat_info": "You can enter date and time in any format supported by <code>Date.parse()</code>, as well as UNIX timestamps:",
-    "dateformat_info_midnight_utc": "(midnight UTC)",
     "reload_btn": "Reload",
     "dow_sunday": "Su",
     "dow_monday": "Mo",

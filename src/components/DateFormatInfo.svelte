@@ -14,7 +14,6 @@
     </p>
     <ul>
         <li>2025-02-27 12:40</li>
-        <li>2025-02-27 {m.dateformat_info_midnight_utc()}</li>
         <li>27 Feb 2025 12:40</li>
         <li>2025-03-30 00:59:55</li>
         <li>2025-04-27T12:40Z</li>
