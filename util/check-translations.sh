@@ -35,7 +35,8 @@ for LOCALE_FILE in ./messages/*.json; do
     echo -e "\n${YELLOW}Checking $locale against $BASE_LOCALE...${NC}"
 
     # Get base keys that are missing in the locale file
-    MISSING_KEYS=$(jq -r --argfile localeFile "$LOCALE_FILE" 'keys - ($localeFile | keys) | .[]' "$BASE_FILE" 2>/dev/null)
+    MISSING_KEYS=$(jq -r --slurpfile localeFile "$LOCALE_FILE" 'keys - ($localeFile[0] | keys) | .[]' "$BASE_FILE")
+
     if [ -z "$(echo "$MISSING_KEYS" | tr -d '\n')" ]; then
         echo -e "${GREEN}✓ All $BASE_LOCALE keys are present in $locale${NC}"
     else
@@ -49,7 +50,8 @@ for LOCALE_FILE in ./messages/*.json; do
     fi
 
     # Check for extra keys not in base locale
-    EXTRA_KEYS=$(jq -r --argfile baseFile "$BASE_FILE" 'keys - ($baseFile | keys) | .[]' "$LOCALE_FILE" 2>/dev/null)
+    EXTRA_KEYS=$(jq -r --slurpfile baseFile "$BASE_FILE" 'keys - ($baseFile[0] | keys) | .[]' "$LOCALE_FILE")
+
     if [ -n "$EXTRA_KEYS" ]; then
         echo -e "${YELLOW}Extra keys in $locale not in $BASE_LOCALE:${NC}"
         echo "$EXTRA_KEYS" | sed 's/^/  - /'
