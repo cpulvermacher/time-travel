@@ -24,8 +24,9 @@ jobs:
         cache: 'pnpm'
     - run: pnpm i
     - run: pnpm test
-    - run: pnpm build
     - run: pnpm lint
+    - run: pnpm audit --production
+    - run: pnpm build
     - name: Create Chrome artifact
       uses: actions/upload-artifact@v4
       with:
