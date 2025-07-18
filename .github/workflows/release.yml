@@ -1,6 +1,6 @@
 name: Release
 permissions:
-  contents: read
+  contents: write
 
 on:
   push:
@@ -49,3 +49,8 @@ jobs:
       with:
         name: time-travel-${{ github.ref_name }}-firefox
         path: dist/firefox/web-ext-artifacts
+    - name: Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: >-
+        bash .github/workflows/release.sh ${{ github.ref_name }}
