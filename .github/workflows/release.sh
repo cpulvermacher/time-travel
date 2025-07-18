@@ -32,7 +32,7 @@ gh release create "${TAG}" \
     --title "${TAG}" \
     $RELEASE_OPTS \
     -n "$CHANGELOG" \
-    "time-travel-${TAG}-chrome.zip" \
-    "time-travel-${TAG}-firefox.zip"
+    "time-travel-*-chrome.zip" \
+    "time-travel-*-firefox.zip"
 
 
