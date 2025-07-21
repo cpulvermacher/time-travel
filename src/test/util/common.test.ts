@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { formatLocalTime, overwriteDatePart, parseDate } from '../../util/common'
 
 describe('overwriteDatePart', () => {
-    const date = new Date('2033-01-22') // 00:00 UTC
+    const date = new Date('2033-01-22 00:00')
     it('updates date part while preserving time precision and format', () => {
         expect(overwriteDatePart('2025-02-10 12:34', date)).toBe('2033-01-22 12:34')
         expect(overwriteDatePart('2025-02-10 12:34:00', date)).toBe('2033-01-22 12:34')
@@ -23,7 +23,6 @@ describe('overwriteDatePart', () => {
     })
 
     it('converts unix timestamps to string before replacing', () => {
-        const date = new Date('2033-01-22')
         const timePartFrom = new Date('1970-01-22 10:19:00.025')
         const timestamp = timePartFrom.getTime().toString()
         const expectedString = formatLocalTime(timePartFrom, { fullPrecision: true }).replace('1970', '2033')

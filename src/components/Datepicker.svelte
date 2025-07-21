@@ -14,7 +14,7 @@
         onEnterKey?: () => void
     }
     let { fakeDate = $bindable(), onEnterKey }: Props = $props()
-    // Note: the datepicker internally works with timestamps in UTC.
+    // Note: the datepicker internally works with timestamps in UTC. When choosing a date, pickerDate will be set to 00:00 local time.
     let pickerDate = $state(Date.parse(fakeDate))
     let isValid = $derived(parseDate(fakeDate) !== null)
     let inputRef: HTMLInputElement
