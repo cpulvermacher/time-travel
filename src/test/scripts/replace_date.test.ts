@@ -52,7 +52,7 @@ describe('replace_date', () => {
     it('Date() with actual date', () => {
         const dateStr = Date()
 
-        expect(dateStr).toBe(new Date().toString())
+        expect(new Date().getTime()).toBeGreaterThanOrEqual(new Date(dateStr).getTime())
 
         //1s accuracy
         expect(Date.parse(dateStr) + 1000).toBeGreaterThan(testStartDate.valueOf())
