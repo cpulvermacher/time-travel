@@ -26,7 +26,7 @@
 
         if (event.key === 'ArrowDown') {
             event.preventDefault()
-            if (event.ctrlKey) {
+            if (event.ctrlKey || event.metaKey) {
                 adjustSeconds(-60 * 60)
             } else if (event.shiftKey) {
                 adjustSeconds(-10 * 60)
@@ -37,7 +37,7 @@
             }
         } else if (event.key === 'ArrowUp') {
             event.preventDefault()
-            if (event.ctrlKey) {
+            if (event.ctrlKey || event.metaKey) {
                 adjustSeconds(60 * 60)
             } else if (event.shiftKey) {
                 adjustSeconds(10 * 60)
