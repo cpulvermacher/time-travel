@@ -5,7 +5,7 @@
     "permission_error_generic": "Time Travel kann im aktuellen Tab nicht verwendet werden.",
     "permission_error_generic_with_message": "Time Travel kann im aktuellen Tab nicht verwendet werden. Grund: {message}",
     "permission_error_please_change_tab": "Bitte wechseln Sie zu einem anderen Tab, um die Zeit zu ändern.",
-    "datetime_input_label": "Zeit und Datum",
+    "datetime_input_label": "Datum und Zeit",
     "format_help_link": "(?)",
     "change_date_btn": "Zeit ändern",
     "stop_time_toggle": "Uhr anhalten",

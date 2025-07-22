@@ -1,7 +1,7 @@
 {
     "$schema": "https://inlang.com/schema/inlang-message-format",
     "permission_error_file_url": "ローカルファイルでTime Travelを使用するには、拡張機能の設定で「ファイルURLへのアクセスを許可」を有効にしてください。",
-    "permission_error_extension_gallery": "Time TravelはChrome Web Storeで使用できません。",
+    "permission_error_extension_gallery": "Time TravelはChrome Web Storeでは使用できません。",
     "permission_error_generic": "現在のタブではTime Travelを使用できません。",
     "permission_error_generic_with_message": "現在のタブではTime Travelを使用できません。 {message}",
     "permission_error_please_change_tab": "日時を変更するには、別のタブに切り替えてください。",
@@ -15,7 +15,7 @@
     "error_reset_failed": "リセットに失敗しました。 ",
     "please_reload_message": "設定した日時を反映するには、ページを再読み込みしてください。",
     "reload_btn": "再読み込み",
-    "dateformat_info": "日時は<code>Date.parse()</code>でサポートされている形式やUNIXタイムスタンプで入力できます。",
+    "dateformat_info": "日時は<code>Date.parse()</code>が対応している形式や、UNIXタイムスタンプで入力できます。",
     "date_input_hint": "時間は矢印キーで調整できます:\n±1分は上/下キーで、\n±10分はShift + 上/下キーで、\n±1時間はCmd/Ctrl + 上/下キーで、\n±1秒はAlt + 上/下キーで",
     "dow_sunday": "日",
     "dow_monday": "月",
