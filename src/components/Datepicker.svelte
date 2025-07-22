@@ -126,6 +126,7 @@
             placeholder={formatLocalTime(new Date())}
             spellcheck="false"
             class={{ error: !isValid }}
+            title={m.date_input_hint()}
         />
     </DatePicker>
 </div>
