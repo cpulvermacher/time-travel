@@ -1,0 +1,24 @@
+
+# {
+#     "editor.detectIndentation": false,
+#     "editor.tabSize": 4,
+#     "typescript.format.semicolons": "remove",
+#     "[typescript][json][css][html]": {
+#         "editor.defaultFormatter": "esbenp.prettier-vscode"
+#     },
+#     "[yaml]": {
+#         "editor.formatOnSave": false
+#     },
+#     "editor.codeActionsOnSave": {
+#         "source.organizeImports": "always"
+#     },
+#     "files.insertFinalNewline": true
+# }
+# create editorconfig from the above settings
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+
