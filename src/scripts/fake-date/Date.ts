@@ -368,6 +368,7 @@ function getFormatterForTimezone(timezone: string | undefined): Intl.DateTimeFor
         second: '2-digit',
         fractionalSecondDigits: 3,
         hour12: false,
+        hourCycle: 'h23',
         weekday: 'short',
         timeZoneName: 'longOffset',
         timeZone: timezone,
