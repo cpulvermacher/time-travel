@@ -57,7 +57,7 @@ function getOffset(locale: string, tz: string | undefined) {
         timeZone: tz,
         timeZoneName: 'longOffset',
     })
-    return formatter.format(new Date()).split(' ').pop() || ''
+    return removeDateTimePart(formatter.format(new Date()))
 }
 
 /** Get timezone name */
@@ -66,5 +66,14 @@ function getTimezoneName(locale: string, tz: string | undefined) {
         timeZone: tz,
         timeZoneName: 'shortGeneric',
     })
-    return formatter.format(new Date()).split(' ').pop() || ''
+    return removeDateTimePart(formatter.format(new Date()))
+}
+
+/** Remove date and time part from a string, leaving only the timezone part. */
+function removeDateTimePart(str: string): string {
+    const parts = str.split(' ')
+    if (parts.length > 1) {
+        return parts.slice(1).join(' ')
+    }
+    return str
 }
