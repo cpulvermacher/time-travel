@@ -37,10 +37,11 @@ export function FakeDate(
     } else if (args.length === 1 && typeof args[0] === 'string') {
         returnDate = new OriginalDate(parseWithTimezone(args[0], timezone))
     } else if (args.length > 1 && typeof args[0] === 'number') {
-        const dateTimeString = buildDateTimeString(
-            args as [number, number?, number?, number?, number?, number?, number?]
-        )
-        returnDate = new OriginalDate(parseWithTimezone(dateTimeString, timezone))
+        const [year, month = 0, day = 1, hours = 0, minutes = 0, seconds = 0, ms = 0] = args
+
+        const desiredLocalDate = getDatePartsForLocalDate(year, month, day, hours, minutes, seconds, ms)
+        const timestamp = disambiguateDate(desiredLocalDate, timezone)
+        returnDate = new OriginalDate(timestamp)
     } else {
         // @ts-expect-error: let original Date constructor handle the arguments
         returnDate = new OriginalDate(...args)
@@ -50,24 +51,6 @@ export function FakeDate(
     Object.setPrototypeOf(returnDate, new.target.prototype as object)
 
     return returnDate
-}
-
-/** build a string in the format of "YYYY-MM-DD HH:mm:ss.sss" */
-function buildDateTimeString(
-    args: [year: number, month?: number, date?: number, hours?: number, min?: number, sec?: number, ms?: number]
-) {
-    const [rawYear, monthIndex = 0, date = 1, hours = 0, minutes = 0, seconds = 0, milliseconds = 0] = args
-    let year = rawYear
-    if (year >= 0 && year <= 99) {
-        year += 1900 // 2-digit years are interpreted as 1900-1999 as per spec
-    }
-    const month = monthIndex + 1
-
-    //TODO spec has fun underflow/overflow rules, e.g. if month is 13, it will be interpreted as January of the next year
-    const dateString = `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}`
-    const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(3, '0')}`
-
-    return `${dateString} ${timeString}`
 }
 
 /**
