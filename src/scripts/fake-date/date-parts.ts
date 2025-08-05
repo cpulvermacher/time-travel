@@ -43,7 +43,7 @@ function getFormatterForTimezone(timezone: string | undefined): Intl.DateTimeFor
         return cachedFormatter
     }
     cachedFormatterForTimezone = timezone
-    cachedFormatter = new Intl.DateTimeFormat('en-US', {
+    cachedFormatter = new Intl.DateTimeFormat('en-GB', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -51,8 +51,6 @@ function getFormatterForTimezone(timezone: string | undefined): Intl.DateTimeFor
         minute: '2-digit',
         second: '2-digit',
         fractionalSecondDigits: 3,
-        hour12: false,
-        hourCycle: 'h23',
         weekday: 'short',
         timeZoneName: 'longOffset',
         timeZone: timezone,
