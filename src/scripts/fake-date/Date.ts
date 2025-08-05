@@ -227,21 +227,25 @@ function patchDateMethods(datePrototype: Date): void {
 
     // --- Override local time setters to use selected timezone ---
 
-    datePrototype.setFullYear = function (year: number, month?: number, date?: number) {
+    datePrototype.setFullYear = function (...args: [year: number, month?: number, date?: number]) {
         const timezone = getTimezone()
         if (!timezone) {
-            return OriginalDate.prototype.setFullYear.call(this, year, month, date)
+            // calling the native method with (1, undefined) will create an invalid date, need to pass correct number of arguments
+            return OriginalDate.prototype.setFullYear.apply(this, args)
         }
 
+        const [year, month, date] = args
         return overridePartOfDate(this, timezone, { year, month, day: date })
     }
 
-    datePrototype.setMonth = function (month: number, date?: number) {
+    datePrototype.setMonth = function (...args: [month: number, date?: number]) {
         const timezone = getTimezone()
         if (!timezone) {
-            return OriginalDate.prototype.setMonth.call(this, month, date)
+            // calling the native method with (1, undefined) will create an invalid date, need to pass correct number of arguments
+            return OriginalDate.prototype.setMonth.apply(this, args)
         }
 
+        const [month, date] = args
         return overridePartOfDate(this, timezone, { month, day: date })
     }
 
@@ -254,12 +258,14 @@ function patchDateMethods(datePrototype: Date): void {
         return overridePartOfDate(this, timezone, { day: date })
     }
 
-    datePrototype.setHours = function (hours: number, min?: number, sec?: number, ms?: number) {
+    datePrototype.setHours = function (...args: [hours: number, min?: number, sec?: number, ms?: number]) {
         const timezone = getTimezone()
         if (!timezone) {
-            return OriginalDate.prototype.setHours.call(this, hours, min, sec, ms)
+            // calling the native method with (1, undefined) will create an invalid date, need to pass correct number of arguments
+            return OriginalDate.prototype.setHours.apply(this, args)
         }
 
+        const [hours, min, sec, ms] = args
         return overridePartOfDate(this, timezone, { hours, minutes: min, seconds: sec, milliseconds: ms })
     }
 
