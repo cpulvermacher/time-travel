@@ -28,12 +28,12 @@ export function getTimezoneOptions(locale: string): Timezone[] {
                 },
                 { tz: 'UTC', label: 'GMT' },
                 ...timeZones
-                    .filter((tz) => tz !== 'UTC') // Remove UTC as it's already added
+                    .filter((tz) => tz !== 'UTC')
                     .map((tz) => {
                         const offset = getOffset(locale, tz)
                         const tzParts = tz.split('/')
                         const group = tzParts.length > 1 ? tzParts[0] : 'Etc' // Firefox has a number of funky timezones like 'CST6CDT', put them in 'Etc'
-                        const tzName = tzParts.length > 1 ? tzParts[1] : tz
+                        const tzName = tzParts.length > 1 ? tzParts.slice(1).join('/') : tz
 
                         return {
                             tz,
