@@ -358,7 +358,7 @@ describe('replace_date with timezone', () => {
 
         // going backwards should work as well
         const novBackByOneHour = new Date(novSecond1AM)
-        novBackByOneHour.setHours(-1)
+        novBackByOneHour.setMinutes(-60)
         expect(novBackByOneHour.toString()).toBe('Sun Nov 02 2025 01:00:00 GMT-0400 (Eastern Daylight Time)')
         expect(novBackByOneHour).toEqual(novFirst1AM)
         const novBackToStart = new Date(novBackByOneHour)

@@ -447,6 +447,8 @@ describe('replace_date', () => {
             it('setHours()', () => {
                 date.setHours(6)
                 expect(date.getHours()).toEqual(6)
+                date.setHours(-1)
+                expect(date.getHours()).toEqual(23)
             })
 
             it('setMinutes()', () => {

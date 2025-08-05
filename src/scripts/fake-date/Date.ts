@@ -274,7 +274,6 @@ function patchDateMethods(datePrototype: Date): void {
         if (!timezone) {
             return OriginalDate.prototype.setMinutes.call(this, minutes)
         }
-        // Note: setMinutes() only accepts minutes, not seconds or milliseconds
 
         return overridePartOfDate(this, timezone, { minutes })
     }
