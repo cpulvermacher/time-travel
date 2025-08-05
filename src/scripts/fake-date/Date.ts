@@ -80,9 +80,9 @@ function patchDateMethods(datePrototype: Date): void {
             return 'Invalid Date'
         }
 
-        const monthLabel = shortMonths[parseInt(parts.month, 10) - 1] || parts.month
+        const monthLabel = shortMonths[parts.month] || parts.month
 
-        return `${parts.weekday} ${monthLabel} ${parts.day} ${parts.year}`
+        return `${parts.weekday} ${monthLabel} ${parts.rawFormat.day} ${parts.rawFormat.year}`
     }
     datePrototype.toTimeString = function () {
         const timezone = getTimezone()
@@ -96,8 +96,9 @@ function patchDateMethods(datePrototype: Date): void {
             offset = 'GMT+0000'
         }
         const tzName = getTimezoneName(this, timezone)
+        const raw = parts.rawFormat
 
-        return `${parts.hour}:${parts.minute}:${parts.second} ${offset} (${tzName})`
+        return `${raw.hour}:${raw.minute}:${raw.second} ${offset} (${tzName})`
     }
 
     // Override locale string methods to use the selected timezone when no timezone is specified
@@ -140,7 +141,7 @@ function patchDateMethods(datePrototype: Date): void {
             return NaN
         }
 
-        return parts.hour ? parseInt(parts.hour, 10) : 0
+        return parts.hour
     }
 
     datePrototype.getMinutes = function () {
@@ -150,7 +151,7 @@ function patchDateMethods(datePrototype: Date): void {
             return NaN
         }
 
-        return parts.minute ? parseInt(parts.minute, 10) : 0
+        return parts.minute
     }
 
     datePrototype.getSeconds = function () {
@@ -160,7 +161,7 @@ function patchDateMethods(datePrototype: Date): void {
             return NaN
         }
 
-        return parts.second ? parseInt(parts.second, 10) : 0
+        return parts.second
     }
 
     datePrototype.getMilliseconds = function () {
@@ -170,7 +171,7 @@ function patchDateMethods(datePrototype: Date): void {
             return NaN
         }
 
-        return parts.fractionalSecond ? parseInt(parts.fractionalSecond, 10) : 0
+        return parts.ms
     }
 
     datePrototype.getDate = function () {
@@ -180,7 +181,7 @@ function patchDateMethods(datePrototype: Date): void {
             return NaN
         }
 
-        return parts.day ? parseInt(parts.day, 10) : 1
+        return parts.day
     }
 
     datePrototype.getMonth = function () {
@@ -190,8 +191,7 @@ function patchDateMethods(datePrototype: Date): void {
             return NaN
         }
 
-        // Month is 1-based in formatToParts but 0-based in Date methods
-        return parts.month ? parseInt(parts.month, 10) - 1 : 0
+        return parts.month
     }
 
     datePrototype.getFullYear = function () {
@@ -201,7 +201,7 @@ function patchDateMethods(datePrototype: Date): void {
             return NaN
         }
 
-        return parts.year ? parseInt(parts.year, 10) : 0
+        return parts.year
     }
 
     datePrototype.getDay = function () {
@@ -308,14 +308,13 @@ function overridePartOfDate(
         return date.setTime(NaN)
     }
 
-    //TODO consider moving this into formatToPartsWithTimezone
-    let year = override.year ?? parseInt(parts.year, 10)
-    let month = override.month ?? parseInt(parts.month, 10) - 1
-    let day = override.day ?? parseInt(parts.day, 10)
-    let hours = override.hours ?? parseInt(parts.hour, 10)
-    let minutes = override.minutes ?? parseInt(parts.minute, 10)
-    let seconds = override.seconds ?? parseInt(parts.second, 10)
-    let ms = override.milliseconds ?? parseInt(parts.fractionalSecond, 10)
+    let year = override.year ?? parts.year
+    let month = override.month ?? parts.month
+    let day = override.day ?? parts.day
+    let hours = override.hours ?? parts.hour
+    let minutes = override.minutes ?? parts.minute
+    let seconds = override.seconds ?? parts.second
+    let ms = override.milliseconds ?? parts.ms
 
     //handle overflow/underflow according to spec:
     // positive values larger than the maximum for this unit overflow, and increase the next highest unit by the appropriate amount.
@@ -428,10 +427,20 @@ function getOffsetFromLongOffset(longOffset?: string): number {
     return 0
 }
 
-function formatToPartsWithTimezone(
-    date: Date,
-    timezone: string | undefined
-): Record<Intl.DateTimeFormatPartTypes, string> | undefined {
+type DateParts = {
+    year: number
+    month: number
+    day: number
+    hour: number
+    minute: number
+    second: number
+    ms: number
+    weekday: string
+    timeZoneName: string
+    rawFormat: Record<Intl.DateTimeFormatPartTypes, string>
+}
+
+function formatToPartsWithTimezone(date: Date, timezone: string | undefined): DateParts | undefined {
     const formatter = getFormatterForTimezone(timezone)
     try {
         const parts = formatter.formatToParts(date)
@@ -439,7 +448,19 @@ function formatToPartsWithTimezone(
         parts.forEach((part) => {
             partsMap[part.type] = part.value
         })
-        return partsMap
+        return {
+            year: parseInt(partsMap.year, 10),
+            // Month is 1-based in formatToParts but 0-based in Date methods
+            month: parseInt(partsMap.month, 10) - 1,
+            day: parseInt(partsMap.day, 10),
+            hour: parseInt(partsMap.hour, 10),
+            minute: parseInt(partsMap.minute, 10),
+            second: parseInt(partsMap.second, 10),
+            ms: parseInt(partsMap.fractionalSecond, 10),
+            weekday: partsMap.weekday,
+            timeZoneName: partsMap.timeZoneName,
+            rawFormat: partsMap,
+        }
     } catch {
         return undefined
     }
