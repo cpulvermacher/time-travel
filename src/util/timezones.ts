@@ -52,12 +52,12 @@ export function getTimezoneOptions(locale: string): Timezone[] {
 }
 
 /**  Get offset in localized format like "GMT-08:00" */
-function getOffset(locale: string, tz: string | undefined) {
+export function getOffset(locale: string, tz: string | undefined, date?: Date) {
     const formatter = new Intl.DateTimeFormat(locale, {
         timeZone: tz,
         timeZoneName: 'longOffset',
     })
-    return removeDateTimePart(formatter.format(new Date()))
+    return removeDateTimePart(formatter.format(date || new Date()))
 }
 
 /** Get timezone name */

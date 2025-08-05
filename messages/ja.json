@@ -44,5 +44,6 @@
     "timezone_selector_label": "タイムゾーン (実験的)",
     "timezone_group_common": "主要",
     "timezone_browser_default": "デフォルト",
-    "date_in_timezone_info": "{timezone}では{date}"
+    "date_in_timezone_info": "{timezone}では{date}",
+    "dst_info": "この日時は夏時間が適用されています。"
 }

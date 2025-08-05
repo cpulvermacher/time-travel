@@ -44,5 +44,6 @@
     "timezone_selector_label": "Zeitzone (Experimentell)",
     "timezone_group_common": "Häufig",
     "timezone_browser_default": "Standard",
-    "date_in_timezone_info": "{date} in {timezone}"
+    "date_in_timezone_info": "{date} in {timezone}",
+    "dst_info": "Sommerzeit ist für dieses Datum aktiv."
 }

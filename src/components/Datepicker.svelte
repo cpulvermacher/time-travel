@@ -5,7 +5,7 @@
     import { getUILanguage } from '../util/browser'
     import { formatDateInTimezone, formatLocalTime, overwriteDatePart, parseDate } from '../util/common'
     import { getFirstDayOfWeek } from '../util/i18n'
-    import { isDst } from '../util/timezones'
+    import { getOffset, isDst } from '../util/timezones'
 
     // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
     const startOfWeek = getFirstDayOfWeek(getUILanguage()) % 7
@@ -138,7 +138,9 @@
                 })}
             </span>
             {#if isDst(fakeDate, timezone)}
-                <span class="dst-badge">DST</span>
+                <span class="dst-badge" title={m.dst_info()}>
+                    {getOffset('en', timezone, new Date(fakeDate)).replace('GMT', '')}
+                </span>
             {/if}
         {/if}
     </DatePicker>
