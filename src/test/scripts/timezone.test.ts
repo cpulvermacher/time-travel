@@ -112,9 +112,22 @@ describe('replace_date with timezone', () => {
         checkDate(new Date(2025, 6, 15, 14, 30, 0, 0))
         // year, month, date, hours, minutes
         checkDate(new Date(2025, 6, 15, 14, 30))
+
+        // parse() with ISO string (UTC)
+        checkDate(new Date(Date.parse('2025-07-15T18:30:00.000Z')))
+        // parse() with local date string (with TZ)
+        checkDate(new Date(Date.parse('2025-07-15 14:30')))
     })
-    //TODO test parse()
-    //TODO note that Date.parse("2025-07-15") with only date is in UTC
+
+    it('parse() with only date is in UTC', () => {
+        const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
+        setFakeDate(fakeDate)
+        setTimezone('America/New_York')
+
+        const date = new Date(Date.parse('2025-07-15'))
+
+        expect(date.toISOString()).toBe('2025-07-15T00:00:00.000Z')
+    })
 
     // ----- Intl.DateTimeFormat ----
 

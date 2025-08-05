@@ -424,6 +424,7 @@ declare const __EXT_VERSION__: string
     // static properties
     Object.setPrototypeOf(FakeDate, OriginalDate)
     FakeDate.now = () => new Date().getTime()
+    FakeDate.parse = (datestr: string) => new Date(datestr).getTime()
 
     // for instance properties, _copy_ them from the original Date prototype
     // this is necessary for e.g. @date-fns/tz, which iterates over Object.getOwnPropertyNames(Date.prototype)
