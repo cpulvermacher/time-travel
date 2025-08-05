@@ -40,7 +40,7 @@ declare const __EXT_VERSION__: string
     /** return timezone setting, or undefined to use browser default */
     function getTimezone(): string | undefined {
         const timezone = getFromStorage(TIMEZONE_STORAGE_KEY)
-        return timezone !== null ? timezone : undefined
+        return timezone || undefined
     }
 
     /** return the current date/time we want the page to see.
@@ -93,6 +93,44 @@ declare const __EXT_VERSION__: string
         return 0
     }
 
+    /** Gets a cached formatter */
+    function getFormatterForTimezone(timezone: string | undefined): Intl.DateTimeFormat {
+        if (cachedFormatterForTimezone === timezone && cachedFormatter !== null) {
+            return cachedFormatter
+        }
+        cachedFormatterForTimezone = timezone
+        cachedFormatter = new OriginalIntlDateTimeFormat('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            fractionalSecondDigits: 3,
+            hour12: false,
+            weekday: 'short',
+            timeZoneName: 'longOffset',
+            timeZone: timezone,
+        })
+        return cachedFormatter
+    }
+
+    function formatToPartsWithTimezone(
+        date: Date,
+        timezone: string | undefined
+    ): Record<Intl.DateTimeFormatPartTypes, string> {
+        const formatter = getFormatterForTimezone(timezone)
+        const parts = formatter.formatToParts(date)
+        const partsMap = {} as Record<Intl.DateTimeFormatPartTypes, string>
+        parts.forEach((part) => {
+            partsMap[part.type] = part.value
+        })
+        return partsMap
+    }
+
+    let cachedFormatter: Intl.DateTimeFormat | null = null
+    let cachedFormatterForTimezone: string | undefined | null = null
+
     const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -112,10 +150,7 @@ declare const __EXT_VERSION__: string
         // @ts-expect-error: let original Date constructor handle the arguments
         const returnDate = new OriginalDate(...args)
 
-        const timezone = getTimezone()
-        if (timezone) {
-            patchDateMethods(returnDate, timezone)
-        }
+        patchDateMethods(returnDate)
 
         // for `new SomeClassDerivedFromDate()`, make sure we return something that is an instance of SomeClassDerivedFromDate
         Object.setPrototypeOf(returnDate, new.target.prototype as object)
@@ -130,61 +165,56 @@ declare const __EXT_VERSION__: string
      * - Local time methods: getHours, getMinutes, getSeconds, etc.
      * - UTC methods (getUTCHours, etc.) remain unaffected
      */
-    function patchDateMethods(dateObj: Date, timezone: string): void {
+    function patchDateMethods(dateObj: Date): void {
         // Store original methods to be used later
         const originalToLocaleString = dateObj.toLocaleString.bind(dateObj)
         const originalToLocaleDateString = dateObj.toLocaleDateString.bind(dateObj)
         const originalToLocaleTimeString = dateObj.toLocaleTimeString.bind(dateObj)
 
-        // Cache the Intl formatter for the timezone to optimize performance
-        const formatter = new OriginalIntlDateTimeFormat('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            fractionalSecondDigits: 3,
-            hour12: false,
-            weekday: 'short',
-            timeZoneName: 'longOffset',
-            timeZone: timezone, //TODO this isn't properly updated
-        })
-
         // --- Override string representation methods ---
+        //TODO I should probably use bind() instead of directly assigning the function
+        // but then again this might only be an Intl. thing
 
         // Override toString to use the selected timezone
         dateObj.toString = function () {
-            const parts = formatter.formatToParts(this)
-            const partsMap: Record<string, string> = {}
-            parts.forEach((part) => {
-                partsMap[part.type] = part.value
-            })
+            const timezone = getTimezone()
+            const parts = formatToPartsWithTimezone(this, timezone)
 
-            const monthLabel = shortMonths[parseInt(partsMap.month, 10) - 1] || partsMap.month
-            const offset = partsMap.timeZoneName.replace(':', '')
+            const monthLabel = shortMonths[parseInt(parts.month, 10) - 1] || parts.month
+            const offset = parts.timeZoneName.replace(':', '')
 
-            return `${partsMap.weekday} ${monthLabel} ${partsMap.day} ${partsMap.year} ${partsMap.hour}:${partsMap.minute}:${partsMap.second} ${offset}`
+            //TODO need (TZ name) at the end.
+            return `${parts.weekday} ${monthLabel} ${parts.day} ${parts.year} ${parts.hour}:${parts.minute}:${parts.second} ${offset}`
         }
+        // TODO dateObj.toDateString and friends
 
         // Override locale string methods to use the selected timezone when no timezone is specified
         dateObj.toLocaleString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
             if (!options || !options.timeZone) {
-                options = { ...(options || {}), timeZone: timezone }
+                const timezone = getTimezone()
+                if (!timezone) {
+                    options = { ...(options || {}), timeZone: timezone }
+                }
             }
             return originalToLocaleString(locales, options)
         }
 
         dateObj.toLocaleDateString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
             if (!options || !options.timeZone) {
-                options = { ...(options || {}), timeZone: timezone }
+                const timezone = getTimezone()
+                if (!timezone) {
+                    options = { ...(options || {}), timeZone: timezone }
+                }
             }
             return originalToLocaleDateString(locales, options)
         }
 
         dateObj.toLocaleTimeString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
             if (!options || !options.timeZone) {
-                options = { ...(options || {}), timeZone: timezone }
+                const timezone = getTimezone()
+                if (!timezone) {
+                    options = { ...(options || {}), timeZone: timezone }
+                }
             }
             return originalToLocaleTimeString(locales, options)
         }
@@ -192,59 +222,68 @@ declare const __EXT_VERSION__: string
         // --- Override local time methods to return values in the selected timezone ---
 
         dateObj.getHours = function () {
-            const parts = formatter.formatToParts(this)
-            const hour = parts.find((p) => p.type === 'hour')?.value
-            return hour ? parseInt(hour, 10) : 0
+            const timezone = getTimezone()
+            const parts = formatToPartsWithTimezone(this, timezone)
+
+            return parts.hour ? parseInt(parts.hour, 10) : 0
         }
 
         dateObj.getMinutes = function () {
-            const parts = formatter.formatToParts(this)
-            const minute = parts.find((p) => p.type === 'minute')?.value
-            return minute ? parseInt(minute, 10) : 0
+            const timezone = getTimezone()
+            const parts = formatToPartsWithTimezone(this, timezone)
+
+            return parts.minute ? parseInt(parts.minute, 10) : 0
         }
 
         dateObj.getSeconds = function () {
-            const parts = formatter.formatToParts(this)
-            const second = parts.find((p) => p.type === 'second')?.value
-            return second ? parseInt(second, 10) : 0
+            const timezone = getTimezone()
+            const parts = formatToPartsWithTimezone(this, timezone)
+
+            return parts.second ? parseInt(parts.second, 10) : 0
         }
 
         dateObj.getMilliseconds = function () {
-            const parts = formatter.formatToParts(this)
-            const fraction = parts.find((p) => p.type === 'fractionalSecond')?.value
-            return fraction ? parseInt(fraction, 10) : 0
+            const timezone = getTimezone()
+            const parts = formatToPartsWithTimezone(this, timezone)
+
+            return parts.fractionalSecond ? parseInt(parts.fractionalSecond, 10) : 0
         }
 
         dateObj.getDate = function () {
-            const parts = formatter.formatToParts(this)
-            const day = parts.find((p) => p.type === 'day')?.value
-            return day ? parseInt(day, 10) : 1
+            const timezone = getTimezone()
+            const parts = formatToPartsWithTimezone(this, timezone)
+
+            return parts.day ? parseInt(parts.day, 10) : 1
         }
 
         dateObj.getMonth = function () {
-            const parts = formatter.formatToParts(this)
-            const month = parts.find((p) => p.type === 'month')?.value
+            const timezone = getTimezone()
+            const parts = formatToPartsWithTimezone(this, timezone)
+
             // Month is 1-based in formatToParts but 0-based in Date methods
-            return month ? parseInt(month, 10) - 1 : 0
+            return parts.month ? parseInt(parts.month, 10) - 1 : 0
         }
 
         dateObj.getFullYear = function () {
-            const parts = formatter.formatToParts(this)
-            const year = parts.find((p) => p.type === 'year')?.value
-            return year ? parseInt(year, 10) : 0
+            const timezone = getTimezone()
+            const parts = formatToPartsWithTimezone(this, timezone)
+
+            return parts.year ? parseInt(parts.year, 10) : 0
         }
 
         dateObj.getDay = function () {
-            const parts = formatter.formatToParts(this)
-            const weekday = parts.find((p) => p.type === 'weekday')?.value
+            const timezone = getTimezone()
+            const parts = formatToPartsWithTimezone(this, timezone)
+
             // Convert weekday name to number (0-6, Sunday-Saturday)
-            return weekdays.indexOf(weekday || 'Sun')
+            return weekdays.indexOf(parts.weekday || 'Sun')
         }
 
         dateObj.getTimezoneOffset = function () {
-            const parts = formatter.formatToParts(this)
-            const offset = parts.find((p) => p.type === 'timeZoneName')?.value
-            return getOffsetFromLongOffset(offset)
+            const timezone = getTimezone()
+            const parts = formatToPartsWithTimezone(this, timezone)
+
+            return getOffsetFromLongOffset(parts.timeZoneName)
         }
 
         // Note: We don't override UTC methods as they should remain as is
