@@ -236,7 +236,7 @@ declare const __EXT_VERSION__: string
         dateObj.toLocaleString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
             if (!options || !options.timeZone) {
                 const timezone = getTimezone()
-                if (!timezone) {
+                if (timezone) {
                     options = { ...(options || {}), timeZone: timezone }
                 }
             }
@@ -246,7 +246,7 @@ declare const __EXT_VERSION__: string
         dateObj.toLocaleDateString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
             if (!options || !options.timeZone) {
                 const timezone = getTimezone()
-                if (!timezone) {
+                if (timezone) {
                     options = { ...(options || {}), timeZone: timezone }
                 }
             }
@@ -256,7 +256,7 @@ declare const __EXT_VERSION__: string
         dateObj.toLocaleTimeString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
             if (!options || !options.timeZone) {
                 const timezone = getTimezone()
-                if (!timezone) {
+                if (timezone) {
                     options = { ...(options || {}), timeZone: timezone }
                 }
             }

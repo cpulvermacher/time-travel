@@ -43,6 +43,11 @@ describe('replace_date with timezone', () => {
         expect(date.toDateString()).toBe('Sun Jan 01 2023')
         expect(date.toTimeString()).toBe('12:00:00 GMT+0000 (Coordinated Universal Time)')
         expect(date.toString()).toBe('Sun Jan 01 2023 12:00:00 GMT+0000 (Coordinated Universal Time)')
+
+        expect(date.toLocaleString('en-US')).toBe('1/1/2023, 12:00:00 PM')
+        expect(date.toLocaleDateString('en-US')).toBe('1/1/2023')
+        expect(date.toLocaleTimeString('en-US')).toBe('12:00:00 PM')
+        expect(Date()).toBe('Sun Jan 01 2023 12:00:00 GMT+0000 (Coordinated Universal Time)')
     })
 
     it('new Date() respects timezone when set', () => {
@@ -77,6 +82,11 @@ describe('replace_date with timezone', () => {
         expect(date.toDateString()).toBe('Sat Dec 31 2022')
         expect(date.toTimeString()).toBe('22:01:02 GMT-0500 (Eastern Standard Time)')
         expect(date.toString()).toBe('Sat Dec 31 2022 22:01:02 GMT-0500 (Eastern Standard Time)')
+
+        expect(date.toLocaleString('en-US')).toBe('12/31/2022, 10:01:02 PM')
+        expect(date.toLocaleDateString('en-US')).toBe('12/31/2022')
+        expect(date.toLocaleTimeString('en-US')).toBe('10:01:02 PM')
+        expect(Date()).toBe('Sat Dec 31 2022 22:01:02 GMT-0500 (Eastern Standard Time)')
     })
 
     // ----- Intl.DateTimeFormat ----
