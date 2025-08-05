@@ -30,6 +30,7 @@ describe('replace_date with timezone', () => {
         expect(date.getUTCMilliseconds()).toBe(0)
         expect(date.getUTCDay()).toBe(0) // Sunday
         expect(date.toISOString()).toBe(fakeDate)
+        expect(date.toJSON()).toBe(fakeDate)
 
         // local time methods
         expect(date.getFullYear()).toBe(2023)
@@ -69,6 +70,7 @@ describe('replace_date with timezone', () => {
         expect(date.getUTCMilliseconds()).toBe(345)
         expect(date.getUTCDay()).toBe(0) // Sunday
         expect(date.toISOString()).toBe(fakeDate)
+        expect(date.toJSON()).toBe(fakeDate)
 
         // local time methods
         expect(date.getFullYear()).toBe(2022)
@@ -88,6 +90,31 @@ describe('replace_date with timezone', () => {
         expect(date.toLocaleTimeString('en-US')).toBe('10:01:02 PM')
         expect(Date()).toBe('Sat Dec 31 2022 22:01:02 GMT-0500 (Eastern Standard Time)')
     })
+    //TODO add test that with disabled fakedate + timezone set, Date() returns local time
+
+    it('if timezone is set, creating a new Date with arguments should use that timezone', () => {
+        const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
+        setFakeDate(fakeDate)
+        setTimezone('America/New_York')
+
+        const checkDate = (date: Date) => {
+            expect(date.toISOString()).toBe('2025-07-15T18:30:00.000Z')
+            expect(date.toString()).toBe('Tue Jul 15 2025 14:30:00 GMT-0400 (Eastern Daylight Time)')
+        }
+
+        // ISO string (UTC)
+        checkDate(new Date('2025-07-15T18:30:00.000Z'))
+        // local date string (with TZ)
+        checkDate(new Date('2025-07-15T14:30:00.000-04:00'))
+        // local date string (without TZ offset = local time in New York)
+        checkDate(new Date('2025-07-15 14:30'))
+        // year, month, date, hours, minutes, seconds, milliseconds
+        checkDate(new Date(2025, 6, 15, 14, 30, 0, 0))
+        // year, month, date, hours, minutes
+        checkDate(new Date(2025, 6, 15, 14, 30))
+    })
+    //TODO test parse()
+    //TODO note that Date.parse("2025-07-15") with only date is in UTC
 
     // ----- Intl.DateTimeFormat ----
 

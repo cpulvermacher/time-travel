@@ -148,6 +148,42 @@ declare const __EXT_VERSION__: string
         }
     }
 
+    function parseWithTimezone(dateString: string, timezone: string | undefined): number {
+        // Check for common timezone patterns
+        const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2}|GMT|UTC|\b[A-Z]{3,4}\b)$/i.test(dateString.trim())
+
+        if (!timezone || hasTimezone) {
+            return OriginalDate.parse(dateString)
+        }
+
+        // Step 1: Parse the date string as if it were in local time to get an approximation
+        const approximateDate = new OriginalDate(dateString)
+        if (isNaN(approximateDate.getTime())) {
+            return NaN
+        }
+
+        // Step 2: Get the timezone offset for that approximate time
+        const parts = formatToPartsWithTimezone(approximateDate, timezone)
+        if (!parts) {
+            return NaN
+        }
+
+        // Step 3: Parse with the timezone offset
+        const trimmedDateString = dateString.replace(/\s*\([^)]+\)\s*$/, '').trim()
+        const firstAttempt = OriginalDate.parse(`${trimmedDateString} ${parts.timeZoneName}`)
+
+        // Step 4: Refinement - check if we crossed a DST boundary
+        const firstAttemptDate = new OriginalDate(firstAttempt)
+        const refinedParts = formatToPartsWithTimezone(firstAttemptDate, timezone)
+
+        // If the timezone offsets are different, we crossed a DST boundary
+        if (refinedParts && refinedParts.timeZoneName !== parts.timeZoneName) {
+            return OriginalDate.parse(`${trimmedDateString} ${refinedParts.timeZoneName}`)
+        }
+
+        return firstAttempt
+    }
+
     let cachedFormatter: Intl.DateTimeFormat | null = null
     let cachedFormatterForTimezone: string | undefined | null = null
 
@@ -167,8 +203,34 @@ declare const __EXT_VERSION__: string
         if (args.length === 0) {
             args = [fakeNowDate()]
         }
-        // @ts-expect-error: let original Date constructor handle the arguments
-        const returnDate = new OriginalDate(...args)
+
+        let returnDate: Date
+        const timezone = getTimezone()
+        if (!timezone || (args.length === 1 && (typeof args[0] === 'number' || args[0] instanceof OriginalDate))) {
+            // @ts-expect-error: let original Date constructor handle the arguments
+            returnDate = new OriginalDate(...args)
+        } else if (args.length === 1 && typeof args[0] === 'string') {
+            returnDate = new OriginalDate(parseWithTimezone(args[0], timezone))
+        } else if (args.length > 1) {
+            let year = args[0] as number
+            if (year >= 0 && year <= 99) {
+                year += 1900 // 2-digit years are interpreted as 1900-1999 as per spec
+            }
+            const month = (args[1] as number) + 1
+            const date = (args[2] as number) || 1
+            const hours = (args[3] as number) || 0
+            const minutes = (args[4] as number) || 0
+            const seconds = (args[5] as number) || 0
+            const milliseconds = (args[6] as number) || 0
+
+            //TODO spec has fun underflow/overflow rules, e.g. if month is 13, it will be interpreted as January of the next year
+            const dateString = `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}`
+            const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(3, '0')}`
+            returnDate = new OriginalDate(parseWithTimezone(`${dateString} ${timeString}`, timezone))
+        } else {
+            // @ts-expect-error: let original Date constructor handle the arguments
+            returnDate = new OriginalDate(...args)
+        }
 
         patchDateMethods(returnDate)
 

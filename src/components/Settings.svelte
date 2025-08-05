@@ -103,6 +103,7 @@
         if (isEnabled) {
             applyAndEnable()
         }
+        //TODO consider saving previously selected timezones in settings
     }
     function onEnableChange(enabled: boolean) {
         const parsedDate = parseDate(fakeDate)
