@@ -225,6 +225,35 @@ function patchDateMethods(datePrototype: Date): void {
         return getOffsetFromLongOffset(parts.timeZoneName)
     }
 
+    // --- Override local time setters to use selected timezone ---
+
+    datePrototype.setFullYear = function (year: number, month?: number, date?: number) {
+        const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.setFullYear.call(this, year, month, date)
+        }
+
+        return overridePartOfDate(this, timezone, { year, month, day: date })
+    }
+
+    datePrototype.setMonth = function (month: number, date?: number) {
+        const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.setMonth.call(this, month, date)
+        }
+
+        return overridePartOfDate(this, timezone, { month, day: date })
+    }
+
+    datePrototype.setDate = function (date: number) {
+        const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.setDate.call(this, date)
+        }
+
+        return overridePartOfDate(this, timezone, { day: date })
+    }
+
     datePrototype.setHours = function (hours: number, min?: number, sec?: number, ms?: number) {
         const timezone = getTimezone()
         if (!timezone) {
