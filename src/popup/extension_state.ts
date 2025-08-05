@@ -39,6 +39,11 @@ export async function setFakeDate(dateString: string): Promise<boolean> {
 
     await injectFunction(tabId, inject.setFakeDate, [fakeDate])
 
+    // Also set the timezone if we have one
+    //TODO fix setting timezone in setFakeDate
+    const timezone = await loadSetting('timezone', undefined)
+    await injectFunction(tabId, inject.setTimezone, [timezone || ''])
+
     return needsReload
 }
 
@@ -71,6 +76,7 @@ export type Settings = {
     autoReload: boolean
     stopClock: boolean // tab state if time travel is active, stored setting if inactive
     advancedSettingsOpen: boolean
+    timezone?: string // undefined means browser default timezone
 }
 
 /** get current state of extension. Throws on permission errors */
@@ -78,6 +84,7 @@ export async function getState(): Promise<InitialState> {
     const autoReload = await loadSetting('autoReload', false)
     const stopClock = await loadSetting('stopClock', false)
     const advancedSettingsOpen = await loadSetting('advancedSettingsOpen', false)
+    const timezone = await loadSetting('timezone', undefined)
 
     if (import.meta.env.DEV) {
         //return dummy state for testing
@@ -88,6 +95,7 @@ export async function getState(): Promise<InitialState> {
                 autoReload,
                 stopClock,
                 advancedSettingsOpen,
+                timezone,
             },
         }
     }
@@ -116,6 +124,7 @@ export async function getState(): Promise<InitialState> {
                 autoReload,
                 stopClock: isEnabled ? state.isClockStopped : stopClock,
                 advancedSettingsOpen,
+                timezone,
             },
         }
     } catch (error) {

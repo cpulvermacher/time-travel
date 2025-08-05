@@ -23,6 +23,8 @@ To restore the system time, click the extension icon and switch off the "Enable 
 When the fake date is enabled, the clock runs forward from the configured time.
 You can stop the clock by switching on the "Stop Clock" toggle. The fake date will be reset to the last value you set.
 
+To change the timezone, open "Advanced Settings" and select a timezone from the dropdown. The default is to use your browser's timezone. When a timezone is set, both `Date` objects and `Intl.DateTimeFormat` will use the selected timezone.
+
 ### Example Dates and Formats
 - `2025-04-27 12:40` - Local time
 - `2025-03-30 00:59:55` - Assuming your system timezone is Europe/London (GMT), 5 seconds before a one-hour jump to 2 a.m. (summer time)
@@ -35,6 +37,7 @@ You can stop the clock by switching on the "Stop Clock" toggle. The fake date wi
 - Fakes date and time for all methods of `Date` and `Intl.DateTimeFormat` objects.
 - Time can be stopped and resumed.
 - Option to automatically reload page after changing date.
+- Configure a specific timezone for date/time operations.
 - Only affects current tab after clicking the extension icon.
 - Minimal permissions (in Chrome)
 

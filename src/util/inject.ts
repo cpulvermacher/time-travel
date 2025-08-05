@@ -37,6 +37,20 @@ export function setTickStartTimestamp(nowTimestampStr: string) {
 }
 
 /** returns true if the content script was injected and activated after page reload */
+export function setTimezone(timezone: string) {
+    const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone'
+
+    if (timezone && timezone.trim() !== '') {
+        window.sessionStorage.setItem(TIMEZONE_STORAGE_KEY, timezone)
+    } else {
+        window.sessionStorage.removeItem(TIMEZONE_STORAGE_KEY)
+    }
+
+    if (window.__timeTravelCheckToggle) {
+        window.__timeTravelCheckToggle()
+    }
+}
+
 export function isContentScriptActive() {
     return window.__timeTravelCheckToggle !== undefined
 }

@@ -145,7 +145,7 @@ function getSettingsStorage(): chrome.storage.StorageArea | undefined {
     return undefined
 }
 
-export type SettingName = 'stopClock' | 'autoReload' | 'advancedSettingsOpen'
+export type SettingName = 'stopClock' | 'autoReload' | 'advancedSettingsOpen' | 'timezone'
 
 /** save a setting */
 export async function saveSetting<T>(key: SettingName, value: T): Promise<void> {

@@ -10,6 +10,7 @@
     import ErrorModal from './ErrorModal.svelte'
     import LinkButton from './LinkButton.svelte'
     import ReloadModal from './ReloadModal.svelte'
+    import TimezoneSelect from './TimezoneSelect.svelte'
     import Toggle from './Toggle.svelte'
 
     interface Props {
@@ -96,6 +97,13 @@
     function onAutoReloadToggle() {
         saveSetting('autoReload', settings.autoReload)
     }
+    function onTimezoneChange(timezone: string | undefined) {
+        settings.timezone = timezone
+        saveSetting('timezone', timezone)
+        if (isEnabled) {
+            applyAndEnable()
+        }
+    }
     function onEnableChange(enabled: boolean) {
         const parsedDate = parseDate(fakeDate)
         if (parsedDate === null) {
@@ -144,6 +152,7 @@
             label={m.stop_time_toggle()}
         />
         <Toggle bind:checked={settings.autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
+        <TimezoneSelect value={settings.timezone} onSelect={onTimezoneChange} />
     </Accordion>
 </main>
 
