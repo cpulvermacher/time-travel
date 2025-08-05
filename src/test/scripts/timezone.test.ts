@@ -116,35 +116,92 @@ describe('replace_date with timezone', () => {
         checkDate(new Date(Date.parse('2025-07-15 14:30')))
     })
 
-    it('if timezone is set, creating new Date on DST boundary works', () => {
+    it('if timezone is set, creating new Date on DST boundary works (New York)', () => {
         const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
         setFakeDate(fakeDate, 'America/New_York')
 
-        const springBeforeDst = new Date('2025-03-09 01:59')
-        expect(springBeforeDst.toString()).toBe('Sun Mar 09 2025 01:59:00 GMT-0500 (Eastern Standard Time)')
-        expect(springBeforeDst.toISOString()).toBe('2025-03-09T06:59:00.000Z')
-        expect(springBeforeDst.getTimezoneOffset()).toBe(300) // -5 hours
-        const springAfterDst = new Date('2025-03-09 03:00')
-        expect(springAfterDst.toString()).toBe('Sun Mar 09 2025 03:00:00 GMT-0400 (Eastern Daylight Time)')
-        expect(springAfterDst.toISOString()).toBe('2025-03-09T07:00:00.000Z')
-        expect(springAfterDst.getTimezoneOffset()).toBe(240) // -4 hours
-        expect(springAfterDst.getTime() - springBeforeDst.getTime()).toBe(60 * 1000) // 1 minute difference
+        const marBeforDst = new Date('2025-03-09 01:59')
+        expect(marBeforDst.toString()).toBe('Sun Mar 09 2025 01:59:00 GMT-0500 (Eastern Standard Time)')
+        expect(marBeforDst.toISOString()).toBe('2025-03-09T06:59:00.000Z')
+        expect(marBeforDst.getTimezoneOffset()).toBe(300) // -5 hours
+        const marAfterDst = new Date('2025-03-09 03:00')
+        expect(marAfterDst.toString()).toBe('Sun Mar 09 2025 03:00:00 GMT-0400 (Eastern Daylight Time)')
+        expect(marAfterDst.toISOString()).toBe('2025-03-09T07:00:00.000Z')
+        expect(marAfterDst.getTimezoneOffset()).toBe(240) // -4 hours
+        expect(marAfterDst.getTime() - marBeforDst.getTime()).toBe(60 * 1000) // 1 minute difference
 
-        const fallBeforeDst = new Date('2025-11-02 01:59')
-        expect(fallBeforeDst.toString()).toBe('Sun Nov 02 2025 01:59:00 GMT-0400 (Eastern Daylight Time)')
-        expect(fallBeforeDst.toISOString()).toBe('2025-11-02T05:59:00.000Z')
-        expect(fallBeforeDst.getTimezoneOffset()).toBe(240) // -4 hours
+        const novBeforeDstEnd = new Date('2025-11-02 01:59')
+        expect(novBeforeDstEnd.toString()).toBe('Sun Nov 02 2025 01:59:00 GMT-0400 (Eastern Daylight Time)')
+        expect(novBeforeDstEnd.toISOString()).toBe('2025-11-02T05:59:00.000Z')
+        expect(novBeforeDstEnd.getTimezoneOffset()).toBe(240) // -4 hours
         // two 02:00 times here, this will take the later one
-        const fallAmbiguous = new Date('2025-11-02 02:00')
-        expect(fallAmbiguous.toString()).toBe('Sun Nov 02 2025 02:00:00 GMT-0500 (Eastern Standard Time)')
-        expect(fallAmbiguous.toISOString()).toBe('2025-11-02T07:00:00.000Z')
-        expect(fallAmbiguous.getTimezoneOffset()).toBe(300) // -5 hours
-        expect(fallAmbiguous.getTime() - fallBeforeDst.getTime()).toBe(60 * 60 * 1000 + 60 * 1000) // 1:01 difference
-        const fallAfterDst = new Date('2025-11-02 03:00')
-        expect(fallAfterDst.toString()).toBe('Sun Nov 02 2025 03:00:00 GMT-0500 (Eastern Standard Time)')
-        expect(fallAfterDst.toISOString()).toBe('2025-11-02T08:00:00.000Z')
-        expect(fallAfterDst.getTimezoneOffset()).toBe(300) // -5 hours
-        expect(fallAfterDst.getTime() - fallBeforeDst.getTime()).toBe(2 * 60 * 60 * 1000 + 60 * 1000) // 2:01 difference
+        const novAmbiguous = new Date('2025-11-02 02:00')
+        expect(novAmbiguous.toString()).toBe('Sun Nov 02 2025 02:00:00 GMT-0500 (Eastern Standard Time)')
+        expect(novAmbiguous.toISOString()).toBe('2025-11-02T07:00:00.000Z')
+        expect(novAmbiguous.getTimezoneOffset()).toBe(300) // -5 hours
+        expect(novAmbiguous.getTime() - novBeforeDstEnd.getTime()).toBe(60 * 60 * 1000 + 60 * 1000) // 1:01 difference
+        const novAfterDstEnd = new Date('2025-11-02 03:00')
+        expect(novAfterDstEnd.toString()).toBe('Sun Nov 02 2025 03:00:00 GMT-0500 (Eastern Standard Time)')
+        expect(novAfterDstEnd.toISOString()).toBe('2025-11-02T08:00:00.000Z')
+        expect(novAfterDstEnd.getTimezoneOffset()).toBe(300) // -5 hours
+        expect(novAfterDstEnd.getTime() - novBeforeDstEnd.getTime()).toBe(2 * 60 * 60 * 1000 + 60 * 1000) // 2:01 difference
+    })
+
+    it('if timezone is set, creating new Date on DST boundary works (Chatham)', () => {
+        const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
+        setFakeDate(fakeDate, 'Pacific/Chatham') // +12:45, DST +13:45 from September to April
+
+        // DST ends april 6 3:45
+        const aprilBeforDstEnd = new Date('2025-04-06 02:00')
+        expect(aprilBeforDstEnd.toString()).toBe('Sun Apr 06 2025 02:00:00 GMT+1345 (Chatham Daylight Time)')
+        expect(aprilBeforDstEnd.toISOString()).toBe('2025-04-05T12:15:00.000Z')
+        expect(aprilBeforDstEnd.getTimezoneOffset()).toBe(-825)
+        const aprilAfterDstEnd = new Date('2025-04-06 04:00')
+        expect(aprilAfterDstEnd.toString()).toBe('Sun Apr 06 2025 04:00:00 GMT+1245 (Chatham Standard Time)')
+        expect(aprilAfterDstEnd.toISOString()).toBe('2025-04-05T15:15:00.000Z')
+        expect(aprilAfterDstEnd.getTimezoneOffset()).toBe(-765)
+        expect(aprilAfterDstEnd.getTime() - aprilBeforDstEnd.getTime()).toBe(3 * 60 * 60 * 1000) // 3h difference
+
+        // DST starts September 28 2:45
+        const septBeforeDst = new Date('2025-09-28 02:44')
+        expect(septBeforeDst.toString()).toBe('Sun Sep 28 2025 02:44:00 GMT+1245 (Chatham Standard Time)')
+        expect(septBeforeDst.toISOString()).toBe('2025-09-27T13:59:00.000Z')
+        expect(septBeforeDst.getTimezoneOffset()).toBe(-765)
+        const septAfterDst = new Date(septBeforeDst)
+        septAfterDst.setUTCMinutes(septBeforeDst.getUTCMinutes() + 1)
+        expect(septAfterDst.toString()).toBe('Sun Sep 28 2025 03:45:00 GMT+1345 (Chatham Daylight Time)')
+        expect(septAfterDst.toISOString()).toBe('2025-09-27T14:00:00.000Z')
+        expect(septAfterDst.getTimezoneOffset()).toBe(-825)
+        expect(septAfterDst.getTime() - septBeforeDst.getTime()).toBe(60 * 1000) // 1min difference
+    })
+
+    it('parse adjusts for nonexisting time near DST boundary', () => {
+        setFakeDate('2025-03-09T06:59:00.000Z', 'America/New_York')
+
+        // 2:00 does not exist on DST start (spring forward)
+        const nonexistentDate = new Date('2025-03-09 02:00')
+
+        // interpreted as the most likely valid time after the DST jump
+        expect(nonexistentDate.toString()).toBe('Sun Mar 09 2025 03:00:00 GMT-0400 (Eastern Daylight Time)')
+    })
+
+    it('getTimezoneOffset() returns correct offset for minutes in offset', () => {
+        const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
+
+        setFakeDate(fakeDate, 'America/New_York')
+        expect(new Date('2025-07-15 14:30').getTimezoneOffset()).toBe(240) // -4 hours (EDT)
+
+        setFakeDate(fakeDate, 'Pacific/Chatham')
+        expect(new Date('2025-07-15 14:30').getTimezoneOffset()).toBe(-765) // -12:45 (Chatham Standard Time)
+
+        setFakeDate(fakeDate, 'UTC')
+        expect(new Date('2025-07-15 14:30').getTimezoneOffset()).toBe(0)
+
+        setFakeDate(fakeDate, 'Asia/Kolkata') // +5:30
+        expect(new Date('2025-07-15 14:30').getTimezoneOffset()).toBe(-330) // -5:30
+
+        setFakeDate(fakeDate, 'Pacific/Marquesas')
+        expect(new Date('2025-07-15 14:30').getTimezoneOffset()).toBe(570) // +9:30
     })
 
     it('parse() with only date is in UTC', () => {
