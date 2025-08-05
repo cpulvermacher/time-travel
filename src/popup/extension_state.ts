@@ -76,7 +76,7 @@ export type Settings = {
     autoReload: boolean
     stopClock: boolean // tab state if time travel is active, stored setting if inactive
     advancedSettingsOpen: boolean
-    timezone?: string // undefined means browser default timezone
+    timezone: string // '' for browser default timezone
 }
 
 /** get current state of extension. Throws on permission errors */
@@ -84,7 +84,7 @@ export async function getState(): Promise<InitialState> {
     const autoReload = await loadSetting('autoReload', false)
     const stopClock = await loadSetting('stopClock', false)
     const advancedSettingsOpen = await loadSetting('advancedSettingsOpen', false)
-    const timezone = await loadSetting('timezone', undefined)
+    const timezone = await loadSetting('timezone', '')
 
     if (import.meta.env.DEV) {
         //return dummy state for testing

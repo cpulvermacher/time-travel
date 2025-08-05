@@ -97,7 +97,7 @@
     function onAutoReloadToggle() {
         saveSetting('autoReload', settings.autoReload)
     }
-    function onTimezoneChange(timezone: string | undefined) {
+    function onTimezoneChange(timezone: string) {
         settings.timezone = timezone
         saveSetting('timezone', timezone)
         if (isEnabled) {

@@ -40,5 +40,8 @@
     "icon_title_running": "({fakeDate} - Uhr läuft)",
     "icon_title_off": "(Off)",
     "enable_auto_reload": "Automatisch neu laden",
-    "advanced_settings": "Details"
+    "advanced_settings": "Details",
+    "timezone_selector_label": "Zeitzone",
+    "timezone_group_common": "Häufig",
+    "timezone_browser_default": "Standard"
 }

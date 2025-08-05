@@ -42,5 +42,6 @@
     "enable_auto_reload": "Auto-Reload Page",
     "advanced_settings": "Details",
     "timezone_selector_label": "Time Zone",
-    "timezone_browser_default": "Browser Default"
+    "timezone_group_common": "Common",
+    "timezone_browser_default": "Default"
 }
