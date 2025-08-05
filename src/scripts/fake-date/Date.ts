@@ -322,13 +322,13 @@ function overridePartOfDate(
     // this ignores ambiguous dates!
     const utcTimestamp = Date.UTC(parts.year, parts.month, parts.day, parts.hour, parts.minute, parts.second, parts.ms)
 
-    let year = override.year ?? parts.year
-    let month = override.month ?? parts.month
-    let day = override.day ?? parts.day
-    let hours = override.hours ?? parts.hour
-    let minutes = override.minutes ?? parts.minute
-    let seconds = override.seconds ?? parts.second
-    let ms = override.milliseconds ?? parts.ms
+    const year = override.year ?? parts.year
+    const month = override.month ?? parts.month
+    const day = override.day ?? parts.day
+    const hours = override.hours ?? parts.hour
+    const minutes = override.minutes ?? parts.minute
+    const seconds = override.seconds ?? parts.second
+    const ms = override.milliseconds ?? parts.ms
 
     // parse overrides using UTC setters.
     // this handles overflows/underflows, so hours=-1 will create a date 1h before utcDate
