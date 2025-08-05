@@ -308,6 +308,10 @@ function overridePartOfDate(
         return date.setTime(NaN)
     }
 
+    // parse local time as UTC, e.g. 12:00:00 GMT+03:00 will be 12:00:00Z
+    // this ignores ambiguous dates!
+    const utcTimestamp = Date.UTC(parts.year, parts.month, parts.day, parts.hour, parts.minute, parts.second, parts.ms)
+
     let year = override.year ?? parts.year
     let month = override.month ?? parts.month
     let day = override.day ?? parts.day
@@ -316,94 +320,20 @@ function overridePartOfDate(
     let seconds = override.seconds ?? parts.second
     let ms = override.milliseconds ?? parts.ms
 
-    //handle overflow/underflow according to spec:
-    // positive values larger than the maximum for this unit overflow, and increase the next highest unit by the appropriate amount.
-    // negative values underflow, and decrease the next highest value
-    if (ms < 0 || ms >= 1000) {
-        seconds += Math.floor(ms / 1000)
-        ms = ms > 0 ? ms % 1000 : 1000 + (ms % 1000)
-    }
-    if (seconds < 0 || seconds >= 60) {
-        minutes += Math.floor(seconds / 60)
-        seconds = seconds > 0 ? seconds % 60 : 60 + (seconds % 60)
-    }
-    if (minutes < 0 || minutes >= 60) {
-        hours += Math.floor(minutes / 60)
-        minutes = minutes > 0 ? minutes % 60 : 60 + (minutes % 60)
-    }
-    if (hours < 0 || hours >= 24) {
-        day += Math.floor(hours / 24)
-        hours = hours > 0 ? hours % 24 : 24 + (hours % 24)
-    }
-    if (day < 1 || day >= 32) {
-        // Date.parse() handles values beyond the last day of the month <= 31,
-        // but outside this range we need to adjust this together with the month
+    // parse overrides using UTC setters.
+    // this handles overflows/underflows, so hours=-1 will create a date 1h before utcDate
+    const utcOverride = new Date(Date.UTC(year, month, day, hours, minutes, seconds, ms))
 
-        while (day >= 32) {
-            day -= daysInMonth(year, month)
-            month += 1
-        }
-        while (day < 1) {
-            day += daysInMonth(year, month - 1)
-            month -= 1
-        }
-    }
-    if (month < 0 || month >= 12) {
-        year += Math.floor(month / 12)
-        month = month > 0 ? month % 12 : 12 + (month % 12)
+    const newDate = new Date(date.getTime() + (utcOverride.getTime() - utcTimestamp))
+
+    // check if offset is different
+    const oldOffset = date.getTimezoneOffset()
+    const newOffset = newDate.getTimezoneOffset()
+    if (oldOffset !== newOffset) {
+        newDate.setTime(newDate.getTime() - (oldOffset - newOffset) * 60 * 1000)
     }
 
-    const timestring = buildDateTimeString([year, month, day, hours, minutes, seconds, ms])
-    const timestamp = parseWithTimezone(timestring, timezone)
-    date.setTime(timestamp)
-
-    //TODO could we avoid all this special logic by running everything through Date.setUTCFullYear() and Date.setUTCHours() once?
-    //     any inputs should be representable in UTC, so this should handle the overflow logic automatically,
-    //     and we can then set the resulting values (from getUTC...()) in local time (taking care of any timezone shenanigans)
-    //       - [x] remaining uncertainty: does this properly deal with e.g. skipping DST transitions?
-    //            - a) forward: date is just before DST transition, setMinutes(61) should add 1 hour (ok)
-    //            - b) backward:
-    //                - 1)date is FIRST 2:59 and we do setSeconds(60) =>  we expect 2:00 (SECOND)
-    //                      - construct UTC date of 2025-03-14T02:59:00Z, setUTCHours(..., ..., 60) => 2025-03-14T03:00:00Z (WRONG!)
-    //                - 2)date is SECOND 2:59 and we do setSeconds(60) =>  we expect 3:00
-    //                      - construct UTC date of 2025-03-14T02:59:00Z, setUTCHours(..., ..., 60) => 2025-03-14T03:00:00Z (ok)
-    //                  => UTC is unambiguous, so we can't distinguish those
-    //       - [ ] no wait, the thoughts above are a bit different from what I had in mind.
-    //          - but, the point is that interpreting local time as UTC has ambiguities
-    //         - [ ] can we do somthing more clever here, like constructing UTC date from current date value, and from set value, then use the difference in timestamp to adjust the original date?
-    //              -a) timestamp has 1h difference (ok)
-    //              -b)
-    //                1) and 2) construct same UTC date from current date value, setValue has 1m difference => we can set the timestamp
-
-    return timestamp
-}
-
-function isLeapYear(year: number): boolean {
-    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
-}
-
-/** returns the number of days in a month, taking leap years into account.
- *
- * @param year - e.g. 2024
- * @param month - 0-based month index, e.g. 0 for January
- */
-function daysInMonth(year: number, month: number): number {
-    if (month < 0 || month >= 12) {
-        //urg.
-        year += Math.floor(month / 12)
-        month = month > 0 ? month % 12 : 12 + (month % 12)
-    }
-
-    if (month == 0 || month == 2 || month == 4 || month == 6 || month == 7 || month == 9 || month == 11) {
-        return 31 // Jan, Mar, May, Jul, Aug, Oct, Dec
-    }
-    if (month == 1 && isLeapYear(year)) {
-        return 29 // February in a leap year
-    }
-    if (month == 1) {
-        return 28
-    }
-    return 30
+    return date.setTime(newDate.getTime())
 }
 
 /** Gets timezone offset in minutes from a longOffset string.
