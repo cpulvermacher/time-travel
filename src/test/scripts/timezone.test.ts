@@ -263,9 +263,8 @@ describe('replace_date with timezone', () => {
         date.setMonth(0) // January
         expect(date.toString()).toBe('Tue Jan 31 2023 19:00:00 GMT-0500 (Eastern Standard Time)')
         date.setMonth(6) // July
-        // expect(date.toISOString()).toBe('2023-07-31T23:00:00.000Z')
-        // TODO 20:00 because we jumped into DST
         expect(date.toString()).toBe('Mon Jul 31 2023 19:00:00 GMT-0400 (Eastern Daylight Time)')
+        expect(date.toISOString()).toBe('2023-07-31T23:00:00.000Z')
         date.setMonth(12) // Out of range, should set to January next year
         expect(date.toString()).toBe('Wed Jan 31 2024 19:00:00 GMT-0500 (Eastern Standard Time)')
 

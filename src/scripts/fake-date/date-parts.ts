@@ -1,4 +1,7 @@
-export type DateParts = {
+export type LocalDateParts = SharedDateParts & {
+    localTimestamp: number // not a UTC timestamp!
+}
+export type SharedDateParts = {
     year: number
     month: number // 0-based month (0 = January)
     day: number // 1-based day of the month
@@ -6,12 +9,15 @@ export type DateParts = {
     minute: number
     second: number
     ms: number
+}
+
+export type FullDateParts = SharedDateParts & {
     weekday: string
     offsetName: string // e.g. "GMT-05:00" or "GMT"
     rawFormat: Record<Intl.DateTimeFormatPartTypes, string>
 }
 
-export function getDateParts(date: Date | number, timezone: string | undefined): DateParts | undefined {
+export function getDateParts(date: Date | number, timezone: string | undefined): FullDateParts | undefined {
     const formatter = getFormatterForTimezone(timezone)
     try {
         const parts = formatter.formatToParts(date)
@@ -35,6 +41,54 @@ export function getDateParts(date: Date | number, timezone: string | undefined):
     } catch {
         return undefined
     }
+}
+
+/** returns LocalDateParts for a given date.
+ *
+ * Resolves any overflows/undeflows, so e.g. for
+ * getDatePartsForLocalDate(2025, 0, 1, 30, 0, 0, 0), it will return 6:00 on the next day.
+ */
+export function getDatePartsForLocalDate(
+    year: number,
+    month: number, //0-based month
+    day: number,
+    hour: number,
+    minute: number,
+    second: number,
+    ms: number
+): LocalDateParts {
+    const utcDate = new Date(Date.UTC(year, month, day, hour, minute, second, ms))
+    return {
+        year: utcDate.getUTCFullYear(),
+        month: utcDate.getUTCMonth(),
+        day: utcDate.getUTCDate(),
+        hour: utcDate.getUTCHours(),
+        minute: utcDate.getUTCMinutes(),
+        second: utcDate.getUTCSeconds(),
+        ms: utcDate.getUTCMilliseconds(),
+        localTimestamp: utcDate.getTime(),
+    }
+}
+
+export function compareDateParts(
+    a: LocalDateParts | FullDateParts | undefined,
+    b: LocalDateParts | FullDateParts | undefined
+): boolean {
+    if (a === undefined || b === undefined) {
+        return a === b
+    }
+    if ('offsetName' in a && 'offsetName' in b && a['offsetName'] !== b['offsetName']) {
+        return false
+    }
+    return (
+        a.year === b.year &&
+        a.month === b.month &&
+        a.day === b.day &&
+        a.hour === b.hour &&
+        a.minute === b.minute &&
+        a.second === b.second &&
+        a.ms === b.ms
+    )
 }
 
 /** Gets a cached formatter */

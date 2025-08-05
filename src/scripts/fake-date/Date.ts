@@ -1,7 +1,12 @@
 import { fakeNowDate, getTimezone } from './storage'
-import { getDateParts } from './date-parts'
+import { compareDateParts, getDateParts, getDatePartsForLocalDate, type LocalDateParts } from './date-parts'
 
 const OriginalDate = Date
+
+const msPerSecond = 1000
+const msPerMinute = 60 * msPerSecond
+const msPerHour = 60 * msPerMinute
+const msPerDay = 24 * msPerHour
 
 // Date constructor, needs to be a function to allow both constructing (`new Date()`) and calling without new: `Date()`
 export function FakeDate(
@@ -292,6 +297,46 @@ function patchDateMethods(datePrototype: Date): void {
 
     // Note: We don't override UTC methods as they should remain as is
     // likewise, setSeconds/setMiliseconds are not affected by timezone
+    // TODO is that correct? add test case for setSeconds/setMilliseconds with overflow
+}
+
+/** for a given date and timezone, returns a single UTC timestamp that produces the desiredDate.
+ *
+ * In case there is a transition between two timezone offsets (e.g. DST change) that results
+ * in two possible matching timestamps, we choose the timestamp before the transition.
+ *
+ * Implementation similar to temporal-polyfill's GetNamedTimeZoneEpochNanoseconds()
+ */
+function disambiguateDate(desiredDate: LocalDateParts, timezone: string): number {
+    // create an initial UTC timestamp based on any offset somewhere within 24h
+    const timestamp =
+        desiredDate.localTimestamp + new Date(desiredDate.localTimestamp).getTimezoneOffset() * msPerMinute
+    const oneDayBefore = new Date(timestamp - msPerDay)
+    const oneDayAfter = new Date(timestamp + msPerDay)
+
+    const offsetBefore = oneDayBefore.getTimezoneOffset()
+    const offsetAfter = oneDayAfter.getTimezoneOffset()
+    // if offsets are the same, there is no transition, we can return the timestamp directly
+    if (offsetBefore === offsetAfter) {
+        return timestamp
+    }
+
+    //if offsets differ, there was a transition => check whether each candidate produces the desired local date
+    const candidateTimestamps = [
+        desiredDate.localTimestamp + offsetBefore * msPerMinute,
+        desiredDate.localTimestamp + offsetAfter * msPerMinute,
+    ]
+    const validTimestamps = candidateTimestamps.filter((ts) => {
+        const candidateDate = getDateParts(ts, timezone)
+        return compareDateParts(candidateDate, desiredDate)
+    })
+    if (validTimestamps.length > 0) {
+        return validTimestamps[0] // return the first valid timestamp (= before transition)
+    }
+
+    //there may not be a valid timestamp, e.g. if the desired local date is skipped due to a DST change
+    //in that case return the timestamp as is
+    return timestamp
 }
 
 /**
@@ -319,10 +364,6 @@ function overridePartOfDate(
         return date.setTime(NaN)
     }
 
-    // parse local time as UTC, e.g. 12:00:00 GMT+03:00 will be 12:00:00Z
-    // this ignores ambiguous dates!
-    const utcTimestamp = Date.UTC(parts.year, parts.month, parts.day, parts.hour, parts.minute, parts.second, parts.ms)
-
     const year = override.year ?? parts.year
     const month = override.month ?? parts.month
     const day = override.day ?? parts.day
@@ -331,20 +372,8 @@ function overridePartOfDate(
     const seconds = override.seconds ?? parts.second
     const ms = override.milliseconds ?? parts.ms
 
-    // parse overrides using UTC setters.
-    // this handles overflows/underflows, so hours=-1 will create a date 1h before utcDate
-    const utcOverride = new Date(Date.UTC(year, month, day, hours, minutes, seconds, ms))
-
-    const newDate = new Date(date.getTime() + (utcOverride.getTime() - utcTimestamp))
-
-    // check if offset is different
-    const oldOffset = date.getTimezoneOffset()
-    const newOffset = newDate.getTimezoneOffset()
-    if (oldOffset !== newOffset) {
-        newDate.setTime(newDate.getTime() - (oldOffset - newOffset) * 60 * 1000)
-    }
-
-    return date.setTime(newDate.getTime())
+    const desiredLocalDate = getDatePartsForLocalDate(year, month, day, hours, minutes, seconds, ms)
+    return date.setTime(disambiguateDate(desiredLocalDate, timezone))
 }
 
 /** Gets timezone offset in minutes from a longOffset string.
