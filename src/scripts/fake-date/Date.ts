@@ -285,6 +285,12 @@ function getTimezoneName(date: Date, timezone: string | undefined): string {
     }
 }
 
+/**
+ * parses a date string into a timestamp.
+ * For all cases where Date.parse() would parse the string as local time, uses the provided timezone.
+ *
+ * This is a bit tricky because timezone is a IANA ID like Europe/London, but parse() only supports timezone offsets
+ */
 function parseWithTimezone(dateString: string, timezone: string | undefined): number {
     // Check for common timezone patterns
     const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2}|GMT|UTC|\b[A-Z]{3,4}\b)$/i.test(dateString.trim())
@@ -296,32 +302,36 @@ function parseWithTimezone(dateString: string, timezone: string | undefined): nu
         return OriginalDate.parse(dateString)
     }
 
-    // Step 1: Parse the date string as if it were in local time to get an approximation
-    const approximateDate = new OriginalDate(dateString)
-    if (isNaN(approximateDate.getTime())) {
-        return NaN
-    }
+    const trimmedDateString = dateString.replace(/\s*\([^)]+\)\s*$/, '').trim()
+    const longOffset = getOffset(trimmedDateString, timezone)
+    return OriginalDate.parse(`${trimmedDateString} ${longOffset}`)
+}
 
-    // Step 2: Get the timezone offset for that approximate time
+/** Returns a long offset string like "GMT+02:00" for the given date string and timezone.
+ *
+ * @param dateString - a local date string (without TZ specifier), e.g. "2025-07-15 12:00:00" in the given timezone
+ * @param timezone - a timezone IANA ID like "Europe/Berlin"
+ * @returns a long offset string like "GMT+02:00"
+ */
+function getOffset(dateString: string, timezone: string): string | undefined {
+    // first, use local time to parse `dateString`. the date is very likely wrong,
+    // but we get a reasonable approximation of the timezone offset
+    const approximateDate = new OriginalDate(dateString)
     const parts = formatToPartsWithTimezone(approximateDate, timezone)
     if (!parts) {
-        return NaN
+        return undefined
     }
+    let offset = parts.timeZoneName
 
-    // Step 3: Parse with the timezone offset
-    const trimmedDateString = dateString.replace(/\s*\([^)]+\)\s*$/, '').trim()
-    const firstAttempt = OriginalDate.parse(`${trimmedDateString} ${parts.timeZoneName}`)
-
-    // Step 4: Refinement - check if we crossed a DST boundary
-    const firstAttemptDate = new OriginalDate(firstAttempt)
+    // now parse the date string with the timezone offset
+    const firstAttemptDate = new OriginalDate(`${dateString} ${offset}`)
     const refinedParts = formatToPartsWithTimezone(firstAttemptDate, timezone)
 
     // If the timezone offsets are different, we crossed a DST boundary
     if (refinedParts && refinedParts.timeZoneName !== parts.timeZoneName) {
-        return OriginalDate.parse(`${trimmedDateString} ${refinedParts.timeZoneName}`)
+        offset = refinedParts.timeZoneName
     }
-
-    return firstAttempt
+    return offset
 }
 
 /** copy all own properties from source to target, except 'constructor'
