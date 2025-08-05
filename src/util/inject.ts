@@ -6,13 +6,21 @@ export function getFakeDate() {
     return window.sessionStorage.getItem(FAKE_DATE_STORAGE_KEY)
 }
 
-export function setFakeDate(date: string) {
+export function setFakeDate(date: string, timezone?: string) {
     //needs to be defined locally!
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
+    const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone'
+
     if (date) {
         window.sessionStorage.setItem(FAKE_DATE_STORAGE_KEY, date)
+        if (timezone && timezone.trim() !== '') {
+            window.sessionStorage.setItem(TIMEZONE_STORAGE_KEY, timezone)
+        } else {
+            window.sessionStorage.removeItem(TIMEZONE_STORAGE_KEY)
+        }
     } else {
         window.sessionStorage.removeItem(FAKE_DATE_STORAGE_KEY)
+        window.sessionStorage.removeItem(TIMEZONE_STORAGE_KEY)
     }
 
     if (window.__timeTravelCheckToggle) {
@@ -33,21 +41,6 @@ export function setTickStartTimestamp(nowTimestampStr: string) {
         window.sessionStorage.removeItem(TICK_START_STORAGE_KEY)
     } else {
         window.sessionStorage.setItem(TICK_START_STORAGE_KEY, nowTimestampStr)
-    }
-}
-
-/** returns true if the content script was injected and activated after page reload */
-export function setTimezone(timezone: string) {
-    const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone'
-
-    if (timezone && timezone.trim() !== '') {
-        window.sessionStorage.setItem(TIMEZONE_STORAGE_KEY, timezone)
-    } else {
-        window.sessionStorage.removeItem(TIMEZONE_STORAGE_KEY)
-    }
-
-    if (window.__timeTravelCheckToggle) {
-        window.__timeTravelCheckToggle()
     }
 }
 

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { setFakeDate, setTickStartTimestamp, setTimezone } from '../../util/inject'
+import { setFakeDate, setTickStartTimestamp } from '../../util/inject'
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
 import '../../scripts/replace_date'
@@ -144,8 +144,7 @@ describe('replace_date', () => {
 
         it('respects timezone settings', () => {
             const fakeDate = '1970-03-01T12:00:00.000Z' // Noon UTC
-            setFakeDate(fakeDate)
-            setTimezone('UTC') // Use UTC to ensure consistent results across environments
+            setFakeDate(fakeDate, 'UTC') // Use UTC to ensure consistent results across environments
 
             const formatted = new Intl.DateTimeFormat('en-US', {
                 hour: 'numeric',
@@ -155,15 +154,11 @@ describe('replace_date', () => {
 
             // Should be 12:00 in UTC
             expect(formatted).toBe('12:00')
-
-            // Reset timezone for other tests
-            setTimezone('')
         })
 
         it('explicit timeZone option overrides timezone setting', () => {
             const fakeDate = '1970-03-01T12:00:00.000Z' // Noon UTC
-            setFakeDate(fakeDate)
-            setTimezone('UTC') // Set default to UTC
+            setFakeDate(fakeDate, 'UTC') // Use UTC to ensure consistent results across environments
 
             // Create with explicit 'GMT' which should behave the same as UTC
             const formatted = new Intl.DateTimeFormat('en-US', {
@@ -175,9 +170,6 @@ describe('replace_date', () => {
 
             // GMT should be the same as UTC at noon
             expect(formatted).toBe('12:00')
-
-            // Reset timezone for other tests
-            setTimezone('')
         })
     })
 

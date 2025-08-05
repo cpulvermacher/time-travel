@@ -34,7 +34,7 @@ export async function isAboutUrl(tabId: number): Promise<boolean> {
 }
 
 /** inject function into MAIN world */
-export async function injectFunction<Args extends [string], Result>(
+export async function injectFunction<Args extends [string] | [string, string], Result>(
     tabId: number,
     func: (...args: Args) => Result,
     args: Args

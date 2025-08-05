@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { setFakeDate, setTimezone } from '../../util/inject'
+import { setFakeDate } from '../../util/inject'
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
 import '../../scripts/replace_date'
@@ -13,8 +13,7 @@ describe('replace_date with timezone', () => {
     // ----- Date ----
     it('new Date() uses UTC when set', () => {
         const fakeDate = '2023-01-01T12:00:00.000Z' // Noon UTC
-        setFakeDate(fakeDate)
-        setTimezone('UTC')
+        setFakeDate(fakeDate, 'UTC')
 
         const date = new Date()
 
@@ -53,8 +52,7 @@ describe('replace_date with timezone', () => {
 
     it('new Date() respects timezone when set', () => {
         const fakeDate = '2023-01-01T03:01:02.345Z' // 3:01 AM UTC
-        setFakeDate(fakeDate)
-        setTimezone('America/New_York') // UTC-5 in winter
+        setFakeDate(fakeDate, 'America/New_York') // UTC-5 in winter
 
         const date = new Date()
 
@@ -94,8 +92,7 @@ describe('replace_date with timezone', () => {
 
     it('if timezone is set, creating a new Date with arguments should use that timezone', () => {
         const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
-        setFakeDate(fakeDate)
-        setTimezone('America/New_York')
+        setFakeDate(fakeDate, 'America/New_York')
 
         const checkDate = (date: Date) => {
             expect(date.toISOString()).toBe('2025-07-15T18:30:00.000Z')
@@ -121,8 +118,7 @@ describe('replace_date with timezone', () => {
 
     it('if timezone is set, creating new Date on DST boundary works', () => {
         const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
-        setFakeDate(fakeDate)
-        setTimezone('America/New_York')
+        setFakeDate(fakeDate, 'America/New_York')
 
         const springBeforeDst = new Date('2025-03-09 01:59')
         expect(springBeforeDst.toString()).toBe('Sun Mar 09 2025 01:59:00 GMT-0500 (Eastern Standard Time)')
@@ -153,8 +149,7 @@ describe('replace_date with timezone', () => {
 
     it('parse() with only date is in UTC', () => {
         const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
-        setFakeDate(fakeDate)
-        setTimezone('America/New_York')
+        setFakeDate(fakeDate, 'America/New_York')
 
         const checkDate = (date: Date) => {
             expect(date.toISOString()).toBe('2025-07-15T00:00:00.000Z')
@@ -172,8 +167,7 @@ describe('replace_date with timezone', () => {
     it('Intl.DateTimeFormat uses timezone when specified', () => {
         // This test only verifies that the option is properly passed to Intl.DateTimeFormat
         const fakeDate = '2023-01-01T12:00:00.000Z' // Noon UTC
-        setFakeDate(fakeDate)
-        setTimezone('UTC')
+        setFakeDate(fakeDate, 'UTC')
 
         // Create formatter with default options (should use the timezone we set)
         const formatter = new Intl.DateTimeFormat('en-US', {
@@ -197,8 +191,7 @@ describe('replace_date with timezone', () => {
 
     it('Intl.DateTimeFormat options override the selected timezone', () => {
         const fakeDate = '2023-01-01T12:00:00.000Z' // Noon UTC
-        setFakeDate(fakeDate)
-        setTimezone('UTC') // Set default to UTC
+        setFakeDate(fakeDate, 'UTC') // Set default to UTC
 
         // Create formatter with explicit 'GMT' timezone that should override the timezone selector
         const gmtFormatter = new Intl.DateTimeFormat('en-US', {
@@ -236,8 +229,7 @@ describe('replace_date with timezone', () => {
 
     it('respects UTC timezone when set', () => {
         const fakeDate = '2023-01-01T12:00:00.000Z' // Noon UTC
-        setFakeDate(fakeDate)
-        setTimezone('UTC')
+        setFakeDate(fakeDate, 'UTC')
 
         const date = new Date()
 
@@ -254,8 +246,7 @@ describe('replace_date with timezone', () => {
 
     it('Intl.DateTimeFormat respects selected timezone', () => {
         const fakeDate = '2023-01-01T12:00:00.000Z' // Noon UTC
-        setFakeDate(fakeDate)
-        setTimezone('America/New_York') // UTC-5
+        setFakeDate(fakeDate, 'America/New_York') // UTC-5
 
         const formatter = new Intl.DateTimeFormat('en-US', {
             hour: 'numeric',
@@ -269,8 +260,7 @@ describe('replace_date with timezone', () => {
 
     it('Intl.DateTimeFormat options override the selected timezone', () => {
         const fakeDate = '2023-01-01T12:00:00.000Z' // Noon UTC
-        setFakeDate(fakeDate)
-        setTimezone('America/New_York') // UTC-5
+        setFakeDate(fakeDate, 'America/New_York') // UTC-5
 
         const formatter = new Intl.DateTimeFormat('en-US', {
             timeZone: 'Asia/Tokyo', // UTC+9
@@ -285,8 +275,7 @@ describe('replace_date with timezone', () => {
 
     it('Can format Date with timezone using Intl.DateTimeFormat', () => {
         const fakeDate = '2023-06-15T14:30:00.000Z' // 2:30 PM UTC
-        setFakeDate(fakeDate)
-        setTimezone('Europe/Berlin') // UTC+2 in summer
+        setFakeDate(fakeDate, 'Europe/Berlin') // UTC+2 in summer
 
         const date = new Date()
 

@@ -41,7 +41,7 @@
     async function applyAndEnable() {
         try {
             await setClockState(settings.stopClock)
-            const needReload = await setFakeDate(fakeDate)
+            const needReload = await setFakeDate(fakeDate, settings.timezone)
             if (needReload && !settings.autoReload) {
                 showReloadModal = true
             }

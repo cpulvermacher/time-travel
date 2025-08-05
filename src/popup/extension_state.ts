@@ -18,8 +18,11 @@ import {
 } from '../util/common'
 import * as inject from '../util/inject'
 
-/** sets & enables fake date, returns whether page needs reload for content script to be injected */
-export async function setFakeDate(dateString: string): Promise<boolean> {
+/** sets & enables fake date, returns whether page needs reload for content script to be injected
+ *
+ * if dateString is empty, the fake date is cleared.
+ */
+export async function setFakeDate(dateString: string, timezone?: string): Promise<boolean> {
     if (import.meta.env.DEV) {
         return true
     }
@@ -37,12 +40,7 @@ export async function setFakeDate(dateString: string): Promise<boolean> {
         needsReload = true
     }
 
-    await injectFunction(tabId, inject.setFakeDate, [fakeDate])
-
-    // Also set the timezone if we have one
-    //TODO fix setting timezone in setFakeDate
-    const timezone = await loadSetting('timezone', undefined)
-    await injectFunction(tabId, inject.setTimezone, [timezone || ''])
+    await injectFunction(tabId, inject.setFakeDate, [fakeDate, timezone || ''])
 
     return needsReload
 }
