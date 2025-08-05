@@ -197,6 +197,15 @@ declare const __EXT_VERSION__: string
 
         // Override toString to use the selected timezone
         dateObj.toString = function () {
+            const dateString = this.toDateString()
+            const timeString = this.toTimeString()
+            if (dateString === 'Invalid Date' || timeString === 'Invalid Date') {
+                return 'Invalid Date'
+            }
+
+            return `${dateString} ${timeString}`
+        }
+        dateObj.toDateString = function () {
             const timezone = getTimezone()
             const parts = formatToPartsWithTimezone(this, timezone)
             if (!parts) {
@@ -204,12 +213,24 @@ declare const __EXT_VERSION__: string
             }
 
             const monthLabel = shortMonths[parseInt(parts.month, 10) - 1] || parts.month
-            const offset = parts.timeZoneName.replace(':', '')
+
+            return `${parts.weekday} ${monthLabel} ${parts.day} ${parts.year}`
+        }
+        dateObj.toTimeString = function () {
+            const timezone = getTimezone()
+            const parts = formatToPartsWithTimezone(this, timezone)
+            if (!parts) {
+                return 'Invalid Date'
+            }
+
+            let offset = parts.timeZoneName.replace(':', '')
+            if (offset === 'GMT') {
+                offset = 'GMT+0000'
+            }
             const tzName = getTimezoneName(this, timezone)
 
-            return `${parts.weekday} ${monthLabel} ${parts.day} ${parts.year} ${parts.hour}:${parts.minute}:${parts.second} ${offset} (${tzName})`
+            return `${parts.hour}:${parts.minute}:${parts.second} ${offset} (${tzName})`
         }
-        // TODO dateObj.toDateString and friends
 
         // Override locale string methods to use the selected timezone when no timezone is specified
         dateObj.toLocaleString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
