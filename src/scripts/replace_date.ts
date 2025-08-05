@@ -132,6 +132,22 @@ declare const __EXT_VERSION__: string
         }
     }
 
+    /** Returns timezone name for toString()/toTimeString(). */
+    function getTimezoneName(date: Date, timezone: string | undefined): string {
+        const formatter = new OriginalIntlDateTimeFormat('en-US', {
+            timeZoneName: 'long', // technically the format is implementation defined, but Chrome, Firefox and node seem to follow this
+            timeZone: timezone,
+        })
+
+        try {
+            const parts = formatter.formatToParts(date)
+            const timeZonePart = parts.find((part) => part.type === 'timeZoneName')
+            return timeZonePart ? timeZonePart.value : ''
+        } catch {
+            return ''
+        }
+    }
+
     let cachedFormatter: Intl.DateTimeFormat | null = null
     let cachedFormatterForTimezone: string | undefined | null = null
 
@@ -189,9 +205,9 @@ declare const __EXT_VERSION__: string
 
             const monthLabel = shortMonths[parseInt(parts.month, 10) - 1] || parts.month
             const offset = parts.timeZoneName.replace(':', '')
+            const tzName = getTimezoneName(this, timezone)
 
-            //TODO need (TZ name) at the end.
-            return `${parts.weekday} ${monthLabel} ${parts.day} ${parts.year} ${parts.hour}:${parts.minute}:${parts.second} ${offset}`
+            return `${parts.weekday} ${monthLabel} ${parts.day} ${parts.year} ${parts.hour}:${parts.minute}:${parts.second} ${offset} (${tzName})`
         }
         // TODO dateObj.toDateString and friends
 

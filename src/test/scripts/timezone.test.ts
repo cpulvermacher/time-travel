@@ -40,7 +40,7 @@ describe('replace_date with timezone', () => {
         expect(date.getSeconds()).toBe(0)
         expect(date.getMilliseconds()).toBe(0)
         expect(date.getDay()).toBe(0) // Sunday
-        expect(date.toString()).toMatch(/Sun Jan 01 2023 12:00:00 GMT/)
+        expect(date.toString()).toBe('Sun Jan 01 2023 12:00:00 GMT (Coordinated Universal Time)')
     })
 
     it('new Date() respects timezone when set', () => {
@@ -72,7 +72,7 @@ describe('replace_date with timezone', () => {
         expect(date.getSeconds()).toBe(2)
         expect(date.getMilliseconds()).toBe(345)
         expect(date.getDay()).toBe(6) // Saturday
-        expect(date.toString()).toMatch(/Sat Dec 31 2022 22:01:02 GMT-0500/)
+        expect(date.toString()).toBe('Sat Dec 31 2022 22:01:02 GMT-0500 (Eastern Standard Time)')
     })
 
     // ----- Intl.DateTimeFormat ----
