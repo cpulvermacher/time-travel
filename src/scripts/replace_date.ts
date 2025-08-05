@@ -118,14 +118,18 @@ declare const __EXT_VERSION__: string
     function formatToPartsWithTimezone(
         date: Date,
         timezone: string | undefined
-    ): Record<Intl.DateTimeFormatPartTypes, string> {
+    ): Record<Intl.DateTimeFormatPartTypes, string> | undefined {
         const formatter = getFormatterForTimezone(timezone)
-        const parts = formatter.formatToParts(date)
-        const partsMap = {} as Record<Intl.DateTimeFormatPartTypes, string>
-        parts.forEach((part) => {
-            partsMap[part.type] = part.value
-        })
-        return partsMap
+        try {
+            const parts = formatter.formatToParts(date)
+            const partsMap = {} as Record<Intl.DateTimeFormatPartTypes, string>
+            parts.forEach((part) => {
+                partsMap[part.type] = part.value
+            })
+            return partsMap
+        } catch {
+            return undefined
+        }
     }
 
     let cachedFormatter: Intl.DateTimeFormat | null = null
@@ -179,6 +183,9 @@ declare const __EXT_VERSION__: string
         dateObj.toString = function () {
             const timezone = getTimezone()
             const parts = formatToPartsWithTimezone(this, timezone)
+            if (!parts) {
+                return 'Invalid Date'
+            }
 
             const monthLabel = shortMonths[parseInt(parts.month, 10) - 1] || parts.month
             const offset = parts.timeZoneName.replace(':', '')
@@ -224,6 +231,9 @@ declare const __EXT_VERSION__: string
         dateObj.getHours = function () {
             const timezone = getTimezone()
             const parts = formatToPartsWithTimezone(this, timezone)
+            if (!parts) {
+                return NaN
+            }
 
             return parts.hour ? parseInt(parts.hour, 10) : 0
         }
@@ -231,6 +241,9 @@ declare const __EXT_VERSION__: string
         dateObj.getMinutes = function () {
             const timezone = getTimezone()
             const parts = formatToPartsWithTimezone(this, timezone)
+            if (!parts) {
+                return NaN
+            }
 
             return parts.minute ? parseInt(parts.minute, 10) : 0
         }
@@ -238,6 +251,9 @@ declare const __EXT_VERSION__: string
         dateObj.getSeconds = function () {
             const timezone = getTimezone()
             const parts = formatToPartsWithTimezone(this, timezone)
+            if (!parts) {
+                return NaN
+            }
 
             return parts.second ? parseInt(parts.second, 10) : 0
         }
@@ -245,6 +261,9 @@ declare const __EXT_VERSION__: string
         dateObj.getMilliseconds = function () {
             const timezone = getTimezone()
             const parts = formatToPartsWithTimezone(this, timezone)
+            if (!parts) {
+                return NaN
+            }
 
             return parts.fractionalSecond ? parseInt(parts.fractionalSecond, 10) : 0
         }
@@ -252,6 +271,9 @@ declare const __EXT_VERSION__: string
         dateObj.getDate = function () {
             const timezone = getTimezone()
             const parts = formatToPartsWithTimezone(this, timezone)
+            if (!parts) {
+                return NaN
+            }
 
             return parts.day ? parseInt(parts.day, 10) : 1
         }
@@ -259,6 +281,9 @@ declare const __EXT_VERSION__: string
         dateObj.getMonth = function () {
             const timezone = getTimezone()
             const parts = formatToPartsWithTimezone(this, timezone)
+            if (!parts) {
+                return NaN
+            }
 
             // Month is 1-based in formatToParts but 0-based in Date methods
             return parts.month ? parseInt(parts.month, 10) - 1 : 0
@@ -267,6 +292,9 @@ declare const __EXT_VERSION__: string
         dateObj.getFullYear = function () {
             const timezone = getTimezone()
             const parts = formatToPartsWithTimezone(this, timezone)
+            if (!parts) {
+                return NaN
+            }
 
             return parts.year ? parseInt(parts.year, 10) : 0
         }
@@ -274,6 +302,9 @@ declare const __EXT_VERSION__: string
         dateObj.getDay = function () {
             const timezone = getTimezone()
             const parts = formatToPartsWithTimezone(this, timezone)
+            if (!parts) {
+                return NaN
+            }
 
             // Convert weekday name to number (0-6, Sunday-Saturday)
             return weekdays.indexOf(parts.weekday || 'Sun')
@@ -282,6 +313,9 @@ declare const __EXT_VERSION__: string
         dateObj.getTimezoneOffset = function () {
             const timezone = getTimezone()
             const parts = formatToPartsWithTimezone(this, timezone)
+            if (!parts) {
+                return NaN
+            }
 
             return getOffsetFromLongOffset(parts.timeZoneName)
         }
