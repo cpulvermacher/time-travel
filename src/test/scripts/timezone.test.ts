@@ -239,29 +239,32 @@ describe('replace_date with timezone', () => {
         setFakeDate('2023-06-01 00:00', 'America/New_York')
 
         const date = new Date(jan1stUtc)
+        expect(date.toString()).toBe('Sun Dec 31 2023 19:00:00 GMT-0500 (Eastern Standard Time)')
 
         date.setMonth(0) // January
-        expect(date.toISOString()).toBe('2024-01-01T00:00:00.000Z') // no change
+        expect(date.toString()).toBe('Tue Jan 31 2023 19:00:00 GMT-0500 (Eastern Standard Time)')
         date.setMonth(6) // July
-        expect(date.toISOString()).toBe('2024-07-01T00:00:00.000Z')
+        expect(date.toISOString()).toBe('2023-07-31T23:00:00.000Z')
+        expect(date.toString()).toBe('Mon Jul 31 2023 19:00:00 GMT-0400 (Eastern Daylight Time)')
         date.setMonth(12) // Out of range, should set to January next year
-        expect(date.toISOString()).toBe('2025-01-01T00:00:00.000Z')
+        expect(date.toString()).toBe('Wed Jan 31 2024 19:00:00 GMT-0500 (Eastern Standard Time)')
 
         date.setMonth(3, 15) // April 15th
-        expect(date.toISOString()).toBe('2025-04-15T00:00:00.000Z')
+        expect(date.toString()).toBe('Mon Apr 15 2024 19:00:00 GMT-0400 (Eastern Daylight Time)')
     })
 
     it('setDate()', () => {
         setFakeDate('2023-06-01 00:00', 'America/New_York')
 
         const date = new Date(jan1stUtc)
+        expect(date.toString()).toBe('Sun Dec 31 2023 19:00:00 GMT-0500 (Eastern Standard Time)')
 
-        date.setDate(1) // 1st of January
-        expect(date.toISOString()).toBe('2024-01-01T00:00:00.000Z') // no change
-        date.setDate(15) // 15th of January
-        expect(date.toISOString()).toBe('2024-01-15T00:00:00.000Z')
+        date.setDate(1) // 1st of December
+        expect(date.toString()).toBe('Fri Dec 01 2023 19:00:00 GMT-0500 (Eastern Standard Time)')
+        date.setDate(15) // 15th of December
+        expect(date.toString()).toBe('Fri Dec 15 2023 19:00:00 GMT-0500 (Eastern Standard Time)')
         date.setDate(0) // Out of range, should set to last day of previous month
-        expect(date.toISOString()).toBe('2023-12-31T00:00:00.000Z')
+        expect(date.toString()).toBe('Thu Nov 30 2023 19:00:00 GMT-0500 (Eastern Standard Time)')
     })
 
     it('setHours()', () => {
