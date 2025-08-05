@@ -5,7 +5,7 @@ import { setFakeDate, setTimezone } from '../../util/inject'
 import '../../scripts/replace_date'
 
 // Only tests the timezone handling, tests without timezone set are in replace_date.test.ts
-describe('replace_date timezone', () => {
+describe('replace_date with timezone', () => {
     afterEach(() => {
         window.sessionStorage.clear()
     })
@@ -27,6 +27,7 @@ describe('replace_date timezone', () => {
         expect(date.getUTCHours()).toBe(12)
         expect(date.getUTCMinutes()).toBe(0)
         expect(date.getUTCSeconds()).toBe(0)
+        expect(date.getUTCMilliseconds()).toBe(0)
         expect(date.getUTCDay()).toBe(0) // Sunday
         expect(date.toISOString()).toBe(fakeDate)
 
@@ -37,12 +38,13 @@ describe('replace_date timezone', () => {
         expect(date.getHours()).toBe(12)
         expect(date.getMinutes()).toBe(0)
         expect(date.getSeconds()).toBe(0)
+        expect(date.getMilliseconds()).toBe(0)
         expect(date.getDay()).toBe(0) // Sunday
         expect(date.toString()).toMatch(/Sun Jan 01 2023 12:00:00 GMT/)
     })
 
     it('new Date() respects timezone when set', () => {
-        const fakeDate = '2023-01-01T03:00:00.000Z' // 3:00 AM UTC
+        const fakeDate = '2023-01-01T03:01:02.345Z' // 3:01 AM UTC
         setFakeDate(fakeDate)
         setTimezone('America/New_York') // UTC-5 in winter
 
@@ -55,8 +57,9 @@ describe('replace_date timezone', () => {
         expect(date.getUTCMonth()).toBe(0) // January
         expect(date.getUTCDate()).toBe(1)
         expect(date.getUTCHours()).toBe(3)
-        expect(date.getUTCMinutes()).toBe(0)
-        expect(date.getUTCSeconds()).toBe(0)
+        expect(date.getUTCMinutes()).toBe(1)
+        expect(date.getUTCSeconds()).toBe(2)
+        expect(date.getUTCMilliseconds()).toBe(345)
         expect(date.getUTCDay()).toBe(0) // Sunday
         expect(date.toISOString()).toBe(fakeDate)
 
@@ -65,10 +68,11 @@ describe('replace_date timezone', () => {
         expect(date.getMonth()).toBe(11) // December
         expect(date.getDate()).toBe(31)
         expect(date.getHours()).toBe(22)
-        expect(date.getMinutes()).toBe(0)
-        expect(date.getSeconds()).toBe(0)
+        expect(date.getMinutes()).toBe(1)
+        expect(date.getSeconds()).toBe(2)
+        expect(date.getMilliseconds()).toBe(345)
         expect(date.getDay()).toBe(6) // Saturday
-        expect(date.toString()).toMatch(/Sat Dec 31 2022 22:00:00 GMT-0500/)
+        expect(date.toString()).toMatch(/Sat Dec 31 2022 22:01:02 GMT-0500/)
     })
 
     // ----- Intl.DateTimeFormat ----
