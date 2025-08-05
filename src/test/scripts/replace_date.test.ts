@@ -454,6 +454,10 @@ describe('replace_date', () => {
             it('setMinutes()', () => {
                 date.setMinutes(45)
                 expect(date.getMinutes()).toEqual(45)
+                date.setMinutes(1, 2, 3)
+                expect(date.getMinutes()).toEqual(1)
+                expect(date.getSeconds()).toEqual(2)
+                expect(date.getMilliseconds()).toEqual(3)
             })
 
             it('setSeconds()', () => {

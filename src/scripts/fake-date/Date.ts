@@ -279,13 +279,14 @@ function patchDateMethods(datePrototype: Date): void {
         return overridePartOfDate(this, timezone, { hours, minutes: min, seconds: sec, milliseconds: ms })
     }
 
-    datePrototype.setMinutes = function (minutes: number) {
+    datePrototype.setMinutes = function (...args: [min: number, sec?: number, ms?: number]) {
         const timezone = getTimezone()
         if (!timezone) {
-            return OriginalDate.prototype.setMinutes.call(this, minutes)
+            return OriginalDate.prototype.setMinutes.apply(this, args)
         }
 
-        return overridePartOfDate(this, timezone, { minutes })
+        const [min, sec, ms] = args
+        return overridePartOfDate(this, timezone, { minutes: min, seconds: sec, milliseconds: ms })
     }
 
     // Note: We don't override UTC methods as they should remain as is

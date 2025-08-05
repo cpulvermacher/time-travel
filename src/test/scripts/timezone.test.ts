@@ -292,12 +292,17 @@ describe('replace_date with timezone', () => {
         const date = new Date(jan1stUtc)
         expect(date.toString()).toBe('Mon Jan 01 2024 13:45:00 GMT+1345 (Chatham Daylight Time)')
 
-        date.setMinutes(0, 0, 0)
+        date.setMinutes(0, 30, 2)
+        expect(date.toString()).toBe('Mon Jan 01 2024 13:00:30 GMT+1345 (Chatham Daylight Time)')
         expect(date.getMinutes()).toBe(0)
-        expect(date.toString()).toBe('Mon Jan 01 2024 13:00:00 GMT+1345 (Chatham Daylight Time)')
+        expect(date.getSeconds()).toBe(30)
+        expect(date.getMilliseconds()).toBe(2)
+
         date.setMinutes(61) // Should roll over to next hour
+        expect(date.toString()).toBe('Mon Jan 01 2024 14:01:30 GMT+1345 (Chatham Daylight Time)')
         expect(date.getMinutes()).toBe(1)
-        expect(date.toString()).toBe('Mon Jan 01 2024 14:01:00 GMT+1345 (Chatham Daylight Time)')
+        expect(date.getSeconds()).toBe(30)
+        expect(date.getMilliseconds()).toBe(2)
     })
 
     it('setSeconds()', () => {
