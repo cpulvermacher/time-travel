@@ -52,6 +52,7 @@ describe('replace_date with timezone', () => {
 
     it('new Date() respects timezone when set', () => {
         const fakeDate = '2023-01-01T03:01:02.345Z' // 3:01 AM UTC
+        const fakeDateTimestamp = new Date(fakeDate).getTime()
         setFakeDate(fakeDate, 'America/New_York') // UTC-5 in winter
 
         const date = new Date()
@@ -69,6 +70,8 @@ describe('replace_date with timezone', () => {
         expect(date.getUTCDay()).toBe(0) // Sunday
         expect(date.toISOString()).toBe(fakeDate)
         expect(date.toJSON()).toBe(fakeDate)
+        expect(date.getTime()).toBe(fakeDateTimestamp)
+        expect(+date).toBe(fakeDateTimestamp)
 
         // local time methods
         expect(date.getFullYear()).toBe(2022)

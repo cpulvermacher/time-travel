@@ -243,7 +243,11 @@ function getOffsetFromLongOffset(longOffset?: string): number {
     if (match) {
         const hours = parseInt(match[1], 10)
         const minutes = parseInt(match[2], 10)
-        return -(hours * 60 + minutes)
+        if (hours < 0) {
+            return -(hours * 60 - minutes)
+        } else {
+            return -(hours * 60 + minutes)
+        }
     }
     return 0
 }
