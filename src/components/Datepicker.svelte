@@ -5,6 +5,7 @@
     import { getUILanguage } from '../util/browser'
     import { formatDateInTimezone, formatLocalTime, overwriteDatePart, parseDate } from '../util/common'
     import { getFirstDayOfWeek } from '../util/i18n'
+    import { isDst } from '../util/timezones'
 
     // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
     const startOfWeek = getFirstDayOfWeek(getUILanguage()) % 7
@@ -136,6 +137,9 @@
                     date: formatDateInTimezone(new Date(fakeDate), timezone),
                 })}
             </span>
+            {#if isDst(fakeDate, timezone)}
+                <span class="dst-badge">DST</span>
+            {/if}
         {/if}
     </DatePicker>
 </div>
@@ -175,6 +179,14 @@
         font-size: 0.9em;
         color: var(--secondary-text-color);
         margin-top: 5px;
+    }
+    .dst-badge {
+        background-color: orange;
+        color: white;
+        padding: 2px 5px;
+        border-radius: 3px;
+        font-size: 0.8em;
+        margin-left: 5px;
     }
 
     /* for Japanese, add a suffix to the year*/

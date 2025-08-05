@@ -77,3 +77,30 @@ function removeDateTimePart(str: string): string {
     }
     return str
 }
+
+export function isDst(dateStr: string, timezone: string): boolean {
+    const date = new Date(dateStr)
+    const summerDate = new Date(date.getFullYear(), 5, 1) // June 1st
+    const winterDate = new Date(date.getFullYear(), 11, 1) // December 1st
+
+    const options: Intl.DateTimeFormatOptions = {
+        timeZone: timezone,
+        timeZoneName: 'longOffset',
+    }
+    const formatter = new Intl.DateTimeFormat('en', options)
+    const offsetSummer = formatter.formatToParts(summerDate).find((part) => part.type === 'timeZoneName')?.value
+    const offsetWinter = formatter.formatToParts(winterDate).find((part) => part.type === 'timeZoneName')?.value
+    if (!offsetSummer || !offsetWinter || offsetSummer === offsetWinter) {
+        return false // timezone does not observe DST
+    }
+    const offsetDate = formatter.formatToParts(date).find((part) => part.type === 'timeZoneName')?.value
+    if (!offsetDate) {
+        return false
+    }
+
+    // DST can happen in 'winter' in the southern hemisphere, so we check if the date's offset is later than either offset
+    if (offsetDate > offsetWinter || offsetDate > offsetSummer) {
+        return true
+    }
+    return false
+}
