@@ -152,7 +152,11 @@ declare const __EXT_VERSION__: string
         // Check for common timezone patterns
         const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2}|GMT|UTC|\b[A-Z]{3,4}\b)$/i.test(dateString.trim())
 
-        if (!timezone || hasTimezone) {
+        // check if this is date only (e.g. "2025-07-15") => Needs to be parsed as UTC
+        const isDateOnly = !dateString.includes(':')
+
+        console.log(hasTimezone, isDateOnly, dateString)
+        if (!timezone || hasTimezone || isDateOnly) {
             return OriginalDate.parse(dateString)
         }
 

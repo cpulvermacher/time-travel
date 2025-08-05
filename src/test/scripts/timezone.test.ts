@@ -119,14 +119,52 @@ describe('replace_date with timezone', () => {
         checkDate(new Date(Date.parse('2025-07-15 14:30')))
     })
 
+    it('if timezone is set, creating new Date on DST boundary works', () => {
+        const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
+        setFakeDate(fakeDate)
+        setTimezone('America/New_York')
+
+        const springBeforeDst = new Date('2025-03-09 01:59')
+        expect(springBeforeDst.toString()).toBe('Sun Mar 09 2025 01:59:00 GMT-0500 (Eastern Standard Time)')
+        expect(springBeforeDst.toISOString()).toBe('2025-03-09T06:59:00.000Z')
+        expect(springBeforeDst.getTimezoneOffset()).toBe(300) // -5 hours
+        const springAfterDst = new Date('2025-03-09 03:00')
+        expect(springAfterDst.toString()).toBe('Sun Mar 09 2025 03:00:00 GMT-0400 (Eastern Daylight Time)')
+        expect(springAfterDst.toISOString()).toBe('2025-03-09T07:00:00.000Z')
+        expect(springAfterDst.getTimezoneOffset()).toBe(240) // -4 hours
+        expect(springAfterDst.getTime() - springBeforeDst.getTime()).toBe(60 * 1000) // 1 minute difference
+
+        const fallBeforeDst = new Date('2025-11-02 01:59')
+        expect(fallBeforeDst.toString()).toBe('Sun Nov 02 2025 01:59:00 GMT-0400 (Eastern Daylight Time)')
+        expect(fallBeforeDst.toISOString()).toBe('2025-11-02T05:59:00.000Z')
+        expect(fallBeforeDst.getTimezoneOffset()).toBe(240) // -4 hours
+        // two 02:00 times here, this will take the later one
+        const fallAmbiguous = new Date('2025-11-02 02:00')
+        expect(fallAmbiguous.toString()).toBe('Sun Nov 02 2025 02:00:00 GMT-0500 (Eastern Standard Time)')
+        expect(fallAmbiguous.toISOString()).toBe('2025-11-02T07:00:00.000Z')
+        expect(fallAmbiguous.getTimezoneOffset()).toBe(300) // -5 hours
+        expect(fallAmbiguous.getTime() - fallBeforeDst.getTime()).toBe(60 * 60 * 1000 + 60 * 1000) // 1:01 difference
+        const fallAfterDst = new Date('2025-11-02 03:00')
+        expect(fallAfterDst.toString()).toBe('Sun Nov 02 2025 03:00:00 GMT-0500 (Eastern Standard Time)')
+        expect(fallAfterDst.toISOString()).toBe('2025-11-02T08:00:00.000Z')
+        expect(fallAfterDst.getTimezoneOffset()).toBe(300) // -5 hours
+        expect(fallAfterDst.getTime() - fallBeforeDst.getTime()).toBe(2 * 60 * 60 * 1000 + 60 * 1000) // 2:01 difference
+    })
+
     it('parse() with only date is in UTC', () => {
         const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
         setFakeDate(fakeDate)
         setTimezone('America/New_York')
 
-        const date = new Date(Date.parse('2025-07-15'))
+        const checkDate = (date: Date) => {
+            expect(date.toISOString()).toBe('2025-07-15T00:00:00.000Z')
+        }
 
-        expect(date.toISOString()).toBe('2025-07-15T00:00:00.000Z')
+        checkDate(new Date('2025-07-15'))
+        checkDate(new Date(Date.parse('2025-07-15')))
+        // Node parses other formats in local time, skipping those
+        // checkDate(new Date('2025/07/15'))
+        // checkDate(new Date(Date.parse('2025/07/15')))
     })
 
     // ----- Intl.DateTimeFormat ----
