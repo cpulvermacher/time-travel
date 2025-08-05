@@ -1,4 +1,5 @@
 import { fakeNowDate, getTimezone } from './storage'
+import { getDateParts } from './date-parts'
 
 const OriginalDate = Date
 
@@ -85,7 +86,7 @@ function patchDateMethods(datePrototype: Date): void {
     }
     datePrototype.toDateString = function () {
         const timezone = getTimezone()
-        const parts = formatToPartsWithTimezone(this, timezone)
+        const parts = getDateParts(this, timezone)
         if (!parts) {
             return 'Invalid Date'
         }
@@ -96,7 +97,7 @@ function patchDateMethods(datePrototype: Date): void {
     }
     datePrototype.toTimeString = function () {
         const timezone = getTimezone()
-        const parts = formatToPartsWithTimezone(this, timezone)
+        const parts = getDateParts(this, timezone)
         if (!parts) {
             return 'Invalid Date'
         }
@@ -146,7 +147,7 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getHours = function () {
         const timezone = getTimezone()
-        const parts = formatToPartsWithTimezone(this, timezone)
+        const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
         }
@@ -156,7 +157,7 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getMinutes = function () {
         const timezone = getTimezone()
-        const parts = formatToPartsWithTimezone(this, timezone)
+        const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
         }
@@ -166,7 +167,7 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getSeconds = function () {
         const timezone = getTimezone()
-        const parts = formatToPartsWithTimezone(this, timezone)
+        const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
         }
@@ -176,7 +177,7 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getMilliseconds = function () {
         const timezone = getTimezone()
-        const parts = formatToPartsWithTimezone(this, timezone)
+        const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
         }
@@ -186,7 +187,7 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getDate = function () {
         const timezone = getTimezone()
-        const parts = formatToPartsWithTimezone(this, timezone)
+        const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
         }
@@ -196,7 +197,7 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getMonth = function () {
         const timezone = getTimezone()
-        const parts = formatToPartsWithTimezone(this, timezone)
+        const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
         }
@@ -206,7 +207,7 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getFullYear = function () {
         const timezone = getTimezone()
-        const parts = formatToPartsWithTimezone(this, timezone)
+        const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
         }
@@ -216,7 +217,7 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getDay = function () {
         const timezone = getTimezone()
-        const parts = formatToPartsWithTimezone(this, timezone)
+        const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
         }
@@ -227,7 +228,7 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getTimezoneOffset = function () {
         const timezone = getTimezone()
-        const parts = formatToPartsWithTimezone(this, timezone)
+        const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
         }
@@ -313,7 +314,7 @@ function overridePartOfDate(
         milliseconds?: number
     }
 ) {
-    const parts = formatToPartsWithTimezone(date, timezone)
+    const parts = getDateParts(date, timezone)
     if (!parts) {
         return date.setTime(NaN)
     }
@@ -367,45 +368,6 @@ function getOffsetFromLongOffset(longOffset?: string): number {
     return 0
 }
 
-type DateParts = {
-    year: number
-    month: number
-    day: number
-    hour: number
-    minute: number
-    second: number
-    ms: number
-    weekday: string
-    timeZoneName: string
-    rawFormat: Record<Intl.DateTimeFormatPartTypes, string>
-}
-
-function formatToPartsWithTimezone(date: Date, timezone: string | undefined): DateParts | undefined {
-    const formatter = getFormatterForTimezone(timezone)
-    try {
-        const parts = formatter.formatToParts(date)
-        const partsMap = {} as Record<Intl.DateTimeFormatPartTypes, string>
-        parts.forEach((part) => {
-            partsMap[part.type] = part.value
-        })
-        return {
-            year: parseInt(partsMap.year, 10),
-            // Month is 1-based in formatToParts but 0-based in Date methods
-            month: parseInt(partsMap.month, 10) - 1,
-            day: parseInt(partsMap.day, 10),
-            hour: parseInt(partsMap.hour, 10),
-            minute: parseInt(partsMap.minute, 10),
-            second: parseInt(partsMap.second, 10),
-            ms: parseInt(partsMap.fractionalSecond, 10),
-            weekday: partsMap.weekday,
-            timeZoneName: partsMap.timeZoneName,
-            rawFormat: partsMap,
-        }
-    } catch {
-        return undefined
-    }
-}
-
 /** Returns timezone name for toString()/toTimeString(). */
 function getTimezoneName(date: Date, timezone: string | undefined): string {
     const formatter = new Intl.DateTimeFormat('en-US', {
@@ -454,7 +416,7 @@ function getOffset(dateString: string, timezone: string): string | undefined {
     // first, use local time to parse `dateString`. the date is very likely wrong,
     // but we get a reasonable approximation of the timezone offset
     const approximateDate = new OriginalDate(dateString)
-    const parts = formatToPartsWithTimezone(approximateDate, timezone)
+    const parts = getDateParts(approximateDate, timezone)
     if (!parts) {
         return undefined
     }
@@ -462,7 +424,7 @@ function getOffset(dateString: string, timezone: string): string | undefined {
 
     // now parse the date string with the timezone offset
     const firstAttemptDate = new OriginalDate(`${dateString} ${offset}`)
-    const refinedParts = formatToPartsWithTimezone(firstAttemptDate, timezone)
+    const refinedParts = getDateParts(firstAttemptDate, timezone)
 
     // If the timezone offsets are different, we crossed a DST boundary
     if (refinedParts && refinedParts.timeZoneName !== parts.timeZoneName) {
@@ -482,32 +444,6 @@ function copyOwnProperties<T extends object>(source: T, target: T): void {
             target[key as keyof T] = source[key as keyof T]
         })
 }
-
-/** Gets a cached formatter */
-function getFormatterForTimezone(timezone: string | undefined): Intl.DateTimeFormat {
-    if (cachedFormatterForTimezone === timezone && cachedFormatter !== null) {
-        return cachedFormatter
-    }
-    cachedFormatterForTimezone = timezone
-    cachedFormatter = new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        fractionalSecondDigits: 3,
-        hour12: false,
-        hourCycle: 'h23',
-        weekday: 'short',
-        timeZoneName: 'longOffset',
-        timeZone: timezone,
-    })
-    return cachedFormatter
-}
-
-let cachedFormatter: Intl.DateTimeFormat | null = null
-let cachedFormatterForTimezone: string | undefined | null = null
 
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
