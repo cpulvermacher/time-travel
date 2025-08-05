@@ -301,7 +301,7 @@ describe('replace_date with timezone', () => {
         date.setHours(12, 30, 45, 500)
         expect(date.getHours()).toBe(12)
         expect(date.toString()).toBe('Sun Dec 31 2023 12:30:45 GMT-0500 (Eastern Standard Time)')
-        expect(date.toISOString()).toBe('2023-12-31T17:30:45.500Z') //TODO correct?
+        expect(date.toISOString()).toBe('2023-12-31T17:30:45.500Z')
     })
 
     it('setMinutes()', () => {

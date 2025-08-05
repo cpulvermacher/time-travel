@@ -57,7 +57,12 @@ export function getDatePartsForLocalDate(
     second: number,
     ms: number
 ): LocalDateParts {
-    const utcDate = new Date(Date.UTC(year, month, day, hour, minute, second, ms))
+    return getDatePartsForLocalTimestamp(Date.UTC(year, month, day, hour, minute, second, ms))
+}
+
+/** returns LocalDateParts for given local (!) timestamp. */
+export function getDatePartsForLocalTimestamp(timestamp: number): LocalDateParts {
+    const utcDate = new Date(timestamp)
     return {
         year: utcDate.getUTCFullYear(),
         month: utcDate.getUTCMonth(),

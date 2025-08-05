@@ -1,5 +1,11 @@
 import { fakeNowDate, getTimezone } from './storage'
-import { compareDateParts, getDateParts, getDatePartsForLocalDate, type LocalDateParts } from './date-parts'
+import {
+    compareDateParts,
+    getDateParts,
+    getDatePartsForLocalDate,
+    getDatePartsForLocalTimestamp,
+    type LocalDateParts,
+} from './date-parts'
 
 const OriginalDate = Date
 
@@ -403,46 +409,25 @@ function getTimezoneName(date: Date, timezone: string | undefined): string {
  * This is a bit tricky because timezone is a IANA ID like Europe/London, but parse() only supports timezone offsets
  */
 function parseWithTimezone(dateString: string, timezone: string | undefined): number {
-    // Check for common timezone patterns
-    const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2}|GMT|UTC|\b[A-Z]{3,4}\b)$/i.test(dateString.trim())
+    if (!timezone) {
+        return OriginalDate.parse(dateString)
+    }
+
+    // check for timezone offset - time specifier (\d:) followed by Z, +\d, -\d
+    const hasOffset = /\d:.*(?:Z|[+-]\d)/i.test(dateString.trim())
 
     // check if this is date only (e.g. "2025-07-15") => Needs to be parsed as UTC
     const isDateOnly = !dateString.includes(':')
 
-    if (!timezone || hasTimezone || isDateOnly) {
+    if (hasOffset || isDateOnly) {
         return OriginalDate.parse(dateString)
     }
 
     const trimmedDateString = dateString.replace(/\s*\([^)]+\)\s*$/, '').trim()
-    const longOffset = getOffset(trimmedDateString, timezone)
-    return OriginalDate.parse(`${trimmedDateString} ${longOffset}`)
-}
+    const parsedAsUTC = OriginalDate.parse(`${trimmedDateString}Z`)
 
-/** Returns a long offset string like "GMT+02:00" for the given date string and timezone.
- *
- * @param dateString - a local date string (without TZ specifier), e.g. "2025-07-15 12:00:00" in the given timezone
- * @param timezone - a timezone IANA ID like "Europe/Berlin"
- * @returns a long offset string like "GMT+02:00"
- */
-function getOffset(dateString: string, timezone: string): string | undefined {
-    // first, use local time to parse `dateString`. the date is very likely wrong,
-    // but we get a reasonable approximation of the timezone offset
-    const approximateDate = new OriginalDate(dateString)
-    const parts = getDateParts(approximateDate, timezone)
-    if (!parts) {
-        return undefined
-    }
-    let offset = parts.offsetName
-
-    // now parse the date string with the timezone offset
-    const firstAttemptDate = new OriginalDate(`${dateString} ${offset}`)
-    const refinedParts = getDateParts(firstAttemptDate, timezone)
-
-    // If the timezone offsets are different, we crossed a DST boundary
-    if (refinedParts && refinedParts.offsetName !== parts.offsetName) {
-        offset = refinedParts.offsetName
-    }
-    return offset
+    const desiredLocalDate = getDatePartsForLocalTimestamp(parsedAsUTC)
+    return disambiguateDate(desiredLocalDate, timezone)
 }
 
 /** copy all own properties from source to target, except 'constructor'
