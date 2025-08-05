@@ -43,5 +43,6 @@
     "advanced_settings": "詳細",
     "timezone_selector_label": "タイムゾーン",
     "timezone_group_common": "主要",
-    "timezone_browser_default": "デフォルト"
+    "timezone_browser_default": "デフォルト",
+    "date_in_timezone_info": "{timezone}では{date}"
 }

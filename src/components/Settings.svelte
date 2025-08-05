@@ -131,7 +131,7 @@
             {m.datetime_input_label()}
             <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
             {#if import.meta.env.DEV}<span class="mock-active">[mock]</span>{/if}
-            <Datepicker bind:fakeDate onEnterKey={onApply} />
+            <Datepicker bind:fakeDate onEnterKey={onApply} timezone={settings.timezone} />
         </label>
     </div>
     <div class="row right-aligned">

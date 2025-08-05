@@ -43,5 +43,6 @@
     "advanced_settings": "Details",
     "timezone_selector_label": "Zeitzone",
     "timezone_group_common": "Häufig",
-    "timezone_browser_default": "Standard"
+    "timezone_browser_default": "Standard",
+    "date_in_timezone_info": "{date} in {timezone}"
 }

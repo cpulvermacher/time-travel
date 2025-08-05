@@ -3,7 +3,7 @@
     import { tick } from 'svelte'
     import { m } from '../paraglide/messages'
     import { getUILanguage } from '../util/browser'
-    import { formatLocalTime, overwriteDatePart, parseDate } from '../util/common'
+    import { formatDateInTimezone, formatLocalTime, overwriteDatePart, parseDate } from '../util/common'
     import { getFirstDayOfWeek } from '../util/i18n'
 
     // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
@@ -12,8 +12,9 @@
     interface Props {
         fakeDate: string
         onEnterKey?: () => void
+        timezone: string // IANA timezone identifier or '' for browser default
     }
-    let { fakeDate = $bindable(), onEnterKey }: Props = $props()
+    let { fakeDate = $bindable(), onEnterKey, timezone }: Props = $props()
     // Note: the datepicker internally works with timestamps in UTC. When choosing a date, pickerDate will be set to 00:00 local time.
     let pickerDate = $state(Date.parse(fakeDate))
     let isValid = $derived(parseDate(fakeDate) !== null)
@@ -128,6 +129,14 @@
             class={{ error: !isValid }}
             title={m.date_input_hint()}
         />
+        {#if isValid && timezone}
+            <span class="timezone-label">
+                {m.date_in_timezone_info({
+                    timezone: timezone,
+                    date: formatDateInTimezone(new Date(fakeDate), timezone),
+                })}
+            </span>
+        {/if}
     </DatePicker>
 </div>
 
@@ -160,6 +169,12 @@
         100% {
             box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
         }
+    }
+
+    .timezone-label {
+        font-size: 0.9em;
+        color: var(--secondary-text-color);
+        margin-top: 5px;
     }
 
     /* for Japanese, add a suffix to the year*/
