@@ -333,7 +333,7 @@ describe('replace_date with timezone', () => {
         expect(date.getMilliseconds()).toBe(456)
     })
 
-    it('setters can be used to correctly step over DST transitions', () => {
+    it('setters can be used to step over DST transitions', () => {
         setFakeDate('2023-06-01 00:00', 'America/New_York')
 
         // Standard Time -> DST: adding 1 minute to 1:59 means clock moves forward to 3:00 a.m.
@@ -342,10 +342,10 @@ describe('replace_date with timezone', () => {
         marAfterDst.setSeconds(60)
         expect(marAfterDst.getTime() - marBeforDst.getTime()).toBe(60 * 1000)
         expect(marAfterDst.toString()).toBe('Sun Mar 09 2025 03:00:00 GMT-0400 (Eastern Daylight Time)')
-        //can move backwards
-        const marBackBeforeDst = new Date(marAfterDst)
-        marBackBeforeDst.setMinutes(-1)
-        expect(marBackBeforeDst).toEqual(marBeforDst)
+        // moving backwards does NOT work here (this matches browser implementation)
+        const marBackwards = new Date(marAfterDst)
+        marBackwards.setMinutes(-1)
+        expect(marBackwards.toString()).toBe('Sun Mar 09 2025 03:59:00 GMT-0400 (Eastern Daylight Time)')
 
         // DST -> Standard Time: adding 1 minute to 0:59 means clock moves to first 1:00 a.m. (still DST) ...
         const novBeforeDstEnd = new Date('2025-11-02 00:59')
@@ -355,13 +355,13 @@ describe('replace_date with timezone', () => {
         expect(novFirst1AM.getTime() - novBeforeDstEnd.getTime()).toBe(60 * 1000)
         expect(novFirst1AM.toString()).toBe('Sun Nov 02 2025 01:00:00 GMT-0400 (Eastern Daylight Time)')
 
-        // ... adding another hour should go to second 1:00 a.m. (non-DST)
+        // ... adding another hour should go to 2:00 a.m. DST (2h ahead)
         const novSecond1AM = new Date(novFirst1AM)
         novSecond1AM.setMinutes(60)
-        expect(novSecond1AM.getTime() - novFirst1AM.getTime()).toBe(60 * 60 * 1000)
-        expect(novSecond1AM.toString()).toBe('Sun Nov 02 2025 01:00:00 GMT-0500 (Eastern Standard Time)')
+        expect(novSecond1AM.getTime() - novFirst1AM.getTime()).toBe(2 * 60 * 60 * 1000)
+        expect(novSecond1AM.toString()).toBe('Sun Nov 02 2025 02:00:00 GMT-0500 (Eastern Standard Time)')
 
-        // going backwards should work as well
+        // moving backwards does NOT work here (should resolve ambiguity by choosing first 1:00 a.m.)
         const novBackByOneHour = new Date(novSecond1AM)
         novBackByOneHour.setMinutes(-60)
         expect(novBackByOneHour.toString()).toBe('Sun Nov 02 2025 01:00:00 GMT-0400 (Eastern Daylight Time)')
