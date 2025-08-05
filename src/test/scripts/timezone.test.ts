@@ -222,6 +222,97 @@ describe('replace_date with timezone', () => {
         // checkDate(new Date(Date.parse('2025/07/15')))
     })
 
+    const jan1stUtc = new Date('2024-01-01T00:00:00.000Z')
+    it('setFullYear()', () => {
+        setFakeDate('2023-06-01 00:00', 'America/New_York')
+
+        const date = new Date(jan1stUtc)
+
+        expect(date.toString()).toBe('Sun Dec 31 2023 19:00:00 GMT-0500 (Eastern Standard Time)')
+        date.setFullYear(2023)
+        expect(date.toISOString()).toBe('2024-01-01T00:00:00.000Z') // no change
+        date.setFullYear(2025)
+        expect(date.toISOString()).toBe('2026-01-01T00:00:00.000Z')
+    })
+
+    it('setMonth()', () => {
+        setFakeDate('2023-06-01 00:00', 'America/New_York')
+
+        const date = new Date(jan1stUtc)
+
+        date.setMonth(0) // January
+        expect(date.toISOString()).toBe('2024-01-01T00:00:00.000Z') // no change
+        date.setMonth(6) // July
+        expect(date.toISOString()).toBe('2024-07-01T00:00:00.000Z')
+        date.setMonth(12) // Out of range, should set to January next year
+        expect(date.toISOString()).toBe('2025-01-01T00:00:00.000Z')
+
+        date.setMonth(3, 15) // April 15th
+        expect(date.toISOString()).toBe('2025-04-15T00:00:00.000Z')
+    })
+
+    it('setDate()', () => {
+        setFakeDate('2023-06-01 00:00', 'America/New_York')
+
+        const date = new Date(jan1stUtc)
+
+        date.setDate(1) // 1st of January
+        expect(date.toISOString()).toBe('2024-01-01T00:00:00.000Z') // no change
+        date.setDate(15) // 15th of January
+        expect(date.toISOString()).toBe('2024-01-15T00:00:00.000Z')
+        date.setDate(0) // Out of range, should set to last day of previous month
+        expect(date.toISOString()).toBe('2023-12-31T00:00:00.000Z')
+    })
+
+    it('setHours()', () => {
+        setFakeDate('2023-06-01 00:00', 'America/New_York')
+
+        const date = new Date(jan1stUtc)
+
+        date.setHours(0, 0, 0, 0)
+        expect(date.toString()).toBe('Sun Dec 31 2023 00:00:00 GMT-0500 (Eastern Standard Time)')
+        date.setHours(12, 30, 45, 500)
+        expect(date.toString()).toBe('Sun Dec 31 2023 12:30:45 GMT-0500 (Eastern Standard Time)')
+        expect(date.toISOString()).toBe('2023-12-31T17:30:45.500Z') //TODO correct?
+    })
+
+    it('setMinutes()', () => {
+        setFakeDate('2023-06-01 00:00', 'America/New_York')
+
+        const date = new Date(jan1stUtc)
+
+        date.setMinutes(0, 0, 0)
+        expect(date.toString()).toBe('Sun Dec 31 2023 19:00:00 GMT-0500 (Eastern Standard Time)')
+        date.setMinutes(61) // Should roll over to next hour
+        expect(date.toString()).toBe('Sun Dec 31 2023 20:01:00 GMT-0500 (Eastern Standard Time)')
+    })
+
+    it('setSeconds()', () => {
+        setFakeDate('2023-06-01 00:00', 'Pacific/Chatham') // +13:45 (DST)
+
+        const date = new Date(jan1stUtc)
+
+        expect(date.toString()).toBe('Mon Jan 01 2024 13:45:00 GMT+1345 (Chatham Daylight Time)')
+        date.setSeconds(0)
+        expect(date.toString()).toBe('Mon Jan 01 2024 00:00:00 GMT+1345 (Chatham Daylight Time)')
+        date.setSeconds(61, 456) // Should roll over to next minute
+        expect(date.toString()).toBe('Mon Jan 01 2024 00:01:01 GMT+1345 (Chatham Daylight Time)')
+        expect(date.getMilliseconds()).toBe(456)
+    })
+
+    it('setMilliseconds()', () => {
+        setFakeDate('2023-06-01 00:00', 'Pacific/Chatham') // +13:45 (DST)
+
+        const date = new Date(jan1stUtc)
+
+        expect(date.toString()).toBe('Mon Jan 01 2024 13:45:00 GMT+1345 (Chatham Daylight Time)')
+        date.setMilliseconds(0)
+        expect(date.getMilliseconds()).toBe(0)
+        date.setMilliseconds(456)
+        expect(date.toString()).toBe('Mon Jan 01 2024 13:45:00 GMT+1345 (Chatham Daylight Time)')
+        expect(date.getMilliseconds()).toBe(456)
+    })
+
     // ----- Intl.DateTimeFormat ----
 
     it('Intl.DateTimeFormat uses timezone when specified', () => {
