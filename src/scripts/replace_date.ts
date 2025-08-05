@@ -13,6 +13,9 @@ declare const __EXT_VERSION__: string
 
     // ==================== helper functions ====================
 
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
     /** return key from storage, or null if unset */
     function getFromStorage(key: string): string | null {
         try {
@@ -119,14 +122,15 @@ declare const __EXT_VERSION__: string
         // Cache the Intl formatter for the timezone to optimize performance
         const formatter = new OriginalIntlDateTimeFormat('en-US', {
             year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
             fractionalSecondDigits: 3,
             hour12: false,
             weekday: 'short',
+            timeZoneName: 'longOffset',
             timeZone: timezone, //TODO this isn't properly updated
         })
 
@@ -140,9 +144,10 @@ declare const __EXT_VERSION__: string
                 partsMap[part.type] = part.value
             })
 
-            return `${partsMap.weekday} ${partsMap.month} ${partsMap.day} ${partsMap.year} ${partsMap.hour}:${partsMap.minute}:${partsMap.second} GMT${
-                partsMap.timeZoneName?.includes('UTC') ? '' : partsMap.timeZoneOffset || ''
-            } (${partsMap.timeZoneName || timezone})`
+            const monthLabel = shortMonths[parseInt(partsMap.month, 10) - 1] || partsMap.month
+            const offset = partsMap.timeZoneName.replace(':', '')
+
+            return `${partsMap.weekday} ${monthLabel} ${partsMap.day} ${partsMap.year} ${partsMap.hour}:${partsMap.minute}:${partsMap.second} ${offset}`
         }
 
         // Override locale string methods to use the selected timezone when no timezone is specified
@@ -216,7 +221,6 @@ declare const __EXT_VERSION__: string
             const parts = formatter.formatToParts(this)
             const weekday = parts.find((p) => p.type === 'weekday')?.value
             // Convert weekday name to number (0-6, Sunday-Saturday)
-            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
             return weekdays.indexOf(weekday || 'Sun')
         }
 
