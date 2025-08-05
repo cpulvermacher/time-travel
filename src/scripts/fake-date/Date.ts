@@ -3,7 +3,17 @@ import { fakeNowDate, getTimezone } from './storage'
 const OriginalDate = Date
 
 // Date constructor, needs to be a function to allow both constructing (`new Date()`) and calling without new: `Date()`
-export function FakeDate(...args: unknown[]) {
+export function FakeDate(
+    ...args: [
+        yearOrDate?: string | number | Date,
+        month?: number,
+        date?: number,
+        hours?: number,
+        min?: number,
+        sec?: number,
+        ms?: number,
+    ]
+) {
     if (!new.target) {
         // `Date()` invoked without 'new', return current time string
         return new Date().toString()
@@ -20,8 +30,10 @@ export function FakeDate(...args: unknown[]) {
         returnDate = new OriginalDate(...args)
     } else if (args.length === 1 && typeof args[0] === 'string') {
         returnDate = new OriginalDate(parseWithTimezone(args[0], timezone))
-    } else if (args.length > 1) {
-        const dateTimeString = buildDateTimeString(args)
+    } else if (args.length > 1 && typeof args[0] === 'number') {
+        const dateTimeString = buildDateTimeString(
+            args as [number, number?, number?, number?, number?, number?, number?]
+        )
         returnDate = new OriginalDate(parseWithTimezone(dateTimeString, timezone))
     } else {
         // @ts-expect-error: let original Date constructor handle the arguments
@@ -35,17 +47,15 @@ export function FakeDate(...args: unknown[]) {
 }
 
 /** build a string in the format of "YYYY-MM-DD HH:mm:ss.sss" */
-function buildDateTimeString(args: unknown[]) {
-    let year = args[0] as number
+function buildDateTimeString(
+    args: [year: number, month?: number, date?: number, hours?: number, min?: number, sec?: number, ms?: number]
+) {
+    const [rawYear, monthIndex = 0, date = 1, hours = 0, minutes = 0, seconds = 0, milliseconds = 0] = args
+    let year = rawYear
     if (year >= 0 && year <= 99) {
         year += 1900 // 2-digit years are interpreted as 1900-1999 as per spec
     }
-    const month = (args[1] as number) + 1
-    const date = (args[2] as number) || 1
-    const hours = (args[3] as number) || 0
-    const minutes = (args[4] as number) || 0
-    const seconds = (args[5] as number) || 0
-    const milliseconds = (args[6] as number) || 0
+    const month = monthIndex + 1
 
     //TODO spec has fun underflow/overflow rules, e.g. if month is 13, it will be interpreted as January of the next year
     const dateString = `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}`
