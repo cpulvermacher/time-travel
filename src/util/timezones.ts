@@ -33,10 +33,11 @@ export function getTimezoneOptions(locale: string): Timezone[] {
                         const offset = getOffset(locale, tz)
                         const tzParts = tz.split('/')
                         const group = tzParts.length > 1 ? tzParts[0] : 'Etc' // Firefox has a number of funky timezones like 'CST6CDT', put them in 'Etc'
+                        const tzName = tzParts.length > 1 ? tzParts[1] : tz
 
                         return {
                             tz,
-                            label: `${tz} (${offset})`,
+                            label: `${tzName}\t(${offset})`,
                             group,
                         }
                     })
