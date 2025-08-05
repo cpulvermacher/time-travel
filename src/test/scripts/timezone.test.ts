@@ -137,12 +137,6 @@ describe('replace_date with timezone', () => {
         expect(novBeforeDstEnd.toString()).toBe('Sun Nov 02 2025 01:59:00 GMT-0400 (Eastern Daylight Time)')
         expect(novBeforeDstEnd.toISOString()).toBe('2025-11-02T05:59:00.000Z')
         expect(novBeforeDstEnd.getTimezoneOffset()).toBe(240) // -4 hours
-        // two 02:00 times here, this will take the later one
-        const novAmbiguous = new Date('2025-11-02 02:00')
-        expect(novAmbiguous.toString()).toBe('Sun Nov 02 2025 02:00:00 GMT-0500 (Eastern Standard Time)')
-        expect(novAmbiguous.toISOString()).toBe('2025-11-02T07:00:00.000Z')
-        expect(novAmbiguous.getTimezoneOffset()).toBe(300) // -5 hours
-        expect(novAmbiguous.getTime() - novBeforeDstEnd.getTime()).toBe(60 * 60 * 1000 + 60 * 1000) // 1:01 difference
         const novAfterDstEnd = new Date('2025-11-02 03:00')
         expect(novAfterDstEnd.toString()).toBe('Sun Nov 02 2025 03:00:00 GMT-0500 (Eastern Standard Time)')
         expect(novAfterDstEnd.toISOString()).toBe('2025-11-02T08:00:00.000Z')
@@ -186,6 +180,31 @@ describe('replace_date with timezone', () => {
 
         // interpreted as the most likely valid time after the DST jump
         expect(nonexistentDate.toString()).toBe('Sun Mar 09 2025 03:00:00 GMT-0400 (Eastern Daylight Time)')
+    })
+
+    it('ambiguous dates are resolved using the offset before the transition', () => {
+        setFakeDate('2025-03-09T06:59:00.000Z', 'America/New_York')
+        // 2025-11-02 01:00 exists twice here, with -4 and -5 hours offset
+
+        //parse using Date constructor
+        const ambiguousDate = new Date('2025-11-02 01:00')
+        expect(ambiguousDate.toString()).toBe('Sun Nov 02 2025 01:00:00 GMT-0400 (Eastern Daylight Time)')
+        expect(ambiguousDate.toISOString()).toBe('2025-11-02T05:00:00.000Z')
+        expect(ambiguousDate.getTimezoneOffset()).toBe(240) // -4 hours
+
+        // Date.parse() should use the same logic
+        const ambiguousDate2 = new Date(Date.parse('2025-11-02 01:00'))
+        expect(ambiguousDate2.toString()).toBe(ambiguousDate.toString())
+
+        // Date constructor with numeric arguments
+        const ambiguousDate3 = new Date(2025, 10, 2, 1, 0) // November is month 10
+        expect(ambiguousDate3.toString()).toBe(ambiguousDate.toString())
+
+        // setters
+        const ambiguousDate4 = new Date('2025-12-01 23:00') //let's start with a -05:00 offset
+        ambiguousDate4.setFullYear(2025, 10, 2) // November 2nd
+        ambiguousDate4.setHours(1, 0, 0, 0) // 01:00
+        expect(ambiguousDate4.toString()).toBe(ambiguousDate.toString())
     })
 
     it('getTimezoneOffset() returns correct offset for minutes in offset', () => {
