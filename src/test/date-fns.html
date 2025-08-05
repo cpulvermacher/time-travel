@@ -10,6 +10,7 @@
             <h3>@date-fns/tz compatibility test</h3>
             <p>new TZDate(): <span id="tzdate"></span></p>
             <p>new TZDate().withTimeZone('UTC'): <span id="tzdate-utc"></span></p>
+            <p>new TZDate().withTimeZone('America/New_York'): <span id="tzdate-newyork"></span></p>
             <script type="module">
                 import { TZDate, TZDateMini } from 'https://cdn.jsdelivr.net/npm/@date-fns/tz@1.1.2/+esm'
 
@@ -17,6 +18,7 @@
 
                 document.getElementById('tzdate').textContent = test
                 document.getElementById('tzdate-utc').textContent = test.withTimeZone('UTC')
+                document.getElementById('tzdate-newyork').textContent = test.withTimeZone('America/New_York')
             </script>
         </div>
     </body>
