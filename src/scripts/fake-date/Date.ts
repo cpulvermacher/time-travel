@@ -28,8 +28,6 @@ export function FakeDate(...args: unknown[]) {
         returnDate = new OriginalDate(...args)
     }
 
-    patchDateMethods(returnDate)
-
     // for `new SomeClassDerivedFromDate()`, make sure we return something that is an instance of SomeClassDerivedFromDate
     Object.setPrototypeOf(returnDate, new.target.prototype as object)
 
@@ -63,18 +61,10 @@ function buildDateTimeString(args: unknown[]) {
  * - Local time methods: getHours, getMinutes, getSeconds, etc.
  * - UTC methods (getUTCHours, etc.) remain unaffected
  */
-function patchDateMethods(dateObj: Date): void {
-    // Store original methods to be used later
-    const originalToLocaleString = dateObj.toLocaleString.bind(dateObj)
-    const originalToLocaleDateString = dateObj.toLocaleDateString.bind(dateObj)
-    const originalToLocaleTimeString = dateObj.toLocaleTimeString.bind(dateObj)
-
+function patchDateMethods(datePrototype: Date): void {
     // --- Override string representation methods ---
-    //TODO I should probably use bind() instead of directly assigning the function
-    // but then again this might only be an Intl. thing
 
-    // Override toString to use the selected timezone
-    dateObj.toString = function () {
+    datePrototype.toString = function () {
         const dateString = this.toDateString()
         const timeString = this.toTimeString()
         if (dateString === 'Invalid Date' || timeString === 'Invalid Date') {
@@ -83,7 +73,7 @@ function patchDateMethods(dateObj: Date): void {
 
         return `${dateString} ${timeString}`
     }
-    dateObj.toDateString = function () {
+    datePrototype.toDateString = function () {
         const timezone = getTimezone()
         const parts = formatToPartsWithTimezone(this, timezone)
         if (!parts) {
@@ -94,7 +84,7 @@ function patchDateMethods(dateObj: Date): void {
 
         return `${parts.weekday} ${monthLabel} ${parts.day} ${parts.year}`
     }
-    dateObj.toTimeString = function () {
+    datePrototype.toTimeString = function () {
         const timezone = getTimezone()
         const parts = formatToPartsWithTimezone(this, timezone)
         if (!parts) {
@@ -111,39 +101,39 @@ function patchDateMethods(dateObj: Date): void {
     }
 
     // Override locale string methods to use the selected timezone when no timezone is specified
-    dateObj.toLocaleString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
+    datePrototype.toLocaleString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
         if (!options || !options.timeZone) {
             const timezone = getTimezone()
             if (timezone) {
                 options = { ...(options || {}), timeZone: timezone }
             }
         }
-        return originalToLocaleString(locales, options)
+        return OriginalDate.prototype.toLocaleString.call(this, locales, options)
     }
 
-    dateObj.toLocaleDateString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
+    datePrototype.toLocaleDateString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
         if (!options || !options.timeZone) {
             const timezone = getTimezone()
             if (timezone) {
                 options = { ...(options || {}), timeZone: timezone }
             }
         }
-        return originalToLocaleDateString(locales, options)
+        return OriginalDate.prototype.toLocaleDateString.call(this, locales, options)
     }
 
-    dateObj.toLocaleTimeString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
+    datePrototype.toLocaleTimeString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
         if (!options || !options.timeZone) {
             const timezone = getTimezone()
             if (timezone) {
                 options = { ...(options || {}), timeZone: timezone }
             }
         }
-        return originalToLocaleTimeString(locales, options)
+        return OriginalDate.prototype.toLocaleTimeString.call(this, locales, options)
     }
 
     // --- Override local time methods to return values in the selected timezone ---
 
-    dateObj.getHours = function () {
+    datePrototype.getHours = function () {
         const timezone = getTimezone()
         const parts = formatToPartsWithTimezone(this, timezone)
         if (!parts) {
@@ -153,7 +143,7 @@ function patchDateMethods(dateObj: Date): void {
         return parts.hour ? parseInt(parts.hour, 10) : 0
     }
 
-    dateObj.getMinutes = function () {
+    datePrototype.getMinutes = function () {
         const timezone = getTimezone()
         const parts = formatToPartsWithTimezone(this, timezone)
         if (!parts) {
@@ -163,7 +153,7 @@ function patchDateMethods(dateObj: Date): void {
         return parts.minute ? parseInt(parts.minute, 10) : 0
     }
 
-    dateObj.getSeconds = function () {
+    datePrototype.getSeconds = function () {
         const timezone = getTimezone()
         const parts = formatToPartsWithTimezone(this, timezone)
         if (!parts) {
@@ -173,7 +163,7 @@ function patchDateMethods(dateObj: Date): void {
         return parts.second ? parseInt(parts.second, 10) : 0
     }
 
-    dateObj.getMilliseconds = function () {
+    datePrototype.getMilliseconds = function () {
         const timezone = getTimezone()
         const parts = formatToPartsWithTimezone(this, timezone)
         if (!parts) {
@@ -183,7 +173,7 @@ function patchDateMethods(dateObj: Date): void {
         return parts.fractionalSecond ? parseInt(parts.fractionalSecond, 10) : 0
     }
 
-    dateObj.getDate = function () {
+    datePrototype.getDate = function () {
         const timezone = getTimezone()
         const parts = formatToPartsWithTimezone(this, timezone)
         if (!parts) {
@@ -193,7 +183,7 @@ function patchDateMethods(dateObj: Date): void {
         return parts.day ? parseInt(parts.day, 10) : 1
     }
 
-    dateObj.getMonth = function () {
+    datePrototype.getMonth = function () {
         const timezone = getTimezone()
         const parts = formatToPartsWithTimezone(this, timezone)
         if (!parts) {
@@ -204,7 +194,7 @@ function patchDateMethods(dateObj: Date): void {
         return parts.month ? parseInt(parts.month, 10) - 1 : 0
     }
 
-    dateObj.getFullYear = function () {
+    datePrototype.getFullYear = function () {
         const timezone = getTimezone()
         const parts = formatToPartsWithTimezone(this, timezone)
         if (!parts) {
@@ -214,7 +204,7 @@ function patchDateMethods(dateObj: Date): void {
         return parts.year ? parseInt(parts.year, 10) : 0
     }
 
-    dateObj.getDay = function () {
+    datePrototype.getDay = function () {
         const timezone = getTimezone()
         const parts = formatToPartsWithTimezone(this, timezone)
         if (!parts) {
@@ -225,7 +215,7 @@ function patchDateMethods(dateObj: Date): void {
         return weekdays.indexOf(parts.weekday || 'Sun')
     }
 
-    dateObj.getTimezoneOffset = function () {
+    datePrototype.getTimezoneOffset = function () {
         const timezone = getTimezone()
         const parts = formatToPartsWithTimezone(this, timezone)
         if (!parts) {
@@ -235,7 +225,151 @@ function patchDateMethods(dateObj: Date): void {
         return getOffsetFromLongOffset(parts.timeZoneName)
     }
 
+    datePrototype.setHours = function (hours: number, min?: number, sec?: number, ms?: number) {
+        const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.setHours.call(this, hours, min, sec, ms)
+        }
+
+        return overridePartOfDate(this, timezone, { hours, minutes: min, seconds: sec, milliseconds: ms })
+    }
+
+    datePrototype.setMinutes = function (minutes: number) {
+        const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.setMinutes.call(this, minutes)
+        }
+        // Note: setMinutes() only accepts minutes, not seconds or milliseconds
+
+        return overridePartOfDate(this, timezone, { minutes })
+    }
+
     // Note: We don't override UTC methods as they should remain as is
+    // likewise, setSeconds/setMiliseconds are not affected by timezone
+}
+
+/**
+ * Overides parts of `date` in a similar way that setHours() etc. do,
+ * but does so in the given timezone.
+ * After calling this, with `{ hours: 14 }`, `FakeDate.getHour(date)` is expected to return 14.
+ *
+ * @returns timestamp of the date after setting, or NaN if invalid
+ */
+function overridePartOfDate(
+    date: Date,
+    timezone: string,
+    override: {
+        year?: number
+        month?: number // 0-based, e.g. 0 for January
+        day?: number // 1-based, e.g. 1 for the first day of the month
+        hours?: number
+        minutes?: number
+        seconds?: number
+        milliseconds?: number
+    }
+) {
+    const parts = formatToPartsWithTimezone(date, timezone)
+    if (!parts) {
+        return date.setTime(NaN)
+    }
+
+    //TODO consider moving this into formatToPartsWithTimezone
+    let year = override.year ?? parseInt(parts.year, 10)
+    let month = override.month ?? parseInt(parts.month, 10) - 1
+    let day = override.day ?? parseInt(parts.day, 10)
+    let hours = override.hours ?? parseInt(parts.hour, 10)
+    let minutes = override.minutes ?? parseInt(parts.minute, 10)
+    let seconds = override.seconds ?? parseInt(parts.second, 10)
+    let ms = override.milliseconds ?? parseInt(parts.fractionalSecond, 10)
+
+    //handle overflow/underflow according to spec:
+    // positive values larger than the maximum for this unit overflow, and increase the next highest unit by the appropriate amount.
+    // negative values underflow, and decrease the next highest value
+    if (ms < 0 || ms >= 1000) {
+        seconds += Math.floor(ms / 1000)
+        ms = ms > 0 ? ms % 1000 : 1000 + (ms % 1000)
+    }
+    if (seconds < 0 || seconds >= 60) {
+        minutes += Math.floor(seconds / 60)
+        seconds = seconds > 0 ? seconds % 60 : 60 + (seconds % 60)
+    }
+    if (minutes < 0 || minutes >= 60) {
+        hours += Math.floor(minutes / 60)
+        minutes = minutes > 0 ? minutes % 60 : 60 + (minutes % 60)
+    }
+    if (hours < 0 || hours >= 24) {
+        day += Math.floor(hours / 24)
+        hours = hours > 0 ? hours % 24 : 24 + (hours % 24)
+    }
+    if (day < 1 || day >= 32) {
+        // Date.parse() handles values beyond the last day of the month <= 31,
+        // but outside this range we need to adjust this together with the month
+
+        while (day >= 32) {
+            day -= daysInMonth(year, month)
+            month += 1
+        }
+        while (day < 1) {
+            day += daysInMonth(year, month - 1)
+            month -= 1
+        }
+    }
+    if (month < 0 || month >= 12) {
+        year += Math.floor(month / 12)
+        month = month > 0 ? month % 12 : 12 + (month % 12)
+    }
+
+    const timestring = buildDateTimeString([year, month, day, hours, minutes, seconds, ms])
+    const timestamp = parseWithTimezone(timestring, timezone)
+    date.setTime(timestamp)
+
+    //TODO could we avoid all this special logic by running everything through Date.setUTCFullYear() and Date.setUTCHours() once?
+    //     any inputs should be representable in UTC, so this should handle the overflow logic automatically,
+    //     and we can then set the resulting values (from getUTC...()) in local time (taking care of any timezone shenanigans)
+    //       - [x] remaining uncertainty: does this properly deal with e.g. skipping DST transitions?
+    //            - a) forward: date is just before DST transition, setMinutes(61) should add 1 hour (ok)
+    //            - b) backward:
+    //                - 1)date is FIRST 2:59 and we do setSeconds(60) =>  we expect 2:00 (SECOND)
+    //                      - construct UTC date of 2025-03-14T02:59:00Z, setUTCHours(..., ..., 60) => 2025-03-14T03:00:00Z (WRONG!)
+    //                - 2)date is SECOND 2:59 and we do setSeconds(60) =>  we expect 3:00
+    //                      - construct UTC date of 2025-03-14T02:59:00Z, setUTCHours(..., ..., 60) => 2025-03-14T03:00:00Z (ok)
+    //                  => UTC is unambiguous, so we can't distinguish those
+    //       - [ ] no wait, the thoughts above are a bit different from what I had in mind.
+    //          - but, the point is that interpreting local time as UTC has ambiguities
+    //         - [ ] can we do somthing more clever here, like constructing UTC date from current date value, and from set value, then use the difference in timestamp to adjust the original date?
+    //              -a) timestamp has 1h difference (ok)
+    //              -b)
+    //                1) and 2) construct same UTC date from current date value, setValue has 1m difference => we can set the timestamp
+
+    return timestamp
+}
+
+function isLeapYear(year: number): boolean {
+    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
+}
+
+/** returns the number of days in a month, taking leap years into account.
+ *
+ * @param year - e.g. 2024
+ * @param month - 0-based month index, e.g. 0 for January
+ */
+function daysInMonth(year: number, month: number): number {
+    if (month < 0 || month >= 12) {
+        //urg.
+        year += Math.floor(month / 12)
+        month = month > 0 ? month % 12 : 12 + (month % 12)
+    }
+
+    if (month == 0 || month == 2 || month == 4 || month == 6 || month == 7 || month == 9 || month == 11) {
+        return 31 // Jan, Mar, May, Jul, Aug, Oct, Dec
+    }
+    if (month == 1 && isLeapYear(year)) {
+        return 29 // February in a leap year
+    }
+    if (month == 1) {
+        return 28
+    }
+    return 30
 }
 
 /** Gets timezone offset in minutes from a longOffset string.
@@ -391,3 +525,4 @@ FakeDate.parse = (datestr: string) => new Date(datestr).getTime()
 // this is necessary for e.g. @date-fns/tz, which iterates over Object.getOwnPropertyNames(Date.prototype)
 // see also https://github.com/cpulvermacher/time-travel/issues/41
 copyOwnProperties(OriginalDate.prototype, FakeDate.prototype)
+patchDateMethods(FakeDate.prototype as Date)

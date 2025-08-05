@@ -552,6 +552,11 @@ describe('replace_date', () => {
                     }
                 }
 
+                // override a method to check that the prototype chain is still intact (date-fns/tz does this)
+                MyDate.prototype['getMonth'] = function () {
+                    return 99
+                }
+
                 const myDate = new MyDate()
 
                 // should be a (possibly fake) Date
@@ -566,6 +571,7 @@ describe('replace_date', () => {
                 expect(myDate instanceof MyDate).toBeTruthy()
                 expect(myDate.method()).toEqual('method')
                 expect(myDate.value).toEqual('value')
+                expect(myDate.getMonth()).toEqual(99)
                 expect(MyDate.staticMethod()).toEqual('staticMethod')
             })
 
@@ -684,7 +690,7 @@ describe('replace_date', () => {
      * @see https://github.com/date-fns/tz/blob/213903702d7c5fcd4f01479ba7370fe917195a65/src/date/mini.js#L70
      * @see https://github.com/cpulvermacher/time-travel/issues/41
      */
-    it('Date should still have the same ownProperties when time travel is enabled', () => {
+    it('Date should still have the same ownProperties available when time travel is enabled', () => {
         setFakeDate('')
         const origProperties = Object.getOwnPropertyNames(Date.prototype)
         expect(Date.name).toBe('Date')

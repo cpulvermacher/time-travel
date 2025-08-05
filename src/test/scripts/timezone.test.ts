@@ -227,8 +227,8 @@ describe('replace_date with timezone', () => {
         setFakeDate('2023-06-01 00:00', 'America/New_York')
 
         const date = new Date(jan1stUtc)
-
         expect(date.toString()).toBe('Sun Dec 31 2023 19:00:00 GMT-0500 (Eastern Standard Time)')
+
         date.setFullYear(2023)
         expect(date.toISOString()).toBe('2024-01-01T00:00:00.000Z') // no change
         date.setFullYear(2025)
@@ -268,23 +268,32 @@ describe('replace_date with timezone', () => {
         setFakeDate('2023-06-01 00:00', 'America/New_York')
 
         const date = new Date(jan1stUtc)
+        expect(date.toString()).toBe('Sun Dec 31 2023 19:00:00 GMT-0500 (Eastern Standard Time)')
+
+        expect(date.getUTCHours()).toBe(0)
+        expect(date.getHours()).toBe(19) // 7 PM in New York (UTC-5)
 
         date.setHours(0, 0, 0, 0)
+        expect(date.getHours()).toBe(0)
         expect(date.toString()).toBe('Sun Dec 31 2023 00:00:00 GMT-0500 (Eastern Standard Time)')
         date.setHours(12, 30, 45, 500)
+        expect(date.getHours()).toBe(12)
         expect(date.toString()).toBe('Sun Dec 31 2023 12:30:45 GMT-0500 (Eastern Standard Time)')
         expect(date.toISOString()).toBe('2023-12-31T17:30:45.500Z') //TODO correct?
     })
 
     it('setMinutes()', () => {
-        setFakeDate('2023-06-01 00:00', 'America/New_York')
+        setFakeDate('2023-06-01 00:00', 'Pacific/Chatham') // +13:45 (DST)
 
         const date = new Date(jan1stUtc)
+        expect(date.toString()).toBe('Mon Jan 01 2024 13:45:00 GMT+1345 (Chatham Daylight Time)')
 
         date.setMinutes(0, 0, 0)
-        expect(date.toString()).toBe('Sun Dec 31 2023 19:00:00 GMT-0500 (Eastern Standard Time)')
+        expect(date.getMinutes()).toBe(0)
+        expect(date.toString()).toBe('Mon Jan 01 2024 13:00:00 GMT+1345 (Chatham Daylight Time)')
         date.setMinutes(61) // Should roll over to next hour
-        expect(date.toString()).toBe('Sun Dec 31 2023 20:01:00 GMT-0500 (Eastern Standard Time)')
+        expect(date.getMinutes()).toBe(1)
+        expect(date.toString()).toBe('Mon Jan 01 2024 14:01:00 GMT+1345 (Chatham Daylight Time)')
     })
 
     it('setSeconds()', () => {
@@ -294,10 +303,12 @@ describe('replace_date with timezone', () => {
 
         expect(date.toString()).toBe('Mon Jan 01 2024 13:45:00 GMT+1345 (Chatham Daylight Time)')
         date.setSeconds(0)
-        expect(date.toString()).toBe('Mon Jan 01 2024 00:00:00 GMT+1345 (Chatham Daylight Time)')
+        expect(date.getSeconds()).toBe(0)
+        expect(date.toString()).toBe('Mon Jan 01 2024 13:45:00 GMT+1345 (Chatham Daylight Time)')
         date.setSeconds(61, 456) // Should roll over to next minute
-        expect(date.toString()).toBe('Mon Jan 01 2024 00:01:01 GMT+1345 (Chatham Daylight Time)')
+        expect(date.getSeconds()).toBe(1)
         expect(date.getMilliseconds()).toBe(456)
+        expect(date.toString()).toBe('Mon Jan 01 2024 13:46:01 GMT+1345 (Chatham Daylight Time)')
     })
 
     it('setMilliseconds()', () => {
