@@ -18,6 +18,8 @@ describe('replace_date timezone', () => {
 
         const date = new Date()
 
+        expect(date.getTimezoneOffset()).toBe(0)
+
         //UTC methods
         expect(date.getUTCFullYear()).toBe(2023)
         expect(date.getUTCMonth()).toBe(0) // January
@@ -45,6 +47,8 @@ describe('replace_date timezone', () => {
         setTimezone('America/New_York') // UTC-5 in winter
 
         const date = new Date()
+
+        expect(date.getTimezoneOffset()).toBe(300)
 
         //UTC methods
         expect(date.getUTCFullYear()).toBe(2023)

@@ -13,9 +13,6 @@ declare const __EXT_VERSION__: string
 
     // ==================== helper functions ====================
 
-    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-    const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
     /** return key from storage, or null if unset */
     function getFromStorage(key: string): string | null {
         try {
@@ -78,6 +75,26 @@ declare const __EXT_VERSION__: string
                 target[key as keyof T] = source[key as keyof T]
             })
     }
+
+    /** Gets timezone offset in minutes from a longOffset string.
+     *
+     * Example: "GMT+02:00" -> -120
+     */
+    function getOffsetFromLongOffset(longOffset?: string): number {
+        if (!longOffset) {
+            return 0
+        }
+        const match = longOffset.match(/GMT([+-]\d{2}):(\d{2})/)
+        if (match) {
+            const hours = parseInt(match[1], 10)
+            const minutes = parseInt(match[2], 10)
+            return -(hours * 60 + minutes)
+        }
+        return 0
+    }
+
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
     // ==================== Date replacement ====================
 
@@ -222,6 +239,12 @@ declare const __EXT_VERSION__: string
             const weekday = parts.find((p) => p.type === 'weekday')?.value
             // Convert weekday name to number (0-6, Sunday-Saturday)
             return weekdays.indexOf(weekday || 'Sun')
+        }
+
+        dateObj.getTimezoneOffset = function () {
+            const parts = formatter.formatToParts(this)
+            const offset = parts.find((p) => p.type === 'timeZoneName')?.value
+            return getOffsetFromLongOffset(offset)
         }
 
         // Note: We don't override UTC methods as they should remain as is
