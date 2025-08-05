@@ -1,13 +1,13 @@
-type DateParts = {
+export type DateParts = {
     year: number
-    month: number
-    day: number
+    month: number // 0-based month (0 = January)
+    day: number // 1-based day of the month
     hour: number
     minute: number
     second: number
     ms: number
     weekday: string
-    timeZoneName: string
+    offsetName: string // e.g. "GMT-05:00" or "GMT"
     rawFormat: Record<Intl.DateTimeFormatPartTypes, string>
 }
 
@@ -29,7 +29,7 @@ export function getDateParts(date: Date | number, timezone: string | undefined):
             second: parseInt(partsMap.second, 10),
             ms: parseInt(partsMap.fractionalSecond, 10),
             weekday: partsMap.weekday,
-            timeZoneName: partsMap.timeZoneName,
+            offsetName: partsMap.timeZoneName,
             rawFormat: partsMap,
         }
     } catch {

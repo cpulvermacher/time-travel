@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import { getDateParts } from '../../../scripts/fake-date/date-parts'
 
 // Only tests the timezone handling, tests without timezone set are in replace_date.test.ts
@@ -16,7 +17,7 @@ describe('getDateParts', () => {
             second: 0,
             ms: 0,
             weekday: 'Sun',
-            timeZoneName: 'GMT',
+            offsetName: 'GMT',
             rawFormat: {
                 year: '2023',
                 month: '01',
@@ -45,7 +46,7 @@ describe('getDateParts', () => {
             second: 0,
             ms: 0,
             weekday: 'Sun',
-            timeZoneName: 'GMT-05:00',
+            offsetName: 'GMT-05:00',
             rawFormat: {
                 year: '2023',
                 month: '01',
@@ -74,7 +75,7 @@ describe('getDateParts', () => {
             second: 34,
             ms: 123,
             weekday: 'Sun',
-            timeZoneName: 'GMT-05:00',
+            offsetName: 'GMT-05:00',
             rawFormat: {
                 year: '2023',
                 month: '01',
@@ -103,7 +104,7 @@ describe('getDateParts', () => {
             second: 34,
             ms: 123,
             weekday: 'Sun',
-            timeZoneName: 'GMT-05:00',
+            offsetName: 'GMT-05:00',
             rawFormat: {
                 year: '2023',
                 month: '01',

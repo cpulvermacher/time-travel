@@ -102,7 +102,7 @@ function patchDateMethods(datePrototype: Date): void {
             return 'Invalid Date'
         }
 
-        let offset = parts.timeZoneName.replace(':', '')
+        let offset = parts.offsetName.replace(':', '')
         if (offset === 'GMT') {
             offset = 'GMT+0000'
         }
@@ -233,7 +233,7 @@ function patchDateMethods(datePrototype: Date): void {
             return NaN
         }
 
-        return getOffsetFromLongOffset(parts.timeZoneName)
+        return getOffsetFromLongOffset(parts.offsetName)
     }
 
     // --- Override local time setters to use selected timezone ---
@@ -420,15 +420,15 @@ function getOffset(dateString: string, timezone: string): string | undefined {
     if (!parts) {
         return undefined
     }
-    let offset = parts.timeZoneName
+    let offset = parts.offsetName
 
     // now parse the date string with the timezone offset
     const firstAttemptDate = new OriginalDate(`${dateString} ${offset}`)
     const refinedParts = getDateParts(firstAttemptDate, timezone)
 
     // If the timezone offsets are different, we crossed a DST boundary
-    if (refinedParts && refinedParts.timeZoneName !== parts.timeZoneName) {
-        offset = refinedParts.timeZoneName
+    if (refinedParts && refinedParts.offsetName !== parts.offsetName) {
+        offset = refinedParts.offsetName
     }
     return offset
 }
