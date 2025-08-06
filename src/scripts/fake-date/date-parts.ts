@@ -17,7 +17,7 @@ export type FullDateParts = SharedDateParts & {
     rawFormat: Record<Intl.DateTimeFormatPartTypes, string>
 }
 
-export function getDateParts(date: Date | number, timezone: string | undefined): FullDateParts | undefined {
+export function getDateParts(date: Date | number, timezone: string): FullDateParts | undefined {
     const formatter = getFormatterForTimezone(timezone)
     try {
         const parts = formatter.formatToParts(date)

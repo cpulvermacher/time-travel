@@ -24,13 +24,13 @@ export function getTimezoneOptions(locale: string): Timezone[] {
             timezoneOptions = [
                 {
                     tz: '',
-                    label: `${m.timezone_browser_default()} - ${getTimezoneName(locale, undefined)} (${getOffset(locale, undefined)})`,
+                    label: `${m.timezone_browser_default()} - ${getTimezoneName(locale, undefined, undefined, 'shortGeneric')} (${getOffset(locale, undefined)})`,
                 },
-                { tz: 'UTC', label: 'GMT' },
+                { tz: 'UTC', label: 'UTC' },
                 ...timeZones
                     .filter((tz) => tz !== 'UTC')
                     .map((tz) => {
-                        const offset = getOffset(locale, tz)
+                        const offset = getOffset(locale, tz).replace('GMT', 'UTC')
                         const tzParts = tz.split('/')
                         const group = tzParts.length > 1 ? tzParts[0] : 'Etc' // Firefox has a number of funky timezones like 'CST6CDT', put them in 'Etc'
                         const tzName = tzParts.length > 1 ? tzParts.slice(1).join('/') : tz
@@ -53,20 +53,21 @@ export function getTimezoneOptions(locale: string): Timezone[] {
 
 /**  Get offset in localized format like "GMT-08:00" */
 export function getOffset(locale: string, tz: string | undefined, date?: Date) {
-    const formatter = new Intl.DateTimeFormat(locale, {
-        timeZone: tz,
-        timeZoneName: 'longOffset',
-    })
-    return removeDateTimePart(formatter.format(date || new Date()))
+    return getTimezoneName(locale, tz, date, 'longOffset')
 }
 
 /** Get timezone name */
-function getTimezoneName(locale: string, tz: string | undefined) {
+function getTimezoneName(
+    locale: string,
+    tz: string | undefined,
+    date: Date | undefined,
+    format: 'short' | 'shortGeneric' | 'longOffset'
+) {
     const formatter = new Intl.DateTimeFormat(locale, {
         timeZone: tz,
-        timeZoneName: 'shortGeneric',
+        timeZoneName: format,
     })
-    return removeDateTimePart(formatter.format(new Date()))
+    return removeDateTimePart(formatter.format(date || new Date()))
 }
 
 /** Remove date and time part from a string, leaving only the timezone part. */
@@ -79,6 +80,7 @@ function removeDateTimePart(str: string): string {
 }
 
 type TzInfo = {
+    tzName: string // e.g. "CEST"
     offset: string // e.g. "-05:00"
     isDst: boolean
     yearWithDst: boolean
@@ -102,8 +104,13 @@ export function getTzInfo(locale: string, dateStr: string | undefined, timezone:
     const offsetDate = getOffset('en', timezone, date)
     const isDst = offsetDate > offsetWinter || offsetDate > offsetSummer
 
+    let tzName = getTimezoneName(locale, timezone, date, 'short')
+    if (tzName !== 'GMT' && tzName.includes('GMT')) {
+        tzName = getTimezoneName(locale, timezone, date, 'shortGeneric')
+    }
     const offset = offsetDate.replace('GMT', '')
     return {
+        tzName,
         offset,
         isDst,
         yearWithDst,

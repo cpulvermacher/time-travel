@@ -15,8 +15,7 @@
 <div class="preview">
     <div class="timezone-label">
         {m.date_in_timezone_info({
-            timezone: timezone,
-            date: '',
+            timezone: `${timezone} (${tzInfo?.tzName})`,
         })}
     </div>
     <div class="time-block">
