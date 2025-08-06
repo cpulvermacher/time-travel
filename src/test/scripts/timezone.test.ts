@@ -33,6 +33,7 @@ describe('replace_date with timezone', () => {
 
         // local time methods
         expect(date.getFullYear()).toBe(2023)
+        expect(date.getYear()).toBe(123)
         expect(date.getMonth()).toBe(0) // January
         expect(date.getDate()).toBe(1)
         expect(date.getHours()).toBe(12)
@@ -75,6 +76,7 @@ describe('replace_date with timezone', () => {
 
         // local time methods
         expect(date.getFullYear()).toBe(2022)
+        expect(date.getYear()).toBe(122)
         expect(date.getMonth()).toBe(11) // December
         expect(date.getDate()).toBe(31)
         expect(date.getHours()).toBe(22)

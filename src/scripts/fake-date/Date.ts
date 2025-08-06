@@ -230,6 +230,13 @@ function patchDateMethods(datePrototype: Date): void {
         return getOffsetFromLongOffset(parts.offsetName)
     }
 
+    // add deprecated getYear() if the underlying Date implements it
+    if (datePrototype.getYear !== undefined) {
+        datePrototype.getYear = function () {
+            return this.getFullYear() - 1900
+        }
+    }
+
     // --- Override local time setters to use selected timezone ---
 
     datePrototype.setFullYear = function (...args: [year: number, month?: number, date?: number]) {
