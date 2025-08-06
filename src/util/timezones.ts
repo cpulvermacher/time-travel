@@ -78,29 +78,35 @@ function removeDateTimePart(str: string): string {
     return str
 }
 
-export function isDst(dateStr: string, timezone: string): boolean {
+export function getDstInfo(
+    dateStr: string | undefined,
+    timezone: string
+): { isDst: boolean; yearWithDst: boolean } | undefined {
+    if (!dateStr) {
+        return undefined
+    }
     const date = new Date(dateStr)
     const summerDate = new Date(date.getFullYear(), 5, 1) // June 1st
     const winterDate = new Date(date.getFullYear(), 11, 1) // December 1st
 
-    const options: Intl.DateTimeFormatOptions = {
+    const formatter = new Intl.DateTimeFormat('en', {
         timeZone: timezone,
         timeZoneName: 'longOffset',
+    })
+    const getOffset = (date: Date): string => {
+        const offset = formatter.formatToParts(date).find((part) => part.type === 'timeZoneName')?.value
+        if (!offset) {
+            throw new Error('getDSTinfo(): could not get offset for date ' + date.toISOString())
+        }
+        return offset
     }
-    const formatter = new Intl.DateTimeFormat('en', options)
-    const offsetSummer = formatter.formatToParts(summerDate).find((part) => part.type === 'timeZoneName')?.value
-    const offsetWinter = formatter.formatToParts(winterDate).find((part) => part.type === 'timeZoneName')?.value
-    if (!offsetSummer || !offsetWinter || offsetSummer === offsetWinter) {
-        return false // timezone does not observe DST
-    }
-    const offsetDate = formatter.formatToParts(date).find((part) => part.type === 'timeZoneName')?.value
-    if (!offsetDate) {
-        return false
-    }
+    const offsetSummer = getOffset(summerDate)
+    const offsetWinter = getOffset(winterDate)
+    const yearWithDst = offsetSummer !== offsetWinter
 
     // DST can happen in 'winter' in the southern hemisphere, so we check if the date's offset is later than either offset
-    if (offsetDate > offsetWinter || offsetDate > offsetSummer) {
-        return true
-    }
-    return false
+    const offsetDate = getOffset(date)
+    const isDst = offsetDate > offsetWinter || offsetDate > offsetSummer
+
+    return { isDst, yearWithDst }
 }

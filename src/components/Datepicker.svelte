@@ -5,7 +5,7 @@
     import { getUILanguage } from '../util/browser'
     import { formatDateInTimezone, formatLocalTime, overwriteDatePart, parseDate } from '../util/common'
     import { getFirstDayOfWeek } from '../util/i18n'
-    import { getOffset, isDst } from '../util/timezones'
+    import { getDstInfo, getOffset } from '../util/timezones'
 
     // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
     const startOfWeek = getFirstDayOfWeek(getUILanguage()) % 7
@@ -20,6 +20,8 @@
     let pickerDate = $state(Date.parse(fakeDate))
     let isValid = $derived(parseDate(fakeDate) !== null)
     let inputRef: HTMLInputElement
+
+    const dstInfo = $derived(getDstInfo(isValid ? fakeDate : undefined, timezone))
 
     function onkeydown(event: KeyboardEvent) {
         if (!isValid) {
@@ -137,8 +139,11 @@
                     date: formatDateInTimezone(new Date(fakeDate), timezone),
                 })}
             </span>
-            {#if isDst(fakeDate, timezone)}
-                <span class="dst-badge" title={m.dst_info()}>
+            {#if dstInfo?.yearWithDst}
+                <span
+                    class={{ badge: true, 'badge--dst': dstInfo?.isDst }}
+                    title={dstInfo?.isDst ? m.dst_info() : undefined}
+                >
                     {getOffset('en', timezone, new Date(fakeDate)).replace('GMT', '')}
                 </span>
             {/if}
@@ -182,13 +187,16 @@
         color: var(--secondary-text-color);
         margin-top: 5px;
     }
-    .dst-badge {
-        background-color: orange;
+    .badge {
+        background-color: #9f9f9f;
         color: white;
         padding: 2px 5px;
         border-radius: 3px;
         font-size: 0.8em;
         margin-left: 5px;
+    }
+    .badge--dst {
+        background-color: orange;
     }
 
     /* for Japanese, add a suffix to the year*/
