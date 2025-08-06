@@ -461,13 +461,27 @@ describe('replace_date', () => {
             })
 
             it('setSeconds()', () => {
+                expect(date.getMinutes()).toEqual(34)
+
                 date.setSeconds(30)
                 expect(date.getSeconds()).toEqual(30)
+                expect(date.getMinutes()).toEqual(34)
+                date.setSeconds(-1, 20)
+                expect(date.getSeconds()).toEqual(59)
+                expect(date.getMilliseconds()).toEqual(20)
+                expect(date.getMinutes()).toEqual(33)
             })
 
             it('setMilliseconds()', () => {
+                expect(date.getSeconds()).toEqual(56)
+
                 date.setMilliseconds(123)
                 expect(date.getMilliseconds()).toEqual(123)
+                expect(date.getSeconds()).toEqual(56)
+
+                date.setMilliseconds(-1)
+                expect(date.getMilliseconds()).toEqual(999)
+                expect(date.getSeconds()).toEqual(55)
             })
 
             // and UTC variants

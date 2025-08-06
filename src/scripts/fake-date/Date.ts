@@ -291,9 +291,26 @@ function patchDateMethods(datePrototype: Date): void {
         return overridePartOfDate(this, timezone, { minutes: min, seconds: sec, milliseconds: ms })
     }
 
+    datePrototype.setSeconds = function (...args: [sec: number, ms?: number]) {
+        const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.setSeconds.apply(this, args)
+        }
+
+        const [sec, ms] = args
+        return overridePartOfDate(this, timezone, { seconds: sec, milliseconds: ms })
+    }
+
+    datePrototype.setMilliseconds = function (ms: number) {
+        const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.setMilliseconds.call(this, ms)
+        }
+
+        return overridePartOfDate(this, timezone, { milliseconds: ms })
+    }
+
     // Note: We don't override UTC methods as they should remain as is
-    // likewise, setSeconds/setMiliseconds are not affected by timezone
-    // TODO is that correct? add test case for setSeconds/setMilliseconds with overflow
 }
 
 /** for a given date and timezone, returns a single UTC timestamp that produces the desiredDate.
