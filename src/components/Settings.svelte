@@ -1,7 +1,7 @@
 <script lang="ts">
     import { m } from '../paraglide/messages'
     import { setClockState, setFakeDate, updateExtensionIcon, type Settings } from '../popup/extension_state'
-    import { reloadTab, saveSetting } from '../util/browser'
+    import { reloadTab, saveMostRecentTimezone, saveSetting } from '../util/browser'
     import { parseDate } from '../util/common'
     import Accordion from './Accordion.svelte'
     import Background from './Background.svelte'
@@ -100,10 +100,11 @@
     function onTimezoneChange(timezone: string) {
         settings.timezone = timezone
         saveSetting('timezone', timezone)
+        saveMostRecentTimezone(timezone)
+
         if (isEnabled) {
             applyAndEnable()
         }
-        //TODO consider saving previously selected timezones in settings
     }
     function onEnableChange(enabled: boolean) {
         const parsedDate = parseDate(fakeDate)

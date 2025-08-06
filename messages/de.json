@@ -42,7 +42,8 @@
     "enable_auto_reload": "Automatisch neu laden",
     "advanced_settings": "Details",
     "timezone_selector_label": "Zeitzone (Experimentell)",
-    "timezone_group_common": "Häufig",
+    "timezone_group_common": "Allgemein",
+    "timezone_group_recent": "Zuletzt",
     "timezone_browser_default": "Standard",
     "date_in_timezone_info": "In {timezone}:",
     "dst_info": "Sommerzeit ist für dieses Datum aktiv."

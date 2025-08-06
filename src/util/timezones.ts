@@ -3,7 +3,7 @@ import { m } from '../paraglide/messages'
 export type Timezone = {
     tz: string // IANA timezone identifier, e.g., "America/New_York". Empty string for browser default.
     label: string // label, e.g. 'America/New_York (UTC-05:00)'
-    group?: string // grouping label, e.g. 'America'
+    group: string // grouping label, e.g. 'America'
 }
 
 let timezoneOptions: Timezone[] | null = null
@@ -12,14 +12,38 @@ let timezoneOptions: Timezone[] | null = null
  *
  * (Assumes locale does not change during the lifetime of the extension)
  */
-export function getTimezoneOptions(locale: string): Timezone[] {
+export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone[] {
     if (timezoneOptions) {
         return timezoneOptions
     }
 
     const defaultZoneLabel = `${m.timezone_browser_default()} - ${getTimezoneName(locale, undefined, undefined, 'shortGeneric')} (${getOffset(locale, undefined)})`
+
+    const buildOption = (tz: string) => {
+        const offset = getOffset(locale, tz).replace('GMT', 'UTC')
+        const tzParts = tz.split('/')
+        const group = tzParts.length > 1 ? tzParts[0] : 'Etc' // Firefox has a number of funky timezones like 'CST6CDT', put them in 'Etc'
+        const tzName = tzParts.length > 1 ? tzParts.slice(1).join('/') : tz
+
+        return {
+            tz,
+            label: `${tzName} (${offset})`,
+            group,
+        }
+    }
+    timezoneOptions = [
+        { tz: '', label: defaultZoneLabel, group: '_common' },
+        { tz: 'UTC', label: 'UTC', group: '_common' },
+        ...recentTz
+            .filter((tz) => tz) // filter ''
+            .map(buildOption)
+            .map((option) => ({
+                ...option,
+                group: '_recent',
+            })),
+    ]
+
     if (!('supportedValuesOf' in Intl)) {
-        timezoneOptions = [{ tz: '', label: defaultZoneLabel }]
         return timezoneOptions
     }
 
@@ -27,27 +51,14 @@ export function getTimezoneOptions(locale: string): Timezone[] {
         const timeZones = Intl.supportedValuesOf('timeZone')
 
         timezoneOptions = [
-            { tz: '', label: defaultZoneLabel },
-            { tz: 'UTC', label: 'UTC' },
+            ...timezoneOptions,
             ...timeZones
                 .filter((tz) => tz !== 'UTC')
-                .map((tz) => {
-                    const offset = getOffset(locale, tz).replace('GMT', 'UTC')
-                    const tzParts = tz.split('/')
-                    const group = tzParts.length > 1 ? tzParts[0] : 'Etc' // Firefox has a number of funky timezones like 'CST6CDT', put them in 'Etc'
-                    const tzName = tzParts.length > 1 ? tzParts.slice(1).join('/') : tz
-
-                    return {
-                        tz,
-                        label: `${tzName} (${offset})`,
-                        group,
-                    }
-                })
+                .map(buildOption)
                 .sort((a, b) => a.tz.localeCompare(b.tz)), // Sort by timezone identifier
         ]
     } catch (error) {
         console.error('Error loading timezones:', error)
-        timezoneOptions = [{ tz: '', label: defaultZoneLabel }]
     }
     return timezoneOptions
 }
