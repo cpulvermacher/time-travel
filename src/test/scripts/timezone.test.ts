@@ -241,6 +241,15 @@ describe('replace_date with timezone', () => {
         // checkDate(new Date(Date.parse('2025/07/15')))
     })
 
+    it('parse() handles some overflows', () => {
+        const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
+        setFakeDate(fakeDate, 'America/New_York')
+
+        const parsedDate = new Date(Date.parse('2025-01-02 24:00:00Z'))
+
+        expect(parsedDate.toISOString()).toBe('2025-01-03T00:00:00.000Z')
+    })
+
     const jan1stUtc = new Date('2024-01-01T00:00:00.000Z')
     it('setFullYear()', () => {
         setFakeDate('2023-06-01 00:00', 'America/New_York')
