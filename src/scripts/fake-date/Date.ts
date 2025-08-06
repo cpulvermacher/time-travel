@@ -60,13 +60,7 @@ export function FakeDate(
     return returnDate
 }
 
-/**
- * Patch Date methods to respect the selected timezone
- * This includes:
- * - String representation methods: toString, toLocaleString, toLocaleDateString, toLocaleTimeString
- * - Local time methods: getHours, getMinutes, getSeconds, etc.
- * - UTC methods (getUTCHours, etc.) remain unaffected
- */
+/** Patch Date methods to respect the selected timezone */
 function patchDateMethods(datePrototype: Date): void {
     // --- Override string representation methods ---
 
@@ -115,7 +109,7 @@ function patchDateMethods(datePrototype: Date): void {
         return `${raw.hour}:${raw.minute}:${raw.second} ${offset} (${tzName})`
     }
 
-    // Override locale string methods to use the selected timezone when no timezone is specified
+    // Override locale string methods to use the configured timezone by default
     datePrototype.toLocaleString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
         return OriginalDate.prototype.toLocaleString.call(this, locales, optionsWithDefaultTz(options))
     }
@@ -128,7 +122,71 @@ function patchDateMethods(datePrototype: Date): void {
         return OriginalDate.prototype.toLocaleTimeString.call(this, locales, optionsWithDefaultTz(options))
     }
 
-    // --- Override local time methods to return values in the selected timezone ---
+    // --- Override local time methods to return values in the configured timezone ---
+
+    datePrototype.getFullYear = function () {
+        const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.getFullYear.call(this)
+        }
+
+        const parts = getDateParts(this, timezone)
+        if (!parts) {
+            return NaN
+        }
+
+        return parts.year
+    }
+
+    // add deprecated getYear() if the underlying Date implements it
+    if (datePrototype.getYear !== undefined) {
+        datePrototype.getYear = function () {
+            return this.getFullYear() - 1900
+        }
+    }
+
+    datePrototype.getMonth = function () {
+        const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.getMonth.call(this)
+        }
+
+        const parts = getDateParts(this, timezone)
+        if (!parts) {
+            return NaN
+        }
+
+        return parts.month
+    }
+
+    datePrototype.getDate = function () {
+        const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.getDate.call(this)
+        }
+
+        const parts = getDateParts(this, timezone)
+        if (!parts) {
+            return NaN
+        }
+
+        return parts.day
+    }
+
+    datePrototype.getDay = function () {
+        const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.getDay.call(this)
+        }
+
+        const parts = getDateParts(this, timezone)
+        if (!parts) {
+            return NaN
+        }
+
+        // Convert weekday name to number (0-6, Sunday-Saturday)
+        return weekdays.indexOf(parts.weekday || 'Sun')
+    }
 
     datePrototype.getHours = function () {
         const timezone = getTimezone()
@@ -186,63 +244,6 @@ function patchDateMethods(datePrototype: Date): void {
         return parts.ms
     }
 
-    datePrototype.getDate = function () {
-        const timezone = getTimezone()
-        if (!timezone) {
-            return OriginalDate.prototype.getDate.call(this)
-        }
-
-        const parts = getDateParts(this, timezone)
-        if (!parts) {
-            return NaN
-        }
-
-        return parts.day
-    }
-
-    datePrototype.getMonth = function () {
-        const timezone = getTimezone()
-        if (!timezone) {
-            return OriginalDate.prototype.getMonth.call(this)
-        }
-
-        const parts = getDateParts(this, timezone)
-        if (!parts) {
-            return NaN
-        }
-
-        return parts.month
-    }
-
-    datePrototype.getFullYear = function () {
-        const timezone = getTimezone()
-        if (!timezone) {
-            return OriginalDate.prototype.getFullYear.call(this)
-        }
-
-        const parts = getDateParts(this, timezone)
-        if (!parts) {
-            return NaN
-        }
-
-        return parts.year
-    }
-
-    datePrototype.getDay = function () {
-        const timezone = getTimezone()
-        if (!timezone) {
-            return OriginalDate.prototype.getDay.call(this)
-        }
-
-        const parts = getDateParts(this, timezone)
-        if (!parts) {
-            return NaN
-        }
-
-        // Convert weekday name to number (0-6, Sunday-Saturday)
-        return weekdays.indexOf(parts.weekday || 'Sun')
-    }
-
     datePrototype.getTimezoneOffset = function () {
         const timezone = getTimezone()
         if (!timezone) {
@@ -257,14 +258,7 @@ function patchDateMethods(datePrototype: Date): void {
         return getOffsetFromLongOffset(parts.offsetName)
     }
 
-    // add deprecated getYear() if the underlying Date implements it
-    if (datePrototype.getYear !== undefined) {
-        datePrototype.getYear = function () {
-            return this.getFullYear() - 1900
-        }
-    }
-
-    // --- Override local time setters to use selected timezone ---
+    // --- Override local time setters to use configured timezone ---
 
     datePrototype.setFullYear = function (...args: [year: number, month?: number, date?: number]) {
         const timezone = getTimezone()
