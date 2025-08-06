@@ -81,6 +81,10 @@ function patchDateMethods(datePrototype: Date): void {
     }
     datePrototype.toDateString = function () {
         const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.toDateString.call(this)
+        }
+
         const parts = getDateParts(this, timezone)
         if (!parts) {
             return 'Invalid Date'
@@ -92,6 +96,10 @@ function patchDateMethods(datePrototype: Date): void {
     }
     datePrototype.toTimeString = function () {
         const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.toTimeString.call(this)
+        }
+
         const parts = getDateParts(this, timezone)
         if (!parts) {
             return 'Invalid Date'
@@ -124,6 +132,10 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getHours = function () {
         const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.getHours.call(this)
+        }
+
         const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
@@ -134,6 +146,10 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getMinutes = function () {
         const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.getMinutes.call(this)
+        }
+
         const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
@@ -144,6 +160,10 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getSeconds = function () {
         const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.getSeconds.call(this)
+        }
+
         const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
@@ -154,6 +174,10 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getMilliseconds = function () {
         const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.getMilliseconds.call(this)
+        }
+
         const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
@@ -164,6 +188,10 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getDate = function () {
         const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.getDate.call(this)
+        }
+
         const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
@@ -174,6 +202,10 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getMonth = function () {
         const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.getMonth.call(this)
+        }
+
         const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
@@ -184,6 +216,10 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getFullYear = function () {
         const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.getFullYear.call(this)
+        }
+
         const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
@@ -194,6 +230,10 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getDay = function () {
         const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.getDay.call(this)
+        }
+
         const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
@@ -205,6 +245,10 @@ function patchDateMethods(datePrototype: Date): void {
 
     datePrototype.getTimezoneOffset = function () {
         const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.getTimezoneOffset.call(this)
+        }
+
         const parts = getDateParts(this, timezone)
         if (!parts) {
             return NaN
