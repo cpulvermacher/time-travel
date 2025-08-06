@@ -15,13 +15,7 @@ export function FakeIntlDateTimeFormat(
         return new Intl.DateTimeFormat(locale, options)
     }
 
-    // Apply custom timezone if set and no explicit timezone in options
-    const timezone = getTimezone()
-    if (timezone && (!options || !options.timeZone)) {
-        options = { ...(options || {}), timeZone: timezone }
-    }
-
-    this._originalObject = OriginalIntlDateTimeFormat(locale, options)
+    this._originalObject = OriginalIntlDateTimeFormat(locale, optionsWithDefaultTz(options))
 
     // the native code implementation of these works even if called without a bound `this`, let's emulate that behaviour
     this.format = format.bind(this)
@@ -31,6 +25,20 @@ export function FakeIntlDateTimeFormat(
     this.resolvedOptions = resolvedOptions.bind(this)
 
     return this
+}
+
+/** Apply custom timezone if set and no explicit timezone in options */
+export function optionsWithDefaultTz(options?: Intl.DateTimeFormatOptions): Intl.DateTimeFormatOptions | undefined {
+    if (options?.timeZone) {
+        return options
+    }
+
+    const timezone = getTimezone()
+    if (!timezone) {
+        return options
+    }
+
+    return { ...(options || {}), timeZone: timezone }
 }
 
 function format(this: FakeIntlDateTimeFormat, date?: Date) {

@@ -6,6 +6,7 @@ import {
     getDatePartsForLocalTimestamp,
     type LocalDateParts,
 } from './date-parts'
+import { optionsWithDefaultTz } from './DateTimeFormat'
 
 const OriginalDate = Date
 
@@ -108,33 +109,15 @@ function patchDateMethods(datePrototype: Date): void {
 
     // Override locale string methods to use the selected timezone when no timezone is specified
     datePrototype.toLocaleString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
-        if (!options || !options.timeZone) {
-            const timezone = getTimezone()
-            if (timezone) {
-                options = { ...(options || {}), timeZone: timezone }
-            }
-        }
-        return OriginalDate.prototype.toLocaleString.call(this, locales, options)
+        return OriginalDate.prototype.toLocaleString.call(this, locales, optionsWithDefaultTz(options))
     }
 
     datePrototype.toLocaleDateString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
-        if (!options || !options.timeZone) {
-            const timezone = getTimezone()
-            if (timezone) {
-                options = { ...(options || {}), timeZone: timezone }
-            }
-        }
-        return OriginalDate.prototype.toLocaleDateString.call(this, locales, options)
+        return OriginalDate.prototype.toLocaleDateString.call(this, locales, optionsWithDefaultTz(options))
     }
 
     datePrototype.toLocaleTimeString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
-        if (!options || !options.timeZone) {
-            const timezone = getTimezone()
-            if (timezone) {
-                options = { ...(options || {}), timeZone: timezone }
-            }
-        }
-        return OriginalDate.prototype.toLocaleTimeString.call(this, locales, options)
+        return OriginalDate.prototype.toLocaleTimeString.call(this, locales, optionsWithDefaultTz(options))
     }
 
     // --- Override local time methods to return values in the selected timezone ---
