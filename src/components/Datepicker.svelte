@@ -3,9 +3,9 @@
     import { tick } from 'svelte'
     import { m } from '../paraglide/messages'
     import { getUILanguage } from '../util/browser'
-    import { formatDateInTimezone, formatLocalTime, overwriteDatePart, parseDate } from '../util/common'
+    import { formatLocalTime, overwriteDatePart, parseDate } from '../util/common'
     import { getFirstDayOfWeek } from '../util/i18n'
-    import { getDstInfo, getOffset } from '../util/timezones'
+    import PreviewInTimezone from './PreviewInTimezone.svelte'
 
     // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
     const startOfWeek = getFirstDayOfWeek(getUILanguage()) % 7
@@ -20,8 +20,6 @@
     let pickerDate = $state(Date.parse(fakeDate))
     let isValid = $derived(parseDate(fakeDate) !== null)
     let inputRef: HTMLInputElement
-
-    const dstInfo = $derived(getDstInfo(isValid ? fakeDate : undefined, timezone))
 
     function onkeydown(event: KeyboardEvent) {
         if (!isValid) {
@@ -133,20 +131,7 @@
             title={m.date_input_hint()}
         />
         {#if isValid && timezone}
-            <span class="timezone-label">
-                {m.date_in_timezone_info({
-                    timezone: timezone,
-                    date: formatDateInTimezone(new Date(fakeDate), timezone),
-                })}
-            </span>
-            {#if dstInfo?.yearWithDst}
-                <span
-                    class={{ badge: true, 'badge--dst': dstInfo?.isDst }}
-                    title={dstInfo?.isDst ? m.dst_info() : undefined}
-                >
-                    {getOffset('en', timezone, new Date(fakeDate)).replace('GMT', '')}
-                </span>
-            {/if}
+            <PreviewInTimezone {fakeDate} {timezone} />
         {/if}
     </DatePicker>
 </div>
@@ -180,23 +165,6 @@
         100% {
             box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
         }
-    }
-
-    .timezone-label {
-        font-size: 0.9em;
-        color: var(--secondary-text-color);
-        margin-top: 5px;
-    }
-    .badge {
-        background-color: #9f9f9f;
-        color: white;
-        padding: 2px 5px;
-        border-radius: 3px;
-        font-size: 0.8em;
-        margin-left: 5px;
-    }
-    .badge--dst {
-        background-color: orange;
     }
 
     /* for Japanese, add a suffix to the year*/
