@@ -4,6 +4,7 @@ import {
     getDateParts,
     getDatePartsForLocalDate,
     getDatePartsForLocalTimestamp,
+    getTimezoneName,
     type LocalDateParts,
 } from './date-parts'
 import { optionsWithDefaultTz } from './DateTimeFormat'
@@ -429,22 +430,6 @@ function getOffsetFromLongOffset(longOffset?: string): number {
         }
     }
     return 0
-}
-
-/** Returns timezone name for toString()/toTimeString(). */
-function getTimezoneName(date: Date, timezone: string | undefined): string {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZoneName: 'long', // technically the format is implementation defined, but Chrome, Firefox and node seem to follow this
-        timeZone: timezone,
-    })
-
-    try {
-        const parts = formatter.formatToParts(date)
-        const timeZonePart = parts.find((part) => part.type === 'timeZoneName')
-        return timeZonePart ? timeZonePart.value : ''
-    } catch {
-        return ''
-    }
 }
 
 /**

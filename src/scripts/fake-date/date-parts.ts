@@ -13,7 +13,7 @@ export type SharedDateParts = {
 
 export type FullDateParts = SharedDateParts & {
     weekday: string
-    offsetName: string // e.g. "GMT-05:00" or "GMT"
+    offsetName: string // a longOffset string, e.g. "GMT-05:00" or "GMT"
     rawFormat: Record<Intl.DateTimeFormatPartTypes, string>
 }
 
@@ -119,3 +119,32 @@ function getFormatterForTimezone(timezone: string | undefined): Intl.DateTimeFor
 
 let cachedFormatter: Intl.DateTimeFormat | null = null
 let cachedFormatterForTimezone: string | undefined | null = null
+
+/** Returns timezone name for toString()/toTimeString(). */
+export function getTimezoneName(date: Date, timezone: string): string {
+    const formatter = getLongNameFormatter(timezone)
+
+    try {
+        const parts = formatter.formatToParts(date)
+        const timeZonePart = parts.find((part) => part.type === 'timeZoneName')
+        return timeZonePart ? timeZonePart.value : ''
+    } catch {
+        return ''
+    }
+}
+
+function getLongNameFormatter(timezone: string): Intl.DateTimeFormat {
+    if (cachedLongNameFormatterForTimezone === timezone && cachedLongNameFormatter !== null) {
+        return cachedLongNameFormatter
+    }
+    cachedLongNameFormatterForTimezone = timezone
+    cachedLongNameFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZoneName: 'long', // technically the format is implementation defined, but Chrome, Firefox and node seem to follow this
+        timeZone: timezone,
+    })
+
+    return cachedLongNameFormatter
+}
+
+let cachedLongNameFormatter: Intl.DateTimeFormat | null = null
+let cachedLongNameFormatterForTimezone: string | undefined | null = null
