@@ -128,7 +128,7 @@ export async function reloadTab() {
     await chrome.tabs.reload(tabId)
 }
 
-/** get the browser UI language */
+/** get the browser UI language (e.g. "en-GB") */
 export function getUILanguage(): string {
     if (typeof chrome !== 'undefined' && chrome?.i18n !== undefined) {
         return chrome.i18n.getUILanguage()

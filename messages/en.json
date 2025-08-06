@@ -44,6 +44,6 @@
     "timezone_selector_label": "Time Zone (Experimental)",
     "timezone_group_common": "Common",
     "timezone_browser_default": "Default",
-    "date_in_timezone_info": "{date} in {timezone}",
+    "date_in_timezone_info": "In {timezone}:",
     "dst_info": "Daylight Saving Time (DST) is in effect for this date."
 }

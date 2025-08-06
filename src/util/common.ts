@@ -90,20 +90,6 @@ export function overwriteDatePart(dateTimeString: string, newDate: Date): string
     return formatLocalTime(newDate, { fullPrecision: true })
 }
 
-/** Get date in YYYY-MM-DD hh:mm format in the specified timezone. */
-export function formatDateInTimezone(date: Date, timezone: string): string {
-    const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        timeZone: timezone,
-    }
-    const formatter = new Intl.DateTimeFormat('en', options)
-    return formatLocalTime(new Date(formatter.format(date).replace(',', '')))
-}
-
 /** Tries parsing a date string, returns a valid date string or null if invalid.
  *
  * If the string is a UNIX timestamp, it is converted into an ISO string instead.

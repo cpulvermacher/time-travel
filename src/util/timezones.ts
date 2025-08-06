@@ -78,10 +78,15 @@ function removeDateTimePart(str: string): string {
     return str
 }
 
-export function getDstInfo(
-    dateStr: string | undefined,
-    timezone: string
-): { isDst: boolean; yearWithDst: boolean } | undefined {
+type TzInfo = {
+    offset: string // e.g. "-05:00"
+    isDst: boolean
+    yearWithDst: boolean
+    timeString: string // localized time string without seconds, e.g. "13:34" or "01:34 PM"
+    dateString: string // date string, e.g. "Aug 6, 2025" or "2025年8月6日"
+}
+
+export function getTzInfo(locale: string, dateStr: string | undefined, timezone: string): TzInfo | undefined {
     if (!dateStr) {
         return undefined
     }
@@ -89,24 +94,25 @@ export function getDstInfo(
     const summerDate = new Date(date.getFullYear(), 5, 1) // June 1st
     const winterDate = new Date(date.getFullYear(), 11, 1) // December 1st
 
-    const formatter = new Intl.DateTimeFormat('en', {
-        timeZone: timezone,
-        timeZoneName: 'longOffset',
-    })
-    const getOffset = (date: Date): string => {
-        const offset = formatter.formatToParts(date).find((part) => part.type === 'timeZoneName')?.value
-        if (!offset) {
-            throw new Error('getDSTinfo(): could not get offset for date ' + date.toISOString())
-        }
-        return offset
-    }
-    const offsetSummer = getOffset(summerDate)
-    const offsetWinter = getOffset(winterDate)
+    const offsetSummer = getOffset('en', timezone, summerDate)
+    const offsetWinter = getOffset('en', timezone, winterDate)
     const yearWithDst = offsetSummer !== offsetWinter
 
     // DST can happen in 'winter' in the southern hemisphere, so we check if the date's offset is later than either offset
-    const offsetDate = getOffset(date)
+    const offsetDate = getOffset('en', timezone, date)
     const isDst = offsetDate > offsetWinter || offsetDate > offsetSummer
 
-    return { isDst, yearWithDst }
+    const offset = offsetDate.replace('GMT', '')
+    return {
+        offset,
+        isDst,
+        yearWithDst,
+        timeString: date.toLocaleTimeString(locale, { timeZone: timezone, hour: 'numeric', minute: 'numeric' }),
+        dateString: date.toLocaleDateString(locale, {
+            timeZone: timezone,
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+        }),
+    }
 }
