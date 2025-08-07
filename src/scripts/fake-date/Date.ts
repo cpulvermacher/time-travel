@@ -1,4 +1,3 @@
-import { fakeNowDate, getTimezone } from './storage'
 import {
     compareDateParts,
     getDateParts,
@@ -6,8 +5,9 @@ import {
     getDatePartsForLocalTimestamp,
     getTimezoneName,
     type LocalDateParts,
-} from './date-parts'
+} from '../../util/date-parts'
 import { optionsWithDefaultTz } from './DateTimeFormat'
+import { fakeNowDate, getTimezone } from './storage'
 
 const OriginalDate = Date
 

@@ -96,10 +96,7 @@ type TzInfo = {
     dateString: string // date string, e.g. "Aug 6, 2025" or "2025年8月6日"
 }
 
-export function getTzInfo(locale: string, dateStr: string | undefined, timezone: string): TzInfo | undefined {
-    if (!dateStr) {
-        return undefined
-    }
+export function getTzInfo(locale: string, dateStr: string, timezone: string): TzInfo {
     const date = new Date(dateStr)
     const summerDate = new Date(date.getFullYear(), 5, 1) // June 1st
     const winterDate = new Date(date.getFullYear(), 11, 1) // December 1st
