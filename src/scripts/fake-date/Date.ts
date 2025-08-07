@@ -3,6 +3,7 @@ import {
     getDateParts,
     getDatePartsForLocalDate,
     getDatePartsForLocalTimestamp,
+    getOffsetMinutes,
     getTimezoneName,
     type LocalDateParts,
 } from '../../util/date-parts'
@@ -256,7 +257,7 @@ function patchDateMethods(datePrototype: Date): void {
             return NaN
         }
 
-        return getOffsetFromLongOffset(parts.offsetName)
+        return getOffsetMinutes(parts.offsetName)
     }
 
     // --- Override local time setters to use configured timezone ---
@@ -409,27 +410,6 @@ function overridePartOfDate(
 
     const desiredLocalDate = getDatePartsForLocalDate(year, month, day, hours, minutes, seconds, ms)
     return date.setTime(disambiguateDate(desiredLocalDate, timezone))
-}
-
-/** Gets timezone offset in minutes from a longOffset string.
- *
- * Example: "GMT+02:00" -> -120
- */
-function getOffsetFromLongOffset(longOffset?: string): number {
-    if (!longOffset) {
-        return 0
-    }
-    const match = longOffset.match(/GMT([+-]\d{2}):(\d{2})/)
-    if (match) {
-        const hours = parseInt(match[1], 10)
-        const minutes = parseInt(match[2], 10)
-        if (hours < 0) {
-            return -(hours * 60 - minutes)
-        } else {
-            return -(hours * 60 + minutes)
-        }
-    }
-    return 0
 }
 
 /**

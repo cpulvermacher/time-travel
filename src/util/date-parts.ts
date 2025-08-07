@@ -96,6 +96,29 @@ export function compareDateParts(
     )
 }
 
+/** Gets timezone offset in minutes from a longOffset string.
+ *
+ * This matches the output of `Date.getTimezoneOffset()`, including the sign.
+ *
+ * Example: "GMT+02:00" -> -120
+ */
+export function getOffsetMinutes(longOffset?: string): number {
+    if (!longOffset) {
+        return 0
+    }
+    const match = longOffset.match(/GMT([+-]\d{2}):(\d{2})/)
+    if (match) {
+        const hours = parseInt(match[1], 10)
+        const minutes = parseInt(match[2], 10)
+        if (hours < 0) {
+            return -(hours * 60 - minutes)
+        } else {
+            return -(hours * 60 + minutes)
+        }
+    }
+    return 0
+}
+
 /** Gets a cached formatter */
 function getFormatterForTimezone(timezone: string | undefined): Intl.DateTimeFormat {
     if (cachedFormatterForTimezone === timezone && cachedFormatter !== null) {
