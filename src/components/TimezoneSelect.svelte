@@ -2,7 +2,7 @@
     import { onMount } from 'svelte'
     import { m } from '../paraglide/messages'
     import { getUILanguage, loadSetting } from '../util/browser'
-    import { getTimezoneOptions, type Timezone } from '../util/timezones'
+    import { getTimezoneOptions, type Timezone } from '../util/timezone-info'
 
     interface Props {
         value: string

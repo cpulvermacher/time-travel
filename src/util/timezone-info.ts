@@ -60,7 +60,7 @@ export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone
 }
 
 /**  Get offset in localized format like "GMT-08:00" */
-export function getOffset(locale: string, tz: string | undefined, date?: Date) {
+function getOffset(locale: string, tz: string | undefined, date?: Date) {
     return getTimezoneName(locale, tz, date, 'longOffset')
 }
 

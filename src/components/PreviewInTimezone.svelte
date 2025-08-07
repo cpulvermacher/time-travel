@@ -1,7 +1,7 @@
 <script lang="ts">
     import { m } from '../paraglide/messages'
     import { getUILanguage } from '../util/browser'
-    import { getTzInfo } from '../util/timezones'
+    import { getTzInfo } from '../util/timezone-info'
 
     interface Props {
         fakeDate: string
