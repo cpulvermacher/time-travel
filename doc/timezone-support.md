@@ -9,9 +9,9 @@ Inside the page's JavaScript environment, all `Date` and `Intl.DateTimeFormat` o
 
 This means that if your system timezone is New York (UTC-05:00), and you configure a fake date of `2025-02-05 17:32`, setting the timezone to:
 
-- London (in February: GMT) will produce a local time of 22:32 on Feb 5,
-- Tokyo (constant UTC+06:00) will produce 07:32 on Feb 6,
-- and Pacific/Chatham (in February: UTC+13:45 with DST) will produce 12:17 on Feb 6.
+- London (in February: GMT) will produce a local time of Feb 5 22:32,
+- Tokyo (constant UTC+06:00) will produce Feb 6 07:32 (one day later),
+- Pacific/Chatham (in February: UTC+13:45 with DST) will produce Feb 6 12:17.
 
 In all cases, the UTC time is unchanged, and only the local time value will change.
 
