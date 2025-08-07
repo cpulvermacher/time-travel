@@ -1,5 +1,4 @@
 import { m } from '../paraglide/messages'
-import { getOffsetMinutes } from './date-parts'
 
 export type Timezone = {
     tz: string // IANA timezone identifier, e.g., "America/New_York". Empty string for browser default.
@@ -63,6 +62,27 @@ export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone
 /**  Get offset in localized format like "GMT-08:00" */
 function getOffset(locale: string, tz: string | undefined, date?: Date) {
     return getTimezoneName(locale, tz, date, 'longOffset')
+}
+
+/** Gets timezone offset in minutes from a longOffset string.
+ *
+ * Note: identical to function in date-parts.ts. Needs to be copied to avoid bundle splitting.
+ */
+function getOffsetMinutes(longOffset?: string): number {
+    if (!longOffset) {
+        return 0
+    }
+    const match = longOffset.match(/GMT([+-]\d{2}):(\d{2})/)
+    if (match) {
+        const hours = parseInt(match[1], 10)
+        const minutes = parseInt(match[2], 10)
+        if (hours < 0) {
+            return -(hours * 60 - minutes)
+        } else {
+            return -(hours * 60 + minutes)
+        }
+    }
+    return 0
 }
 
 /** Get timezone name */

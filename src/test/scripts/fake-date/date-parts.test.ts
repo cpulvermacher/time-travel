@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getDateParts, getOffsetMinutes } from '../../util/date-parts'
+import { getDateParts, getOffsetMinutes } from '../../../scripts/fake-date/date-parts'
 
 // Only tests the timezone handling, tests without timezone set are in replace_date.test.ts
 describe('getDateParts', () => {

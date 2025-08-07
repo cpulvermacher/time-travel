@@ -6,7 +6,7 @@ import {
     getOffsetMinutes,
     getTimezoneName,
     type LocalDateParts,
-} from '../../util/date-parts'
+} from './date-parts'
 import { optionsWithDefaultTz } from './DateTimeFormat'
 import { fakeNowDate, getTimezone } from './storage'
 
