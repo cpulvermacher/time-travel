@@ -43,10 +43,6 @@ export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone
             })),
     ]
 
-    if (!('supportedValuesOf' in Intl)) {
-        return timezoneOptions
-    }
-
     try {
         const timeZones = Intl.supportedValuesOf('timeZone')
 
