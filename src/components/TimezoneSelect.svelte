@@ -11,7 +11,7 @@
 
     const { value, onSelect }: Props = $props()
 
-    let timezones: { keys: any; groups: any } | null = $state(null)
+    let timezones: { keys: string[]; groups: Record<string, Timezone[]> } | null = $state(null)
 
     // generating this list for hundreds of timezones takes some time, do it after first render
     onMount(async () => {
