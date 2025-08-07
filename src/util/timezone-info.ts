@@ -1,4 +1,5 @@
 import { m } from '../paraglide/messages'
+import { getOffsetMinutes } from './date-parts'
 
 export type Timezone = {
     tz: string // IANA timezone identifier, e.g., "America/New_York". Empty string for browser default.
@@ -105,9 +106,11 @@ export function getTzInfo(locale: string, dateStr: string, timezone: string): Tz
     const offsetWinter = getOffset('en', timezone, winterDate)
     const yearWithDst = offsetSummer !== offsetWinter
 
-    // DST can happen in 'winter' in the southern hemisphere, so we check if the date's offset is later than either offset
+    // DST can happen around the end of the year in the southern hemisphere, so we check if the date's offset is smaller than either offset
     const offsetDate = getOffset('en', timezone, date)
-    const isDst = offsetDate > offsetWinter || offsetDate > offsetSummer
+    const isDst =
+        getOffsetMinutes(offsetDate) < getOffsetMinutes(offsetWinter) ||
+        getOffsetMinutes(offsetDate) < getOffsetMinutes(offsetSummer)
 
     let tzName = getTimezoneName(locale, timezone, date, 'short')
     if (tzName !== 'GMT' && tzName.includes('GMT')) {
