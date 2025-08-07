@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getDateParts } from '../../util/date-parts'
+import { getDateParts, getOffsetMinutes } from '../../util/date-parts'
 
 // Only tests the timezone handling, tests without timezone set are in replace_date.test.ts
 describe('getDateParts', () => {
@@ -118,5 +118,24 @@ describe('getDateParts', () => {
                 literal: ' ',
             },
         })
+    })
+})
+
+describe('getOffsetMinutes', () => {
+    it('returns 0 for UTC', () => {
+        expect(getOffsetMinutes('GMT')).toBe(0)
+    })
+
+    it('returns correct minute offset', () => {
+        expect(getOffsetMinutes('GMT-05:00')).toBe(300)
+        expect(getOffsetMinutes('GMT+02:00')).toBe(-120)
+        expect(getOffsetMinutes('GMT+00:30')).toBe(-30)
+        expect(getOffsetMinutes('GMT+12:45')).toBe(-765)
+    })
+
+    it('returns 0 for invalid timezone', () => {
+        expect(getOffsetMinutes('abcd')).toBe(0)
+        expect(getOffsetMinutes('')).toBe(0)
+        expect(getOffsetMinutes(undefined)).toBe(0)
     })
 })
