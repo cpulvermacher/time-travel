@@ -40,7 +40,9 @@ export async function setFakeDate(dateString: string, timezone?: string): Promis
         needsReload = true
     }
 
-    await injectFunction(tabId, inject.setFakeDate, [fakeDate, timezone || ''])
+    // store UTC time (also avoids issues with `resistFingerprinting` on Firefox)
+    const fakeDateUtc = fakeDate ? new Date(fakeDate).toISOString() : ''
+    await injectFunction(tabId, inject.setFakeDate, [fakeDateUtc, timezone || ''])
 
     return needsReload
 }
