@@ -93,7 +93,24 @@ describe('replace_date with timezone', () => {
         expect(date.toLocaleTimeString('en-US')).toBe('10:01:02 PM')
         expect(Date()).toBe('Sat Dec 31 2022 22:01:02 GMT-0500 (Eastern Standard Time)')
     })
-    //TODO add test that with disabled fakedate + timezone set, Date() returns local time
+
+    it('verify timezone is not used if fakedate is disabled', () => {
+        //pick a TZ different from the current one
+        const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+        const timezone = currentTimezone !== 'America/New_York' ? 'America/New_York' : 'America/Los_Angeles'
+
+        // like setFakeDate(), but only set TZ
+        const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
+        const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone'
+        window.sessionStorage.removeItem(FAKE_DATE_STORAGE_KEY)
+        window.sessionStorage.setItem(TIMEZONE_STORAGE_KEY, timezone)
+        if (window.__timeTravelCheckToggle) {
+            window.__timeTravelCheckToggle()
+        }
+
+        //validate TZ did NOT change
+        expect(Intl.DateTimeFormat().resolvedOptions().timeZone).toBe(currentTimezone)
+    })
 
     it('if timezone is set, creating a new Date with arguments should use that timezone', () => {
         const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
@@ -494,6 +511,7 @@ describe('replace_date with timezone', () => {
 
         // Should be 7:00 in New York (UTC-5)
         expect(formatter.format(new Date())).toBe('07:00')
+        expect(formatter.resolvedOptions().timeZone).toBe('America/New_York')
     })
 
     it('Intl.DateTimeFormat options override the selected timezone', () => {
