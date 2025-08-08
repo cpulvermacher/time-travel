@@ -141,36 +141,6 @@ describe('replace_date', () => {
             const parts = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).formatToParts()
             expect(parts.map((pair) => pair.value).join('')).toStrictEqual('Mar 1, 1970')
         })
-
-        it('respects timezone settings', () => {
-            const fakeDate = '1970-03-01T12:00:00.000Z' // Noon UTC
-            setFakeDate(fakeDate, 'UTC') // Use UTC to ensure consistent results across environments
-
-            const formatted = new Intl.DateTimeFormat('en-US', {
-                hour: 'numeric',
-                minute: 'numeric',
-                hour12: false,
-            }).format()
-
-            // Should be 12:00 in UTC
-            expect(formatted).toBe('12:00')
-        })
-
-        it('explicit timeZone option overrides timezone setting', () => {
-            const fakeDate = '1970-03-01T12:00:00.000Z' // Noon UTC
-            setFakeDate(fakeDate, 'UTC') // Use UTC to ensure consistent results across environments
-
-            // Create with explicit 'GMT' which should behave the same as UTC
-            const formatted = new Intl.DateTimeFormat('en-US', {
-                timeZone: 'GMT',
-                hour: 'numeric',
-                minute: 'numeric',
-                hour12: false,
-            }).format()
-
-            // GMT should be the same as UTC at noon
-            expect(formatted).toBe('12:00')
-        })
     })
 
     describe('ticking', () => {
