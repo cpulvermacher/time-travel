@@ -76,21 +76,13 @@
 </label>
 
 <style>
-    label {
-        margin-top: 5px;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        font-size: 0.9em;
-    }
-
     select {
         width: 100%;
-        padding: 5px;
-        border-radius: 4px;
+        padding: 5px 10px;
+        margin-top: 5px;
+        border-radius: 3px;
         border: 1px solid var(--border-color);
-        background-color: var(--input-bg-color);
+        background: white;
         color: var(--text-color);
-        margin-top: 4px;
     }
 </style>
