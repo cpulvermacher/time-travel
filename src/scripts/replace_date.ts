@@ -14,7 +14,7 @@ const OriginalIntlDateTimeFormat = Intl.DateTimeFormat
 const timeTravelCheckToggle = () => {
     const fakeDate = getFakeDate()
     if (fakeDate !== null) {
-        const timezone = getTimezone()
+        const timezone = getTimezone() ?? 'browser default'
         console.log(`Time Travel: Enabling fake date: ${fakeDate} (TZ: ${timezone})`)
         // eslint-disable-next-line no-global-assign
         Date = FakeDate as DateConstructor

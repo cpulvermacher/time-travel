@@ -33,10 +33,10 @@ export function getTickStartTimestamp(): number | null {
     }
 }
 
-/** return timezone setting, or undefined to use browser default */
-export function getTimezone(): string | undefined {
+/** return timezone setting, or null to use browser default */
+export function getTimezone(): string | null {
     const timezone = getFromStorage(TIMEZONE_STORAGE_KEY)
-    return timezone || undefined
+    return timezone || null
 }
 
 /** return the current date/time we want the page to see.
