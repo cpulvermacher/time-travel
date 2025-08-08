@@ -6,12 +6,12 @@ describe('getTzInfo', () => {
         const timezone = 'Europe/Berlin'
 
         const winter = getTzInfo('en', '2025-01-01', timezone)
-        expect(winter.yearWithDst).toBe(true)
+        expect(winter.isYearWithDst).toBe(true)
         expect(winter.isDst).toBe(false)
         expect(winter.offset).toBe('+01:00')
 
         const summer = getTzInfo('en', '2025-07-01', timezone)
-        expect(summer.yearWithDst).toBe(true)
+        expect(summer.isYearWithDst).toBe(true)
         expect(summer.isDst).toBe(true)
         expect(summer.offset).toBe('+02:00')
     })
@@ -20,12 +20,12 @@ describe('getTzInfo', () => {
         const timezone = 'America/New_York'
 
         const winter = getTzInfo('en', '2025-01-01', timezone)
-        expect(winter.yearWithDst).toBe(true)
+        expect(winter.isYearWithDst).toBe(true)
         expect(winter.isDst).toBe(false)
         expect(winter.offset).toBe('-05:00')
 
         const summer = getTzInfo('en', '2025-07-01', timezone)
-        expect(summer.yearWithDst).toBe(true)
+        expect(summer.isYearWithDst).toBe(true)
         expect(summer.isDst).toBe(true)
         expect(summer.offset).toBe('-04:00')
     })
@@ -34,12 +34,12 @@ describe('getTzInfo', () => {
         const timezone = 'Pacific/Chatham'
 
         const winter = getTzInfo('en', '2025-07-01', timezone)
-        expect(winter.yearWithDst).toBe(true)
+        expect(winter.isYearWithDst).toBe(true)
         expect(winter.isDst).toBe(false)
         expect(winter.offset).toBe('+12:45')
 
         const summer = getTzInfo('en', '2025-01-01', timezone)
-        expect(summer.yearWithDst).toBe(true)
+        expect(summer.isYearWithDst).toBe(true)
         expect(summer.isDst).toBe(true)
         expect(summer.offset).toBe('+13:45')
     })
@@ -48,8 +48,21 @@ describe('getTzInfo', () => {
         const timezone = 'Asia/Tokyo'
 
         const info = getTzInfo('en', '2025-07-01', timezone)
-        expect(info.yearWithDst).toBe(false)
+        expect(info.isYearWithDst).toBe(false)
         expect(info.isDst).toBe(false)
         expect(info.offset).toBe('+09:00')
+    })
+
+    it('detects if offset is different from now', () => {
+        //assuming this test is run after 1972 and these places don't switch back to crazy offsets
+        const infoMorovia = getTzInfo('en', '1970-01-01', 'Africa/Monrovia')
+        expect(infoMorovia.isOffsetDifferentFromNow).toBe(true)
+        expect(infoMorovia.offset).toBe('-00:44:30')
+        expect(infoMorovia.isYearWithDst).toBe(false)
+
+        const infoDublin = getTzInfo('en', '1910-01-01', 'Europe/Dublin')
+        expect(infoDublin.isOffsetDifferentFromNow).toBe(true)
+        expect(infoDublin.offset).toBe('-00:25:21')
+        expect(infoDublin.isYearWithDst).toBe(false)
     })
 })

@@ -112,7 +112,8 @@ type TzInfo = {
     tzName: string // e.g. "CEST"
     offset: string // e.g. "-05:00"
     isDst: boolean
-    yearWithDst: boolean
+    isYearWithDst: boolean
+    isOffsetDifferentFromNow: boolean
     timeString: string // localized time string without seconds, e.g. "13:34" or "01:34 PM"
     dateString: string // date string, e.g. "Aug 6, 2025" or "2025年8月6日"
 }
@@ -137,11 +138,15 @@ export function getTzInfo(locale: string, dateStr: string, timezone: string): Tz
         tzName = getTimezoneName(locale, timezone, date, 'shortGeneric')
     }
     const offset = offsetDate.replace('GMT', '')
+
+    const offsetNow = getOffset('en', timezone, new Date())
+
     return {
         tzName,
         offset,
         isDst,
-        yearWithDst,
+        isYearWithDst: yearWithDst,
+        isOffsetDifferentFromNow: offsetDate !== offsetNow,
         timeString: date.toLocaleTimeString(locale, { timeZone: timezone, hour: 'numeric', minute: 'numeric' }),
         dateString: date.toLocaleDateString(locale, {
             timeZone: timezone,

@@ -20,7 +20,7 @@
     </div>
     <div class="time-block">
         <div class="datetime">{tzInfo?.dateString} {tzInfo?.timeString}</div>
-        {#if tzInfo?.yearWithDst}
+        {#if tzInfo?.isYearWithDst || tzInfo?.isOffsetDifferentFromNow}
             <span class={{ badge: true, 'badge--dst': tzInfo?.isDst }} title={tzInfo?.isDst ? m.dst_info() : undefined}>
                 {tzInfo.offset}
             </span>
