@@ -67,9 +67,9 @@ describe('replace_date', () => {
 
         expect(dateStr).toBe(new Date().toString())
 
-        //check whether it's within 1s of fakeDate
+        //check whether it's within 1min of fakeDate (e.g. Africa/Monrovia in 1970 has -44:30 offset, so this could be 29s of)
         expect(Date.parse(dateStr)).toBeLessThanOrEqual(fakeDateInMsSinceEpoch)
-        expect(Date.parse(dateStr) + 1000).toBeGreaterThan(fakeDateInMsSinceEpoch)
+        expect(Date.parse(dateStr) + 1000 * 60).toBeGreaterThan(fakeDateInMsSinceEpoch)
     })
 
     it('Date() without new ignores parameters', () => {
@@ -82,9 +82,9 @@ describe('replace_date', () => {
 
         expect(dateStr).toBe(new Date().toString())
 
-        //check whether it's within 1s of fakeDate
+        //check whether it's within 1min of fakeDate (e.g. Africa/Monrovia in 1970 has -44:30 offset, so this could be 29s of)
         expect(Date.parse(dateStr)).toBeLessThanOrEqual(fakeDateInMsSinceEpoch)
-        expect(Date.parse(dateStr) + 1000).toBeGreaterThan(fakeDateInMsSinceEpoch)
+        expect(Date.parse(dateStr) + 1000 * 60).toBeGreaterThan(fakeDateInMsSinceEpoch)
     })
 
     it('Date.prototype.constructor without new returns string', () => {
