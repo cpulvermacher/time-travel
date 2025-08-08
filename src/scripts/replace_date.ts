@@ -3,7 +3,7 @@
 
 import { FakeDate } from './fake-date/Date'
 import { FakeIntlDateTimeFormat } from './fake-date/DateTimeFormat'
-import { getFakeDate } from './fake-date/storage'
+import { getFakeDate, getTimezone } from './fake-date/storage'
 
 declare const __EXT_VERSION__: string
 console.log(`Time Travel: injected content-script (version ${__EXT_VERSION__}) for host ${window.location.host}`)
@@ -14,7 +14,8 @@ const OriginalIntlDateTimeFormat = Intl.DateTimeFormat
 const timeTravelCheckToggle = () => {
     const fakeDate = getFakeDate()
     if (fakeDate !== null) {
-        console.log(`Time Travel: Enabling fake date: ${fakeDate}`)
+        const timezone = getTimezone()
+        console.log(`Time Travel: Enabling fake date: ${fakeDate} (TZ: ${timezone})`)
         // eslint-disable-next-line no-global-assign
         Date = FakeDate as DateConstructor
         Intl.DateTimeFormat = FakeIntlDateTimeFormat as typeof Intl.DateTimeFormat
