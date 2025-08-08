@@ -17,7 +17,9 @@ export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone
         return timezoneOptions
     }
 
-    const defaultZoneLabel = `${m.timezone_browser_default()} - ${getTimezoneName(locale, undefined, undefined, 'shortGeneric')} (${getOffset(locale, undefined)})`
+    const defaultOffset = getOffset(locale, undefined).replace('GMT', 'UTC')
+    const defaultTzName = getTimezoneName(locale, undefined, undefined, 'shortGeneric')
+    const defaultZoneLabel = `${m.timezone_browser_default()} - ${defaultTzName} (${defaultOffset})`
 
     const buildOption = (tz: string) => {
         const offset = getOffset(locale, tz).replace('GMT', 'UTC')
