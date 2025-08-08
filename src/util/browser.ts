@@ -34,7 +34,7 @@ export async function isAboutUrl(tabId: number): Promise<boolean> {
 }
 
 /** inject function into MAIN world */
-export async function injectFunction<Args extends [string], Result>(
+export async function injectFunction<Args extends [string] | [string, string], Result>(
     tabId: number,
     func: (...args: Args) => Result,
     args: Args
@@ -128,7 +128,7 @@ export async function reloadTab() {
     await chrome.tabs.reload(tabId)
 }
 
-/** get the browser UI language */
+/** get the browser UI language (e.g. "en-GB") */
 export function getUILanguage(): string {
     if (typeof chrome !== 'undefined' && chrome?.i18n !== undefined) {
         return chrome.i18n.getUILanguage()
@@ -145,14 +145,14 @@ function getSettingsStorage(): chrome.storage.StorageArea | undefined {
     return undefined
 }
 
-export type SettingName = 'stopClock' | 'autoReload' | 'advancedSettingsOpen'
+export type SettingName = 'stopClock' | 'autoReload' | 'advancedSettingsOpen' | 'timezone' | 'recentTimezones'
 
 /** save a setting */
 export async function saveSetting<T>(key: SettingName, value: T): Promise<void> {
     try {
         await getSettingsStorage()?.set({ [key]: value })
     } catch (error) {
-        // this shouldn't be fatal
+        // this shouldn't be fatal (there are rate limits on this)
         console.error('Error saving setting:', error)
     }
 }
@@ -170,4 +170,17 @@ export async function loadSetting<T>(key: SettingName, defaultValue: T): Promise
         console.error('Error loading setting:', error)
         return defaultValue
     }
+}
+
+/** most recent timezone to 'recentTimezones' history */
+export async function saveMostRecentTimezone(timezone: string) {
+    const maxHistory = 5
+    let timezones = await loadSetting<string[]>('recentTimezones', [])
+
+    timezones.unshift(timezone)
+    //remove duplicates
+    timezones = timezones.filter((tz, index) => timezones.indexOf(tz) === index)
+    timezones = timezones.slice(0, maxHistory)
+
+    await saveSetting('recentTimezones', timezones)
 }

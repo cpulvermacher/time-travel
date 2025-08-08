@@ -38,3 +38,5 @@ jobs:
     - run: pnpm test --if-present
     - run: pnpm dev --if-present
     - run: pnpm lint
+    - name: web-ext lint
+      run: npx web-ext lint -s dist/firefox

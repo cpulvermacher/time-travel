@@ -12,6 +12,8 @@
             <p id="now"></p>
             <h4>Intl.DateTimeFormat</h4>
             <p id="nowIntl"></p>
+            <h4>Intl.DateTimeFormat (tz = America/New_York)</h4>
+            <p id="nowIntlNewYork"></p>
 
             <script>
                 setInterval(() => {
@@ -19,6 +21,11 @@
                     document.getElementById('nowIntl').textContent = new Intl.DateTimeFormat('en-US', {
                         dateStyle: 'full',
                         timeStyle: 'long',
+                    }).format()
+                    document.getElementById('nowIntlNewYork').textContent = new Intl.DateTimeFormat('en-US', {
+                        dateStyle: 'full',
+                        timeStyle: 'long',
+                        timeZone: 'America/New_York',
                     }).format()
                 }, 1000)
             </script>

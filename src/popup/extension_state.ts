@@ -18,8 +18,11 @@ import {
 } from '../util/common'
 import * as inject from '../util/inject'
 
-/** sets & enables fake date, returns whether page needs reload for content script to be injected */
-export async function setFakeDate(dateString: string): Promise<boolean> {
+/** sets & enables fake date, returns whether page needs reload for content script to be injected
+ *
+ * if dateString is empty, the fake date is cleared.
+ */
+export async function setFakeDate(dateString: string, timezone?: string): Promise<boolean> {
     if (import.meta.env.DEV) {
         return true
     }
@@ -37,7 +40,9 @@ export async function setFakeDate(dateString: string): Promise<boolean> {
         needsReload = true
     }
 
-    await injectFunction(tabId, inject.setFakeDate, [fakeDate])
+    // store UTC time (also avoids issues with `resistFingerprinting` on Firefox)
+    const fakeDateUtc = fakeDate ? new Date(fakeDate).toISOString() : ''
+    await injectFunction(tabId, inject.setFakeDate, [fakeDateUtc, timezone || ''])
 
     return needsReload
 }
@@ -71,6 +76,7 @@ export type Settings = {
     autoReload: boolean
     stopClock: boolean // tab state if time travel is active, stored setting if inactive
     advancedSettingsOpen: boolean
+    timezone: string // '' for browser default timezone
 }
 
 /** get current state of extension. Throws on permission errors */
@@ -78,6 +84,7 @@ export async function getState(): Promise<InitialState> {
     const autoReload = await loadSetting('autoReload', false)
     const stopClock = await loadSetting('stopClock', false)
     const advancedSettingsOpen = await loadSetting('advancedSettingsOpen', false)
+    const timezone = await loadSetting('timezone', '')
 
     if (import.meta.env.DEV) {
         //return dummy state for testing
@@ -88,6 +95,7 @@ export async function getState(): Promise<InitialState> {
                 autoReload,
                 stopClock,
                 advancedSettingsOpen,
+                timezone,
             },
         }
     }
@@ -116,6 +124,7 @@ export async function getState(): Promise<InitialState> {
                 autoReload,
                 stopClock: isEnabled ? state.isClockStopped : stopClock,
                 advancedSettingsOpen,
+                timezone,
             },
         }
     } catch (error) {

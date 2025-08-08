@@ -67,9 +67,9 @@ describe('replace_date', () => {
 
         expect(dateStr).toBe(new Date().toString())
 
-        //check whether it's within 1s of fakeDate
+        //check whether it's within 1min of fakeDate (e.g. Africa/Monrovia in 1970 has -44:30 offset, so this could be 29s of)
         expect(Date.parse(dateStr)).toBeLessThanOrEqual(fakeDateInMsSinceEpoch)
-        expect(Date.parse(dateStr) + 1000).toBeGreaterThan(fakeDateInMsSinceEpoch)
+        expect(Date.parse(dateStr) + 1000 * 60).toBeGreaterThan(fakeDateInMsSinceEpoch)
     })
 
     it('Date() without new ignores parameters', () => {
@@ -82,9 +82,9 @@ describe('replace_date', () => {
 
         expect(dateStr).toBe(new Date().toString())
 
-        //check whether it's within 1s of fakeDate
+        //check whether it's within 1min of fakeDate (e.g. Africa/Monrovia in 1970 has -44:30 offset, so this could be 29s of)
         expect(Date.parse(dateStr)).toBeLessThanOrEqual(fakeDateInMsSinceEpoch)
-        expect(Date.parse(dateStr) + 1000).toBeGreaterThan(fakeDateInMsSinceEpoch)
+        expect(Date.parse(dateStr) + 1000 * 60).toBeGreaterThan(fakeDateInMsSinceEpoch)
     })
 
     it('Date.prototype.constructor without new returns string', () => {
@@ -417,21 +417,41 @@ describe('replace_date', () => {
             it('setHours()', () => {
                 date.setHours(6)
                 expect(date.getHours()).toEqual(6)
+                date.setHours(-1)
+                expect(date.getHours()).toEqual(23)
             })
 
             it('setMinutes()', () => {
                 date.setMinutes(45)
                 expect(date.getMinutes()).toEqual(45)
+                date.setMinutes(1, 2, 3)
+                expect(date.getMinutes()).toEqual(1)
+                expect(date.getSeconds()).toEqual(2)
+                expect(date.getMilliseconds()).toEqual(3)
             })
 
             it('setSeconds()', () => {
+                expect(date.getMinutes()).toEqual(34)
+
                 date.setSeconds(30)
                 expect(date.getSeconds()).toEqual(30)
+                expect(date.getMinutes()).toEqual(34)
+                date.setSeconds(-1, 20)
+                expect(date.getSeconds()).toEqual(59)
+                expect(date.getMilliseconds()).toEqual(20)
+                expect(date.getMinutes()).toEqual(33)
             })
 
             it('setMilliseconds()', () => {
+                expect(date.getSeconds()).toEqual(56)
+
                 date.setMilliseconds(123)
                 expect(date.getMilliseconds()).toEqual(123)
+                expect(date.getSeconds()).toEqual(56)
+
+                date.setMilliseconds(-1)
+                expect(date.getMilliseconds()).toEqual(999)
+                expect(date.getSeconds()).toEqual(55)
             })
 
             // and UTC variants
@@ -522,6 +542,11 @@ describe('replace_date', () => {
                     }
                 }
 
+                // override a method to check that the prototype chain is still intact (date-fns/tz does this)
+                MyDate.prototype['getMonth'] = function () {
+                    return 99
+                }
+
                 const myDate = new MyDate()
 
                 // should be a (possibly fake) Date
@@ -536,6 +561,7 @@ describe('replace_date', () => {
                 expect(myDate instanceof MyDate).toBeTruthy()
                 expect(myDate.method()).toEqual('method')
                 expect(myDate.value).toEqual('value')
+                expect(myDate.getMonth()).toEqual(99)
                 expect(MyDate.staticMethod()).toEqual('staticMethod')
             })
 
@@ -654,7 +680,7 @@ describe('replace_date', () => {
      * @see https://github.com/date-fns/tz/blob/213903702d7c5fcd4f01479ba7370fe917195a65/src/date/mini.js#L70
      * @see https://github.com/cpulvermacher/time-travel/issues/41
      */
-    it('Date should still have the same ownProperties when time travel is enabled', () => {
+    it('Date should still have the same ownProperties available when time travel is enabled', () => {
         setFakeDate('')
         const origProperties = Object.getOwnPropertyNames(Date.prototype)
         expect(Date.name).toBe('Date')

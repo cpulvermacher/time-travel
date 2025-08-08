@@ -40,5 +40,11 @@
     "icon_title_running": "({fakeDate} - Clock running)",
     "icon_title_off": "(Off)",
     "enable_auto_reload": "Auto-Reload Page",
-    "advanced_settings": "Details"
+    "advanced_settings": "Details",
+    "timezone_selector_label": "Time Zone (Experimental)",
+    "timezone_group_common": "Common",
+    "timezone_group_recent": "Recent",
+    "timezone_browser_default": "Default",
+    "date_in_timezone_info": "In {timezone}:",
+    "dst_info": "Daylight Saving Time (DST) is in effect for this date."
 }
