@@ -7,7 +7,7 @@ import '../../scripts/replace_date'
 // Only tests the timezone handling, tests without timezone set are in replace_date.test.ts
 describe('replace_date with timezone', () => {
     afterEach(() => {
-        window.sessionStorage.clear()
+        setFakeDate('')
     })
 
     // ----- Date ----

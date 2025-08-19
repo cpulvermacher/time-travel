@@ -8,7 +8,7 @@ const testStartDate = new Date()
 
 describe('replace_date', () => {
     afterEach(() => {
-        window.sessionStorage.clear()
+        setFakeDate('')
     })
 
     it('new Date() with actual date', () => {
