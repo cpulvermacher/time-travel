@@ -4,6 +4,32 @@ const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone'
 
 const OriginalDate = Date
 
+export function updateState() {
+    const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
+    if (fakeDate === null) {
+        window['__timeTravelState'] = undefined
+        return
+    }
+
+    const timezone = getFromStorage(TIMEZONE_STORAGE_KEY) || null
+    const startTimestamp = getFromStorage(TICK_START_STORAGE_KEY)
+
+    let tickStartTimestamp: number | null = null
+    if (startTimestamp !== null) {
+        try {
+            tickStartTimestamp = Number.parseInt(startTimestamp)
+        } catch {
+            //ignore errors, leave value unchanged
+        }
+    }
+
+    window['__timeTravelState'] = {
+        fakeDate,
+        timezone,
+        tickStartTimestamp,
+    }
+}
+
 /** return key from storage, or null if unset */
 function getFromStorage(key: string): string | null {
     try {
@@ -16,27 +42,17 @@ function getFromStorage(key: string): string | null {
 
 /** return fake date, or null if unset */
 export function getFakeDate(): string | null {
-    return getFromStorage(FAKE_DATE_STORAGE_KEY)
+    return window['__timeTravelState']?.fakeDate ?? null
 }
 
 /** return tick start time, or null if unset/invalid */
 export function getTickStartTimestamp(): number | null {
-    const startTimestamp = getFromStorage(TICK_START_STORAGE_KEY)
-    if (startTimestamp === null) {
-        return null
-    }
-
-    try {
-        return Number.parseInt(startTimestamp)
-    } catch {
-        return null
-    }
+    return window['__timeTravelState']?.tickStartTimestamp ?? null
 }
 
 /** return timezone setting, or null to use browser default */
 export function getTimezone(): string | null {
-    const timezone = getFromStorage(TIMEZONE_STORAGE_KEY)
-    return timezone || null
+    return window['__timeTravelState']?.timezone ?? null
 }
 
 /** return the current date/time we want the page to see.

@@ -67,6 +67,11 @@ function patchDateMethods(datePrototype: Date): void {
     // --- Override string representation methods ---
 
     datePrototype.toString = function () {
+        const timezone = getTimezone()
+        if (!timezone) {
+            return OriginalDate.prototype.toString.call(this)
+        }
+
         const dateString = this.toDateString()
         const timeString = this.toTimeString()
         if (dateString === 'Invalid Date' || timeString === 'Invalid Date') {
