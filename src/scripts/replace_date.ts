@@ -11,7 +11,7 @@ console.log(`Time Travel: injected content-script (version ${__EXT_VERSION__}) f
 const OriginalDate = Date
 const OriginalIntlDateTimeFormat = Intl.DateTimeFormat
 
-const timeTravelCheckToggle = () => {
+const updateStateAndReplaceDate = () => {
     updateState()
     const fakeDate = getFakeDate()
     if (fakeDate !== null) {
@@ -28,10 +28,10 @@ const timeTravelCheckToggle = () => {
     }
 }
 
-if (window['__timeTravelCheckToggle'] !== undefined) {
+if (window['__timeTravelUpdateState'] !== undefined) {
     // this can happen if multiple versions of the extension are installed
     console.log('Time Travel: content script was already injected, aborting.')
 } else {
-    timeTravelCheckToggle()
-    window['__timeTravelCheckToggle'] = timeTravelCheckToggle
+    updateStateAndReplaceDate()
+    window['__timeTravelUpdateState'] = updateStateAndReplaceDate
 }

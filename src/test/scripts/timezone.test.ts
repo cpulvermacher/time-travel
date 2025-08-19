@@ -104,8 +104,8 @@ describe('replace_date with timezone', () => {
         const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone'
         window.sessionStorage.removeItem(FAKE_DATE_STORAGE_KEY)
         window.sessionStorage.setItem(TIMEZONE_STORAGE_KEY, timezone)
-        if (window.__timeTravelCheckToggle) {
-            window.__timeTravelCheckToggle()
+        if (window.__timeTravelUpdateState) {
+            window.__timeTravelUpdateState()
         }
 
         //validate TZ did NOT change

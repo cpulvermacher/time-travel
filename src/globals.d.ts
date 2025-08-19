@@ -2,7 +2,9 @@ export {}
 
 declare global {
     interface Window {
-        __timeTravelCheckToggle?: () => void
+        /** updates content script state from session storage */
+        __timeTravelUpdateState?: () => void
+        /** state used by content script, updated by __timeTravelUpdateState() */
         __timeTravelState?: {
             fakeDate: string | null
             timezone: string | null

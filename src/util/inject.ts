@@ -24,8 +24,8 @@ export function setFakeDate(date: string, timezone?: string) {
         window.sessionStorage.removeItem(TIMEZONE_STORAGE_KEY)
     }
 
-    if (window.__timeTravelCheckToggle) {
-        window.__timeTravelCheckToggle()
+    if (window.__timeTravelUpdateState) {
+        window.__timeTravelUpdateState()
     }
 }
 
@@ -46,5 +46,5 @@ export function setTickStartTimestamp(nowTimestampStr: string) {
 }
 
 export function isContentScriptActive() {
-    return window.__timeTravelCheckToggle !== undefined
+    return window.__timeTravelUpdateState !== undefined
 }
