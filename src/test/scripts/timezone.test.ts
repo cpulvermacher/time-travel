@@ -255,9 +255,32 @@ describe('replace_date with timezone', () => {
 
         checkDate(new Date('2025-07-15'))
         checkDate(new Date(Date.parse('2025-07-15')))
-        // Node parses other formats in local time, skipping those
-        // checkDate(new Date('2025/07/15'))
-        // checkDate(new Date(Date.parse('2025/07/15')))
+    })
+
+    it('parse() wih only date with slashes is implementation dependent', () => {
+        // Both Chrome and Node parse this format in local time, but Firefox parses it in UTC
+        const checkDate = (date: Date) => {
+            expect(date.toDateString()).toBe('Tue Jul 15 2025')
+            expect(date.getHours()).toBe(0) // 00:00 in local time
+            expect(date.getMinutes()).toBe(0)
+            expect(date.getSeconds()).toBe(0)
+            expect(date.getMilliseconds()).toBe(0)
+        }
+
+        // check unmodified Date constructor
+        checkDate(new Date('2025/07/15'))
+        checkDate(new Date(Date.parse('2025/07/15')))
+        checkDate(new Date('07/15/2025'))
+        checkDate(new Date(Date.parse('07/15/2025')))
+
+        const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
+        setFakeDate(fakeDate, 'America/New_York')
+
+        // check FakeDate with timezone set
+        checkDate(new Date('2025/07/15'))
+        checkDate(new Date(Date.parse('2025/07/15')))
+        checkDate(new Date('07/15/2025'))
+        checkDate(new Date(Date.parse('07/15/2025')))
     })
 
     it('parse() handles some overflows', () => {

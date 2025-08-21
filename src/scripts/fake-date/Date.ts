@@ -17,6 +17,14 @@ const msPerMinute = 60 * msPerSecond
 const msPerHour = 60 * msPerMinute
 const msPerDay = 24 * msPerHour
 
+//detect whether this browser handles 'yyyy/mm/dd' as 00:00 UTC or 00:00 local time
+const testDateWithSlashes = new OriginalDate('2025/01/01')
+const parsesDateOnlyStringWithSlashesAsUTCTime =
+    testDateWithSlashes.getUTCHours() === 0 &&
+    testDateWithSlashes.getUTCMinutes() === 0 &&
+    testDateWithSlashes.getUTCSeconds() === 0 &&
+    testDateWithSlashes.getUTCMilliseconds() === 0
+
 // Date constructor, needs to be a function to allow both constructing (`new Date()`) and calling without new: `Date()`
 export function FakeDate(
     ...args: [
@@ -424,17 +432,7 @@ function overridePartOfDate(
  * This is a bit tricky because timezone is a IANA ID like Europe/London, but parse() only supports timezone offsets
  */
 function parseWithTimezone(dateString: string, timezone: string | undefined): number {
-    if (!timezone) {
-        return OriginalDate.parse(dateString)
-    }
-
-    // check for timezone offset - time specifier (\d:) followed by Z, +\d, -\d
-    const hasOffset = /\d:.*(?:Z|[+-]\d)/i.test(dateString.trim())
-
-    // check if this is date only (e.g. "2025-07-15") => Needs to be parsed as UTC
-    const isDateOnly = !dateString.includes(':')
-
-    if (hasOffset || isDateOnly) {
+    if (!timezone || !shouldParseAsLocalTime(dateString)) {
         return OriginalDate.parse(dateString)
     }
 
@@ -443,6 +441,29 @@ function parseWithTimezone(dateString: string, timezone: string | undefined): nu
 
     const desiredLocalDate = getDatePartsForLocalTimestamp(parsedAsUTC)
     return disambiguateDate(desiredLocalDate, timezone)
+}
+
+function shouldParseAsLocalTime(dateString: string): boolean {
+    // check for timezone offset - time specifier (\d:) followed by Z, +\d, -\d
+    const hasOffset = /\d:.*(?:Z|[+-]\d)/i.test(dateString.trim())
+    if (hasOffset) {
+        return false
+    }
+
+    const isDateOnly = !dateString.includes(':')
+    // no offset and a time, parse as local time
+    if (!isDateOnly) {
+        return true
+    }
+
+    const isDateOnlyWithSlashes = isDateOnly && dateString.includes('/')
+    // "2025-01-01" is always 00:00 UTC
+    if (!isDateOnlyWithSlashes) {
+        return false
+    }
+
+    // but "2025/01/01" is parsed as local time in some browsers, so we need to handle those
+    return !parsesDateOnlyStringWithSlashesAsUTCTime
 }
 
 /** copy all own properties from source to target, except 'constructor'
