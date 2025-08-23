@@ -432,38 +432,29 @@ function overridePartOfDate(
  * This is a bit tricky because timezone is a IANA ID like Europe/London, but parse() only supports timezone offsets
  */
 function parseWithTimezone(dateString: string, timezone: string | undefined): number {
-    if (!timezone || canParseUnmodifiedDate(dateString)) {
+    if (!timezone || hasOffset(dateString)) {
         return OriginalDate.parse(dateString)
     }
 
-    const trimmedDateString = dateString.replace(/\s*\([^)]+\)\s*$/, '').trim()
-    const parsedAsUTC = OriginalDate.parse(`${trimmedDateString}Z`)
+    // remove whitespace and anything in parentheses at the end, e.g. " (GMT+2)" (would be ignored by parse() anyway)
+    dateString = dateString.replace(/\s*\([^)]+\)\s*$/, '').trim()
 
-    const desiredLocalDate = getDatePartsForLocalTimestamp(parsedAsUTC)
+    const isDateOnly = !dateString.includes(':')
+    if (isDateOnly && (!dateString.includes('/') || parsesDateOnlyStringWithSlashesAsUTCTime)) {
+        // "2025-01-01" is always 00:00 UTC, but "2025/01/01" is parsed as local time in some browsers, so we need to handle those
+        return OriginalDate.parse(dateString)
+    }
+
+    // Need to handle dateString as local time in given timezone
+    // pretend date is in UTC to get local time stamp, and get UTC timestamp in the desired timezone
+    const localTimestamp = OriginalDate.parse(dateString + (isDateOnly ? ' 00:00Z' : 'Z'))
+    const desiredLocalDate = getDatePartsForLocalTimestamp(localTimestamp)
     return disambiguateDate(desiredLocalDate, timezone)
 }
 
-function canParseUnmodifiedDate(dateString: string): boolean {
-    // check for timezone offset - time specifier (\d:) followed by Z, +\d, -\d
-    const hasOffset = /\d:.*(?:Z|[+-]\d)/i.test(dateString.trim())
-    if (hasOffset) {
-        return true
-    }
-
-    const isDateOnly = !dateString.includes(':')
-    // no offset and a time, parse as local time
-    if (!isDateOnly) {
-        return false
-    }
-
-    const isDateOnlyWithSlashes = isDateOnly && dateString.includes('/')
-    // "2025-01-01" is always 00:00 UTC
-    if (!isDateOnlyWithSlashes) {
-        return true
-    }
-
-    // but "2025/01/01" is parsed as local time in some browsers, so we need to handle those
-    return parsesDateOnlyStringWithSlashesAsUTCTime
+function hasOffset(dateString: string): boolean {
+    // check for timezone offset - time specifier (\d:) followed by 'Z', +\d, -\d
+    return /\d:.*(?:Z|[+-]\d)/i.test(dateString.trim())
 }
 
 /** copy all own properties from source to target, except 'constructor'
