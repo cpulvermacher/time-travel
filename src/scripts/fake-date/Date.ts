@@ -17,14 +17,6 @@ const msPerMinute = 60 * msPerSecond
 const msPerHour = 60 * msPerMinute
 const msPerDay = 24 * msPerHour
 
-//detect whether this browser handles 'yyyy/mm/dd' as 00:00 UTC or 00:00 local time
-const testDateWithSlashes = new OriginalDate('2025/01/01')
-const parsesDateOnlyStringWithSlashesAsUTCTime =
-    testDateWithSlashes.getUTCHours() === 0 &&
-    testDateWithSlashes.getUTCMinutes() === 0 &&
-    testDateWithSlashes.getUTCSeconds() === 0 &&
-    testDateWithSlashes.getUTCMilliseconds() === 0
-
 // Date constructor, needs to be a function to allow both constructing (`new Date()`) and calling without new: `Date()`
 export function FakeDate(
     ...args: [
@@ -440,8 +432,8 @@ function parseWithTimezone(dateString: string, timezone: string | undefined): nu
     dateString = dateString.replace(/\s*\([^)]+\)\s*$/, '').trim()
 
     const isDateOnly = !dateString.includes(':')
-    if (isDateOnly && (!dateString.includes('/') || parsesDateOnlyStringWithSlashesAsUTCTime)) {
-        // "2025-01-01" is always 00:00 UTC, but "2025/01/01" is parsed as local time in some browsers, so we need to handle those
+    if (isDateOnly && !dateString.includes('/')) {
+        // "2025-01-01" is always 00:00 UTC, but "2025/01/01" is parsed as local time
         return OriginalDate.parse(dateString)
     }
 

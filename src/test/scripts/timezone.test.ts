@@ -267,11 +267,10 @@ describe('replace_date with timezone', () => {
         checkDate(new Date(Date.parse('2025-07-15')))
     })
 
-    it('parse() wih only date with slashes is implementation dependent', () => {
-        // Both Chrome and Node parse this format in local time, but Firefox parses it in UTC
+    it('parse() wih only date with slashes is in local time', () => {
         const checkDate = (date: Date) => {
             expect(date.toDateString()).toBe('Tue Jul 15 2025')
-            expect(date.getHours()).toBe(0) // 00:00 in local time (assuming tests run in Node)
+            expect(date.getHours()).toBe(0)
             expect(date.getMinutes()).toBe(0)
             expect(date.getSeconds()).toBe(0)
             expect(date.getMilliseconds()).toBe(0)
