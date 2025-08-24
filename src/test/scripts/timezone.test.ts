@@ -255,20 +255,18 @@ describe('replace_date with timezone', () => {
         expect(new Date('2025-07-15 14:30').getTimezoneOffset()).toBe(570) // +9:30
     })
 
-    it('parse() with only date is in UTC', () => {
+    it('parse() with only yyyy-mm-dd, yyyy-mm, or yyyy is in UTC', () => {
         const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
         setFakeDate(fakeDate, 'America/New_York')
 
-        const checkDate = (date: Date) => {
-            expect(date.toISOString()).toBe('2025-07-15T00:00:00.000Z')
-        }
-
-        checkDate(new Date('2025-07-15'))
-        checkDate(new Date(Date.parse('2025-07-15')))
+        expect(new Date('2025-07-15').toISOString()).toBe('2025-07-15T00:00:00.000Z')
+        expect(new Date(Date.parse('2025-07-15')).toISOString()).toBe('2025-07-15T00:00:00.000Z')
+        expect(new Date('2025-07').toISOString()).toBe('2025-07-01T00:00:00.000Z')
+        expect(new Date('2025').toISOString()).toBe('2025-01-01T00:00:00.000Z')
     })
 
-    it('parse() wih only date with slashes is in local time', () => {
-        const checkDate = (date: Date) => {
+    it('parse() wih any other date only format is in local time', () => {
+        const expectLocalMidnight = (date: Date) => {
             expect(date.toDateString()).toBe('Tue Jul 15 2025')
             expect(date.getHours()).toBe(0)
             expect(date.getMinutes()).toBe(0)
@@ -276,20 +274,24 @@ describe('replace_date with timezone', () => {
             expect(date.getMilliseconds()).toBe(0)
         }
 
+        const runTestCases = () => {
+            expectLocalMidnight(new Date('2025/07/15'))
+            expectLocalMidnight(new Date('07/15/2025'))
+            //any deviations from yyyy(-mm(-dd)) are also local time
+            expectLocalMidnight(new Date('2025-07-15 '))
+            expectLocalMidnight(new Date(' 2025-07-15'))
+            expectLocalMidnight(new Date('2025-7-15'))
+            expectLocalMidnight(new Date('2025-07/15'))
+        }
+
         // check unmodified Date constructor
-        checkDate(new Date('2025/07/15'))
-        checkDate(new Date(Date.parse('2025/07/15')))
-        checkDate(new Date('07/15/2025'))
-        checkDate(new Date(Date.parse('07/15/2025')))
+        runTestCases()
 
         const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
         setFakeDate(fakeDate, 'America/New_York')
 
         // check FakeDate with timezone set
-        checkDate(new Date('2025/07/15'))
-        checkDate(new Date(Date.parse('2025/07/15')))
-        checkDate(new Date('07/15/2025'))
-        checkDate(new Date(Date.parse('07/15/2025')))
+        runTestCases()
     })
 
     it('parse() handles offsets', () => {

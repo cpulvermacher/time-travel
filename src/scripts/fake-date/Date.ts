@@ -424,7 +424,7 @@ function overridePartOfDate(
  * This is a bit tricky because timezone is a IANA ID like Europe/London, but parse() only supports timezone offsets
  */
 function parseWithTimezone(dateString: string, timezone: string | undefined): number {
-    if (!timezone) {
+    if (!timezone || isUTCDate(dateString)) {
         return OriginalDate.parse(dateString)
     }
 
@@ -435,14 +435,9 @@ function parseWithTimezone(dateString: string, timezone: string | undefined): nu
         return OriginalDate.parse(dateString)
     }
 
-    const isDateOnly = !dateString.includes(':')
-    if (isDateOnly && !dateString.includes('/')) {
-        // "2025-01-01" is always 00:00 UTC, but "2025/01/01" is parsed as local time
-        return OriginalDate.parse(dateString)
-    }
-
     // Need to handle dateString as local time in given timezone
     // pretend date is in UTC to get local time stamp, and get UTC timestamp in the desired timezone
+    const isDateOnly = !dateString.includes(':')
     const localTimestamp = OriginalDate.parse(dateString + (isDateOnly ? ' 00:00Z' : 'Z'))
     const desiredLocalDate = getDatePartsForLocalTimestamp(localTimestamp)
     return disambiguateDate(desiredLocalDate, timezone)
@@ -452,7 +447,23 @@ function hasOffset(dateString: string): boolean {
     if (/(?:[Zz]|UTC|GMT)$/i.test(dateString)) {
         return true
     }
-    return /[+-]\d{1,2}(:?\d{1,2})?$/.test(dateString)
+    return /(?:[Zz]|UTC|GMT|:.*)\s*[+-]\d{1,2}(:?\d{1,2})?$/.test(dateString)
+}
+
+/** there is a very limited number of date-only formats that must be parsed as UTC:
+ * - 'YYYY-MM-DD'
+ * - 'YYYY-MM'
+ * - 'YYYY'
+ *
+ * Even minor variations should be parsed in local time:
+ * - 'YYYY/MM/DD'
+ * - 'YYYY-MM-DD '
+ * - ' YYYY-MM-DD'
+ * - 'YYY'
+ * - 'YY'
+ */
+function isUTCDate(dateString: string): boolean {
+    return /^\d{4}(-\d{2}(-\d{2})?)?$/.test(dateString)
 }
 
 /** copy all own properties from source to target, except 'constructor'

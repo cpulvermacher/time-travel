@@ -97,6 +97,7 @@
                 { input: '2024-01-15 10:30:00', expected: 'Mon Jan 15 2024 10:30:00', output: 'local' },
                 //toLocaleString('en-US')
                 { input: '8/21/2025, 8:00:00 AM', expected: 'Thu Aug 21 2025 08:00:00', output: 'local' },
+                { input: '8/21/2025, 8:00:00 PM', expected: 'Thu Aug 21 2025 20:00:00', output: 'local' },
                 //toString() without offset
                 { input: 'Thu Aug 21 2025 08:00:00', expected: 'Thu Aug 21 2025 08:00:00', output: 'local' },
                 { input: 'January 15, 2024', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
@@ -105,6 +106,8 @@
                 { input: '01/15/2024', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
                 { input: '2024/01/15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
                 { input: '2024/01-15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+                { input: ' 2024-01-15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+                { input: '2024-01-15 ', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
                 { input: '2024-01/15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
                 { input: '2024,01,15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
                 { input: '2024 01 15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
