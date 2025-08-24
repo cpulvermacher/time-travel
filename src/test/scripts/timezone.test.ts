@@ -292,6 +292,28 @@ describe('replace_date with timezone', () => {
         checkDate(new Date(Date.parse('07/15/2025')))
     })
 
+    it('parse() handles offsets', () => {
+        const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
+        setFakeDate(fakeDate, 'America/New_York')
+
+        const checkDate = (date: Date) => {
+            expect(date.toISOString()).toBe('2025-07-15T14:00:00.000Z')
+        }
+
+        checkDate(new Date('2025-07-15 13:00:00.000-01:00'))
+        checkDate(new Date('2025-07-15 13:00-01:00'))
+        checkDate(new Date('2025-07-15 13:00 UTC-01:00'))
+        checkDate(new Date('2025-07-15 12:27 UTC-01:33'))
+        checkDate(new Date('2025-07-15 15:33 UTC+01:33'))
+
+        expect(new Date('15 July 2024 Z+02:00').toISOString()).toBe('2024-07-14T22:00:00.000Z')
+        expect(new Date('15 July 2024 Z+01:59').toISOString()).toBe('2024-07-14T22:01:00.000Z')
+        expect(new Date('15 July 2024 UTC+02:00').toISOString()).toBe('2024-07-14T22:00:00.000Z')
+        expect(new Date('15 July 2024 UTC+01:59').toISOString()).toBe('2024-07-14T22:01:00.000Z')
+        expect(new Date('15 July 2024 GMT+02:00').toISOString()).toBe('2024-07-14T22:00:00.000Z')
+        expect(new Date('15 July 2024 GMT+01:59').toISOString()).toBe('2024-07-14T22:01:00.000Z')
+    })
+
     it('parse() handles some overflows', () => {
         const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
         setFakeDate(fakeDate, 'America/New_York')

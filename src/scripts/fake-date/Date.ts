@@ -424,12 +424,16 @@ function overridePartOfDate(
  * This is a bit tricky because timezone is a IANA ID like Europe/London, but parse() only supports timezone offsets
  */
 function parseWithTimezone(dateString: string, timezone: string | undefined): number {
-    if (!timezone || hasOffset(dateString)) {
+    if (!timezone) {
         return OriginalDate.parse(dateString)
     }
 
     // remove whitespace and anything in parentheses at the end, e.g. " (GMT+2)" (would be ignored by parse() anyway)
     dateString = dateString.replace(/\s*\([^)]+\)\s*$/, '').trim()
+
+    if (hasOffset(dateString)) {
+        return OriginalDate.parse(dateString)
+    }
 
     const isDateOnly = !dateString.includes(':')
     if (isDateOnly && !dateString.includes('/')) {
@@ -445,8 +449,10 @@ function parseWithTimezone(dateString: string, timezone: string | undefined): nu
 }
 
 function hasOffset(dateString: string): boolean {
-    // check for timezone offset - time specifier (\d:) followed by 'Z', +\d, -\d
-    return /\d:.*(?:Z|[+-]\d)/i.test(dateString.trim())
+    if (/(?:[Zz]|UTC|GMT)$/i.test(dateString)) {
+        return true
+    }
+    return /[+-]\d{1,2}(:?\d{1,2})?$/.test(dateString)
 }
 
 /** copy all own properties from source to target, except 'constructor'

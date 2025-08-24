@@ -89,6 +89,8 @@
                 },
                 { input: '15 January 2024 UTC+01:00', expected: '2024-01-14T23:00:00.000Z', output: 'utc' },
                 { input: '15 January 2024 UTC+01:59', expected: '2024-01-14T22:01:00.000Z', output: 'utc' },
+                { input: '15 January 2024 Z+01:59', expected: '2024-01-14T22:01:00.000Z', output: 'utc' },
+                { input: '15 January 2024 GMT+01:59', expected: '2024-01-14T22:01:00.000Z', output: 'utc' },
 
                 { category: 'Local Formats' },
                 { input: '2024-01-15T10:30:00', expected: 'Mon Jan 15 2024 10:30:00', output: 'local' },
@@ -142,7 +144,7 @@
                 { input: 'Apricot 15', expected: 'Sun Apr 15 2001 00:00:00', output: 'local' },
                 { input: 'apricot 15', expected: 'Sun Apr 15 2001 00:00:00', output: 'local' },
 
-                { category: 'Invalid cases' },
+                { category: 'Invalid Cases' },
                 { input: '15/01/2024', expected: 'Invalid Date', output: 'local' },
                 { input: '10:30:00', expected: 'Invalid Date', output: 'both' },
                 { input: '10:30 AM', expected: 'Invalid Date', output: 'both' },
