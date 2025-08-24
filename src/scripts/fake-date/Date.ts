@@ -1,21 +1,10 @@
-import {
-    compareDateParts,
-    getDateParts,
-    getDatePartsForLocalDate,
-    getDatePartsForLocalTimestamp,
-    getOffsetMinutes,
-    getTimezoneName,
-    type LocalDateParts,
-} from './date-parts'
+import { getDateParts, getDatePartsForLocalDate, getOffsetMinutes, getTimezoneName } from './date-parts'
 import { optionsWithDefaultTz } from './DateTimeFormat'
+import { disambiguateDate } from './disambiguateDate'
+import { parseWithTimezone } from './parseWithTimezone'
 import { fakeNowDate, getTimezone } from './storage'
 
 const OriginalDate = Date
-
-const msPerSecond = 1000
-const msPerMinute = 60 * msPerSecond
-const msPerHour = 60 * msPerMinute
-const msPerDay = 24 * msPerHour
 
 // Date constructor, needs to be a function to allow both constructing (`new Date()`) and calling without new: `Date()`
 export function FakeDate(
@@ -341,45 +330,6 @@ function patchDateMethods(datePrototype: Date): void {
     // Note: We don't override UTC methods as they should remain as is
 }
 
-/** for a given date and timezone, returns a single UTC timestamp that produces the desiredDate.
- *
- * In case there is a transition between two timezone offsets (e.g. DST change) that results
- * in two possible matching timestamps, we choose the timestamp before the transition.
- *
- * Implementation similar to temporal-polyfill's GetNamedTimeZoneEpochNanoseconds()
- */
-function disambiguateDate(desiredDate: LocalDateParts, timezone: string): number {
-    // create an initial UTC timestamp based on any offset somewhere within 24h
-    const timestamp =
-        desiredDate.localTimestamp + new Date(desiredDate.localTimestamp).getTimezoneOffset() * msPerMinute
-    const oneDayBefore = new Date(timestamp - msPerDay)
-    const oneDayAfter = new Date(timestamp + msPerDay)
-
-    const offsetBefore = oneDayBefore.getTimezoneOffset()
-    const offsetAfter = oneDayAfter.getTimezoneOffset()
-    // if offsets are the same, there is no transition, we can return the timestamp directly
-    if (offsetBefore === offsetAfter) {
-        return timestamp
-    }
-
-    //if offsets differ, there was a transition => check whether each candidate produces the desired local date
-    const candidateTimestamps = [
-        desiredDate.localTimestamp + offsetBefore * msPerMinute,
-        desiredDate.localTimestamp + offsetAfter * msPerMinute,
-    ]
-    const validTimestamps = candidateTimestamps.filter((ts) => {
-        const candidateDate = getDateParts(ts, timezone)
-        return compareDateParts(candidateDate, desiredDate)
-    })
-    if (validTimestamps.length > 0) {
-        return validTimestamps[0] // return the first valid timestamp (= before transition)
-    }
-
-    //there may not be a valid timestamp, e.g. if the desired local date is skipped due to a DST change
-    //in that case return the timestamp as is
-    return timestamp
-}
-
 /**
  * Overides parts of `date` in a similar way that setHours() etc. do,
  * but does so in the given timezone.
@@ -415,67 +365,6 @@ function overridePartOfDate(
 
     const desiredLocalDate = getDatePartsForLocalDate(year, month, day, hours, minutes, seconds, ms)
     return date.setTime(disambiguateDate(desiredLocalDate, timezone))
-}
-
-/**
- * parses a date string into a timestamp.
- * For all cases where Date.parse() would parse the string as local time, uses the provided timezone.
- *
- * This is a bit tricky because timezone is a IANA ID like Europe/London, but parse() only supports timezone offsets
- */
-function parseWithTimezone(dateString: string, timezone: string | undefined): number {
-    if (!timezone || isUTCDate(dateString)) {
-        return OriginalDate.parse(dateString)
-    }
-
-    // remove whitespace and anything in parentheses at the end, e.g. " (GMT+2)" (would be ignored by parse() anyway)
-    dateString = dateString.replace(/\s*\([^)]+\)\s*$/, '').trim()
-
-    if (hasOffset(dateString)) {
-        return OriginalDate.parse(dateString)
-    }
-
-    // Need to handle dateString as local time in given timezone
-    // pretend date is in UTC to get local time stamp, and get UTC timestamp in the desired timezone
-    const localTimestamp = OriginalDate.parse(toUTCDateString(dateString))
-    const desiredLocalDate = getDatePartsForLocalTimestamp(localTimestamp)
-    return disambiguateDate(desiredLocalDate, timezone)
-}
-
-function hasOffset(dateString: string): boolean {
-    if (/(?:[Zz]|UTC|GMT)$/i.test(dateString)) {
-        return true
-    }
-    return /(?:[Zz]|UTC|GMT|:.*)\s*[+-]\d{1,2}(:?\d{1,2})?$/.test(dateString)
-}
-
-/** there is a very limited number of date-only formats that must be parsed as UTC:
- * - 'YYYY-MM-DD'
- * - 'YYYY-MM'
- * - 'YYYY'
- *
- * Even minor variations should be parsed in local time:
- * - 'YYYY/MM/DD'
- * - 'YYYY-MM-DD '
- * - ' YYYY-MM-DD'
- * - 'YYY'
- * - 'YY'
- */
-function isUTCDate(dateString: string): boolean {
-    return /^\d{4}(-\d{2}(-\d{2})?)?$/.test(dateString)
-}
-
-/** 'convert' a local date string (without any TZ specifier) to a UTC string for parsing the raw contents */
-function toUTCDateString(dateString: string): string {
-    if (!dateString.includes(':')) {
-        // date only string, add time part
-        return dateString + ' 00:00Z'
-    } else if (!/\d$/.test(dateString)) {
-        // does not end in a digit (maybe "AM" or "PM")
-        return dateString + ' Z'
-    } else {
-        return dateString + 'Z'
-    }
 }
 
 /** copy all own properties from source to target, except 'constructor'
