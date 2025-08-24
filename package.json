@@ -14,12 +14,12 @@
         "machine-translate": "inlang machine translate --project project.inlang"
     },
     "devDependencies": {
-        "@eslint/js": "^9.33.0",
+        "@eslint/js": "^9.34.0",
         "@sveltejs/vite-plugin-svelte": "^6.1.3",
-        "@tsconfig/svelte": "^5.0.4",
-        "@types/chrome": "^0.0.329",
+        "@tsconfig/svelte": "^5.0.5",
+        "@types/chrome": "^0.1.4",
         "chrome-webstore-upload-cli": "^3.3.2",
-        "eslint": "^9.33.0",
+        "eslint": "^9.34.0",
         "happy-dom": "^18.0.1",
         "prettier": "^3.6.2",
         "svelte-check": "^4.3.1",
@@ -33,6 +33,6 @@
     },
     "dependencies": {
         "@svelte-plugins/datepicker": "^1.0.11",
-        "svelte": "^5.38.2"
+        "svelte": "^5.38.3"
     }
 }
