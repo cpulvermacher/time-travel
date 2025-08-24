@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Date String Parsing Test</title>
+        <link rel="stylesheet" href="demo.css" />
+        <style>
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                margin-top: 20px;
+            }
+            th,
+            td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+                font-family: monospace;
+                font-size: 12px;
+            }
+            th {
+                background-color: #f2f2f2;
+                font-weight: bold;
+            }
+            .input-string {
+                font-weight: bold;
+                color: #333;
+            }
+            .error {
+                color: #d32f2f;
+                font-style: italic;
+            }
+            .warning {
+                background-color: #fff3cd;
+            }
+            .section-header {
+                background-color: #e3f2fd;
+                font-weight: bold;
+                text-align: center;
+            }
+            .match {
+                background-color: #e8f5e8;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h3>Date String Parsing Test</h3>
+        <p>Testing various string formats with <code>new Date(str)</code></p>
+
+        <table id="results">
+            <thead>
+                <tr>
+                    <th>Input String</th>
+                    <th>Parsed Date</th>
+                    <th>Expected</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <script>
+            const testCases = [
+                { category: 'UTC Format' },
+                { input: '2024-01-15T10:30:00Z', expected: '2024-01-15T10:30:00.000Z', output: 'utc' },
+                { input: '2024-01-15T10:30:00.500Z', expected: '2024-01-15T10:30:00.500Z', output: 'utc' },
+
+                { category: 'Other Formats Parsed in UTC ' },
+                { input: '2024-01-15', expected: '2024-01-15T00:00:00.000Z', output: 'utc' },
+                { input: '2024-02', expected: '2024-02-01T00:00:00.000Z', output: 'utc' },
+                { input: '2024', expected: '2024-01-01T00:00:00.000Z', output: 'utc' },
+                //toUTCString()
+                { input: 'Thu, 21 Aug 2025 00:00:00 GMT', expected: '2025-08-21T00:00:00.000Z', output: 'utc' },
+                { input: '15 January 2024 UTC', expected: '2024-01-15T00:00:00.000Z', output: 'utc' },
+
+                { category: 'Explicit Offsets' },
+                { input: '2024-01-15T10:30:00+05:00', expected: '2024-01-15T05:30:00.000Z', output: 'utc' },
+                { input: '2024-01-15T10:30:00-08:00', expected: '2024-01-15T18:30:00.000Z', output: 'utc' },
+                // toString() with offset
+                {
+                    input: 'Thu Aug 21 2025 08:00:00 GMT+0900 (Japan Standard Time)',
+                    expected: '2025-08-20T23:00:00.000Z',
+                    output: 'utc',
+                },
+                // toString() with parentheses content modified (should be ignored)
+                {
+                    input: 'Thu Aug 21 2025 08:00:00 GMT+0900 (Eastern Standard Time)',
+                    expected: '2025-08-20T23:00:00.000Z',
+                    output: 'utc',
+                },
+                { input: '15 January 2024 UTC+01:00', expected: '2024-01-14T23:00:00.000Z', output: 'utc' },
+                { input: '15 January 2024 UTC+01:59', expected: '2024-01-14T22:01:00.000Z', output: 'utc' },
+
+                { category: 'Local Formats' },
+                { input: '2024-01-15T10:30:00', expected: 'Mon Jan 15 2024 10:30:00', output: 'local' },
+                { input: '2024-01-15 10:30:00', expected: 'Mon Jan 15 2024 10:30:00', output: 'local' },
+                //toLocaleString('en-US')
+                { input: '8/21/2025, 8:00:00 AM', expected: 'Thu Aug 21 2025 08:00:00', output: 'local' },
+                //toString() without offset
+                { input: 'Thu Aug 21 2025 08:00:00', expected: 'Thu Aug 21 2025 08:00:00', output: 'local' },
+                { input: 'January 15, 2024', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+                { input: 'Jan 15, 2024', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+                { input: '15 January 2024', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+                { input: '01/15/2024', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+                { input: '2024/01/15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+                { input: '2024,01,15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+                { input: '2024 01 15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+                { input: '2024-1-15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+                { input: '2024-01-5', expected: 'Fri Jan 05 2024 00:00:00', output: 'local' },
+                { input: '15-Jan-2024', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+                { input: 'Mon Jan 15 2024', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+
+                { category: 'Edge Cases' },
+                { input: '2024-02-29', expected: '2024-02-29T00:00:00.000Z', output: 'utc' },
+                { input: '2023-02-29', expected: '2023-03-01T00:00:00.000Z', output: 'utc' },
+                { input: '2024-12-31T23:59:59.999Z', expected: '2024-12-31T23:59:59.999Z', output: 'utc' },
+                { input: '1970-01-01T00:00:00Z', expected: '1970-01-01T00:00:00.000Z', output: 'utc' },
+                { input: '0000-01-01', expected: '0000-01-01T00:00:00.000Z', output: 'utc' },
+                { input: '9999-12-31', expected: '9999-12-31T00:00:00.000Z', output: 'utc' },
+                { input: '01-02-03', expected: 'Thu Jan 02 2003 00:00:00', output: 'local' },
+                { input: '49-02-03', expected: 'Wed Feb 03 2049 00:00:00', output: 'local' },
+                { input: '50-02-03', expected: 'Fri Feb 03 1950 00:00:00', output: 'local' },
+                { input: '0', expected: 'Sat Jan 01 2000 00:00:00', output: 'local' },
+                { input: '1', expected: 'Mon Jan 01 2001 00:00:00', output: 'local' },
+                { input: 'abc 1', expected: 'Mon Jan 01 2001 00:00:00', output: 'local' },
+                { input: '2', expected: 'Thu Feb 01 2001 00:00:00', output: 'local' },
+                { input: '99', expected: 'Fri Jan 01 1999 00:00:00', output: 'local' },
+                { input: '100', expected: 'Fri Jan 01 0100 00:00:00', output: 'local' },
+                { input: '49', expected: 'Fri Jan 01 2049 00:00:00', output: 'local' },
+                { input: '50', expected: 'Sun Jan 01 1950 00:00:00', output: 'local' },
+                // invalid offset parsed as year??
+                { input: '15 January UTC+01:60', expected: '1960-01-14T23:00:00.000Z', output: 'utc' },
+                //ignores parantheses (contrary to jsdate.wtf this is local, not UTC)
+                { input: '1990 (2010)', expected: 'Mon Jan 01 1990 00:00:00', output: 'local' },
+                { input: '(2010) 1990', expected: 'Mon Jan 01 1990 00:00:00', output: 'local' },
+
+                { category: 'Chrome/Node Only' },
+                { input: '12.1', expected: 'Sat Dec 01 2001 00:00:00', output: 'local' },
+                { input: '12.-1', expected: 'Sat Dec 01 2001 00:00:00', output: 'local' },
+                { input: 'Apr 15', expected: 'Sun Apr 15 2001 00:00:00', output: 'local' },
+                { input: 'Apricot 15', expected: 'Sun Apr 15 2001 00:00:00', output: 'local' },
+                { input: 'apricot 15', expected: 'Sun Apr 15 2001 00:00:00', output: 'local' },
+
+                { category: 'Invalid cases' },
+                { input: '15/01/2024', expected: 'Invalid Date', output: 'local' },
+                { input: '10:30:00', expected: 'Invalid Date', output: 'both' },
+                { input: '10:30 AM', expected: 'Invalid Date', output: 'both' },
+                { input: '22:30', expected: 'Invalid Date', output: 'both' },
+                { input: '2024-01-32', expected: 'Invalid Date', output: 'both' },
+                { input: '2024-13-15', expected: 'Invalid Date', output: 'both' },
+                { input: '27-02-03', expected: 'Invalid Date', output: 'both' },
+                { input: 'invalid', expected: 'Invalid Date', output: 'both' },
+                { input: '13', expected: 'Invalid Date', output: 'local' },
+                { input: '31', expected: 'Invalid Date', output: 'both' },
+                { input: '', expected: 'Invalid Date', output: 'both' },
+            ]
+
+            function formatLocalDate(date) {
+                const st = date.toString()
+                //remove parentheses content
+                return st.replace(/\s*\(.*?\)\s*/g, '')
+            }
+
+            function runTests() {
+                const tbody = document.querySelector('#results tbody')
+
+                testCases.forEach((testCase) => {
+                    const row = document.createElement('tr')
+                    tbody.appendChild(row)
+
+                    if (testCase.category) {
+                        // Section header
+                        row.className = 'section-header'
+                        row.innerHTML = `<td colspan="3">${testCase.category}</td>`
+                        return
+                    }
+
+                    // Test case
+                    const inputCell = document.createElement('td')
+                    inputCell.className = 'input-string'
+                    inputCell.textContent = `"${testCase.input}"`
+
+                    const resultCell = document.createElement('td')
+                    const expectedCell = document.createElement('td')
+
+                    const date = new Date(testCase.input)
+
+                    let actualOutput = ''
+
+                    if (isNaN(date.getTime())) {
+                        resultCell.className = 'error'
+                        const errorP = document.createElement('p')
+                        errorP.textContent = 'Invalid Date'
+                        resultCell.appendChild(errorP)
+                        actualOutput = 'Invalid Date'
+                    } else {
+                        const outputType = testCase.output || 'both'
+                        const outputParts = []
+
+                        if (outputType === 'local' || outputType === 'both') {
+                            const localOutput = `Local: ${formatLocalDate(date)}`
+                            const toStringP = document.createElement('p')
+                            toStringP.textContent = localOutput
+                            resultCell.appendChild(toStringP)
+                            outputParts.push(localOutput)
+                        }
+
+                        if (outputType === 'utc' || outputType === 'both') {
+                            const utcOutput = `UTC: ${date.toISOString()}`
+                            const toUTCP = document.createElement('p')
+                            toUTCP.textContent = utcOutput
+                            resultCell.appendChild(toUTCP)
+                            outputParts.push(utcOutput)
+                        }
+
+                        actualOutput = outputParts.join(' | ')
+                    }
+
+                    expectedCell.textContent = testCase.expected
+
+                    // Check if actual output matches expected output
+                    if (actualOutput.includes(testCase.expected)) {
+                        row.className = 'match'
+                    }
+
+                    row.appendChild(inputCell)
+                    row.appendChild(resultCell)
+                    row.appendChild(expectedCell)
+                })
+            }
+
+            // Run tests when page loads
+            document.addEventListener('DOMContentLoaded', runTests)
+        </script>
+
+        <h3>References</h3>
+        <nav>
+            <ul>
+                <li><a href="https://jsdate.wtf/">jsdate.wtf</a></li>
+                <li>
+                    <a
+                        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/parse"
+                        >Date.parse() MDN Reference</a
+                    >
+                </li>
+            </ul>
+        </nav>
+    </body>
+</html>
