@@ -78,6 +78,7 @@
                 { category: 'Explicit Offsets' },
                 { input: '2024-01-15T10:30:00+05:00', expected: '2024-01-15T05:30:00.000Z', output: 'utc' },
                 { input: '2024-01-15T10:30:00-08:00', expected: '2024-01-15T18:30:00.000Z', output: 'utc' },
+                { input: '2024-01-15T10:30:00-0800', expected: '2024-01-15T18:30:00.000Z', output: 'utc' },
                 // toString() with offset
                 {
                     input: 'Thu Aug 21 2025 08:00:00 GMT+0900 (Japan Standard Time)',

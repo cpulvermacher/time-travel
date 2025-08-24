@@ -319,9 +319,11 @@ describe('replace_date with timezone', () => {
 
         checkDate(new Date('2025-07-15 13:00:00.000-01:00'))
         checkDate(new Date('2025-07-15 13:00-01:00'))
+        checkDate(new Date('2025-07-15 13:00-0100'))
         checkDate(new Date('2025-07-15 13:00 UTC-01:00'))
         checkDate(new Date('2025-07-15 12:27 UTC-01:33'))
         checkDate(new Date('2025-07-15 15:33 UTC+01:33'))
+        checkDate(new Date('2025-07-15 15:33 UTC+0133'))
 
         expect(new Date('15 July 2024 Z+02:00').toISOString()).toBe('2024-07-14T22:00:00.000Z')
         expect(new Date('15 July 2024 Z+01:59').toISOString()).toBe('2024-07-14T22:01:00.000Z')
