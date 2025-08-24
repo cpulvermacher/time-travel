@@ -102,6 +102,8 @@
                 { input: '15 January 2024', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
                 { input: '01/15/2024', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
                 { input: '2024/01/15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+                { input: '2024/01-15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
+                { input: '2024-01/15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
                 { input: '2024,01,15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
                 { input: '2024 01 15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
                 { input: '2024-1-15', expected: 'Mon Jan 15 2024 00:00:00', output: 'local' },
