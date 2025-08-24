@@ -201,9 +201,9 @@ describe('replace_date with timezone', () => {
         expect(nonexistentDate.toString()).toBe('Sun Mar 09 2025 03:00:00 GMT-0400 (Eastern Daylight Time)')
     })
 
-    //TODO skipped, but disambiguation picks Dec 29
-    it.skip('parse adjusts for nonexisting dates', () => {
+    it('parse adjusts for nonexisting dates', () => {
         setFakeDate('2025-03-09T06:59:00.000Z', 'Pacific/Apia')
+
         // Samoa skipped 2011-12-30 switching from UTC-11 to UTC+13 (actually -10 to +14 with DST)
         const nonexistentDate = new Date('2011-12-30 12:00')
 

@@ -30,7 +30,7 @@ export function disambiguateDate(desiredDate: LocalDateParts, timezone: string):
     const candidateTimestamps = [
         desiredDate.localTimestamp + offsetBefore * msPerMinute,
         desiredDate.localTimestamp + offsetAfter * msPerMinute,
-    ]
+    ].sort((a, b) => a - b)
     const validTimestamps = candidateTimestamps.filter((ts) => {
         const candidateDate = getDateParts(ts, timezone)
         return compareDateParts(candidateDate, desiredDate)
@@ -40,6 +40,6 @@ export function disambiguateDate(desiredDate: LocalDateParts, timezone: string):
     }
 
     //there may not be a valid timestamp, e.g. if the desired local date is skipped due to a DST change
-    //in that case return the timestamp as is
-    return timestamp
+    //in that case return the UTC timestamp with the offset _after_ the transition
+    return candidateTimestamps[1]
 }
