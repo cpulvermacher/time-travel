@@ -282,6 +282,9 @@ describe('replace_date with timezone', () => {
             expectLocalMidnight(new Date(' 2025-07-15'))
             expectLocalMidnight(new Date('2025-7-15'))
             expectLocalMidnight(new Date('2025-07/15'))
+            expectLocalMidnight(new Date('2025-07-15T00:00'))
+            expectLocalMidnight(new Date('2025-07-15T00:00:00'))
+            expectLocalMidnight(new Date('2025-07-15T00:00:00.000'))
         }
 
         // check unmodified Date constructor
@@ -292,6 +295,18 @@ describe('replace_date with timezone', () => {
 
         // check FakeDate with timezone set
         runTestCases()
+    })
+
+    it('parse() handles AM/PM for toString() format', () => {
+        const fakeDate = '2023-01-01T03:01:02.345Z' // value irrelevant, just needs to be set
+        setFakeDate(fakeDate, 'America/New_York')
+
+        expect(new Date('8/21/2025, 8:00:00 AM').toString()).toBe(
+            'Thu Aug 21 2025 08:00:00 GMT-0400 (Eastern Daylight Time)'
+        )
+        expect(new Date('8/21/2025, 8:00:00 PM').toString()).toBe(
+            'Thu Aug 21 2025 20:00:00 GMT-0400 (Eastern Daylight Time)'
+        )
     })
 
     it('parse() handles offsets', () => {

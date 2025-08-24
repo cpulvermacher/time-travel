@@ -437,8 +437,7 @@ function parseWithTimezone(dateString: string, timezone: string | undefined): nu
 
     // Need to handle dateString as local time in given timezone
     // pretend date is in UTC to get local time stamp, and get UTC timestamp in the desired timezone
-    const isDateOnly = !dateString.includes(':')
-    const localTimestamp = OriginalDate.parse(dateString + (isDateOnly ? ' 00:00Z' : 'Z'))
+    const localTimestamp = OriginalDate.parse(toUTCDateString(dateString))
     const desiredLocalDate = getDatePartsForLocalTimestamp(localTimestamp)
     return disambiguateDate(desiredLocalDate, timezone)
 }
@@ -464,6 +463,19 @@ function hasOffset(dateString: string): boolean {
  */
 function isUTCDate(dateString: string): boolean {
     return /^\d{4}(-\d{2}(-\d{2})?)?$/.test(dateString)
+}
+
+/** 'convert' a local date string (without any TZ specifier) to a UTC string for parsing the raw contents */
+function toUTCDateString(dateString: string): string {
+    if (!dateString.includes(':')) {
+        // date only string, add time part
+        return dateString + ' 00:00Z'
+    } else if (!/\d$/.test(dateString)) {
+        // does not end in a digit (maybe "AM" or "PM")
+        return dateString + ' Z'
+    } else {
+        return dateString + 'Z'
+    }
 }
 
 /** copy all own properties from source to target, except 'constructor'
