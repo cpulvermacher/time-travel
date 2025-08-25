@@ -44,7 +44,7 @@
     "icon_title_off": "(Off)",
     "enable_auto_reload": "Auto-Reload Page",
     "advanced_settings": "Details",
-    "timezone_selector_label": "Time Zone (Experimental)",
+    "timezone_selector_label": "Time Zone (EXPERIMENTAL)",
     "timezone_group_common": "Common",
     "timezone_group_recent": "Recent",
     "timezone_browser_default": "Default",
