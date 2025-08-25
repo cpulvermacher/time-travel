@@ -27,7 +27,7 @@ export function FakeIntlDateTimeFormat(
     return this
 }
 
-/** Apply custom timezone if set and no explicit timezone in options */
+/** Apply custom time zone if set and no explicit time zone in options */
 export function optionsWithDefaultTz(options?: Intl.DateTimeFormatOptions): Intl.DateTimeFormatOptions | undefined {
     if (options?.timeZone) {
         return options

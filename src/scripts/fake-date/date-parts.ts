@@ -96,7 +96,7 @@ export function compareDateParts(
     )
 }
 
-/** Gets timezone offset in minutes from a longOffset string.
+/** Gets time zone offset in minutes from a longOffset string.
  *
  * This matches the output of `Date.getTimezoneOffset()`, including the sign.
  *
@@ -143,7 +143,7 @@ function getFormatterForTimezone(timezone: string | undefined): Intl.DateTimeFor
 let cachedFormatter: Intl.DateTimeFormat | null = null
 let cachedFormatterForTimezone: string | undefined | null = null
 
-/** Returns timezone name for toString()/toTimeString(). */
+/** Returns time zone name for toString()/toTimeString(). */
 export function getTimezoneName(date: Date, timezone: string): string {
     const formatter = getLongNameFormatter(timezone)
 

@@ -105,7 +105,7 @@ function patchDateMethods(datePrototype: Date): void {
         return `${raw.hour}:${raw.minute}:${raw.second} ${offset} (${tzName})`
     }
 
-    // Override locale string methods to use the configured timezone by default
+    // Override locale string methods to use the configured time zone by default
     datePrototype.toLocaleString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
         return OriginalDate.prototype.toLocaleString.call(this, locales, optionsWithDefaultTz(options))
     }
@@ -118,7 +118,7 @@ function patchDateMethods(datePrototype: Date): void {
         return OriginalDate.prototype.toLocaleTimeString.call(this, locales, optionsWithDefaultTz(options))
     }
 
-    // --- Override local time methods to return values in the configured timezone ---
+    // --- Override local time methods to return values in the configured time zone ---
 
     datePrototype.getFullYear = function () {
         const timezone = getTimezone()

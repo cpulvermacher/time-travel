@@ -1,7 +1,7 @@
 import { m } from '../paraglide/messages'
 
 export type Timezone = {
-    tz: string // IANA timezone identifier, e.g., "America/New_York". Empty string for browser default.
+    tz: string // IANA time zone identifier, e.g., "America/New_York". Empty string for browser default.
     label: string // label, e.g. 'America/New_York (UTC-05:00)'
     group: string // grouping label, e.g. 'America'
 }
@@ -24,7 +24,7 @@ export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone
     const buildOption = (tz: string) => {
         const offset = getOffset(locale, tz).replace('GMT', 'UTC')
         const tzParts = tz.split('/')
-        const group = tzParts.length > 1 ? tzParts[0] : 'Etc' // Firefox has a number of funky timezones like 'CST6CDT', put them in 'Etc'
+        const group = tzParts.length > 1 ? tzParts[0] : 'Etc' // Firefox has a number of funky time zones like 'CST6CDT', put them in 'Etc'
         const tzName = tzParts.length > 1 ? tzParts.slice(1).join('/') : tz
 
         return {
@@ -53,7 +53,7 @@ export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone
             ...timeZones
                 .filter((tz) => tz !== 'UTC')
                 .map(buildOption)
-                .sort((a, b) => a.tz.localeCompare(b.tz)), // Sort by timezone identifier
+                .sort((a, b) => a.tz.localeCompare(b.tz)), // Sort by time zone identifier
         ]
     } catch (error) {
         console.error('Error loading timezones:', error)
@@ -66,7 +66,7 @@ function getOffset(locale: string, tz: string | undefined, date?: Date) {
     return getTimezoneName(locale, tz, date, 'longOffset')
 }
 
-/** Gets timezone offset in minutes from a longOffset string.
+/** Gets time zone offset in minutes from a longOffset string.
  *
  * Note: identical to function in date-parts.ts. Needs to be copied to avoid bundle splitting.
  */
@@ -87,7 +87,7 @@ function getOffsetMinutes(longOffset?: string): number {
     return 0
 }
 
-/** Get timezone name */
+/** Get time zone name */
 function getTimezoneName(
     locale: string,
     tz: string | undefined,
@@ -101,7 +101,7 @@ function getTimezoneName(
     return removeDateTimePart(formatter.format(date || new Date()))
 }
 
-/** Remove date and time part from a string, leaving only the timezone part. */
+/** Remove date and time part from a string, leaving only the time zone part. */
 function removeDateTimePart(str: string): string {
     const parts = str.split(' ')
     if (parts.length > 1) {

@@ -5,9 +5,9 @@ const OriginalDate = Date
 
 /**
  * parses a date string into a timestamp.
- * For all cases where Date.parse() would parse the string as local time, uses the provided timezone.
+ * For all cases where Date.parse() would parse the string as local time, uses the provided time zone.
  *
- * This is a bit tricky because timezone is a IANA ID like Europe/London, but parse() only supports timezone offsets
+ * This is a bit tricky because time zone is a IANA ID like Europe/London, but parse() only supports time zone offsets
  */
 export function parseWithTimezone(dateString: string, timezone: string | undefined): number {
     if (!timezone || isUTCDate(dateString)) {
@@ -21,8 +21,8 @@ export function parseWithTimezone(dateString: string, timezone: string | undefin
         return OriginalDate.parse(dateString)
     }
 
-    // Need to handle dateString as local time in given timezone
-    // pretend date is in UTC to get local time stamp, and get UTC timestamp in the desired timezone
+    // Need to handle dateString as local time in given time zone
+    // pretend date is in UTC to get local time stamp, and get UTC timestamp in the desired time zone
     const localTimestamp = OriginalDate.parse(toUTCDateString(dateString))
     const desiredLocalDate = getDatePartsForLocalTimestamp(localTimestamp)
     return disambiguateDate(desiredLocalDate, timezone)

@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 
 import { getDateParts, getOffsetMinutes } from '../../../scripts/fake-date/date-parts'
 
-// Only tests the timezone handling, tests without timezone set are in replace_date.test.ts
 describe('getDateParts', () => {
     it('returns parts for UTC', () => {
         const fakeDate = '2023-01-01T12:00:00.000Z' // Noon UTC

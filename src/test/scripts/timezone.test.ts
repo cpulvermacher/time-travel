@@ -4,8 +4,8 @@ import { setFakeDate } from '../../util/inject'
 //Note: sessionStorage starts empty, so this just sets up the event listener
 import '../../scripts/replace_date'
 
-// Only tests the timezone handling, tests without timezone set are in replace_date.test.ts
-describe('replace_date with timezone', () => {
+// Only tests the time zone handling, tests without time zone set are in replace_date.test.ts
+describe('replace_date with time zone', () => {
     afterEach(() => {
         setFakeDate('')
     })

@@ -5,9 +5,9 @@ const msPerMinute = 60 * msPerSecond
 const msPerHour = 60 * msPerMinute
 const msPerDay = 24 * msPerHour
 
-/** for a given date and timezone, returns a single UTC timestamp that produces the desiredDate.
+/** for a given date and time zone, returns a single UTC timestamp that produces the desiredDate.
  *
- * In case there is a transition between two timezone offsets (e.g. DST change) that results
+ * In case there is a transition between two time zone offsets (e.g. DST change) that results
  * in two possible matching timestamps, we choose the timestamp before the transition.
  *
  * Implementation similar to temporal-polyfill's GetNamedTimeZoneEpochNanoseconds()

@@ -13,7 +13,7 @@
     interface Props {
         fakeDate: string
         onEnterKey?: () => void
-        timezone: string // IANA timezone identifier or '' for browser default
+        timezone: string // IANA time zone identifier or '' for browser default
     }
     let { fakeDate = $bindable(), onEnterKey, timezone }: Props = $props()
     // Note: the datepicker internally works with timestamps in UTC. When choosing a date, pickerDate will be set to 00:00 local time.

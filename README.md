@@ -7,7 +7,7 @@
 [![Status](https://flat.badgen.net/github/checks/cpulvermacher/time-travel)](https://github.com/cpulvermacher/time-travel/actions/workflows/node.js.yml)
 [![License](https://flat.badgen.net/github/license/cpulvermacher/time-travel)](./LICENSE)
 
-A browser extension to fake the current date, time and timezone in JavaScript `Date` or `Intl.DateTimeFormat` objects, to help you debug time-dependent frontend applications without having to change the system time.
+A browser extension to fake the current date, time and time zone in JavaScript `Date` or `Intl.DateTimeFormat` objects, to help you debug time-dependent frontend applications without having to change the system time.
 
 https://github.com/user-attachments/assets/74f0ee57-f941-4b94-9176-5445d58fd8a1
 
@@ -24,21 +24,21 @@ To restore the system time, click the extension icon and switch off the "Enable 
 When the fake date is enabled, the clock runs forward from the configured time.
 You can stop the clock by switching on the "Stop Clock" toggle. The fake date will be reset to the last value you set.
 
-To change the timezone, open "Details" and select a timezone from the dropdown. When a non-default timezone is set, both `Date` objects and `Intl.DateTimeFormat` will use this timezone instead of the system timezone. The fake date in the Time Travel UI is still shown and configured in the system timezone, but a preview of the time in the configured timezone plus the Daylight Saving Time (DST) offset is shown if applicable.
+To change the time zone, open "Details" and select a time zone from the dropdown. When a non-default time zone is set, both `Date` objects and `Intl.DateTimeFormat` will use this time zone instead of the system time zone. The fake date in the Time Travel UI is still shown and configured in the system time zone, but a preview of the time in the configured time zone plus the Daylight Saving Time (DST) offset is shown if applicable.
 
 ### Example Dates and Formats
 
 - `2025-04-27 12:40` - Local time
-- `2025-03-30 00:59:55` - Assuming your system timezone is Europe/London (GMT), 5 seconds before a one-hour jump to 2 a.m. (summer time)
+- `2025-03-30 00:59:55` - Assuming your system time zone is Europe/London (GMT), 5 seconds before a one-hour jump to 2 a.m. (summer time)
 - `2025-04-27T12:40Z` - Set local equivalent for given UTC time
-- `2025-04-27T12:40+1130` - Set local equivalent for time with +11:30 timezone offset. Note that actual time zone is not changed
+- `2025-04-27T12:40+1130` - Set local equivalent for time with +11:30 time zone offset. Note that actual time zone is not changed
 - `2025-03-25T12:40:00.120` - Local time with milliseconds
 - `1731493140025` - UNIX timestamp
 
 ## Features
 
 - Fakes date and time for all methods of `Date` and `Intl.DateTimeFormat` objects.
-- (experimental) Timezone can be changed, with full support for DST transitions.
+- (experimental) Time zone can be changed, with full support for DST transitions.
 - Time can be stopped and resumed.
 - Option to automatically reload page after changing date.
 - Only affects current tab after clicking the extension icon.

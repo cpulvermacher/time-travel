@@ -50,7 +50,7 @@ export function getTickStartTimestamp(): number | null {
     return window['__timeTravelState']?.tickStartTimestamp ?? null
 }
 
-/** return timezone setting, or null to use browser default */
+/** return time zone setting, or null to use browser default */
 export function getTimezone(): string | null {
     return window['__timeTravelState']?.timezone ?? null
 }
