@@ -130,8 +130,8 @@
             class={{ error: !isValid }}
             title={m.date_input_hint()}
         />
-        {#if isValid && timezone}
-            <PreviewInTimezone {fakeDate} {timezone} />
+        {#if timezone}
+            <PreviewInTimezone {fakeDate} {timezone} {isValid} />
         {/if}
     </DatePicker>
 </div>

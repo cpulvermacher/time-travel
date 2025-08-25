@@ -6,8 +6,9 @@
     interface Props {
         fakeDate: string
         timezone: string
+        isValid: boolean
     }
-    let { fakeDate, timezone }: Props = $props()
+    let { fakeDate, timezone, isValid }: Props = $props()
 
     const tzInfo = $derived(getTzInfo(getUILanguage(), fakeDate, timezone))
 </script>
@@ -18,18 +19,24 @@
             timezone: `${timezone} (${tzInfo?.tzName})`,
         })}
     </div>
-    <div class="time-block">
-        <div class="datetime">{tzInfo?.dateString} {tzInfo?.timeString}</div>
-        {#if tzInfo?.isYearWithDst || tzInfo?.isOffsetDifferentFromNow}
-            <span class={{ badge: true, 'badge--dst': tzInfo?.isDst }} title={tzInfo?.isDst ? m.dst_info() : undefined}>
-                {tzInfo.offset}
-            </span>
-        {/if}
-    </div>
+    {#if isValid}
+        <div class="time-block">
+            <div class="datetime">{tzInfo?.dateString} {tzInfo?.timeString}</div>
+            {#if tzInfo?.isYearWithDst || tzInfo?.isOffsetDifferentFromNow}
+                <span
+                    class={{ badge: true, 'badge--dst': tzInfo?.isDst }}
+                    title={tzInfo?.isDst ? m.dst_info() : undefined}
+                >
+                    {tzInfo.offset}
+                </span>
+            {/if}
+        </div>
+    {/if}
 </div>
 
 <style>
     .preview {
+        height: 2em;
         margin-top: 5px;
         display: flex;
         flex-direction: column;
