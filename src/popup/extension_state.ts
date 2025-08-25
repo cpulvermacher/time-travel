@@ -81,22 +81,19 @@ export type Settings = {
 
 /** get current state of extension. Throws on permission errors */
 export async function getState(): Promise<InitialState> {
-    const autoReload = await loadSetting('autoReload', false)
-    const stopClock = await loadSetting('stopClock', false)
-    const advancedSettingsOpen = await loadSetting('advancedSettingsOpen', false)
-    const timezone = await loadSetting('timezone', '')
+    const settings = {
+        autoReload: await loadSetting('autoReload', false),
+        stopClock: await loadSetting('stopClock', false),
+        advancedSettingsOpen: await loadSetting('advancedSettingsOpen', false),
+        timezone: await loadSetting('timezone', ''),
+    }
 
     if (import.meta.env.DEV) {
-        //return dummy state for testing
+        //return dummy state based on settings for testing
         return {
             isEnabled: true,
             fakeDate: '2005-06-07 08:09',
-            settings: {
-                autoReload,
-                stopClock,
-                advancedSettingsOpen,
-                timezone,
-            },
+            settings: settings,
         }
     }
 
@@ -121,10 +118,10 @@ export async function getState(): Promise<InitialState> {
             isEnabled,
             fakeDate: initialFakeDate,
             settings: {
-                autoReload,
-                stopClock: isEnabled ? state.isClockStopped : stopClock,
-                advancedSettingsOpen,
-                timezone,
+                autoReload: settings.autoReload,
+                advancedSettingsOpen: settings.advancedSettingsOpen,
+                stopClock: isEnabled ? state.isClockStopped : settings.stopClock,
+                timezone: isEnabled ? state.timezone || '' : settings.timezone,
             },
         }
     } catch (error) {
