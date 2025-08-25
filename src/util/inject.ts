@@ -6,6 +6,11 @@ export function getFakeDate() {
     return window.sessionStorage.getItem(FAKE_DATE_STORAGE_KEY)
 }
 
+export function getTimezone() {
+    const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone'
+    return window.sessionStorage.getItem(TIMEZONE_STORAGE_KEY)
+}
+
 /** sets fake date and timezone and triggers a state update. empty date will disable the fake date */
 export function setFakeDate(date: string, timezone?: string) {
     //needs to be defined locally!

@@ -3,6 +3,7 @@ import { overwriteGetLocale } from '../paraglide/runtime'
 import { getUILanguage, injectFunction, setBadgeText, setTitle } from './browser'
 import { getTranslationLocale } from './i18n'
 import * as inject from './inject'
+import { getTzInfo } from './timezone-info'
 
 declare const __EXT_VERSION__: string
 declare const __MODE__: 'dev' | 'production'
@@ -14,6 +15,7 @@ type ContentScriptState = {
     contentScriptActive: boolean
     fakeDate: string | null
     tickStartTimestamp: string | null
+    timezone: string | null
     isClockStopped: boolean
     fakeDateActive: boolean
 }
@@ -22,6 +24,7 @@ export type ActivationMessage = {
     msg: 'active'
     fakeDate: string
     tickStartTimestamp: string | null
+    timezone: string | null
     isClockStopped: boolean
 }
 
@@ -116,7 +119,12 @@ export async function setBadgeAndTitle(tabId: number, state: ContentScriptState)
 
     let title = defaultTitleText
     if (state.fakeDateActive && state.fakeDate) {
-        const formattedFakeDate = formatLocalTime(new Date(state.fakeDate))
+        const tzInfo = getTzInfo(getUILanguage(), state.fakeDate, state.timezone || undefined)
+
+        let formattedFakeDate = tzInfo.dateString + ' ' + tzInfo.timeString + ' ' + tzInfo.tzName
+        if (tzInfo.isYearWithDst || tzInfo.isOffsetDifferentFromNow) {
+            formattedFakeDate += ` (${tzInfo.offset})`
+        }
 
         const titleArgs = { fakeDate: formattedFakeDate }
         title += ' ' + (state.isClockStopped ? m.icon_title_stopped(titleArgs) : m.icon_title_running(titleArgs))
@@ -134,12 +142,14 @@ export async function isContentScriptActive(tabId: number) {
 export async function getContentScriptState(tabId: number): Promise<ContentScriptState> {
     const contentScriptActive = await isContentScriptActive(tabId)
     const fakeDate = await injectFunction(tabId, inject.getFakeDate, [''])
+    const timezone = await injectFunction(tabId, inject.getTimezone, [''])
     const tickStartTimestamp = await injectFunction(tabId, inject.getTickStartTimestamp, [''])
 
     return {
         contentScriptActive,
         fakeDate,
         tickStartTimestamp: tickStartTimestamp,
+        timezone,
         isClockStopped: contentScriptActive && !!fakeDate && !tickStartTimestamp,
         fakeDateActive: contentScriptActive && !!fakeDate,
     }

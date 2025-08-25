@@ -8,9 +8,11 @@ try {
     const fakeDate = window.sessionStorage.getItem('timeTravelDate')
     if (fakeDate) {
         const tickStartTimestamp = window.sessionStorage.getItem('timeTravelTickStartTimestamp')
+        const timezone = window.sessionStorage.getItem('timeTravelTimezone')
         void chrome.runtime.sendMessage<ActivationMessage>({
             msg: 'active',
             fakeDate,
+            timezone,
             tickStartTimestamp,
             isClockStopped: !tickStartTimestamp,
         })

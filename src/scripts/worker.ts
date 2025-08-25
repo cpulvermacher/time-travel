@@ -18,6 +18,7 @@ chrome.runtime.onMessage.addListener((message: ActivationMessage, sender) => {
             contentScriptActive: true,
             fakeDate: message.fakeDate,
             tickStartTimestamp: message.tickStartTimestamp,
+            timezone: message.timezone,
             isClockStopped: message.isClockStopped,
             fakeDateActive: true,
         }
