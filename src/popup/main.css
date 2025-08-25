@@ -32,7 +32,7 @@ body {
     font-family: var(--font-family);
     font-size: 1rem;
     min-width: 240px;
-    width: fit-content;
+    width: 300px;
 }
 
 @media (min-width: 400px) {

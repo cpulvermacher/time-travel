@@ -76,6 +76,10 @@
 </label>
 
 <style>
+    label {
+        display: flex;
+        flex-direction: column;
+    }
     select {
         width: 100%;
         padding: 5px 10px;
