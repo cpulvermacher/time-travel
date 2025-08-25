@@ -36,7 +36,7 @@
 
 <style>
     .preview {
-        height: 2em;
+        min-height: 2em;
         margin-top: 5px;
         display: flex;
         flex-direction: column;
