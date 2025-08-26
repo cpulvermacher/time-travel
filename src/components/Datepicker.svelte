@@ -131,7 +131,7 @@
             title={m.date_input_hint()}
         />
         {#if timezone}
-            <PreviewInTimezone {fakeDate} {timezone} {isValid} />
+            <PreviewInTimezone fakeDate={parseDate(fakeDate)} {timezone} />
         {/if}
     </DatePicker>
 </div>

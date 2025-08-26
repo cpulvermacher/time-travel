@@ -4,13 +4,12 @@
     import { getTzInfo } from '../util/timezone-info'
 
     interface Props {
-        fakeDate: string
+        fakeDate: string | null
         timezone: string
-        isValid: boolean
     }
-    let { fakeDate, timezone, isValid }: Props = $props()
+    let { fakeDate, timezone }: Props = $props()
 
-    const tzInfo = $derived(isValid ? getTzInfo(getUILanguage(), fakeDate, timezone) : null)
+    const tzInfo = $derived(fakeDate ? getTzInfo(getUILanguage(), fakeDate, timezone) : null)
 </script>
 
 <div class="preview">
