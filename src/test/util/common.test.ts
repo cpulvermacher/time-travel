@@ -119,6 +119,12 @@ describe('parseDate', () => {
     it('returns null for invalid dates', () => {
         expect(parseDate('abcdefgh')).toBe(null)
         expect(parseDate('2025-02-32')).toBe(null)
+        expect(parseDate('27-02-03')).toBe(null)
+        expect(parseDate('15/01/2024')).toBe(null)
+        expect(parseDate('2025-01-001ZZ')).toBe(null)
+        expect(parseDate('22:30')).toBe(null)
+        expect(parseDate('2024-01-15T10:30:00 Z')).toBe(null)
+        expect(parseDate('1234567898764212345678')).toBe(null)
     })
 
     it('accepts empty string', () => {

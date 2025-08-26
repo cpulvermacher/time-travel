@@ -98,13 +98,17 @@ export function overwriteDatePart(dateTimeString: string, newDate: Date): string
  * If the string is a UNIX timestamp, it is converted into an ISO string instead.
  */
 export function parseDate(date: string): string | null {
-    if (date && Number.isInteger(+date)) {
-        date = new Date(Number.parseInt(date)).toISOString()
-    }
-    if (date && isNaN(Date.parse(date))) {
+    try {
+        if (date && Number.isInteger(+date)) {
+            date = new Date(Number.parseInt(date)).toISOString()
+        }
+        if (date && isNaN(Date.parse(date))) {
+            return null
+        }
+        return date
+    } catch {
         return null
     }
-    return date
 }
 
 export async function setBadgeAndTitle(tabId: number, state: ContentScriptState) {
