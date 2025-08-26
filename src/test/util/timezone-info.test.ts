@@ -65,4 +65,14 @@ describe('getTzInfo', () => {
         expect(infoDublin.offset).toBe('-00:25:21')
         expect(infoDublin.isYearWithDst).toBe(false)
     })
+
+    it('returns strings in given locale', () => {
+        const infoJa = getTzInfo('ja', '2025-07-01T10:00Z', 'America/New_York')!
+        expect(infoJa.dateString).toBe('2025年7月1日')
+        expect(infoJa.timeString).toBe('6:00')
+
+        const infoDe = getTzInfo('de', '2025-07-01T10:00Z', 'America/New_York')!
+        expect(infoDe.dateString).toBe('1. Juli 2025')
+        expect(infoDe.timeString).toBe('06:00')
+    })
 })
