@@ -35,8 +35,8 @@ jobs:
         cache: 'pnpm'
     - run: pnpm i
     - run: pnpm audit --production
-    - run: pnpm test --if-present
-    - run: pnpm dev --if-present
+    - run: pnpm --if-present test
+    - run: pnpm --if-present dev
     - run: pnpm lint
     - name: web-ext lint
       run: npx web-ext lint -s dist/firefox
