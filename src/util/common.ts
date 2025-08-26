@@ -125,9 +125,12 @@ export async function setBadgeAndTitle(tabId: number, state: ContentScriptState)
     if (state.fakeDateActive && state.fakeDate) {
         const tzInfo = getTzInfo(getUILanguage(), state.fakeDate, state.timezone || undefined)
 
-        let formattedFakeDate = tzInfo.dateString + ' ' + tzInfo.timeString + ' ' + tzInfo.tzName
-        if (tzInfo.isYearWithDst || tzInfo.isOffsetDifferentFromNow) {
-            formattedFakeDate += ` (${tzInfo.offset})`
+        let formattedFakeDate = ''
+        if (tzInfo) {
+            formattedFakeDate = tzInfo.dateString + ' ' + tzInfo.timeString + ' ' + tzInfo.tzName
+            if (tzInfo.isYearWithDst || tzInfo.isOffsetDifferentFromNow) {
+                formattedFakeDate += ` (${tzInfo.offset})`
+            }
         }
 
         const titleArgs = { fakeDate: formattedFakeDate }

@@ -120,41 +120,46 @@ type TzInfo = {
     dateString: string // date string, e.g. "Aug 6, 2025" or "2025年8月6日"
 }
 
-export function getTzInfo(locale: string, dateStr: string, timezone: string | undefined): TzInfo {
-    const date = new Date(dateStr)
-    const summerDate = new Date(date.getFullYear(), 5, 1) // June 1st
-    const winterDate = new Date(date.getFullYear(), 11, 1) // December 1st
+export function getTzInfo(locale: string, dateStr: string, timezone: string | undefined): TzInfo | null {
+    try {
+        const date = new Date(dateStr)
+        const summerDate = new Date(date.getFullYear(), 5, 1) // June 1st
+        const winterDate = new Date(date.getFullYear(), 11, 1) // December 1st
 
-    const offsetSummer = getOffset('en', timezone, summerDate)
-    const offsetWinter = getOffset('en', timezone, winterDate)
-    const yearWithDst = offsetSummer !== offsetWinter
+        const offsetSummer = getOffset('en', timezone, summerDate)
+        const offsetWinter = getOffset('en', timezone, winterDate)
+        const yearWithDst = offsetSummer !== offsetWinter
 
-    // DST can happen around the end of the year in the southern hemisphere, so we check if the date's offset is smaller than either offset
-    const offsetDate = getOffset('en', timezone, date)
-    const isDst =
-        getOffsetMinutes(offsetDate) < getOffsetMinutes(offsetWinter) ||
-        getOffsetMinutes(offsetDate) < getOffsetMinutes(offsetSummer)
+        // DST can happen around the end of the year in the southern hemisphere, so we check if the date's offset is smaller than either offset
+        const offsetDate = getOffset('en', timezone, date)
+        const isDst =
+            getOffsetMinutes(offsetDate) < getOffsetMinutes(offsetWinter) ||
+            getOffsetMinutes(offsetDate) < getOffsetMinutes(offsetSummer)
 
-    let tzName = getTimezoneName(locale, timezone, date, 'short')
-    if (tzName !== 'GMT' && tzName.includes('GMT')) {
-        tzName = getTimezoneName(locale, timezone, date, 'shortGeneric')
-    }
-    const offset = offsetDate.replace('GMT', '')
+        let tzName = getTimezoneName(locale, timezone, date, 'short')
+        if (tzName !== 'GMT' && tzName.includes('GMT')) {
+            tzName = getTimezoneName(locale, timezone, date, 'shortGeneric')
+        }
+        const offset = offsetDate.replace('GMT', '')
 
-    const offsetNow = getOffset('en', timezone, new Date())
+        const offsetNow = getOffset('en', timezone, new Date())
 
-    return {
-        tzName,
-        offset,
-        isDst,
-        isYearWithDst: yearWithDst,
-        isOffsetDifferentFromNow: offsetDate !== offsetNow,
-        timeString: date.toLocaleTimeString(locale, { timeZone: timezone, hour: 'numeric', minute: 'numeric' }),
-        dateString: date.toLocaleDateString(locale, {
-            timeZone: timezone,
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-        }),
+        return {
+            tzName,
+            offset,
+            isDst,
+            isYearWithDst: yearWithDst,
+            isOffsetDifferentFromNow: offsetDate !== offsetNow,
+            timeString: date.toLocaleTimeString(locale, { timeZone: timezone, hour: 'numeric', minute: 'numeric' }),
+            dateString: date.toLocaleDateString(locale, {
+                timeZone: timezone,
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+            }),
+        }
+    } catch (e) {
+        console.error('Error getting timezone info for', dateStr, timezone, e)
+        return null
     }
 }

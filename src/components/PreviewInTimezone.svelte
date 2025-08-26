@@ -10,16 +10,16 @@
     }
     let { fakeDate, timezone, isValid }: Props = $props()
 
-    const tzInfo = $derived(getTzInfo(getUILanguage(), fakeDate, timezone))
+    const tzInfo = $derived(isValid ? getTzInfo(getUILanguage(), fakeDate, timezone) : null)
 </script>
 
 <div class="preview">
     <div class="timezone-label">
         {m.date_in_timezone_info({
-            timezone: `${timezone} (${tzInfo?.tzName})`,
+            timezone: tzInfo ? `${timezone} (${tzInfo?.tzName})` : timezone,
         })}
     </div>
-    {#if isValid}
+    {#if tzInfo}
         <div class="time-block">
             <div class="datetime">{tzInfo?.dateString} {tzInfo?.timeString}</div>
             {#if tzInfo?.isYearWithDst || tzInfo?.isOffsetDifferentFromNow}
