@@ -10,13 +10,17 @@
     let { fakeDate, timezone }: Props = $props()
 
     const tzInfo = $derived(fakeDate ? getTzInfo(getUILanguage(), fakeDate, timezone) : null)
+    const timeZoneLabel = $derived.by(() => {
+        if (!tzInfo || tzInfo.tzName === timezone) {
+            return timezone
+        }
+        return `${timezone} (${tzInfo?.tzName})`
+    })
 </script>
 
 <div class="preview">
     <div class="timezone-label">
-        {m.date_in_timezone_info({
-            timezone: tzInfo ? `${timezone} (${tzInfo?.tzName})` : timezone,
-        })}
+        {m.date_in_timezone_info({ timezone: timeZoneLabel })}
     </div>
     {#if tzInfo}
         <div class="time-block">
