@@ -52,6 +52,10 @@ export function setTickStartTimestamp(nowTimestampStr: string) {
     } else {
         window.sessionStorage.setItem(TICK_START_STORAGE_KEY, nowTimestampStr)
     }
+
+    if (window.__timeTravelUpdateState) {
+        window.__timeTravelUpdateState()
+    }
 }
 
 export function isContentScriptActive() {

@@ -57,13 +57,8 @@ export async function updateExtensionIcon() {
 export async function setClockState(stopClock: boolean): Promise<void> {
     const tabId = await getActiveTabId()
 
-    if (stopClock) {
-        await injectFunction(tabId, inject.setTickStartTimestamp, [''])
-    } else {
-        const now = new Date()
-        const nowTimestampStr = now.getTime().toString()
-        await injectFunction(tabId, inject.setTickStartTimestamp, [nowTimestampStr])
-    }
+    const timestamp = stopClock ? '' : new Date().getTime().toString()
+    await injectFunction(tabId, inject.setTickStartTimestamp, [timestamp])
 }
 
 export type InitialState = {
