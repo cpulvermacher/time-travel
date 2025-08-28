@@ -76,8 +76,11 @@
     }
     function adjustSeconds(seconds: number) {
         // adjust UTC timestamp
-        const fakeDateTimestamp = Date.parse(fakeDate)
-        pickerDate = fakeDateTimestamp + seconds * 1000
+        const parsedDate = parseDate(fakeDate)
+        if (parsedDate === null || parsedDate === '') {
+            return
+        }
+        pickerDate = Date.parse(parsedDate) + seconds * 1000
         fakeDate = formatLocalTime(new Date(pickerDate), { fullPrecision: true })
     }
 </script>

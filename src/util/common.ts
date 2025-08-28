@@ -96,6 +96,7 @@ export function overwriteDatePart(dateTimeString: string, newDate: Date): string
 /** Tries parsing a date string, returns a valid date string or null if invalid.
  *
  * If the string is a UNIX timestamp, it is converted into an ISO string instead.
+ * Empty strings are returned as is.
  */
 export function parseDate(date: string): string | null {
     try {
