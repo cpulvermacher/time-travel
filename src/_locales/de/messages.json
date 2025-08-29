@@ -1,6 +1,6 @@
 {
     "extensionDescription": {
-        "message": "Ersetzt das aktuelle Datum und Uhrzeit in JavaScript Date oder Intl.DateTimeFormat mit beliebigen Werten.",
+        "message": "Ersetzt Datum, Uhrzeit und Zeitzone in JavaScript Date oder Intl.DateTimeFormat mit beliebigen Werten.",
         "description": "description shown in browser UI"
     }
 }

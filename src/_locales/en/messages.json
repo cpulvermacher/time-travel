@@ -1,6 +1,6 @@
 {
     "extensionDescription": {
-        "message": "Fake the current date and time in JavaScript Date or Intl.DateTimeFormat objects.",
+        "message": "Fake the current date, time and time zone in JavaScript Date or Intl.DateTimeFormat objects.",
         "description": "description shown in browser UI"
     }
 }
