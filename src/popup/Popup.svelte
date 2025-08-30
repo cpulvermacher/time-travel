@@ -3,7 +3,7 @@
     import { m } from '../paraglide/messages'
     import { overwriteGetLocale } from '../paraglide/runtime'
     import { getUILanguage } from '../util/browser'
-    import { formatLocalTime } from '../util/common'
+    import { formatLocalDate } from '../util/formatLocalDate'
     import { getTranslationLocale } from '../util/i18n'
     import { getState } from './extension_state'
 
@@ -20,7 +20,7 @@
     </div>
 {:then initialState}
     <Settings
-        fakeDate={initialState.fakeDate ?? formatLocalTime(new Date())}
+        fakeDate={initialState.fakeDate ?? formatLocalDate(new Date())}
         isEnabled={!!initialState.isEnabled}
         settings={initialState.settings}
     />

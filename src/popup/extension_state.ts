@@ -9,7 +9,8 @@ import {
     loadSetting,
     registerContentScript,
 } from '../util/browser'
-import { formatLocalTime, getContentScriptState, isContentScriptActive, parseDate } from '../util/common'
+import { getContentScriptState, isContentScriptActive, parseDate } from '../util/common'
+import { formatLocalDate } from '../util/formatLocalDate'
 import { setIconBadgeAndTitle } from '../util/icon'
 import * as inject from '../util/inject'
 
@@ -97,7 +98,7 @@ export async function getState(): Promise<InitialState> {
                 const tickStartTimestamp = Number.parseInt(state.tickStartTimestamp)
                 const elapsed = Date.now() - tickStartTimestamp
                 const fakeDateNow = new Date(fakeDate.getTime() + elapsed)
-                initialFakeDate = formatLocalTime(fakeDateNow)
+                initialFakeDate = formatLocalDate(fakeDateNow)
             } else {
                 initialFakeDate = state.fakeDate
             }

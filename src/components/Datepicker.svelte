@@ -3,7 +3,8 @@
     import { tick } from 'svelte'
     import { m } from '../paraglide/messages'
     import { getUILanguage } from '../util/browser'
-    import { formatLocalTime, overwriteDatePart, parseDate } from '../util/common'
+    import { overwriteDatePart, parseDate } from '../util/common'
+    import { formatLocalDate } from '../util/formatLocalDate'
     import { getFirstDayOfWeek } from '../util/i18n'
     import PreviewInTimezone from './PreviewInTimezone.svelte'
 
@@ -81,7 +82,7 @@
             return
         }
         pickerDate = Date.parse(parsedDate) + seconds * 1000
-        fakeDate = formatLocalTime(new Date(pickerDate), { fullPrecision: true })
+        fakeDate = formatLocalDate(new Date(pickerDate), { fullPrecision: true })
     }
 </script>
 
@@ -128,7 +129,7 @@
             type="text"
             size="28"
             maxlength="28"
-            placeholder={formatLocalTime(new Date())}
+            placeholder={formatLocalDate(new Date())}
             spellcheck="false"
             class={{ error: !isValid }}
             title={m.date_input_hint()}
