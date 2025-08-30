@@ -1,6 +1,7 @@
-import { getDateParts, getDatePartsForLocalDate, getOffsetMinutes, getTimezoneName } from './date-parts'
+import { getDateParts, getDatePartsForLocalDate, getOffsetMinutes } from './date-parts'
 import { optionsWithDefaultTz } from './DateTimeFormat'
 import { disambiguateDate } from './disambiguateDate'
+import { getTimezoneName } from './getTimezoneName'
 import { parseWithTimezone } from './parseWithTimezone'
 import { fakeNowDate, getTimezone } from './storage'
 
