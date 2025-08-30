@@ -1,17 +1,7 @@
-import { m } from '../paraglide/messages'
-import { overwriteGetLocale } from '../paraglide/runtime'
-import { getUILanguage, injectFunction, setBadgeText, setTitle } from './browser'
-import { getTranslationLocale } from './i18n'
+import { injectFunction } from './browser'
 import * as inject from './inject'
-import { getTzInfo } from './timezone-info'
 
-declare const __EXT_VERSION__: string
-declare const __MODE__: 'dev' | 'production'
-
-const defaultTitleText = 'Time Travel'
-const devVersion = __MODE__ === 'dev' ? `\nVersion: ${__EXT_VERSION__}` : ''
-
-type ContentScriptState = {
+export type ContentScriptState = {
     contentScriptActive: boolean
     fakeDate: string | null
     tickStartTimestamp: string | null
@@ -110,37 +100,6 @@ export function parseDate(date: string): string | null {
     } catch {
         return null
     }
-}
-
-export async function setBadgeAndTitle(tabId: number, state: ContentScriptState) {
-    overwriteGetLocale(() => getTranslationLocale(getUILanguage()))
-
-    let badgeText = ''
-    if (state.fakeDateActive) {
-        badgeText = 'ON'
-    }
-
-    await setBadgeText(tabId, badgeText)
-
-    let title = defaultTitleText
-    if (state.fakeDateActive && state.fakeDate) {
-        const tzInfo = getTzInfo(getUILanguage(), state.fakeDate, state.timezone || undefined)
-
-        let formattedFakeDate = ''
-        if (tzInfo) {
-            formattedFakeDate = tzInfo.dateString + ' ' + tzInfo.timeString + ' ' + tzInfo.tzName
-            if (tzInfo.isYearWithDst || tzInfo.isOffsetDifferentFromNow) {
-                formattedFakeDate += ` (${tzInfo.offset})`
-            }
-        }
-
-        const titleArgs = { fakeDate: formattedFakeDate }
-        title += ' ' + (state.isClockStopped ? m.icon_title_stopped(titleArgs) : m.icon_title_running(titleArgs))
-    } else if (state.contentScriptActive) {
-        title += ' ' + m.icon_title_off()
-    }
-    title += devVersion
-    await setTitle(tabId, title)
 }
 
 export async function isContentScriptActive(tabId: number) {

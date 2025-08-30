@@ -1,4 +1,5 @@
-import { getContentScriptState, setBadgeAndTitle, type ActivationMessage } from './util/common'
+import { getContentScriptState, type ActivationMessage } from './util/common'
+import { setIconBadgeAndTitle } from './util/icon'
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
     void updateBadgeAndTitle(activeInfo.tabId)
@@ -22,14 +23,14 @@ chrome.runtime.onMessage.addListener((message: ActivationMessage, sender) => {
             isClockStopped: message.isClockStopped,
             fakeDateActive: true,
         }
-        void setBadgeAndTitle(sender.tab.id, state)
+        void setIconBadgeAndTitle(sender.tab.id, state)
     }
 })
 
 async function updateBadgeAndTitle(tabId: number) {
     try {
         const state = await getContentScriptState(tabId)
-        await setBadgeAndTitle(tabId, state)
+        await setIconBadgeAndTitle(tabId, state)
     } catch (e) {
         //ignore errors
         console.log(e)
