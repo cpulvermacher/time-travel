@@ -11,14 +11,6 @@ export type ContentScriptState = {
     fakeDateActive: boolean
 }
 
-export type ActivationMessage = {
-    msg: 'active'
-    fakeDate: string
-    tickStartTimestamp: string | null
-    timezone: string | null
-    isClockStopped: boolean
-}
-
 /** Returns a date string in format "YYYY-MM-DD hh:mm..." using the date from `newDate`, and the time from `dateTimeString`.
  *
  * Precision of time part is preserved, but includes at least hours and minutes.

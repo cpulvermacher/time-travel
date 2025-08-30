@@ -2,7 +2,7 @@
 // is active even in case we don't have `activeTab` permission right now.
 // this is necessary in particular when reloading a tab or on navigation
 
-import type { ActivationMessage } from '../util/common'
+import type { ActivationMessage } from '../types/ActivationMessage'
 
 try {
     const fakeDate = window.sessionStorage.getItem('timeTravelDate')

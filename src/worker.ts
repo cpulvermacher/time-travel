@@ -1,4 +1,4 @@
-import { type ActivationMessage } from './util/common'
+import type { ActivationMessage } from './types/ActivationMessage'
 import { setIconBadgeAndTitle, updateExtensionIcon } from './util/icon'
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
