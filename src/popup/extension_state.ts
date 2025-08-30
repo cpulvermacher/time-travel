@@ -6,12 +6,12 @@ import {
     isAboutUrl,
     isExtensionGalleryUrl,
     isFileUrl,
-    loadSetting,
     registerContentScript,
 } from '../util/browser'
 import { getContentScriptState, isContentScriptActive, parseDate } from '../util/common'
 import { formatLocalDate } from '../util/formatLocalDate'
 import * as inject from '../util/inject'
+import { loadSetting } from '../util/settings'
 
 /** sets & enables fake date, returns whether page needs reload for content script to be injected
  *

@@ -1,7 +1,8 @@
 <script lang="ts">
     import { onMount } from 'svelte'
     import { m } from '../paraglide/messages'
-    import { getUILanguage, loadSetting } from '../util/browser'
+    import { getUILanguage } from '../util/browser'
+    import { loadSetting } from '../util/settings'
     import { getTimezoneOptions, type Timezone } from '../util/timezone-info'
 
     interface Props {
