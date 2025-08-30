@@ -1,15 +1,4 @@
-import { injectFunction } from './browser'
 import { formatLocalDate } from './formatLocalDate'
-import * as inject from './inject'
-
-export type ContentScriptState = {
-    contentScriptActive: boolean
-    fakeDate: string | null
-    tickStartTimestamp: string | null
-    timezone: string | null
-    isClockStopped: boolean
-    fakeDateActive: boolean
-}
 
 /** Returns a date string in format "YYYY-MM-DD hh:mm..." using the date from `newDate`, and the time from `dateTimeString`.
  *
@@ -52,25 +41,5 @@ export function parseDate(date: string): string | null {
         return date
     } catch {
         return null
-    }
-}
-
-export async function isContentScriptActive(tabId: number) {
-    return !!(await injectFunction(tabId, inject.isContentScriptActive, ['']))
-}
-
-export async function getContentScriptState(tabId: number): Promise<ContentScriptState> {
-    const contentScriptActive = await isContentScriptActive(tabId)
-    const fakeDate = await injectFunction(tabId, inject.getFakeDate, [''])
-    const timezone = await injectFunction(tabId, inject.getTimezone, [''])
-    const tickStartTimestamp = await injectFunction(tabId, inject.getTickStartTimestamp, [''])
-
-    return {
-        contentScriptActive,
-        fakeDate,
-        tickStartTimestamp: tickStartTimestamp,
-        timezone,
-        isClockStopped: contentScriptActive && !!fakeDate && !tickStartTimestamp,
-        fakeDateActive: contentScriptActive && !!fakeDate,
     }
 }

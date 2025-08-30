@@ -1,6 +1,13 @@
 import { getSettingsStorage } from './browser'
 
-export type SettingName = 'stopClock' | 'autoReload' | 'advancedSettingsOpen' | 'timezone' | 'recentTimezones'
+export type SettingName = keyof Settings | 'recentTimezones'
+
+export type Settings = {
+    autoReload: boolean
+    stopClock: boolean // tab state if time travel is active, stored setting if inactive
+    advancedSettingsOpen: boolean
+    timezone: string // '' for browser default timezone
+}
 
 export async function saveSetting<T>(key: SettingName, value: T): Promise<void> {
     try {

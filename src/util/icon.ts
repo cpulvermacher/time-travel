@@ -1,7 +1,7 @@
 import { m } from '../paraglide/messages'
 import { overwriteGetLocale } from '../paraglide/runtime'
 import { getActiveTabId, getUILanguage, setBadgeText, setTitle } from './browser'
-import { getContentScriptState, type ContentScriptState } from './common'
+import { getContentScriptState, type ContentScriptState } from './content-script-state'
 import { getTranslationLocale } from './i18n'
 import { getTzInfo } from './timezone-info'
 

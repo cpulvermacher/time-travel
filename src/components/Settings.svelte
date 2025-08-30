@@ -1,10 +1,10 @@
 <script lang="ts">
     import { m } from '../paraglide/messages'
-    import { setClockState, setFakeDate, type Settings } from '../popup/extension_state'
     import { reloadTab } from '../util/browser'
     import { parseDate } from '../util/common'
+    import { setClockState, setFakeDate } from '../util/content-script-state'
     import { updateExtensionIcon } from '../util/icon'
-    import { saveMostRecentTimezone, saveSetting } from '../util/settings'
+    import { saveMostRecentTimezone, saveSetting, type Settings } from '../util/settings'
     import Accordion from './Accordion.svelte'
     import Background from './Background.svelte'
     import DateFormatInfo from './DateFormatInfo.svelte'

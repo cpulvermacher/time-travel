@@ -1,66 +1,14 @@
 /// <reference types="vite/client" />
 import { m } from '../paraglide/messages'
-import {
-    getActiveTabId,
-    injectFunction,
-    isAboutUrl,
-    isExtensionGalleryUrl,
-    isFileUrl,
-    registerContentScript,
-} from '../util/browser'
-import { getContentScriptState, isContentScriptActive, parseDate } from '../util/common'
+import { getActiveTabId, isAboutUrl, isExtensionGalleryUrl, isFileUrl } from '../util/browser'
+import { getContentScriptState } from '../util/content-script-state'
 import { formatLocalDate } from '../util/formatLocalDate'
-import * as inject from '../util/inject'
-import { loadSetting } from '../util/settings'
-
-/** sets & enables fake date, returns whether page needs reload for content script to be injected
- *
- * if dateString is empty, the fake date is cleared.
- */
-export async function setFakeDate(dateString: string, timezone?: string): Promise<boolean> {
-    if (import.meta.env.DEV) {
-        return true
-    }
-
-    const fakeDate = parseDate(dateString)
-    if (fakeDate === null) {
-        throw new Error('Invalid date format!')
-    }
-
-    const tabId = await getActiveTabId()
-
-    let needsReload = false
-    if (fakeDate && !(await isContentScriptActive(tabId))) {
-        await registerContentScript()
-        needsReload = true
-    }
-
-    // store UTC time (also avoids issues with `resistFingerprinting` on Firefox)
-    const fakeDateUtc = fakeDate ? new Date(fakeDate).toISOString() : ''
-    await injectFunction(tabId, inject.setFakeDate, [fakeDateUtc, timezone || ''])
-
-    return needsReload
-}
-
-/** set clock ticking state. `setClockState(false)` also resets the start time to now. */
-export async function setClockState(stopClock: boolean): Promise<void> {
-    const tabId = await getActiveTabId()
-
-    const timestamp = stopClock ? '' : new Date().getTime().toString()
-    await injectFunction(tabId, inject.setTickStartTimestamp, [timestamp])
-}
+import { loadSetting, type Settings } from '../util/settings'
 
 export type InitialState = {
     isEnabled: boolean
     fakeDate?: string
     settings: Settings
-}
-
-export type Settings = {
-    autoReload: boolean
-    stopClock: boolean // tab state if time travel is active, stored setting if inactive
-    advancedSettingsOpen: boolean
-    timezone: string // '' for browser default timezone
 }
 
 /** get current state of extension. Throws on permission errors */
