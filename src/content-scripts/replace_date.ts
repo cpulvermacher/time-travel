@@ -1,8 +1,8 @@
 // this content script is injected into the MAIN world, with no isolation
 // to avoid polluting the global scope, the bundled version is wrapped in an IIFE
 
-import { FakeDate } from './fake-date/Date'
-import { FakeIntlDateTimeFormat } from './fake-date/DateTimeFormat'
+import { FakeDate } from './fake-date/FakeDate'
+import { FakeIntlDateTimeFormat } from './fake-date/FakeIntlDateTimeFormat'
 import { getFakeDate, getTimezone, updateState } from './fake-date/storage'
 
 declare const __EXT_VERSION__: string
