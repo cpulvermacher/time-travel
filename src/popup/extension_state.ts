@@ -3,22 +3,17 @@ import { m } from '../paraglide/messages'
 import { getActiveTabId, isAboutUrl, isExtensionGalleryUrl, isFileUrl } from '../util/browser'
 import { getContentScriptState } from '../util/content-script-state'
 import { formatLocalDate } from '../util/formatLocalDate'
-import { loadSetting, type Settings } from '../util/settings'
+import { loadSettings, type Settings } from '../util/settings'
 
-export type InitialState = {
+type InitialState = {
     isEnabled: boolean
     fakeDate?: string
-    settings: Settings
+    settings: Settings // stored settings, but possibly overridden by tab state if active
 }
 
 /** get current state of extension. Throws on permission errors */
 export async function getState(): Promise<InitialState> {
-    const settings = {
-        autoReload: await loadSetting('autoReload', false),
-        stopClock: await loadSetting('stopClock', false),
-        advancedSettingsOpen: await loadSetting('advancedSettingsOpen', false),
-        timezone: await loadSetting('timezone', ''),
-    }
+    const settings = await loadSettings()
 
     if (import.meta.env.DEV) {
         //return dummy state based on settings for testing
@@ -54,6 +49,7 @@ export async function getState(): Promise<InitialState> {
                 advancedSettingsOpen: settings.advancedSettingsOpen,
                 stopClock: isEnabled ? state.isClockStopped : settings.stopClock,
                 timezone: isEnabled ? state.timezone || '' : settings.timezone,
+                recentTimezones: settings.recentTimezones,
             },
         }
     } catch (error) {

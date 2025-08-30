@@ -156,7 +156,11 @@
             label={m.stop_time_toggle()}
         />
         <Toggle bind:checked={settings.autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
-        <TimezoneSelect value={settings.timezone} onSelect={onTimezoneChange} />
+        <TimezoneSelect
+            value={settings.timezone}
+            onSelect={onTimezoneChange}
+            recentTimezones={settings.recentTimezones}
+        />
     </Accordion>
 </main>
 

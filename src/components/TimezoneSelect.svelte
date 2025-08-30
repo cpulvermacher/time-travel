@@ -2,23 +2,21 @@
     import { onMount } from 'svelte'
     import { m } from '../paraglide/messages'
     import { getUILanguage } from '../util/browser'
-    import { loadSetting } from '../util/settings'
     import { getTimezoneOptions, type Timezone } from '../util/timezone-info'
 
     interface Props {
         value: string
         onSelect?: (timezone: string) => void
+        recentTimezones: string[]
     }
 
-    const { value, onSelect }: Props = $props()
+    const { value, onSelect, recentTimezones }: Props = $props()
 
     let timezones: { keys: string[]; groups: Record<string, Timezone[]> } | null = $state(null)
 
     // generating this list for hundreds of timezones takes some time, do it after first render
     onMount(async () => {
-        const history = await loadSetting('recentTimezones', [])
-
-        const timezoneOptions = getTimezoneOptions(getUILanguage(), history)
+        const timezoneOptions = getTimezoneOptions(getUILanguage(), recentTimezones)
 
         // Group options by their group attribute
         const groupedOptions = timezoneOptions.reduce(

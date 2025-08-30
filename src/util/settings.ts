@@ -1,13 +1,16 @@
 import { getSettingsStorage } from './browser'
 
-export type SettingName = keyof Settings | 'recentTimezones'
+type SettingName = keyof Settings
 
 export type Settings = {
     autoReload: boolean
     stopClock: boolean // tab state if time travel is active, stored setting if inactive
     advancedSettingsOpen: boolean
     timezone: string // '' for browser default timezone
+    recentTimezones: string[] // last `maxTimezoneHistory` timezone IDs
 }
+
+const maxTimezoneHistory = 5
 
 export async function saveSetting<T>(key: SettingName, value: T): Promise<void> {
     try {
@@ -18,8 +21,30 @@ export async function saveSetting<T>(key: SettingName, value: T): Promise<void> 
     }
 }
 
+export async function loadSettings(): Promise<Settings> {
+    return {
+        autoReload: await loadSetting('autoReload', false),
+        stopClock: await loadSetting('stopClock', false),
+        advancedSettingsOpen: await loadSetting('advancedSettingsOpen', false),
+        timezone: await loadSetting('timezone', ''),
+        recentTimezones: await loadSetting<string[]>('recentTimezones', []),
+    }
+}
+
+/** save most recent timezone to 'recentTimezones' history */
+export async function saveMostRecentTimezone(timezone: string) {
+    let timezones = await loadSetting<string[]>('recentTimezones', [])
+
+    timezones.unshift(timezone)
+    //remove duplicates
+    timezones = timezones.filter((tz, index) => timezones.indexOf(tz) === index)
+    timezones = timezones.slice(0, maxTimezoneHistory)
+
+    await saveSetting('recentTimezones', timezones)
+}
+
 /** load a setting */
-export async function loadSetting<T>(key: SettingName, defaultValue: T): Promise<T> {
+async function loadSetting<T>(key: SettingName, defaultValue: T): Promise<T> {
     try {
         const result = await getSettingsStorage()?.get([key])
         if (result && key in result) {
@@ -31,17 +56,4 @@ export async function loadSetting<T>(key: SettingName, defaultValue: T): Promise
         console.error('Error loading setting:', error)
         return defaultValue
     }
-}
-
-/** save most recent timezone to 'recentTimezones' history */
-export async function saveMostRecentTimezone(timezone: string) {
-    const maxHistory = 5
-    let timezones = await loadSetting<string[]>('recentTimezones', [])
-
-    timezones.unshift(timezone)
-    //remove duplicates
-    timezones = timezones.filter((tz, index) => timezones.indexOf(tz) === index)
-    timezones = timezones.slice(0, maxHistory)
-
-    await saveSetting('recentTimezones', timezones)
 }
