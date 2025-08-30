@@ -1,4 +1,4 @@
-import { getContentScriptState, setBadgeAndTitle, type ActivationMessage } from '../util/common'
+import { getContentScriptState, setBadgeAndTitle, type ActivationMessage } from './util/common'
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
     void updateBadgeAndTitle(activeInfo.tabId)

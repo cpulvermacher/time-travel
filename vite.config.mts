@@ -2,8 +2,9 @@ import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { defineConfig } from 'vitest/config'
 
-const moduleNames = ['replace_date', 'send_active', 'worker']
-const tsEntryModules = moduleNames.map((name) => `/scripts/${name}.ts`)
+const entryPoints = ['/scripts/replace_date.ts', '/scripts/send_active.ts', '/worker.ts']
+// get basename without extension
+const scriptNames = entryPoints.map((path) => path.split('/').pop()?.split('.').shift() || '')
 export default defineConfig(({ mode }) => ({
     plugins: [
         svelte(),
@@ -29,11 +30,13 @@ export default defineConfig(({ mode }) => ({
         cssMinify: true,
         modulePreload: false /* we don't need to preload things */,
         rollupOptions: {
-            input: tsEntryModules.concat(['/popup/main.html']),
+            input: entryPoints.concat(['/popup/main.html']),
             output: {
                 entryFileNames: (assetInfo) => {
-                    if (moduleNames.includes(assetInfo.name)) {
-                        return 'scripts/[name].js'
+                    if (scriptNames.includes(assetInfo.name)) {
+                        // retain original path (e.g. src/scripts/abc.ts -> src/scripts/abc.js)
+                        const relativePath = assetInfo.facadeModuleId?.split('/src/').pop() || ''
+                        return relativePath.replace('.ts', '.js')
                     } else {
                         return 'assets/[name]-[hash].js'
                     }
