@@ -11,7 +11,6 @@ import {
 } from '../util/browser'
 import { getContentScriptState, isContentScriptActive, parseDate } from '../util/common'
 import { formatLocalDate } from '../util/formatLocalDate'
-import { setIconBadgeAndTitle } from '../util/icon'
 import * as inject from '../util/inject'
 
 /** sets & enables fake date, returns whether page needs reload for content script to be injected
@@ -41,12 +40,6 @@ export async function setFakeDate(dateString: string, timezone?: string): Promis
     await injectFunction(tabId, inject.setFakeDate, [fakeDateUtc, timezone || ''])
 
     return needsReload
-}
-
-export async function updateExtensionIcon() {
-    const tabId = await getActiveTabId()
-    const state = await getContentScriptState(tabId)
-    await setIconBadgeAndTitle(tabId, state)
 }
 
 /** set clock ticking state. `setClockState(false)` also resets the start time to now. */

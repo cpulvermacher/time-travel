@@ -1,7 +1,7 @@
 import { m } from '../paraglide/messages'
 import { overwriteGetLocale } from '../paraglide/runtime'
-import { getUILanguage, setBadgeText, setTitle } from './browser'
-import { type ContentScriptState } from './common'
+import { getActiveTabId, getUILanguage, setBadgeText, setTitle } from './browser'
+import { getContentScriptState, type ContentScriptState } from './common'
 import { getTranslationLocale } from './i18n'
 import { getTzInfo } from './timezone-info'
 
@@ -41,4 +41,12 @@ export async function setIconBadgeAndTitle(tabId: number, state: ContentScriptSt
     }
     title += devVersion
     await setTitle(tabId, title)
+}
+
+export async function updateExtensionIcon(tabId?: number) {
+    if (!tabId) {
+        tabId = await getActiveTabId()
+    }
+    const state = await getContentScriptState(tabId)
+    await setIconBadgeAndTitle(tabId, state)
 }
