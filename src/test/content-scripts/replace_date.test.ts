@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { setFakeDate, setTickStartTimestamp } from '../../util/inject'
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
-import '../../scripts/replace_date'
+import '../../content-scripts/replace_date'
 
 const testStartDate = new Date()
 

@@ -71,7 +71,7 @@ export async function registerContentScript() {
     const contentScripts: chrome.scripting.RegisteredContentScript[] = [
         {
             id: 'replaceDate',
-            js: ['scripts/replace_date.js'],
+            js: ['content-scripts/replace_date.js'],
             world: 'MAIN',
             matches: ['<all_urls>'],
             runAt: 'document_start',
@@ -81,7 +81,7 @@ export async function registerContentScript() {
         },
         {
             id: 'sendActive',
-            js: ['scripts/send_active.js'],
+            js: ['content-scripts/send_active.js'],
             world: 'ISOLATED',
             matches: ['<all_urls>'],
             runAt: 'document_start',

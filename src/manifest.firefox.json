@@ -15,7 +15,7 @@
     "content_scripts": [
         {
             "matches": ["http://*/*", "https://*/*", "file://*/*"],
-            "js": ["scripts/replace_date.js"],
+            "js": ["content-scripts/replace_date.js"],
             "all_frames": true,
             "match_about_blank": true,
             "run_at": "document_start",
