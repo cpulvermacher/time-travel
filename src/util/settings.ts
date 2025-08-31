@@ -10,6 +10,14 @@ export type Settings = {
     recentTimezones: string[] // last `maxTimezoneHistory` timezone IDs
 }
 
+const defaultSettings: Settings = {
+    autoReload: false,
+    stopClock: false,
+    advancedSettingsOpen: false,
+    timezone: '',
+    recentTimezones: [],
+}
+
 const maxTimezoneHistory = 5
 
 export async function saveSetting<T>(key: SettingName, value: T): Promise<void> {
@@ -18,16 +26,6 @@ export async function saveSetting<T>(key: SettingName, value: T): Promise<void> 
     } catch (error) {
         // this shouldn't be fatal (there are rate limits on this)
         console.error('Error saving setting:', error)
-    }
-}
-
-export async function loadSettings(): Promise<Settings> {
-    return {
-        autoReload: await loadSetting('autoReload', false),
-        stopClock: await loadSetting('stopClock', false),
-        advancedSettingsOpen: await loadSetting('advancedSettingsOpen', false),
-        timezone: await loadSetting('timezone', ''),
-        recentTimezones: await loadSetting('recentTimezones', []),
     }
 }
 
@@ -41,6 +39,28 @@ export async function saveMostRecentTimezone(timezone: string) {
     timezones = timezones.slice(0, maxTimezoneHistory)
 
     await saveSetting('recentTimezones', timezones)
+}
+
+/** load all settings */
+export async function loadSettings(): Promise<Settings> {
+    let settings: Settings | undefined
+    try {
+        settings = await getSettingsStorage()?.get<Settings>([
+            'autoReload',
+            'stopClock',
+            'advancedSettingsOpen',
+            'timezone',
+            'recentTimezones',
+        ])
+    } catch (error) {
+        console.error('Error loading settings:', error)
+    }
+
+    if (settings) {
+        return { ...defaultSettings, ...settings }
+    } else {
+        return defaultSettings
+    }
 }
 
 /** load a single setting */
