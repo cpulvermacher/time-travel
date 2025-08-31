@@ -12,7 +12,7 @@ type InitialState = {
 }
 
 /** get current state of extension. Throws on permission errors */
-export async function getState(): Promise<InitialState> {
+export async function getInitialState(): Promise<InitialState> {
     const settings = await loadSettings()
 
     if (import.meta.env.DEV) {

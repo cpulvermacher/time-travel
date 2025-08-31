@@ -5,13 +5,13 @@
     import { getUILanguage } from '../util/browser'
     import { formatLocalDate } from '../util/formatLocalDate'
     import { getTranslationLocale } from '../util/i18n'
-    import { getState } from './extension_state'
+    import { getInitialState } from './initial-state'
 
     overwriteGetLocale(() => getTranslationLocale(getUILanguage()))
 
     document.documentElement.lang = getTranslationLocale(getUILanguage())
 
-    const promise = getState()
+    const promise = getInitialState()
 </script>
 
 {#await promise}
