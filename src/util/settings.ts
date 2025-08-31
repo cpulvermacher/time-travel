@@ -43,24 +43,26 @@ export async function saveMostRecentTimezone(timezone: string) {
 
 /** load all settings */
 export async function loadSettings(): Promise<Settings> {
-    let settings: Settings | undefined
+    const storage = getSettingsStorage()
+    if (!storage) {
+        console.error('No settings storage available')
+        return defaultSettings
+    }
+
     try {
-        settings = await getSettingsStorage()?.get<Settings>([
+        const settings = await storage.get<Settings>([
             'autoReload',
             'stopClock',
             'advancedSettingsOpen',
             'timezone',
             'recentTimezones',
         ])
+        return { ...defaultSettings, ...settings }
     } catch (error) {
         console.error('Error loading settings:', error)
     }
 
-    if (settings) {
-        return { ...defaultSettings, ...settings }
-    } else {
-        return defaultSettings
-    }
+    return defaultSettings
 }
 
 /** load a single setting */
