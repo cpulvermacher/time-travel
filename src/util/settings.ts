@@ -27,13 +27,13 @@ export async function loadSettings(): Promise<Settings> {
         stopClock: await loadSetting('stopClock', false),
         advancedSettingsOpen: await loadSetting('advancedSettingsOpen', false),
         timezone: await loadSetting('timezone', ''),
-        recentTimezones: await loadSetting<string[]>('recentTimezones', []),
+        recentTimezones: await loadSetting('recentTimezones', []),
     }
 }
 
 /** save most recent timezone to 'recentTimezones' history */
 export async function saveMostRecentTimezone(timezone: string) {
-    let timezones = await loadSetting<string[]>('recentTimezones', [])
+    let timezones = await loadSetting('recentTimezones', [])
 
     timezones.unshift(timezone)
     //remove duplicates
@@ -43,12 +43,12 @@ export async function saveMostRecentTimezone(timezone: string) {
     await saveSetting('recentTimezones', timezones)
 }
 
-/** load a setting */
-async function loadSetting<T>(key: SettingName, defaultValue: T): Promise<T> {
+/** load a single setting */
+async function loadSetting<T extends keyof Settings>(key: T, defaultValue: Settings[T]): Promise<Settings[T]> {
     try {
-        const result = await getSettingsStorage()?.get([key])
+        const result = await getSettingsStorage()?.get<Settings>([key])
         if (result && key in result) {
-            return result[key] as T
+            return result[key]
         } else {
             return defaultValue
         }
