@@ -2,7 +2,7 @@
 import { m } from '../paraglide/messages'
 import { getActiveTabId, isAboutUrl, isExtensionGalleryUrl, isFileUrl } from '../util/browser'
 import { getContentScriptState } from '../util/content-script-state'
-import { formatLocalDate } from '../util/formatLocalDate'
+import { formatLocalDate } from '../util/date-utils'
 import { loadSettings, type Settings } from '../util/settings'
 
 type InitialState = {

@@ -1,6 +1,6 @@
 import * as inject from '../util/inject'
 import { getActiveTabId, injectFunction, registerContentScript } from './browser'
-import { parseDate } from './common'
+import { parseDate } from './date-utils'
 
 export type ContentScriptState = {
     contentScriptActive: boolean

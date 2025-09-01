@@ -3,7 +3,7 @@
     import { m } from '../paraglide/messages'
     import { overwriteGetLocale } from '../paraglide/runtime'
     import { getUILanguage } from '../util/browser'
-    import { formatLocalDate } from '../util/formatLocalDate'
+    import { formatLocalDate } from '../util/date-utils'
     import { getTranslationLocale } from '../util/i18n'
     import { getInitialState } from './initial-state'
 
