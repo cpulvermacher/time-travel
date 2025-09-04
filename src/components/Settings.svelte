@@ -1,7 +1,7 @@
 <script lang="ts">
     import { m } from '../paraglide/messages'
     import { reloadTab } from '../util/browser'
-    import { setClockState, setFakeDate } from '../util/content-script-state'
+    import { disableFakeDate, setClockState, setFakeDate } from '../util/content-script-state'
     import { parseDate } from '../util/date-utils'
     import { updateExtensionIcon } from '../util/icon'
     import { saveMostRecentTimezone, saveSetting, type Settings } from '../util/settings'
@@ -57,7 +57,7 @@
     }
     async function reset() {
         try {
-            await setFakeDate(null)
+            await disableFakeDate()
             await setClockState(true)
             await updateExtensionIcon()
             if (settings.autoReload) {

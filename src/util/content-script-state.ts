@@ -12,9 +12,9 @@ export type ContentScriptState = {
 
 /** sets & enables fake date, returns whether page needs reload for content script to be injected
  *
- * @param date date to set, or null to disable fake date
+ * @param date a valid date to set
  */
-export async function setFakeDate(date: Date | null, timezone?: string): Promise<boolean> {
+export async function setFakeDate(date: Date, timezone?: string): Promise<boolean> {
     if (import.meta.env.DEV) {
         return true
     }
@@ -22,16 +22,26 @@ export async function setFakeDate(date: Date | null, timezone?: string): Promise
     const tabId = await getActiveTabId()
 
     let needsReload = false
-    if (date && !(await isContentScriptActive(tabId))) {
+    if (!(await isContentScriptActive(tabId))) {
         await registerContentScript()
         needsReload = true
     }
 
     // store UTC time (also avoids issues with `resistFingerprinting` on Firefox)
-    const fakeDateUtc = date ? date.toISOString() : ''
+    const fakeDateUtc = date.toISOString()
     await injectFunction(tabId, inject.setFakeDate, [fakeDateUtc, timezone || ''])
 
     return needsReload
+}
+
+/** unsets fake date */
+export async function disableFakeDate(): Promise<void> {
+    if (import.meta.env.DEV) {
+        return
+    }
+
+    const tabId = await getActiveTabId()
+    await injectFunction(tabId, inject.setFakeDate, ['', ''])
 }
 
 /** set clock ticking state. `setClockState(false)` also resets the start time to now. */
