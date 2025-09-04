@@ -1,6 +1,5 @@
 import * as inject from '../util/inject'
 import { getActiveTabId, injectFunction, registerContentScript } from './browser'
-import { parseDate } from './date-utils'
 
 export type ContentScriptState = {
     contentScriptActive: boolean
@@ -13,28 +12,23 @@ export type ContentScriptState = {
 
 /** sets & enables fake date, returns whether page needs reload for content script to be injected
  *
- * if dateString is empty, the fake date is cleared.
+ * @param date date to set, or null to disable fake date
  */
-export async function setFakeDate(dateString: string, timezone?: string): Promise<boolean> {
+export async function setFakeDate(date: Date | null, timezone?: string): Promise<boolean> {
     if (import.meta.env.DEV) {
         return true
-    }
-
-    const fakeDate = parseDate(dateString)
-    if (fakeDate === null) {
-        throw new Error('Invalid date format!')
     }
 
     const tabId = await getActiveTabId()
 
     let needsReload = false
-    if (fakeDate && !(await isContentScriptActive(tabId))) {
+    if (date && !(await isContentScriptActive(tabId))) {
         await registerContentScript()
         needsReload = true
     }
 
     // store UTC time (also avoids issues with `resistFingerprinting` on Firefox)
-    const fakeDateUtc = fakeDate ? new Date(fakeDate).toISOString() : ''
+    const fakeDateUtc = date ? date.toISOString() : ''
     await injectFunction(tabId, inject.setFakeDate, [fakeDateUtc, timezone || ''])
 
     return needsReload

@@ -40,10 +40,10 @@
             setError(m.error_toggle_clock_failed(), e)
         }
     }
-    async function applyAndEnable() {
+    async function applyAndEnable(date: Date) {
         try {
             await setClockState(settings.stopClock)
-            const needReload = await setFakeDate(fakeDate, settings.timezone)
+            const needReload = await setFakeDate(date, settings.timezone)
             if (needReload && !settings.autoReload) {
                 showReloadModal = true
             }
@@ -57,7 +57,7 @@
     }
     async function reset() {
         try {
-            await setFakeDate('')
+            await setFakeDate(null)
             await setClockState(true)
             await updateExtensionIcon()
             if (settings.autoReload) {
@@ -84,7 +84,7 @@
         } else {
             isEnabled = true
             effectiveDate = new Date(parsedDate)
-            applyAndEnable()
+            applyAndEnable(effectiveDate)
         }
     }
     function onAdvancedSettingsToggle(open: boolean) {
@@ -104,8 +104,8 @@
         saveSetting('timezone', timezone)
         saveMostRecentTimezone(timezone)
 
-        if (isEnabled) {
-            applyAndEnable()
+        if (isEnabled && effectiveDate) {
+            applyAndEnable(effectiveDate)
         }
     }
     function onEnableChange(enabled: boolean) {
@@ -116,7 +116,7 @@
 
         if (enabled) {
             effectiveDate = new Date(parsedDate)
-            applyAndEnable()
+            applyAndEnable(effectiveDate)
         } else {
             effectiveDate = undefined
             reset()
