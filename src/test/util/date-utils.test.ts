@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatLocalDate, overwriteDatePart, parseDate } from '../../util/date-utils'
+import { formatLocalDate, overwriteDatePart, parseDate, type ValidDate } from '../../util/date-utils'
 
 describe('formatLocalDate', () => {
     const full = { fullPrecision: true }
@@ -84,10 +84,10 @@ describe('overwriteDatePart', () => {
         expect(overwriteDatePart('2025-02-10 1:1', date)).toBe('2033-01-22 01:01')
     })
 
-    it('converts unix timestamps to string before replacing', () => {
+    it('time part of unix timestamps is lost', () => {
         const timePartFrom = new Date('1970-01-22 10:19:00.025')
         const timestamp = timePartFrom.getTime().toString()
-        const expectedString = formatLocalDate(timePartFrom, { fullPrecision: true }).replace('1970', '2033')
+        const expectedString = '2033-01-22 00:00'
         expect(overwriteDatePart(timestamp, date)).toBe(expectedString)
     })
 
@@ -103,32 +103,66 @@ describe('overwriteDatePart', () => {
 
 describe('parseDate', () => {
     it('parses various date formats and returns same string', () => {
-        expect(parseDate('2025-02-27 12:40')).toBe('2025-02-27 12:40')
-        expect(parseDate('2025-02-27')).toBe('2025-02-27')
-        expect(parseDate('27 Feb 2025 12:40')).toBe('27 Feb 2025 12:40')
-        expect(parseDate('2025-03-30 00:59:55')).toBe('2025-03-30 00:59:55')
-        expect(parseDate('2025-04-27T12:40Z')).toBe('2025-04-27T12:40Z')
-        expect(parseDate('2025-02-25T12:40:00.120')).toBe('2025-02-25T12:40:00.120')
+        function checkValidDate(dateStr: string) {
+            const date = parseDate(dateStr) as ValidDate
+
+            expect(date.isValid).toBe(true)
+            expect(date.isReset).toBe(false)
+            expect(date.dateString).toBe(dateStr)
+            expect(date.date.getTime()).toBe(Date.parse(dateStr))
+        }
+        checkValidDate('2025-02-27 12:40')
+        checkValidDate('2025-02-27')
+        checkValidDate('27 Feb 2025 12:40')
+        checkValidDate('2025-03-30 00:59:55')
+        checkValidDate('2025-04-27T12:40Z')
+        checkValidDate('2025-02-25T12:40:00.120')
     })
 
     it('parses UNIX timestamps', () => {
-        expect(parseDate('1731493140025')).toBe('2024-11-13T10:19:00.025Z')
-        expect(parseDate('01')).toBe('1970-01-01T00:00:00.001Z')
+        const nov2024 = parseDate('1731493140025') as ValidDate
+
+        expect(nov2024.isValid).toBe(true)
+        expect(nov2024.isReset).toBe(false)
+        expect(nov2024.dateString).toBe('1731493140025')
+        expect(nov2024.date.getTime()).toBe(1731493140025)
+
+        const date1970 = parseDate('01') as ValidDate
+        expect(date1970.isValid).toBe(true)
+        expect(date1970.isReset).toBe(false)
+        expect(date1970.date.getTime()).toBe(1)
+        expect(date1970.date.getUTCFullYear()).toBe(1970)
+        expect(date1970.dateString).toBe('01')
+
+        const date1970b = parseDate('100') as ValidDate
+        expect(date1970b.isValid).toBe(true)
+        expect(date1970b.isReset).toBe(false)
+        expect(date1970b.date.getTime()).toBe(100)
+        expect(date1970b.date.getUTCFullYear()).toBe(1970)
+        expect(date1970b.dateString).toBe('100')
     })
 
     it('returns null for invalid dates', () => {
-        expect(parseDate('abcdefgh')).toBe(null)
-        expect(parseDate('2025-02-32')).toBe(null)
-        expect(parseDate('27-02-03')).toBe(null)
-        expect(parseDate('15/01/2024')).toBe(null)
-        expect(parseDate('2025-01-001ZZ')).toBe(null)
-        expect(parseDate('22:30')).toBe(null)
-        expect(parseDate('2024-01-15T10:30:00 Z')).toBe(null)
-        expect(parseDate('1234567898764212345678')).toBe(null)
+        expect(parseDate('abcdefgh').isValid).toBe(false)
+        expect(parseDate('2025-02-32').isValid).toBe(false)
+        expect(parseDate('27-02-03').isValid).toBe(false)
+        expect(parseDate('15/01/2024').isValid).toBe(false)
+        expect(parseDate('2025-01-001ZZ').isValid).toBe(false)
+        expect(parseDate('22:30').isValid).toBe(false)
+        expect(parseDate('2024-01-15T10:30:00 Z').isValid).toBe(false)
+        expect(parseDate('1234567898764212345678').isValid).toBe(false)
     })
 
     it('accepts empty string', () => {
         // can be used to clear the fake date
-        expect(parseDate('')).toBe('')
+        const dateEmpty = parseDate('')
+        expect(dateEmpty.isReset).toBe(true)
+        expect(dateEmpty.isValid).toBe(false)
+        expect(dateEmpty.dateString).toBe('')
+
+        const dateWhitespace = parseDate('   ')
+        expect(dateWhitespace.isReset).toBe(true)
+        expect(dateWhitespace.isValid).toBe(false)
+        expect(dateWhitespace.dateString).toBe('   ')
     })
 })

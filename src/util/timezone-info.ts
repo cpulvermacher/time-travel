@@ -120,9 +120,11 @@ type TzInfo = {
     dateString: string // date string, e.g. "Aug 6, 2025" or "2025年8月6日"
 }
 
-export function getTzInfo(locale: string, dateStr: string, timezone: string | undefined): TzInfo | null {
+export function getTzInfo(locale: string, date: Date | string, timezone: string | undefined): TzInfo | null {
     try {
-        const date = new Date(dateStr)
+        if (typeof date === 'string') {
+            date = new Date(date)
+        }
         const summerDate = new Date(date.getFullYear(), 5, 1) // June 1st
         const winterDate = new Date(date.getFullYear(), 11, 1) // December 1st
 
@@ -159,7 +161,7 @@ export function getTzInfo(locale: string, dateStr: string, timezone: string | un
             }),
         }
     } catch (e) {
-        console.error('Error getting timezone info for', dateStr, timezone, e)
+        console.error('Error getting timezone info for', date, timezone, e)
         return null
     }
 }

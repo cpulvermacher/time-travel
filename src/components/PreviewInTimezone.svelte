@@ -1,15 +1,16 @@
 <script lang="ts">
     import { m } from '../paraglide/messages'
     import { getUILanguage } from '../util/browser'
+    import type { ParsedDate } from '../util/date-utils'
     import { getTzInfo } from '../util/timezone-info'
 
     interface Props {
-        fakeDate: string | null
+        parsedDate: ParsedDate
         timezone: string
     }
-    let { fakeDate, timezone }: Props = $props()
+    let { parsedDate, timezone }: Props = $props()
 
-    const tzInfo = $derived(fakeDate ? getTzInfo(getUILanguage(), fakeDate, timezone) : null)
+    const tzInfo = $derived(parsedDate.isValid ? getTzInfo(getUILanguage(), parsedDate.date, timezone) : null)
     const timeZoneLabel = $derived.by(() => {
         if (!tzInfo || tzInfo.tzName === timezone) {
             return timezone

@@ -46,7 +46,7 @@ export function formatLocalDate(date: Date, options?: FormatOptions): string {
 export function overwriteDatePart(dateTimeString: string, newDate: Date): string {
     const parsedDateTime = parseDate(dateTimeString)
     const timeRegex = /\d{1,2}:\d{1,2}/
-    if (parsedDateTime === null || !timeRegex.test(parsedDateTime)) {
+    if (!parsedDateTime.isValid || !timeRegex.test(dateTimeString)) {
         newDate.setHours(0)
         newDate.setMinutes(0)
         newDate.setSeconds(0)
@@ -54,7 +54,7 @@ export function overwriteDatePart(dateTimeString: string, newDate: Date): string
         return formatLocalDate(newDate)
     }
 
-    const timePart = new Date(parsedDateTime)
+    const timePart = parsedDateTime.date
     newDate.setHours(timePart.getHours())
     newDate.setMinutes(timePart.getMinutes())
     newDate.setSeconds(timePart.getSeconds())
@@ -63,21 +63,42 @@ export function overwriteDatePart(dateTimeString: string, newDate: Date): string
     return formatLocalDate(newDate, { fullPrecision: true })
 }
 
-/** Tries parsing a date string, returns a valid date string or null if invalid.
- *
- * If the string is a UNIX timestamp, it is converted into an ISO string instead.
- * Empty strings are returned as is.
- */
-export function parseDate(date: string): string | null {
+export type ParsedDate = ValidDate | InvalidDate | ResetDate
+export type ValidDate = {
+    dateString: string // unmodified input string
+    date: Date
+    isValid: true
+    isReset: false
+}
+export type InvalidDate = {
+    dateString: string // unmodified input string
+    isValid: false
+    isReset: false
+}
+export type ResetDate = {
+    dateString: string // unmodified input string
+    isValid: false
+    isReset: true
+}
+
+/** Tries parsing a date string */
+export function parseDate(dateString: string): ParsedDate {
+    if (dateString.trim() === '') {
+        return { dateString, isValid: false, isReset: true }
+    }
+
     try {
-        if (date && Number.isInteger(+date)) {
-            date = new Date(Number.parseInt(date)).toISOString()
+        let date
+        if (Number.isInteger(+dateString)) {
+            date = new Date(Number.parseInt(dateString))
+        } else {
+            date = new Date(dateString)
         }
-        if (date && isNaN(Date.parse(date))) {
-            return null
+        if (isNaN(date.getTime())) {
+            return { dateString, isValid: false, isReset: false }
         }
-        return date
+        return { dateString, date, isValid: true, isReset: false }
     } catch {
-        return null
+        return { dateString, isValid: false, isReset: false }
     }
 }

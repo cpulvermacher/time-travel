@@ -23,13 +23,13 @@
     const initialState: Props = $props()
 
     let errorMsg = $state<string>()
+    let showFormatHelp = $state(false)
     let showReloadModal = $state(false)
     let settings = $state(initialState.settings)
-    let fakeDate = $state(initialState.fakeDate)
     let isEnabled = $state(initialState.isEnabled)
-    let isDateValid = $derived(parseDate(fakeDate) !== null)
+    let fakeDate = $state(initialState.fakeDate)
+    let parsedDate = $derived(parseDate(fakeDate))
     let effectiveDate = $state(initialState.isEnabled ? new Date(initialState.fakeDate) : undefined)
-    let showFormatHelp = $state(false)
 
     async function updateClockState() {
         try {
@@ -72,18 +72,13 @@
     }
 
     function onApply() {
-        const parsedDate = parseDate(fakeDate)
-        if (parsedDate === null) {
-            return
-        }
-
-        if (parsedDate === '') {
+        if (parsedDate.isReset) {
             isEnabled = false
             effectiveDate = undefined
             reset()
-        } else {
+        } else if (parsedDate.isValid) {
             isEnabled = true
-            effectiveDate = new Date(parsedDate)
+            effectiveDate = parsedDate.date
             applyAndEnable(effectiveDate)
         }
     }
@@ -108,23 +103,23 @@
             applyAndEnable(effectiveDate)
         }
     }
-    function onEnableChange(enabled: boolean) {
-        const parsedDate = parseDate(fakeDate)
-        if (parsedDate === null) {
-            return
-        }
-
-        if (enabled) {
-            effectiveDate = new Date(parsedDate)
+    function onEnableToggle(enabled: boolean) {
+        if (enabled && parsedDate.isValid) {
+            effectiveDate = parsedDate.date
             applyAndEnable(effectiveDate)
         } else {
             effectiveDate = undefined
             reset()
         }
     }
-    function hasDateChanged(): boolean {
-        const newFakeDate = new Date(parseDate(fakeDate) || '')
-        return newFakeDate.getTime() !== effectiveDate?.getTime()
+    function isApplyButtonEnabled(): boolean {
+        if (!parsedDate.isValid && !parsedDate.isReset) {
+            return false
+        }
+        if (parsedDate.isReset) {
+            return isEnabled
+        }
+        return parsedDate.date.getTime() !== effectiveDate?.getTime()
     }
 </script>
 
@@ -139,19 +134,19 @@
         </label>
     </div>
     <div class="row right-aligned">
-        <button disabled={!isDateValid || !hasDateChanged()} onclick={onApply}>{m.change_date_btn()}</button>
+        <button disabled={!isApplyButtonEnabled()} onclick={onApply}>{m.change_date_btn()}</button>
     </div>
     <hr />
     <Toggle
         bind:checked={isEnabled}
-        disabled={!isDateValid}
-        onChange={onEnableChange}
+        disabled={!parsedDate.isValid && !isEnabled}
+        onChange={onEnableToggle}
         label={m.enable_fake_date_toggle()}
     />
     <Accordion title={m.advanced_settings()} open={settings.advancedSettingsOpen} onToggle={onAdvancedSettingsToggle}>
         <Toggle
             bind:checked={settings.stopClock}
-            disabled={!isDateValid}
+            disabled={!parsedDate.isValid}
             onChange={onClockToggle}
             label={m.stop_time_toggle()}
         />

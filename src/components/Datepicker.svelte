@@ -16,13 +16,13 @@
         timezone: string // IANA time zone identifier or '' for browser default
     }
     let { fakeDate = $bindable(), onEnterKey, timezone }: Props = $props()
+    let parsedDate = $derived(parseDate(fakeDate))
     // Note: the datepicker internally works with timestamps in UTC. When choosing a date, pickerDate will be set to 00:00 local time.
-    let pickerDate = $state(Date.parse(fakeDate))
-    let isValid = $derived(parseDate(fakeDate) !== null)
+    let pickerDate: number = $state(Date.parse(fakeDate)) //TODO
     let inputRef: HTMLInputElement
 
     function onkeydown(event: KeyboardEvent) {
-        if (!isValid) {
+        if (!parsedDate.isValid) {
             return
         }
 
@@ -67,20 +67,17 @@
         inputRef.setSelectionRange(dateAndTimeSeparator + 1, -1) // select hh:mm (and everything afterwards)
     }
     function onInput() {
-        const inputDate = parseDate(fakeDate)
-        if (inputDate === null) {
-            // if date in input field is invalid, skip
+        if (!parsedDate.isValid) {
             return
         }
-        pickerDate = new Date(inputDate).getTime()
+        pickerDate = parsedDate.date.getTime()
     }
     function adjustSeconds(seconds: number) {
-        // adjust UTC timestamp
-        const parsedDate = parseDate(fakeDate)
-        if (parsedDate === null || parsedDate === '') {
+        if (!parsedDate.isValid) {
             return
         }
-        pickerDate = Date.parse(parsedDate) + seconds * 1000
+        // adjust UTC timestamp
+        pickerDate = parsedDate.date.getTime() + seconds * 1000
         fakeDate = formatLocalDate(new Date(pickerDate), { fullPrecision: true })
     }
 </script>
@@ -130,11 +127,11 @@
             maxlength="28"
             placeholder={formatLocalDate(new Date())}
             spellcheck="false"
-            class={{ error: !isValid }}
+            class={{ error: !parsedDate.isValid && !parsedDate.isReset }}
             title={m.date_input_hint()}
         />
         {#if timezone}
-            <PreviewInTimezone fakeDate={parseDate(fakeDate)} {timezone} />
+            <PreviewInTimezone {parsedDate} {timezone} />
         {/if}
     </DatePicker>
 </div>
