@@ -19,6 +19,10 @@ export async function setFakeDate(date: Date, timezone?: string): Promise<boolea
         return true
     }
 
+    if (isNaN(date.getTime())) {
+        throw new Error('setFakeDate(): Invalid date')
+    }
+
     const tabId = await getActiveTabId()
 
     let needsReload = false
