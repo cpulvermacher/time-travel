@@ -81,7 +81,6 @@
         outline: 2px solid var(--primary-color);
     }
     input:disabled + .toggle-bg {
-        background-color: #d9d9d9;
         border-color: var(--border-color);
     }
 
@@ -94,9 +93,12 @@
         background-color: white;
         border-radius: 50%;
         filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.3));
-        transition: transform 0.2s cubic-bezier(0.54, 0.38, 0.06, 1.62);
+        transition: all 0.2s cubic-bezier(0.54, 0.38, 0.06, 1.62);
     }
     input:checked + .toggle-bg .slider {
         transform: translateX(16px);
+    }
+    input:disabled + .toggle-bg .slider {
+        background-color: #eee;
     }
 </style>
