@@ -2,10 +2,10 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { setFakeDate } from '../../util/inject'
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
-import '../../content-scripts/replace_date'
+import '../../content-scripts/replace-date'
 
-// Only tests the time zone handling, tests without time zone set are in replace_date.test.ts
-describe('replace_date with time zone', () => {
+// Only tests the time zone handling, tests without time zone set are in replace-date.test.ts
+describe('replace-date with time zone', () => {
     afterEach(() => {
         setFakeDate('')
     })

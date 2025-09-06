@@ -2,7 +2,7 @@ import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { defineConfig } from 'vitest/config'
 
-const entryPoints = ['/content-scripts/replace_date.ts', '/content-scripts/send_active.ts', '/worker.ts']
+const entryPoints = ['/content-scripts/replace-date.ts', '/content-scripts/send-active.ts', '/worker.ts']
 // get basename without extension
 const scriptNames = entryPoints.map((path) => path.split('/').pop()?.split('.').shift() || '')
 export default defineConfig(({ mode }) => ({

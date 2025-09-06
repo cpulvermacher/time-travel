@@ -1,4 +1,4 @@
-// gets loaded together with replace_date.ts, so we know the extension
+// gets loaded together with replace-date.ts, so we know the extension
 // is active even in case we don't have `activeTab` permission right now.
 // this is necessary in particular when reloading a tab or on navigation
 
@@ -19,5 +19,5 @@ try {
     }
 } catch (exception) {
     //document possibly sandboxed
-    console.log('send_active: Reading from sessionStorage was blocked:', exception)
+    console.log('send-active: Reading from sessionStorage was blocked:', exception)
 }
