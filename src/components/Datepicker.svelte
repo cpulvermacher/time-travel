@@ -18,7 +18,8 @@
     let { fakeDate = $bindable(), onEnterKey, timezone }: Props = $props()
     let parsedDate = $derived(parseDate(fakeDate))
     // Note: the datepicker internally works with timestamps in UTC. When choosing a date, pickerDate will be set to 00:00 local time.
-    let pickerDate: number = $state(Date.parse(fakeDate)) //TODO
+    const initialParsedDate = parseDate(fakeDate)
+    let pickerDate: number = $state(initialParsedDate.isValid ? initialParsedDate.date.getTime() : Date.now())
     let inputRef: HTMLInputElement
 
     function onkeydown(event: KeyboardEvent) {
