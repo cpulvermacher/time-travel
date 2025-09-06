@@ -48,6 +48,6 @@
     "timezone_group_common": "Common",
     "timezone_group_recent": "Recent",
     "timezone_browser_default": "Default",
-    "date_in_timezone_info": "In {timezone}:",
+    "date_in_timezone_info": "In page time zone:",
     "dst_info": "Daylight Saving Time (DST) is in effect for this date."
 }

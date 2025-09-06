@@ -20,9 +20,7 @@
 </script>
 
 <div class="preview">
-    <div class="timezone-label">
-        {m.date_in_timezone_info({ timezone: timeZoneLabel })}
-    </div>
+    <div class="timezone-label">{m.date_in_timezone_info()}</div>
     {#if tzInfo}
         <div class="time-block">
             <div class="datetime">{tzInfo?.dateString} {tzInfo?.timeString}</div>
@@ -36,11 +34,12 @@
             {/if}
         </div>
     {/if}
+    <div class="timezone-label">{timeZoneLabel}</div>
 </div>
 
 <style>
     .preview {
-        min-height: 2em;
+        min-height: 58px;
         margin-top: 5px;
         display: flex;
         flex-direction: column;
@@ -51,13 +50,15 @@
         display: flex;
         gap: 5px;
         align-items: center;
+        color: var(--text-color);
+        font-size: 1rem;
     }
     .badge {
         background-color: #9f9f9f;
         color: white;
         padding: 0 5px;
         border-radius: 8px;
-        font-size: 0.8em;
+        font-size: 0.8rem;
     }
     .badge--dst {
         background-color: orange;

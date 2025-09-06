@@ -48,6 +48,6 @@
     "timezone_group_common": "主要",
     "timezone_group_recent": "最近",
     "timezone_browser_default": "デフォルト",
-    "date_in_timezone_info": "{timezone}では",
+    "date_in_timezone_info": "ページタイムゾーンでは",
     "dst_info": "この日時は夏時間が適用されています。"
 }
