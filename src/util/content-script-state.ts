@@ -61,10 +61,12 @@ export async function isContentScriptActive(tabId: number) {
 }
 
 export async function getContentScriptState(tabId: number): Promise<ContentScriptState> {
-    const contentScriptActive = await isContentScriptActive(tabId)
-    const fakeDate = await injectFunction(tabId, inject.getFakeDate, [''])
-    const timezone = await injectFunction(tabId, inject.getTimezone, [''])
-    const tickStartTimestamp = await injectFunction(tabId, inject.getTickStartTimestamp, [''])
+    const [contentScriptActive, fakeDate, tickStartTimestamp, timezone] = await Promise.all([
+        isContentScriptActive(tabId),
+        injectFunction(tabId, inject.getFakeDate, ['']),
+        injectFunction(tabId, inject.getTickStartTimestamp, ['']),
+        injectFunction(tabId, inject.getTimezone, ['']),
+    ])
 
     return {
         contentScriptActive,
