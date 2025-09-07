@@ -6,6 +6,7 @@
     import { formatLocalDate, overwriteDatePart, parseDate } from '../util/date-utils'
     import { getFirstDayOfWeek } from '../util/i18n'
     import PreviewInTimezone from './PreviewInTimezone.svelte'
+    import TimePicker from './TimePicker.svelte'
 
     // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
     const startOfWeek = getFirstDayOfWeek(getUILanguage()) % 7
@@ -117,20 +118,23 @@
         includeFont={false}
         theme="theme"
     >
-        <input
-            {onkeydown}
-            bind:value={fakeDate}
-            use:focus
-            bind:this={inputRef}
-            oninput={onInput}
-            type="text"
-            size="28"
-            maxlength="28"
-            placeholder={formatLocalDate(new Date())}
-            spellcheck="false"
-            class={{ error: !parsedDate.isValid && !parsedDate.isReset }}
-            title={m.date_input_hint()}
-        />
+        <div class="input-fields">
+            <input
+                {onkeydown}
+                bind:value={fakeDate}
+                use:focus
+                bind:this={inputRef}
+                oninput={onInput}
+                type="text"
+                size="28"
+                maxlength="28"
+                placeholder={formatLocalDate(new Date())}
+                spellcheck="false"
+                class={{ error: !parsedDate.isValid && !parsedDate.isReset }}
+                title={m.date_input_hint()}
+            />
+            <TimePicker bind:value={fakeDate} onChange={onInput} />
+        </div>
         {#if timezone}
             <PreviewInTimezone {parsedDate} {timezone} />
         {/if}
@@ -140,6 +144,11 @@
 <style>
     .container {
         min-height: 245px; /** height of input plus DatePicker for 6 weeks to avoid jumps*/
+    }
+    .input-fields {
+        display: flex;
+        gap: 10px;
+        align-items: center;
     }
     input {
         width: 100%;
