@@ -70,7 +70,7 @@
         transition: all 0.3s;
         border: 1px solid var(--border-color);
     }
-    input:checked + .toggle-bg {
+    input:not(:disabled):checked + .toggle-bg {
         background-color: var(--primary-color);
         border-color: var(--primary-color);
     }
