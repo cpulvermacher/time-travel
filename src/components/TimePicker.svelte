@@ -39,6 +39,12 @@
         background-repeat: no-repeat;
         background-position: center;
         background-size: 80%;
+
+        /** only show on mobile screens */
+        display: none;
+        @media (min-width: 400px) {
+            display: block;
+        }
     }
 
     input {
