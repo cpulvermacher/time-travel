@@ -54,7 +54,6 @@
     }
 
     /* --- WebKit-specific pseudo-elements to hide internal controls --- */
-
     input::-webkit-calendar-picker-indicator {
         background: none;
         display: block;
@@ -68,9 +67,5 @@
 
     input::-webkit-clear-button {
         display: none;
-    }
-
-    input {
-        -moz-appearance: none;
     }
 </style>
