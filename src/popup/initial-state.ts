@@ -2,7 +2,7 @@
 import { m } from '../paraglide/messages'
 import { getActiveTabId, isAboutUrl, isExtensionGalleryUrl, isFileUrl } from '../util/browser'
 import { getContentScriptState } from '../util/content-script-state'
-import { formatLocalDate } from '../util/date-utils'
+import { formatLocalDate, parseDate } from '../util/date-utils'
 import { loadSettings, type Settings } from '../util/settings'
 
 type InitialState = {
@@ -29,11 +29,13 @@ export async function getInitialState(): Promise<InitialState> {
         let initialFakeDate
         const state = await getContentScriptState(tabId)
         if (state.fakeDateActive && state.fakeDate) {
-            const fakeDate = new Date(Date.parse(state.fakeDate))
-            if (!state.isClockStopped && state.tickStartTimestamp) {
+            const fakeDate = parseDate(state.fakeDate)
+            if (!fakeDate.isValid) {
+                initialFakeDate = undefined
+            } else if (!state.isClockStopped && state.tickStartTimestamp) {
                 const tickStartTimestamp = Number.parseInt(state.tickStartTimestamp)
                 const elapsed = Date.now() - tickStartTimestamp
-                const fakeDateNow = new Date(fakeDate.getTime() + elapsed)
+                const fakeDateNow = new Date(fakeDate.date.getTime() + elapsed)
                 initialFakeDate = formatLocalDate(fakeDateNow)
             } else {
                 initialFakeDate = state.fakeDate
