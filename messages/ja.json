@@ -43,7 +43,7 @@
     "icon_title_running": "({fakeDate} - 時計が作動中)",
     "icon_title_off": "（オフ）",
     "enable_auto_reload": "自動再読み込みする",
-    "advanced_settings": "詳細",
+    "advanced_settings": "オプション",
     "timezone_selector_label": "タイムゾーン (実験的)",
     "timezone_group_common": "主要",
     "timezone_group_recent": "最近",

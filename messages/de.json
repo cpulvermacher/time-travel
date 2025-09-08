@@ -43,7 +43,7 @@
     "icon_title_running": "({fakeDate} - Uhr läuft)",
     "icon_title_off": "(Off)",
     "enable_auto_reload": "Automatisch neu laden",
-    "advanced_settings": "Details",
+    "advanced_settings": "Optionen",
     "timezone_selector_label": "Zeitzone (EXPERIMENTELL)",
     "timezone_group_common": "Allgemein",
     "timezone_group_recent": "Zuletzt",

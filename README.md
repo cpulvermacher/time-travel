@@ -24,7 +24,7 @@ To restore the system time, click the extension icon and switch off the "Enable 
 When the fake date is enabled, the clock runs forward from the configured time.
 You can stop the clock by switching on the "Stop Clock" toggle. The fake date will be reset to the last value you set.
 
-To change the time zone, open "Details" and select a time zone from the dropdown. When a non-default time zone is set, both `Date` objects and `Intl.DateTimeFormat` will use this time zone instead of the system time zone. The fake date in the Time Travel UI is still shown and configured in the system time zone, but a preview of the time in the configured time zone plus the Daylight Saving Time (DST) offset is shown if applicable.
+To change the time zone, open "Options" and select a time zone from the dropdown. When a non-default time zone is set, both `Date` objects and `Intl.DateTimeFormat` will use this time zone instead of the system time zone. The fake date in the Time Travel UI is still shown and configured in the system time zone, but a preview of the time in the configured time zone plus the Daylight Saving Time (DST) offset is shown if applicable.
 
 ### Example Dates and Formats
 
