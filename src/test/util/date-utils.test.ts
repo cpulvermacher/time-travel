@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatLocalDate, overwriteDatePart, parseDate, type ValidDate } from '../../util/date-utils'
+import { formatLocalDate, formatLocalTime, overwriteDatePart, parseDate, type ValidDate } from '../../util/date-utils'
 
 describe('formatLocalDate', () => {
     const full = { fullPrecision: true }
@@ -60,6 +60,27 @@ describe('formatLocalDate', () => {
         expect(formatLocalDate(new Date('2025-02-10 12:34:55'), full)).toBe('2025-02-10 12:34:55')
         expect(formatLocalDate(new Date('2025-02-10 12:34'), full)).toBe('2025-02-10 12:34')
         expect(formatLocalDate(new Date('2025-02-10 00:00'), full)).toBe('2025-02-10 00:00')
+    })
+})
+
+describe('formatLocalTime', () => {
+    it('formats in correct format', () => {
+        expect(formatLocalTime(new Date('2025-02-10 12:34'))).toBe('12:34')
+        expect(formatLocalTime(new Date('2000-01-01 01:01'))).toBe('01:01')
+        expect(formatLocalTime(new Date('2024-12-31 23:59'))).toBe('23:59')
+        expect(formatLocalTime(new Date('2025-02-10 12:34:55'))).toBe('12:34')
+        expect(formatLocalTime(new Date('2025-02-10 12:34:55.123'))).toBe('12:34')
+        expect(formatLocalTime(new Date('2025-02-10 00:00'))).toBe('00:00')
+        expect(formatLocalTime(new Date('2025-01-01 00:00'))).toBe('00:00')
+        expect(formatLocalTime(new Date('2005-12-31 23:59'))).toBe('23:59')
+        expect(formatLocalTime(new Date('0999-02-10 12:34:55.123'))).toBe('12:34')
+        expect(formatLocalTime(new Date('-001000-02-10T13:04'))).toBe('13:04')
+    })
+
+    it('handles invalid dates', () => {
+        expect(formatLocalTime(new Date(''))).toBe('Invalid Date')
+        expect(formatLocalTime(new Date('abcdefgh'))).toBe('Invalid Date')
+        expect(formatLocalTime(new Date('2025-01-32'))).toBe('Invalid Date')
     })
 })
 

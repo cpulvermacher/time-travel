@@ -35,9 +35,10 @@ export function formatLocalDate(date: Date, options?: FormatOptions): string {
     return dateStr
 }
 
+/** Returns time in format "HH:mm" in local time, or "Invalid Date" if invalid */
 export function formatLocalTime(date: Date): string {
     if (isNaN(date.getTime())) {
-        return ''
+        return 'Invalid Date'
     }
 
     const HH = String(date.getHours()).padStart(2, '0')
