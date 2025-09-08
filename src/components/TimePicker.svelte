@@ -39,12 +39,17 @@
         background-repeat: no-repeat;
         background-position: center;
         background-size: 80%;
+        border-radius: 30px;
 
         /** only show on mobile screens */
         display: none;
         @media (min-width: 400px) {
             display: block;
         }
+    }
+
+    .icon:focus-within {
+        outline: 2px solid var(--primary-color);
     }
 
     input {
