@@ -207,6 +207,12 @@ describe('parseDate', () => {
         expect(date1970b.dateString).toBe('100');
     });
 
+    it('parses timestamps in base ten', () => {
+        const dateBase10 = parseDate('00000000123') as ValidDate;
+        expect(dateBase10.isValid).toBe(true);
+        expect(dateBase10.date.getTime()).toBe(123); // base 8 result would be 83
+    });
+
     it('returns null for invalid dates', () => {
         expect(parseDate('abcdefgh').isValid).toBe(false);
         expect(parseDate('2025-02-32').isValid).toBe(false);
