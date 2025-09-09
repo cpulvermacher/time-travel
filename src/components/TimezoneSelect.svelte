@@ -87,5 +87,11 @@
         border: 1px solid var(--border-color);
         background: white;
         color: var(--text-color);
+        cursor: pointer;
+        transition: all 0.3s ease-in;
+    }
+    select:not(:disabled):hover {
+        filter: drop-shadow(0 0 2px var(--primary-color));
+        cursor: pointer;
     }
 </style>

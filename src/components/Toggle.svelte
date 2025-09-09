@@ -75,7 +75,7 @@
         border-color: var(--primary-color);
     }
     input:not(:disabled):hover + .toggle-bg {
-        filter: drop-shadow(0 0 1px var(--primary-color));
+        filter: drop-shadow(0 0 2px var(--primary-color));
     }
     input:focus-visible + .toggle-bg {
         outline: 2px solid var(--primary-color);
