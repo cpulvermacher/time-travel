@@ -1,12 +1,12 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest';
 
-import { getDateParts, getOffsetMinutes } from '../../../content-scripts/fake-date/date-parts'
+import { getDateParts, getOffsetMinutes } from '../../../content-scripts/fake-date/date-parts';
 
 describe('getDateParts', () => {
     it('returns parts for UTC', () => {
-        const fakeDate = '2023-01-01T12:00:00.000Z' // Noon UTC
+        const fakeDate = '2023-01-01T12:00:00.000Z'; // Noon UTC
 
-        const parts = getDateParts(new Date(fakeDate), 'UTC')
+        const parts = getDateParts(new Date(fakeDate), 'UTC');
         expect(parts).toEqual({
             year: 2023,
             month: 0,
@@ -29,13 +29,13 @@ describe('getDateParts', () => {
                 timeZoneName: 'GMT',
                 literal: ' ',
             },
-        })
-    })
+        });
+    });
 
     it('returns parts for New York', () => {
-        const fakeDate = '2023-01-01T12:00:00.000Z' // Noon UTC
+        const fakeDate = '2023-01-01T12:00:00.000Z'; // Noon UTC
 
-        const parts = getDateParts(new Date(fakeDate), 'America/New_York')
+        const parts = getDateParts(new Date(fakeDate), 'America/New_York');
         expect(parts).toEqual({
             year: 2023,
             month: 0,
@@ -58,13 +58,13 @@ describe('getDateParts', () => {
                 timeZoneName: 'GMT-05:00',
                 literal: ' ',
             },
-        })
-    })
+        });
+    });
 
     it('uses 24h date format (0 hours)', () => {
-        const fakeDate = '2023-01-01T00:12:34.123-0500'
+        const fakeDate = '2023-01-01T00:12:34.123-0500';
 
-        const parts = getDateParts(new Date(fakeDate), 'America/New_York')
+        const parts = getDateParts(new Date(fakeDate), 'America/New_York');
         expect(parts).toEqual({
             year: 2023,
             month: 0,
@@ -87,13 +87,13 @@ describe('getDateParts', () => {
                 timeZoneName: 'GMT-05:00',
                 literal: ' ',
             },
-        })
-    })
+        });
+    });
 
     it('uses 24h date format (23 hours)', () => {
-        const fakeDate = '2023-01-01T23:12:34.123-0500'
+        const fakeDate = '2023-01-01T23:12:34.123-0500';
 
-        const parts = getDateParts(new Date(fakeDate), 'America/New_York')
+        const parts = getDateParts(new Date(fakeDate), 'America/New_York');
         expect(parts).toEqual({
             year: 2023,
             month: 0,
@@ -116,25 +116,25 @@ describe('getDateParts', () => {
                 timeZoneName: 'GMT-05:00',
                 literal: ' ',
             },
-        })
-    })
-})
+        });
+    });
+});
 
 describe('getOffsetMinutes', () => {
     it('returns 0 for UTC', () => {
-        expect(getOffsetMinutes('GMT')).toBe(0)
-    })
+        expect(getOffsetMinutes('GMT')).toBe(0);
+    });
 
     it('returns correct minute offset', () => {
-        expect(getOffsetMinutes('GMT-05:00')).toBe(300)
-        expect(getOffsetMinutes('GMT+02:00')).toBe(-120)
-        expect(getOffsetMinutes('GMT+00:30')).toBe(-30)
-        expect(getOffsetMinutes('GMT+12:45')).toBe(-765)
-    })
+        expect(getOffsetMinutes('GMT-05:00')).toBe(300);
+        expect(getOffsetMinutes('GMT+02:00')).toBe(-120);
+        expect(getOffsetMinutes('GMT+00:30')).toBe(-30);
+        expect(getOffsetMinutes('GMT+12:45')).toBe(-765);
+    });
 
     it('returns 0 for invalid timezone', () => {
-        expect(getOffsetMinutes('abcd')).toBe(0)
-        expect(getOffsetMinutes('')).toBe(0)
-        expect(getOffsetMinutes(undefined)).toBe(0)
-    })
-})
+        expect(getOffsetMinutes('abcd')).toBe(0);
+        expect(getOffsetMinutes('')).toBe(0);
+        expect(getOffsetMinutes(undefined)).toBe(0);
+    });
+});

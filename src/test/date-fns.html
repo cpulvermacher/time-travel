@@ -12,13 +12,13 @@
             <p>new TZDate().withTimeZone('UTC'): <span id="tzdate-utc"></span></p>
             <p>new TZDate().withTimeZone('America/New_York'): <span id="tzdate-newyork"></span></p>
             <script type="module">
-                import { TZDate, TZDateMini } from 'https://cdn.jsdelivr.net/npm/@date-fns/tz@1.1.2/+esm'
+                import { TZDate, TZDateMini } from 'https://cdn.jsdelivr.net/npm/@date-fns/tz@1.1.2/+esm';
 
-                const test = new TZDate()
+                const test = new TZDate();
 
-                document.getElementById('tzdate').textContent = test
-                document.getElementById('tzdate-utc').textContent = test.withTimeZone('UTC')
-                document.getElementById('tzdate-newyork').textContent = test.withTimeZone('America/New_York')
+                document.getElementById('tzdate').textContent = test;
+                document.getElementById('tzdate-utc').textContent = test.withTimeZone('UTC');
+                document.getElementById('tzdate-newyork').textContent = test.withTimeZone('America/New_York');
             </script>
 
             <h3>date-fns-tz compatibility test</h3>
@@ -29,13 +29,13 @@
             <p>fromZonedTime('2025-03-09 01:00', 'America/New_York'): <span id="fromZonedTime"></span></p>
 
             <script type="module">
-                import { toZonedTime, fromZonedTime } from 'https://cdn.jsdelivr.net/npm/date-fns-tz@3.0.0/+esm'
+                import { toZonedTime, fromZonedTime } from 'https://cdn.jsdelivr.net/npm/date-fns-tz@3.0.0/+esm';
 
-                document.getElementById('toZonedTime').textContent = toZonedTime(new Date(), 'America/New_York')
+                document.getElementById('toZonedTime').textContent = toZonedTime(new Date(), 'America/New_York');
                 document.getElementById('fromZonedTime').textContent = fromZonedTime(
                     '2025-03-09 02:00',
                     'America/New_York'
-                ).toISOString()
+                ).toISOString();
             </script>
         </div>
     </body>

@@ -1,24 +1,24 @@
-import type { Locale } from '../paraglide/runtime'
+import type { Locale } from '../paraglide/runtime';
 
 export function getTranslationLocale(language: string): Locale {
     if (language.startsWith('de')) {
-        return 'de'
+        return 'de';
     } else if (language.startsWith('ja')) {
-        return 'ja'
+        return 'ja';
     }
-    return 'en'
+    return 'en';
 }
 
 /** get the first day of the week (1=Monday, 7: Sunday) */
 export function getFirstDayOfWeek(lang: string): number {
     // Chrome supports `getWeekInfo()` since version 130
-    const locale = new Intl.Locale(lang)
+    const locale = new Intl.Locale(lang);
     if ('getWeekInfo' in locale) {
         interface WeekInfo {
-            firstDay: number
+            firstDay: number;
         }
-        const info = (locale.getWeekInfo as () => WeekInfo)()
-        return info.firstDay
+        const info = (locale.getWeekInfo as () => WeekInfo)();
+        return info.firstDay;
     }
 
     // for browsers without support, add some common Monday cases and assume Sunday for the rest
@@ -42,8 +42,8 @@ export function getFirstDayOfWeek(lang: string): number {
         lang === 'zh' ||
         lang === 'zh-CN'
     ) {
-        return 1
+        return 1;
     }
 
-    return 7
+    return 7;
 }

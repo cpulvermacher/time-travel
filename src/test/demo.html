@@ -17,17 +17,17 @@
 
             <script>
                 setInterval(() => {
-                    document.getElementById('now').textContent = new Date().toString()
+                    document.getElementById('now').textContent = new Date().toString();
                     document.getElementById('nowIntl').textContent = new Intl.DateTimeFormat('en-US', {
                         dateStyle: 'full',
                         timeStyle: 'long',
-                    }).format()
+                    }).format();
                     document.getElementById('nowIntlNewYork').textContent = new Intl.DateTimeFormat('en-US', {
                         dateStyle: 'full',
                         timeStyle: 'long',
                         timeZone: 'America/New_York',
-                    }).format()
-                }, 1000)
+                    }).format();
+                }, 1000);
             </script>
 
             <h3>Other Demos</h3>

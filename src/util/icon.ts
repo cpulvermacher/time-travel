@@ -1,52 +1,52 @@
-import { m } from '../paraglide/messages'
-import { overwriteGetLocale } from '../paraglide/runtime'
-import { getActiveTabId, getUILanguage, setBadgeText, setTitle } from './browser'
-import { getContentScriptState, type ContentScriptState } from './content-script-state'
-import { getTranslationLocale } from './i18n'
-import { getTzInfo } from './timezone-info'
+import { m } from '../paraglide/messages';
+import { overwriteGetLocale } from '../paraglide/runtime';
+import { getActiveTabId, getUILanguage, setBadgeText, setTitle } from './browser';
+import { getContentScriptState, type ContentScriptState } from './content-script-state';
+import { getTranslationLocale } from './i18n';
+import { getTzInfo } from './timezone-info';
 
-declare const __EXT_VERSION__: string
-declare const __MODE__: 'dev' | 'production'
+declare const __EXT_VERSION__: string;
+declare const __MODE__: 'dev' | 'production';
 
-const defaultTitleText = 'Time Travel'
-const devVersion = __MODE__ === 'dev' ? `\nVersion: ${__EXT_VERSION__}` : ''
+const defaultTitleText = 'Time Travel';
+const devVersion = __MODE__ === 'dev' ? `\nVersion: ${__EXT_VERSION__}` : '';
 
 /** Set icon badge and mouseover text based on state of content script in current tab */
 export async function setIconBadgeAndTitle(tabId: number, state: ContentScriptState) {
-    overwriteGetLocale(() => getTranslationLocale(getUILanguage()))
+    overwriteGetLocale(() => getTranslationLocale(getUILanguage()));
 
-    let badgeText = ''
+    let badgeText = '';
     if (state.fakeDateActive) {
-        badgeText = 'ON'
+        badgeText = 'ON';
     }
 
-    await setBadgeText(tabId, badgeText)
+    await setBadgeText(tabId, badgeText);
 
-    let title = defaultTitleText
+    let title = defaultTitleText;
     if (state.fakeDateActive && state.fakeDate) {
-        const tzInfo = getTzInfo(getUILanguage(), state.fakeDate, state.timezone || undefined)
+        const tzInfo = getTzInfo(getUILanguage(), state.fakeDate, state.timezone || undefined);
 
-        let formattedFakeDate = ''
+        let formattedFakeDate = '';
         if (tzInfo) {
-            formattedFakeDate = tzInfo.dateString + ' ' + tzInfo.timeString + ' ' + tzInfo.tzName
+            formattedFakeDate = tzInfo.dateString + ' ' + tzInfo.timeString + ' ' + tzInfo.tzName;
             if (tzInfo.isYearWithDst || tzInfo.isOffsetDifferentFromNow) {
-                formattedFakeDate += ` (${tzInfo.offset})`
+                formattedFakeDate += ` (${tzInfo.offset})`;
             }
         }
 
-        const titleArgs = { fakeDate: formattedFakeDate }
-        title += ' ' + (state.isClockStopped ? m.icon_title_stopped(titleArgs) : m.icon_title_running(titleArgs))
+        const titleArgs = { fakeDate: formattedFakeDate };
+        title += ' ' + (state.isClockStopped ? m.icon_title_stopped(titleArgs) : m.icon_title_running(titleArgs));
     } else if (state.contentScriptActive) {
-        title += ' ' + m.icon_title_off()
+        title += ' ' + m.icon_title_off();
     }
-    title += devVersion
-    await setTitle(tabId, title)
+    title += devVersion;
+    await setTitle(tabId, title);
 }
 
 export async function updateExtensionIcon(tabId?: number) {
     if (!tabId) {
-        tabId = await getActiveTabId()
+        tabId = await getActiveTabId();
     }
-    const state = await getContentScriptState(tabId)
-    await setIconBadgeAndTitle(tabId, state)
+    const state = await getContentScriptState(tabId);
+    await setIconBadgeAndTitle(tabId, state);
 }

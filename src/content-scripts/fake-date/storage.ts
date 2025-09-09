@@ -1,23 +1,23 @@
-const FAKE_DATE_STORAGE_KEY = 'timeTravelDate'
-const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp'
-const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone'
+const FAKE_DATE_STORAGE_KEY = 'timeTravelDate';
+const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp';
+const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone';
 
-const OriginalDate = Date
+const OriginalDate = Date;
 
 export function updateState() {
-    const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY)
+    const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY);
     if (fakeDate === null) {
-        window['__timeTravelState'] = undefined
-        return
+        window['__timeTravelState'] = undefined;
+        return;
     }
 
-    const timezone = getFromStorage(TIMEZONE_STORAGE_KEY) || null
-    const startTimestamp = getFromStorage(TICK_START_STORAGE_KEY)
+    const timezone = getFromStorage(TIMEZONE_STORAGE_KEY) || null;
+    const startTimestamp = getFromStorage(TICK_START_STORAGE_KEY);
 
-    let tickStartTimestamp: number | null = null
+    let tickStartTimestamp: number | null = null;
     if (startTimestamp !== null) {
         try {
-            tickStartTimestamp = Number.parseInt(startTimestamp)
+            tickStartTimestamp = Number.parseInt(startTimestamp);
         } catch {
             //ignore errors, leave value unchanged
         }
@@ -27,32 +27,32 @@ export function updateState() {
         fakeDate,
         timezone,
         tickStartTimestamp,
-    }
+    };
 }
 
 /** return key from storage, or null if unset */
 function getFromStorage(key: string): string | null {
     try {
-        return window.sessionStorage.getItem(key)
+        return window.sessionStorage.getItem(key);
     } catch {
         //in sandbox, we might not be able to access sessionStorage
-        return null
+        return null;
     }
 }
 
 /** return fake date, or null if unset */
 export function getFakeDate(): string | null {
-    return window['__timeTravelState']?.fakeDate ?? null
+    return window['__timeTravelState']?.fakeDate ?? null;
 }
 
 /** return tick start time, or null if unset/invalid */
 export function getTickStartTimestamp(): number | null {
-    return window['__timeTravelState']?.tickStartTimestamp ?? null
+    return window['__timeTravelState']?.tickStartTimestamp ?? null;
 }
 
 /** return time zone setting, or null to use browser default */
 export function getTimezone(): string | null {
-    return window['__timeTravelState']?.timezone ?? null
+    return window['__timeTravelState']?.timezone ?? null;
 }
 
 /** return the current date/time we want the page to see.
@@ -61,17 +61,17 @@ export function getTimezone(): string | null {
  * or the fake time, stopped or running (extension on).
  */
 export function fakeNowDate(): Date {
-    const fakeDate = getFakeDate()
+    const fakeDate = getFakeDate();
     if (fakeDate !== null) {
-        const fakeDateObject = new OriginalDate(fakeDate)
-        const startTimestamp = getTickStartTimestamp()
+        const fakeDateObject = new OriginalDate(fakeDate);
+        const startTimestamp = getTickStartTimestamp();
         if (startTimestamp === null) {
-            return fakeDateObject
+            return fakeDateObject;
         } else {
-            const elapsed = OriginalDate.now() - startTimestamp
-            return new OriginalDate(fakeDateObject.getTime() + elapsed)
+            const elapsed = OriginalDate.now() - startTimestamp;
+            return new OriginalDate(fakeDateObject.getTime() + elapsed);
         }
     } else {
-        return new OriginalDate()
+        return new OriginalDate();
     }
 }

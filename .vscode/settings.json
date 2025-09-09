@@ -1,7 +1,7 @@
 {
     "editor.detectIndentation": false,
     "editor.tabSize": 4,
-    "typescript.format.semicolons": "remove",
+    "typescript.format.semicolons": "insert",
     "[typescript][json][css][html]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },

@@ -164,84 +164,84 @@
                 { input: '13', expected: 'Invalid Date', output: 'local' },
                 { input: '31', expected: 'Invalid Date', output: 'both' },
                 { input: '', expected: 'Invalid Date', output: 'both' },
-            ]
+            ];
 
             function formatLocalDate(date) {
-                const st = date.toString()
+                const st = date.toString();
                 //remove parentheses content
-                return st.replace(/\s*\(.*?\)\s*/g, '')
+                return st.replace(/\s*\(.*?\)\s*/g, '');
             }
 
             function runTests() {
-                const tbody = document.querySelector('#results tbody')
+                const tbody = document.querySelector('#results tbody');
 
                 testCases.forEach((testCase) => {
-                    const row = document.createElement('tr')
-                    tbody.appendChild(row)
+                    const row = document.createElement('tr');
+                    tbody.appendChild(row);
 
                     if (testCase.category) {
                         // Section header
-                        row.className = 'section-header'
-                        row.innerHTML = `<td colspan="3">${testCase.category}</td>`
-                        return
+                        row.className = 'section-header';
+                        row.innerHTML = `<td colspan="3">${testCase.category}</td>`;
+                        return;
                     }
 
                     // Test case
-                    const inputCell = document.createElement('td')
-                    inputCell.className = 'input-string'
-                    inputCell.textContent = `"${testCase.input}"`
+                    const inputCell = document.createElement('td');
+                    inputCell.className = 'input-string';
+                    inputCell.textContent = `"${testCase.input}"`;
 
-                    const resultCell = document.createElement('td')
-                    const expectedCell = document.createElement('td')
+                    const resultCell = document.createElement('td');
+                    const expectedCell = document.createElement('td');
 
-                    const date = new Date(testCase.input)
+                    const date = new Date(testCase.input);
 
-                    let actualOutput = ''
+                    let actualOutput = '';
 
                     if (isNaN(date.getTime())) {
-                        resultCell.className = 'error'
-                        const errorP = document.createElement('p')
-                        errorP.textContent = 'Invalid Date'
-                        resultCell.appendChild(errorP)
-                        actualOutput = 'Invalid Date'
+                        resultCell.className = 'error';
+                        const errorP = document.createElement('p');
+                        errorP.textContent = 'Invalid Date';
+                        resultCell.appendChild(errorP);
+                        actualOutput = 'Invalid Date';
                     } else {
-                        const outputType = testCase.output || 'both'
-                        const outputParts = []
+                        const outputType = testCase.output || 'both';
+                        const outputParts = [];
 
                         if (outputType === 'local' || outputType === 'both') {
-                            const localOutput = `Local: ${formatLocalDate(date)}`
-                            const toStringP = document.createElement('p')
-                            toStringP.textContent = localOutput
-                            resultCell.appendChild(toStringP)
-                            outputParts.push(localOutput)
+                            const localOutput = `Local: ${formatLocalDate(date)}`;
+                            const toStringP = document.createElement('p');
+                            toStringP.textContent = localOutput;
+                            resultCell.appendChild(toStringP);
+                            outputParts.push(localOutput);
                         }
 
                         if (outputType === 'utc' || outputType === 'both') {
-                            const utcOutput = `UTC: ${date.toISOString()}`
-                            const toUTCP = document.createElement('p')
-                            toUTCP.textContent = utcOutput
-                            resultCell.appendChild(toUTCP)
-                            outputParts.push(utcOutput)
+                            const utcOutput = `UTC: ${date.toISOString()}`;
+                            const toUTCP = document.createElement('p');
+                            toUTCP.textContent = utcOutput;
+                            resultCell.appendChild(toUTCP);
+                            outputParts.push(utcOutput);
                         }
 
-                        actualOutput = outputParts.join(' | ')
+                        actualOutput = outputParts.join(' | ');
                     }
 
-                    expectedCell.textContent = testCase.expected
+                    expectedCell.textContent = testCase.expected;
 
                     // Check if actual output matches expected output
                     if (actualOutput.includes(testCase.expected)) {
-                        row.className = 'match'
+                        row.className = 'match';
                     }
 
-                    row.appendChild(inputCell)
-                    row.appendChild(resultCell)
-                    row.appendChild(expectedCell)
-                })
+                    row.appendChild(inputCell);
+                    row.appendChild(resultCell);
+                    row.appendChild(expectedCell);
+                });
             }
 
             // Run tests when page loads
-            document.addEventListener('DOMContentLoaded', runTests)
+            document.addEventListener('DOMContentLoaded', runTests);
         </script>
 
         <h3>References</h3>

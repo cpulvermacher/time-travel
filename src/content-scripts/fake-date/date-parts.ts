@@ -1,30 +1,30 @@
 export type LocalDateParts = SharedDateParts & {
-    localTimestamp: number // not a UTC timestamp!
-}
+    localTimestamp: number; // not a UTC timestamp!
+};
 export type SharedDateParts = {
-    year: number
-    month: number // 0-based month (0 = January)
-    day: number // 1-based day of the month
-    hour: number
-    minute: number
-    second: number
-    ms: number
-}
+    year: number;
+    month: number; // 0-based month (0 = January)
+    day: number; // 1-based day of the month
+    hour: number;
+    minute: number;
+    second: number;
+    ms: number;
+};
 
 export type FullDateParts = SharedDateParts & {
-    weekday: string
-    offsetName: string // a longOffset string, e.g. "GMT-05:00" or "GMT"
-    rawFormat: Record<Intl.DateTimeFormatPartTypes, string>
-}
+    weekday: string;
+    offsetName: string; // a longOffset string, e.g. "GMT-05:00" or "GMT"
+    rawFormat: Record<Intl.DateTimeFormatPartTypes, string>;
+};
 
 export function getDateParts(date: Date | number, timezone: string): FullDateParts | undefined {
-    const formatter = getFormatterForTimezone(timezone)
+    const formatter = getFormatterForTimezone(timezone);
     try {
-        const parts = formatter.formatToParts(date)
-        const partsMap = {} as Record<Intl.DateTimeFormatPartTypes, string>
+        const parts = formatter.formatToParts(date);
+        const partsMap = {} as Record<Intl.DateTimeFormatPartTypes, string>;
         parts.forEach((part) => {
-            partsMap[part.type] = part.value
-        })
+            partsMap[part.type] = part.value;
+        });
         return {
             year: parseInt(partsMap.year, 10),
             // Month is 1-based in formatToParts but 0-based in Date methods
@@ -37,9 +37,9 @@ export function getDateParts(date: Date | number, timezone: string): FullDatePar
             weekday: partsMap.weekday,
             offsetName: partsMap.timeZoneName,
             rawFormat: partsMap,
-        }
+        };
     } catch {
-        return undefined
+        return undefined;
     }
 }
 
@@ -57,12 +57,12 @@ export function getDatePartsForLocalDate(
     second: number,
     ms: number
 ): LocalDateParts {
-    return getDatePartsForLocalTimestamp(Date.UTC(year, month, day, hour, minute, second, ms))
+    return getDatePartsForLocalTimestamp(Date.UTC(year, month, day, hour, minute, second, ms));
 }
 
 /** returns LocalDateParts for given local (!) timestamp. */
 export function getDatePartsForLocalTimestamp(timestamp: number): LocalDateParts {
-    const utcDate = new Date(timestamp)
+    const utcDate = new Date(timestamp);
     return {
         year: utcDate.getUTCFullYear(),
         month: utcDate.getUTCMonth(),
@@ -72,7 +72,7 @@ export function getDatePartsForLocalTimestamp(timestamp: number): LocalDateParts
         second: utcDate.getUTCSeconds(),
         ms: utcDate.getUTCMilliseconds(),
         localTimestamp: utcDate.getTime(),
-    }
+    };
 }
 
 export function compareDateParts(
@@ -80,10 +80,10 @@ export function compareDateParts(
     b: LocalDateParts | FullDateParts | undefined
 ): boolean {
     if (a === undefined || b === undefined) {
-        return a === b
+        return a === b;
     }
     if ('offsetName' in a && 'offsetName' in b && a['offsetName'] !== b['offsetName']) {
-        return false
+        return false;
     }
     return (
         a.year === b.year &&
@@ -93,7 +93,7 @@ export function compareDateParts(
         a.minute === b.minute &&
         a.second === b.second &&
         a.ms === b.ms
-    )
+    );
 }
 
 /** Gets time zone offset in minutes from a longOffset string.
@@ -104,27 +104,27 @@ export function compareDateParts(
  */
 export function getOffsetMinutes(longOffset?: string): number {
     if (!longOffset) {
-        return 0
+        return 0;
     }
-    const match = longOffset.match(/GMT([+-]\d{2}):(\d{2})/)
+    const match = longOffset.match(/GMT([+-]\d{2}):(\d{2})/);
     if (match) {
-        const hours = parseInt(match[1], 10)
-        const minutes = parseInt(match[2], 10)
+        const hours = parseInt(match[1], 10);
+        const minutes = parseInt(match[2], 10);
         if (hours < 0) {
-            return -(hours * 60 - minutes)
+            return -(hours * 60 - minutes);
         } else {
-            return -(hours * 60 + minutes)
+            return -(hours * 60 + minutes);
         }
     }
-    return 0
+    return 0;
 }
 
 /** Gets a cached formatter */
 function getFormatterForTimezone(timezone: string | undefined): Intl.DateTimeFormat {
     if (cachedFormatterForTimezone === timezone && cachedFormatter !== null) {
-        return cachedFormatter
+        return cachedFormatter;
     }
-    cachedFormatterForTimezone = timezone
+    cachedFormatterForTimezone = timezone;
     cachedFormatter = new Intl.DateTimeFormat('en-GB', {
         year: 'numeric',
         month: '2-digit',
@@ -136,9 +136,9 @@ function getFormatterForTimezone(timezone: string | undefined): Intl.DateTimeFor
         weekday: 'short',
         timeZoneName: 'longOffset',
         timeZone: timezone,
-    })
-    return cachedFormatter
+    });
+    return cachedFormatter;
 }
 
-let cachedFormatter: Intl.DateTimeFormat | null = null
-let cachedFormatterForTimezone: string | undefined | null = null
+let cachedFormatter: Intl.DateTimeFormat | null = null;
+let cachedFormatterForTimezone: string | undefined | null = null;

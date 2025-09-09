@@ -15,15 +15,15 @@
         <script>
             setTimeout(() => {
                 document.getElementById('delayed-iframe').innerHTML =
-                    '<iframe src="demo.html" title="frame-with-delay"></iframe>'
-            }, 1000)
+                    '<iframe src="demo.html" title="frame-with-delay"></iframe>';
+            }, 1000);
         </script>
 
         <h2>iframe (dynamic content)</h2>
         <div id="dynamic-iframe"></div>
         <script>
-            const iframe = document.createElement('iframe')
-            iframe.src = 'about:blank'
+            const iframe = document.createElement('iframe');
+            iframe.src = 'about:blank';
             iframe.srcdoc =
                 `
             <link rel="stylesheet" href="./demo.css" />
@@ -37,8 +37,8 @@
                         document.getElementById("now").textContent = new Date().toString().substring(0, 24)
                         document.getElementById("nowIntl").textContent = new Intl.DateTimeFormat('en-US', { dateStyle: 'full', timeStyle: 'medium' }).format()
                     }, 1000)
-                <` + '/script></div>'
-            document.getElementById('dynamic-iframe').appendChild(iframe)
+                <` + '/script></div>';
+            document.getElementById('dynamic-iframe').appendChild(iframe);
         </script>
 
         <h2>iframe (sandbox with scripts + same-origin)</h2>

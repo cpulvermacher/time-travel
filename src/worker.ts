@@ -1,17 +1,17 @@
-import type { ActivationMessage } from './types/ActivationMessage'
-import { setIconBadgeAndTitle, updateExtensionIcon } from './util/icon'
+import type { ActivationMessage } from './types/ActivationMessage';
+import { setIconBadgeAndTitle, updateExtensionIcon } from './util/icon';
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
-    void updateBadgeAndTitle(activeInfo.tabId)
-})
+    void updateBadgeAndTitle(activeInfo.tabId);
+});
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
     if (changeInfo.url === undefined) {
-        return // url unchanged, nothing to do
+        return; // url unchanged, nothing to do
     }
 
-    void updateBadgeAndTitle(tabId)
-})
+    void updateBadgeAndTitle(tabId);
+});
 
 chrome.runtime.onMessage.addListener((message: ActivationMessage, sender) => {
     if (message.msg === 'active' && sender.tab?.id) {
@@ -22,16 +22,16 @@ chrome.runtime.onMessage.addListener((message: ActivationMessage, sender) => {
             timezone: message.timezone,
             isClockStopped: message.isClockStopped,
             fakeDateActive: true,
-        }
-        void setIconBadgeAndTitle(sender.tab.id, state)
+        };
+        void setIconBadgeAndTitle(sender.tab.id, state);
     }
-})
+});
 
 async function updateBadgeAndTitle(tabId: number) {
     try {
-        await updateExtensionIcon(tabId)
+        await updateExtensionIcon(tabId);
     } catch (e) {
         //ignore errors
-        console.log(e)
+        console.log(e);
     }
 }

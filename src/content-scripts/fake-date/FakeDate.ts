@@ -1,11 +1,11 @@
-import { getDateParts, getDatePartsForLocalDate, getOffsetMinutes } from './date-parts'
-import { disambiguateDate } from './disambiguateDate'
-import { optionsWithDefaultTz } from './FakeIntlDateTimeFormat'
-import { getTimezoneName } from './getTimezoneName'
-import { parseWithTimezone } from './parseWithTimezone'
-import { fakeNowDate, getTimezone } from './storage'
+import { getDateParts, getDatePartsForLocalDate, getOffsetMinutes } from './date-parts';
+import { disambiguateDate } from './disambiguateDate';
+import { optionsWithDefaultTz } from './FakeIntlDateTimeFormat';
+import { getTimezoneName } from './getTimezoneName';
+import { parseWithTimezone } from './parseWithTimezone';
+import { fakeNowDate, getTimezone } from './storage';
 
-const OriginalDate = Date
+const OriginalDate = Date;
 
 // Date constructor, needs to be a function to allow both constructing (`new Date()`) and calling without new: `Date()`
 export function FakeDate(
@@ -21,35 +21,35 @@ export function FakeDate(
 ) {
     if (!new.target) {
         // `Date()` invoked without 'new', return current time string
-        return new Date().toString()
+        return new Date().toString();
     }
 
     if (args.length === 0) {
-        args = [fakeNowDate()]
+        args = [fakeNowDate()];
     }
 
-    let returnDate: Date
-    const timezone = getTimezone()
+    let returnDate: Date;
+    const timezone = getTimezone();
     if (!timezone || (args.length === 1 && (typeof args[0] === 'number' || args[0] instanceof OriginalDate))) {
         // @ts-expect-error: let original Date constructor handle the arguments
-        returnDate = new OriginalDate(...args)
+        returnDate = new OriginalDate(...args);
     } else if (args.length === 1 && typeof args[0] === 'string') {
-        returnDate = new OriginalDate(parseWithTimezone(args[0], timezone))
+        returnDate = new OriginalDate(parseWithTimezone(args[0], timezone));
     } else if (args.length > 1 && typeof args[0] === 'number') {
-        const [year, month = 0, day = 1, hours = 0, minutes = 0, seconds = 0, ms = 0] = args
+        const [year, month = 0, day = 1, hours = 0, minutes = 0, seconds = 0, ms = 0] = args;
 
-        const desiredLocalDate = getDatePartsForLocalDate(year, month, day, hours, minutes, seconds, ms)
-        const timestamp = disambiguateDate(desiredLocalDate, timezone)
-        returnDate = new OriginalDate(timestamp)
+        const desiredLocalDate = getDatePartsForLocalDate(year, month, day, hours, minutes, seconds, ms);
+        const timestamp = disambiguateDate(desiredLocalDate, timezone);
+        returnDate = new OriginalDate(timestamp);
     } else {
         // @ts-expect-error: let original Date constructor handle the arguments
-        returnDate = new OriginalDate(...args)
+        returnDate = new OriginalDate(...args);
     }
 
     // for `new SomeClassDerivedFromDate()`, make sure we return something that is an instance of SomeClassDerivedFromDate
-    Object.setPrototypeOf(returnDate, new.target.prototype as object)
+    Object.setPrototypeOf(returnDate, new.target.prototype as object);
 
-    return returnDate
+    return returnDate;
 }
 
 /** Patch Date methods to respect the selected timezone */
@@ -57,276 +57,276 @@ function patchDateMethods(datePrototype: Date): void {
     // --- Override string representation methods ---
 
     datePrototype.toString = function () {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.toString.call(this)
+            return OriginalDate.prototype.toString.call(this);
         }
 
-        const dateString = this.toDateString()
-        const timeString = this.toTimeString()
+        const dateString = this.toDateString();
+        const timeString = this.toTimeString();
         if (dateString === 'Invalid Date' || timeString === 'Invalid Date') {
-            return 'Invalid Date'
+            return 'Invalid Date';
         }
 
-        return `${dateString} ${timeString}`
-    }
+        return `${dateString} ${timeString}`;
+    };
     datePrototype.toDateString = function () {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.toDateString.call(this)
+            return OriginalDate.prototype.toDateString.call(this);
         }
 
-        const parts = getDateParts(this, timezone)
+        const parts = getDateParts(this, timezone);
         if (!parts) {
-            return 'Invalid Date'
+            return 'Invalid Date';
         }
 
-        const monthLabel = shortMonths[parts.month] || parts.month
+        const monthLabel = shortMonths[parts.month] || parts.month;
 
-        return `${parts.weekday} ${monthLabel} ${parts.rawFormat.day} ${parts.rawFormat.year}`
-    }
+        return `${parts.weekday} ${monthLabel} ${parts.rawFormat.day} ${parts.rawFormat.year}`;
+    };
     datePrototype.toTimeString = function () {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.toTimeString.call(this)
+            return OriginalDate.prototype.toTimeString.call(this);
         }
 
-        const parts = getDateParts(this, timezone)
+        const parts = getDateParts(this, timezone);
         if (!parts) {
-            return 'Invalid Date'
+            return 'Invalid Date';
         }
 
-        let offset = parts.offsetName.replace(':', '')
+        let offset = parts.offsetName.replace(':', '');
         if (offset === 'GMT') {
-            offset = 'GMT+0000'
+            offset = 'GMT+0000';
         }
-        const tzName = getTimezoneName(this, timezone)
-        const raw = parts.rawFormat
+        const tzName = getTimezoneName(this, timezone);
+        const raw = parts.rawFormat;
 
-        return `${raw.hour}:${raw.minute}:${raw.second} ${offset} (${tzName})`
-    }
+        return `${raw.hour}:${raw.minute}:${raw.second} ${offset} (${tzName})`;
+    };
 
     // Override locale string methods to use the configured time zone by default
     datePrototype.toLocaleString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
-        return OriginalDate.prototype.toLocaleString.call(this, locales, optionsWithDefaultTz(options))
-    }
+        return OriginalDate.prototype.toLocaleString.call(this, locales, optionsWithDefaultTz(options));
+    };
 
     datePrototype.toLocaleDateString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
-        return OriginalDate.prototype.toLocaleDateString.call(this, locales, optionsWithDefaultTz(options))
-    }
+        return OriginalDate.prototype.toLocaleDateString.call(this, locales, optionsWithDefaultTz(options));
+    };
 
     datePrototype.toLocaleTimeString = function (locales?: string | string[], options?: Intl.DateTimeFormatOptions) {
-        return OriginalDate.prototype.toLocaleTimeString.call(this, locales, optionsWithDefaultTz(options))
-    }
+        return OriginalDate.prototype.toLocaleTimeString.call(this, locales, optionsWithDefaultTz(options));
+    };
 
     // --- Override local time methods to return values in the configured time zone ---
 
     datePrototype.getFullYear = function () {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.getFullYear.call(this)
+            return OriginalDate.prototype.getFullYear.call(this);
         }
 
-        const parts = getDateParts(this, timezone)
+        const parts = getDateParts(this, timezone);
         if (!parts) {
-            return NaN
+            return NaN;
         }
 
-        return parts.year
-    }
+        return parts.year;
+    };
 
     // add deprecated getYear() if the underlying Date implements it
     if (datePrototype.getYear !== undefined) {
         datePrototype.getYear = function () {
-            return this.getFullYear() - 1900
-        }
+            return this.getFullYear() - 1900;
+        };
     }
 
     datePrototype.getMonth = function () {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.getMonth.call(this)
+            return OriginalDate.prototype.getMonth.call(this);
         }
 
-        const parts = getDateParts(this, timezone)
+        const parts = getDateParts(this, timezone);
         if (!parts) {
-            return NaN
+            return NaN;
         }
 
-        return parts.month
-    }
+        return parts.month;
+    };
 
     datePrototype.getDate = function () {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.getDate.call(this)
+            return OriginalDate.prototype.getDate.call(this);
         }
 
-        const parts = getDateParts(this, timezone)
+        const parts = getDateParts(this, timezone);
         if (!parts) {
-            return NaN
+            return NaN;
         }
 
-        return parts.day
-    }
+        return parts.day;
+    };
 
     datePrototype.getDay = function () {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.getDay.call(this)
+            return OriginalDate.prototype.getDay.call(this);
         }
 
-        const parts = getDateParts(this, timezone)
+        const parts = getDateParts(this, timezone);
         if (!parts) {
-            return NaN
+            return NaN;
         }
 
         // Convert weekday name to number (0-6, Sunday-Saturday)
-        return weekdays.indexOf(parts.weekday || 'Sun')
-    }
+        return weekdays.indexOf(parts.weekday || 'Sun');
+    };
 
     datePrototype.getHours = function () {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.getHours.call(this)
+            return OriginalDate.prototype.getHours.call(this);
         }
 
-        const parts = getDateParts(this, timezone)
+        const parts = getDateParts(this, timezone);
         if (!parts) {
-            return NaN
+            return NaN;
         }
 
-        return parts.hour
-    }
+        return parts.hour;
+    };
 
     datePrototype.getMinutes = function () {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.getMinutes.call(this)
+            return OriginalDate.prototype.getMinutes.call(this);
         }
 
-        const parts = getDateParts(this, timezone)
+        const parts = getDateParts(this, timezone);
         if (!parts) {
-            return NaN
+            return NaN;
         }
 
-        return parts.minute
-    }
+        return parts.minute;
+    };
 
     datePrototype.getSeconds = function () {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.getSeconds.call(this)
+            return OriginalDate.prototype.getSeconds.call(this);
         }
 
-        const parts = getDateParts(this, timezone)
+        const parts = getDateParts(this, timezone);
         if (!parts) {
-            return NaN
+            return NaN;
         }
 
-        return parts.second
-    }
+        return parts.second;
+    };
 
     datePrototype.getMilliseconds = function () {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.getMilliseconds.call(this)
+            return OriginalDate.prototype.getMilliseconds.call(this);
         }
 
-        const parts = getDateParts(this, timezone)
+        const parts = getDateParts(this, timezone);
         if (!parts) {
-            return NaN
+            return NaN;
         }
 
-        return parts.ms
-    }
+        return parts.ms;
+    };
 
     datePrototype.getTimezoneOffset = function () {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.getTimezoneOffset.call(this)
+            return OriginalDate.prototype.getTimezoneOffset.call(this);
         }
 
-        const parts = getDateParts(this, timezone)
+        const parts = getDateParts(this, timezone);
         if (!parts) {
-            return NaN
+            return NaN;
         }
 
-        return getOffsetMinutes(parts.offsetName)
-    }
+        return getOffsetMinutes(parts.offsetName);
+    };
 
     // --- Override local time setters to use configured timezone ---
 
     datePrototype.setFullYear = function (...args: [year: number, month?: number, date?: number]) {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
             // calling the native method with (1, undefined) will create an invalid date, need to pass correct number of arguments
-            return OriginalDate.prototype.setFullYear.apply(this, args)
+            return OriginalDate.prototype.setFullYear.apply(this, args);
         }
 
-        const [year, month, date] = args
-        return overridePartOfDate(this, timezone, { year, month, day: date })
-    }
+        const [year, month, date] = args;
+        return overridePartOfDate(this, timezone, { year, month, day: date });
+    };
 
     datePrototype.setMonth = function (...args: [month: number, date?: number]) {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
             // calling the native method with (1, undefined) will create an invalid date, need to pass correct number of arguments
-            return OriginalDate.prototype.setMonth.apply(this, args)
+            return OriginalDate.prototype.setMonth.apply(this, args);
         }
 
-        const [month, date] = args
-        return overridePartOfDate(this, timezone, { month, day: date })
-    }
+        const [month, date] = args;
+        return overridePartOfDate(this, timezone, { month, day: date });
+    };
 
     datePrototype.setDate = function (date: number) {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.setDate.call(this, date)
+            return OriginalDate.prototype.setDate.call(this, date);
         }
 
-        return overridePartOfDate(this, timezone, { day: date })
-    }
+        return overridePartOfDate(this, timezone, { day: date });
+    };
 
     datePrototype.setHours = function (...args: [hours: number, min?: number, sec?: number, ms?: number]) {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
             // calling the native method with (1, undefined) will create an invalid date, need to pass correct number of arguments
-            return OriginalDate.prototype.setHours.apply(this, args)
+            return OriginalDate.prototype.setHours.apply(this, args);
         }
 
-        const [hours, min, sec, ms] = args
-        return overridePartOfDate(this, timezone, { hours, minutes: min, seconds: sec, milliseconds: ms })
-    }
+        const [hours, min, sec, ms] = args;
+        return overridePartOfDate(this, timezone, { hours, minutes: min, seconds: sec, milliseconds: ms });
+    };
 
     datePrototype.setMinutes = function (...args: [min: number, sec?: number, ms?: number]) {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.setMinutes.apply(this, args)
+            return OriginalDate.prototype.setMinutes.apply(this, args);
         }
 
-        const [min, sec, ms] = args
-        return overridePartOfDate(this, timezone, { minutes: min, seconds: sec, milliseconds: ms })
-    }
+        const [min, sec, ms] = args;
+        return overridePartOfDate(this, timezone, { minutes: min, seconds: sec, milliseconds: ms });
+    };
 
     datePrototype.setSeconds = function (...args: [sec: number, ms?: number]) {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.setSeconds.apply(this, args)
+            return OriginalDate.prototype.setSeconds.apply(this, args);
         }
 
-        const [sec, ms] = args
-        return overridePartOfDate(this, timezone, { seconds: sec, milliseconds: ms })
-    }
+        const [sec, ms] = args;
+        return overridePartOfDate(this, timezone, { seconds: sec, milliseconds: ms });
+    };
 
     datePrototype.setMilliseconds = function (ms: number) {
-        const timezone = getTimezone()
+        const timezone = getTimezone();
         if (!timezone) {
-            return OriginalDate.prototype.setMilliseconds.call(this, ms)
+            return OriginalDate.prototype.setMilliseconds.call(this, ms);
         }
 
-        return overridePartOfDate(this, timezone, { milliseconds: ms })
-    }
+        return overridePartOfDate(this, timezone, { milliseconds: ms });
+    };
 
     // Note: We don't override UTC methods as they should remain as is
 }
@@ -342,30 +342,30 @@ function overridePartOfDate(
     date: Date,
     timezone: string,
     override: {
-        year?: number
-        month?: number // 0-based, e.g. 0 for January
-        day?: number // 1-based, e.g. 1 for the first day of the month
-        hours?: number
-        minutes?: number
-        seconds?: number
-        milliseconds?: number
+        year?: number;
+        month?: number; // 0-based, e.g. 0 for January
+        day?: number; // 1-based, e.g. 1 for the first day of the month
+        hours?: number;
+        minutes?: number;
+        seconds?: number;
+        milliseconds?: number;
     }
 ) {
-    const parts = getDateParts(date, timezone)
+    const parts = getDateParts(date, timezone);
     if (!parts) {
-        return date.setTime(NaN)
+        return date.setTime(NaN);
     }
 
-    const year = override.year ?? parts.year
-    const month = override.month ?? parts.month
-    const day = override.day ?? parts.day
-    const hours = override.hours ?? parts.hour
-    const minutes = override.minutes ?? parts.minute
-    const seconds = override.seconds ?? parts.second
-    const ms = override.milliseconds ?? parts.ms
+    const year = override.year ?? parts.year;
+    const month = override.month ?? parts.month;
+    const day = override.day ?? parts.day;
+    const hours = override.hours ?? parts.hour;
+    const minutes = override.minutes ?? parts.minute;
+    const seconds = override.seconds ?? parts.second;
+    const ms = override.milliseconds ?? parts.ms;
 
-    const desiredLocalDate = getDatePartsForLocalDate(year, month, day, hours, minutes, seconds, ms)
-    return date.setTime(disambiguateDate(desiredLocalDate, timezone))
+    const desiredLocalDate = getDatePartsForLocalDate(year, month, day, hours, minutes, seconds, ms);
+    return date.setTime(disambiguateDate(desiredLocalDate, timezone));
 }
 
 /** copy all own properties from source to target, except 'constructor'
@@ -376,20 +376,20 @@ function copyOwnProperties<T extends object>(source: T, target: T): void {
     Reflect.ownKeys(source)
         .filter((key) => key !== 'constructor')
         .forEach((key) => {
-            target[key as keyof T] = source[key as keyof T]
-        })
+            target[key as keyof T] = source[key as keyof T];
+        });
 }
 
-const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 // static properties
-Object.setPrototypeOf(FakeDate, OriginalDate)
-FakeDate.now = () => new Date().getTime()
-FakeDate.parse = (datestr: string) => new Date(datestr).getTime()
+Object.setPrototypeOf(FakeDate, OriginalDate);
+FakeDate.now = () => new Date().getTime();
+FakeDate.parse = (datestr: string) => new Date(datestr).getTime();
 
 // for instance properties, _copy_ them from the original Date prototype
 // this is necessary for e.g. @date-fns/tz, which iterates over Object.getOwnPropertyNames(Date.prototype)
 // see also https://github.com/cpulvermacher/time-travel/issues/41
-copyOwnProperties(OriginalDate.prototype, FakeDate.prototype)
-patchDateMethods(FakeDate.prototype as Date)
+copyOwnProperties(OriginalDate.prototype, FakeDate.prototype);
+patchDateMethods(FakeDate.prototype as Date);

@@ -1,28 +1,28 @@
 /** Returns time zone name for toString()/toTimeString(). */
 export function getTimezoneName(date: Date, timezone: string): string {
-    const formatter = getLongNameFormatter(timezone)
+    const formatter = getLongNameFormatter(timezone);
 
     try {
-        const parts = formatter.formatToParts(date)
-        const timeZonePart = parts.find((part) => part.type === 'timeZoneName')
-        return timeZonePart ? timeZonePart.value : ''
+        const parts = formatter.formatToParts(date);
+        const timeZonePart = parts.find((part) => part.type === 'timeZoneName');
+        return timeZonePart ? timeZonePart.value : '';
     } catch {
-        return ''
+        return '';
     }
 }
 
 function getLongNameFormatter(timezone: string): Intl.DateTimeFormat {
     if (cachedLongNameFormatterForTimezone === timezone && cachedLongNameFormatter !== null) {
-        return cachedLongNameFormatter
+        return cachedLongNameFormatter;
     }
-    cachedLongNameFormatterForTimezone = timezone
+    cachedLongNameFormatterForTimezone = timezone;
     cachedLongNameFormatter = new Intl.DateTimeFormat('en-US', {
         timeZoneName: 'long', // technically the format is implementation defined, but Chrome, Firefox and node seem to follow this
         timeZone: timezone,
-    })
+    });
 
-    return cachedLongNameFormatter
+    return cachedLongNameFormatter;
 }
 
-let cachedLongNameFormatter: Intl.DateTimeFormat | null = null
-let cachedLongNameFormatterForTimezone: string | undefined | null = null
+let cachedLongNameFormatter: Intl.DateTimeFormat | null = null;
+let cachedLongNameFormatterForTimezone: string | undefined | null = null;
