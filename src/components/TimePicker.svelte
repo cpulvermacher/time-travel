@@ -39,6 +39,7 @@
         background-repeat: no-repeat;
         background-position: center;
         background-size: 80%;
+        border: 1px solid var(--border-color);
         border-radius: 30px;
 
         /** only show on mobile screens */
