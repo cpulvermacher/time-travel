@@ -1,44 +1,44 @@
 <script lang="ts">
-    import type { Snippet } from 'svelte'
+    import type { Snippet } from 'svelte';
 
     interface Props {
-        children: Snippet
-        onClose?: () => void
-        closeOnCancel?: boolean
+        children: Snippet;
+        onClose?: () => void;
+        closeOnCancel?: boolean;
     }
-    const { children, onClose, closeOnCancel }: Props = $props()
+    const { children, onClose, closeOnCancel }: Props = $props();
 
     function show(node: HTMLDialogElement) {
-        node.showModal()
+        node.showModal();
     }
     function oncancel(event: Event) {
         // cancel can be cancelled
         // in Chrome pressing Esc multiple times will close the dialog anyway,
         // but since Esc closes the popup first we don't need to worry about that
-        event.preventDefault()
+        event.preventDefault();
         if (closeOnCancel) {
-            onClose?.()
+            onClose?.();
         }
     }
     function onDialogClick(event: MouseEvent) {
         if (!closeOnCancel) {
-            return
+            return;
         }
 
-        const target = event.target as HTMLElement
+        const target = event.target as HTMLElement;
         if (target.tagName !== 'DIALOG') {
-            return
+            return;
         }
-        const dialogRect = target.getBoundingClientRect()
+        const dialogRect = target.getBoundingClientRect();
 
         const isOutsideClick =
             event.clientX < dialogRect.left ||
             event.clientX > dialogRect.right ||
             event.clientY < dialogRect.top ||
-            event.clientY > dialogRect.bottom
+            event.clientY > dialogRect.bottom;
         if (isOutsideClick) {
-            event.preventDefault()
-            onClose?.()
+            event.preventDefault();
+            onClose?.();
         }
     }
 </script>

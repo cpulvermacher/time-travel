@@ -1,59 +1,59 @@
 <script lang="ts">
-    import { onMount } from 'svelte'
-    import { m } from '../paraglide/messages'
-    import { getUILanguage } from '../util/browser'
-    import { getTimezoneOptions, type Timezone } from '../util/timezone-info'
+    import { onMount } from 'svelte';
+    import { m } from '../paraglide/messages';
+    import { getUILanguage } from '../util/browser';
+    import { getTimezoneOptions, type Timezone } from '../util/timezone-info';
 
     interface Props {
-        value: string
-        onSelect?: (timezone: string) => void
-        recentTimezones: string[]
+        value: string;
+        onSelect?: (timezone: string) => void;
+        recentTimezones: string[];
     }
 
-    const { value, onSelect, recentTimezones }: Props = $props()
+    const { value, onSelect, recentTimezones }: Props = $props();
 
-    let timezones: { keys: string[]; groups: Record<string, Timezone[]> } | null = $state(null)
+    let timezones: { keys: string[]; groups: Record<string, Timezone[]> } | null = $state(null);
 
     // generating this list for hundreds of timezones takes some time, do it after first render
     onMount(async () => {
-        const timezoneOptions = getTimezoneOptions(getUILanguage(), recentTimezones)
+        const timezoneOptions = getTimezoneOptions(getUILanguage(), recentTimezones);
 
         // Group options by their group attribute
         const groupedOptions = timezoneOptions.reduce(
             (groups, option) => {
-                const group = option.group || ''
+                const group = option.group || '';
                 if (!groups[group]) {
-                    groups[group] = []
+                    groups[group] = [];
                 }
-                groups[group].push(option)
-                return groups
+                groups[group].push(option);
+                return groups;
             },
             {} as Record<string, Timezone[]>
-        )
+        );
 
         // Sort the group keys alphabetically, but ensure undefined is first
         const groupKeys = Object.keys(groupedOptions).sort((a, b) => {
-            if (!a) return -1
-            if (!b) return 1
-            return a.localeCompare(b)
-        })
+            if (!a) return -1;
+            if (!b) return 1;
+            return a.localeCompare(b);
+        });
 
-        timezones = { keys: groupKeys, groups: groupedOptions }
-    })
+        timezones = { keys: groupKeys, groups: groupedOptions };
+    });
 
     function groupLabel(key: string) {
         if (key === '_common') {
-            return m.timezone_group_common()
+            return m.timezone_group_common();
         } else if (key === '_recent') {
-            return m.timezone_group_recent()
+            return m.timezone_group_recent();
         } else {
-            return key
+            return key;
         }
     }
 
     function onChange(event: Event) {
-        const select = event.target as HTMLSelectElement
-        onSelect?.(select.value)
+        const select = event.target as HTMLSelectElement;
+        onSelect?.(select.value);
     }
 </script>
 

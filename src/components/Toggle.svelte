@@ -1,16 +1,16 @@
 <script lang="ts">
     interface Props {
-        label?: string
-        description?: string
-        checked: boolean
-        disabled?: boolean
-        bold?: boolean
-        onChange?: (checked: boolean) => void
+        label?: string;
+        description?: string;
+        checked: boolean;
+        disabled?: boolean;
+        bold?: boolean;
+        onChange?: (checked: boolean) => void;
     }
-    let { label, description, checked = $bindable(), disabled, bold, onChange }: Props = $props()
+    let { label, description, checked = $bindable(), disabled, bold, onChange }: Props = $props();
 
     function onchange() {
-        onChange?.(checked)
+        onChange?.(checked);
     }
 </script>
 

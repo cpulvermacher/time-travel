@@ -1,19 +1,19 @@
 <script lang="ts">
-    import type { Snippet } from 'svelte'
+    import type { Snippet } from 'svelte';
 
     interface Props {
-        title: string
-        children: Snippet
-        open?: boolean
-        onToggle?: (open: boolean) => void
+        title: string;
+        children: Snippet;
+        open?: boolean;
+        onToggle?: (open: boolean) => void;
     }
-    const { title, children, open, onToggle }: Props = $props()
+    const { title, children, open, onToggle }: Props = $props();
 </script>
 
 <details
     {open}
     ontoggle={(event) => {
-        onToggle?.((event.target as HTMLDetailsElement).open)
+        onToggle?.((event.target as HTMLDetailsElement).open);
     }}
 >
     <summary>

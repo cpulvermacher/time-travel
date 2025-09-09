@@ -1,125 +1,125 @@
 <script lang="ts">
-    import { m } from '../paraglide/messages'
-    import { reloadTab } from '../util/browser'
-    import { disableFakeDate, setClockState, setFakeDate } from '../util/content-script-state'
-    import { parseDate } from '../util/date-utils'
-    import { updateExtensionIcon } from '../util/icon'
-    import { saveMostRecentTimezone, saveSetting, type Settings } from '../util/settings'
-    import Accordion from './Accordion.svelte'
-    import Background from './Background.svelte'
-    import DateFormatInfo from './DateFormatInfo.svelte'
-    import Datepicker from './Datepicker.svelte'
-    import ErrorModal from './ErrorModal.svelte'
-    import LinkButton from './LinkButton.svelte'
-    import ReloadModal from './ReloadModal.svelte'
-    import TimezoneSelect from './TimezoneSelect.svelte'
-    import Toggle from './Toggle.svelte'
+    import { m } from '../paraglide/messages';
+    import { reloadTab } from '../util/browser';
+    import { disableFakeDate, setClockState, setFakeDate } from '../util/content-script-state';
+    import { parseDate } from '../util/date-utils';
+    import { updateExtensionIcon } from '../util/icon';
+    import { saveMostRecentTimezone, saveSetting, type Settings } from '../util/settings';
+    import Accordion from './Accordion.svelte';
+    import Background from './Background.svelte';
+    import DateFormatInfo from './DateFormatInfo.svelte';
+    import Datepicker from './Datepicker.svelte';
+    import ErrorModal from './ErrorModal.svelte';
+    import LinkButton from './LinkButton.svelte';
+    import ReloadModal from './ReloadModal.svelte';
+    import TimezoneSelect from './TimezoneSelect.svelte';
+    import Toggle from './Toggle.svelte';
 
     interface Props {
-        isEnabled: boolean
-        fakeDate: string
-        settings: Settings
+        isEnabled: boolean;
+        fakeDate: string;
+        settings: Settings;
     }
-    const initialState: Props = $props()
+    const initialState: Props = $props();
 
-    let errorMsg = $state<string>()
-    let showFormatHelp = $state(false)
-    let showReloadModal = $state(false)
-    let settings = $state(initialState.settings)
-    let isEnabled = $state(initialState.isEnabled)
-    let fakeDate = $state(initialState.fakeDate)
-    let parsedDate = $derived(parseDate(fakeDate))
-    let effectiveDate = $state(initialState.isEnabled ? new Date(initialState.fakeDate) : undefined)
+    let errorMsg = $state<string>();
+    let showFormatHelp = $state(false);
+    let showReloadModal = $state(false);
+    let settings = $state(initialState.settings);
+    let isEnabled = $state(initialState.isEnabled);
+    let fakeDate = $state(initialState.fakeDate);
+    let parsedDate = $derived(parseDate(fakeDate));
+    let effectiveDate = $state(initialState.isEnabled ? new Date(initialState.fakeDate) : undefined);
 
     async function updateClockState() {
         try {
-            await setClockState(settings.stopClock)
-            await updateExtensionIcon()
+            await setClockState(settings.stopClock);
+            await updateExtensionIcon();
             // Note: no need to reload the tab here, stop/resume applies immediately
         } catch (e) {
-            setError(m.error_toggle_clock_failed(), e)
+            setError(m.error_toggle_clock_failed(), e);
         }
     }
     async function applyAndEnable(date: Date) {
         try {
-            await setClockState(settings.stopClock)
-            const needReload = await setFakeDate(date, settings.timezone)
+            await setClockState(settings.stopClock);
+            const needReload = await setFakeDate(date, settings.timezone);
             if (needReload && !settings.autoReload) {
-                showReloadModal = true
+                showReloadModal = true;
             }
-            await updateExtensionIcon()
+            await updateExtensionIcon();
             if (settings.autoReload) {
-                await reloadTab()
+                await reloadTab();
             }
         } catch (e) {
-            setError(m.error_setting_date_failed(), e)
+            setError(m.error_setting_date_failed(), e);
         }
     }
     async function reset() {
         try {
-            await disableFakeDate()
-            await setClockState(true)
-            await updateExtensionIcon()
+            await disableFakeDate();
+            await setClockState(true);
+            await updateExtensionIcon();
             if (settings.autoReload) {
-                await reloadTab()
+                await reloadTab();
             }
         } catch (e) {
-            setError(m.error_reset_failed(), e)
+            setError(m.error_reset_failed(), e);
         }
     }
     function setError(msg: string, err: unknown) {
-        errorMsg = msg + (err instanceof Error ? err.message : '')
+        errorMsg = msg + (err instanceof Error ? err.message : '');
     }
 
     function onApply() {
         if (parsedDate.isReset) {
-            isEnabled = false
-            effectiveDate = undefined
-            reset()
+            isEnabled = false;
+            effectiveDate = undefined;
+            reset();
         } else if (parsedDate.isValid) {
-            isEnabled = true
-            effectiveDate = parsedDate.date
-            applyAndEnable(effectiveDate)
+            isEnabled = true;
+            effectiveDate = parsedDate.date;
+            applyAndEnable(effectiveDate);
         }
     }
     function onAdvancedSettingsToggle(open: boolean) {
-        saveSetting('advancedSettingsOpen', open)
+        saveSetting('advancedSettingsOpen', open);
     }
     function onClockToggle() {
         if (isEnabled) {
-            updateClockState()
+            updateClockState();
         }
-        saveSetting('stopClock', settings.stopClock)
+        saveSetting('stopClock', settings.stopClock);
     }
     function onAutoReloadToggle() {
-        saveSetting('autoReload', settings.autoReload)
+        saveSetting('autoReload', settings.autoReload);
     }
     function onTimezoneChange(timezone: string) {
-        settings.timezone = timezone
-        saveSetting('timezone', timezone)
-        saveMostRecentTimezone(timezone)
+        settings.timezone = timezone;
+        saveSetting('timezone', timezone);
+        saveMostRecentTimezone(timezone);
 
         if (isEnabled && effectiveDate) {
-            applyAndEnable(effectiveDate)
+            applyAndEnable(effectiveDate);
         }
     }
     function onEnableToggle(enabled: boolean) {
         if (enabled && parsedDate.isValid) {
-            effectiveDate = parsedDate.date
-            applyAndEnable(effectiveDate)
+            effectiveDate = parsedDate.date;
+            applyAndEnable(effectiveDate);
         } else {
-            effectiveDate = undefined
-            reset()
+            effectiveDate = undefined;
+            reset();
         }
     }
     function isApplyButtonEnabled(): boolean {
         if (!parsedDate.isValid && !parsedDate.isReset) {
-            return false
+            return false;
         }
         if (parsedDate.isReset) {
-            return isEnabled
+            return isEnabled;
         }
-        return parsedDate.date.getTime() !== effectiveDate?.getTime()
+        return parsedDate.date.getTime() !== effectiveDate?.getTime();
     }
 </script>
 

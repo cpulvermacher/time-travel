@@ -1,28 +1,28 @@
 <script lang="ts">
-    import { formatLocalTime, overwriteTimePart, parseDate } from '../util/date-utils'
+    import { formatLocalTime, overwriteTimePart, parseDate } from '../util/date-utils';
 
     interface Props {
-        value: string
-        onChange?: () => void
+        value: string;
+        onChange?: () => void;
     }
-    let { value = $bindable() }: Props = $props()
+    let { value = $bindable() }: Props = $props();
 
-    let parsedDate = $derived(parseDate(value))
-    let localTime = $derived(parsedDate.isValid ? formatLocalTime(parsedDate.date) : '')
+    let parsedDate = $derived(parseDate(value));
+    let localTime = $derived(parsedDate.isValid ? formatLocalTime(parsedDate.date) : '');
 
-    const hasTouchScreen = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+    const hasTouchScreen = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
     function onChange(event: Event & { currentTarget: EventTarget & HTMLInputElement }) {
-        const input = event.target as HTMLInputElement
+        const input = event.target as HTMLInputElement;
         if (!input.value) {
-            return
+            return;
         }
 
-        let [hours, minutes] = input.value.split(':')
-        const hoursNum = parseInt(hours, 10)
-        const minutesNum = parseInt(minutes, 10)
+        let [hours, minutes] = input.value.split(':');
+        const hoursNum = parseInt(hours, 10);
+        const minutesNum = parseInt(minutes, 10);
 
-        value = overwriteTimePart(value, hoursNum, minutesNum)
+        value = overwriteTimePart(value, hoursNum, minutesNum);
     }
 </script>
 

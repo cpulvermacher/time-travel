@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { m } from '../paraglide/messages'
-    import Modal from './Modal.svelte'
+    import { m } from '../paraglide/messages';
+    import Modal from './Modal.svelte';
 
     interface Props {
-        onClose: () => void
+        onClose: () => void;
     }
-    const { onClose }: Props = $props()
+    const { onClose }: Props = $props();
 </script>
 
 <Modal {onClose} closeOnCancel={true}>

@@ -1,16 +1,16 @@
 <script lang="ts">
-    import type { Action } from 'svelte/action'
-    import { m } from '../paraglide/messages'
-    import { reloadTab } from '../util/browser'
-    import Modal from './Modal.svelte'
+    import type { Action } from 'svelte/action';
+    import { m } from '../paraglide/messages';
+    import { reloadTab } from '../util/browser';
+    import Modal from './Modal.svelte';
 
     const focusButton: Action = (node) => {
-        node.focus()
-    }
+        node.focus();
+    };
 
     async function reload() {
-        await reloadTab()
-        window.close()
+        await reloadTab();
+        window.close();
     }
 </script>
 

@@ -1,17 +1,17 @@
 <script lang="ts">
-    import Settings from '../components/Settings.svelte'
-    import { m } from '../paraglide/messages'
-    import { overwriteGetLocale } from '../paraglide/runtime'
-    import { getUILanguage } from '../util/browser'
-    import { formatLocalDate } from '../util/date-utils'
-    import { getTranslationLocale } from '../util/i18n'
-    import { getInitialState } from './initial-state'
+    import Settings from '../components/Settings.svelte';
+    import { m } from '../paraglide/messages';
+    import { overwriteGetLocale } from '../paraglide/runtime';
+    import { getUILanguage } from '../util/browser';
+    import { formatLocalDate } from '../util/date-utils';
+    import { getTranslationLocale } from '../util/i18n';
+    import { getInitialState } from './initial-state';
 
-    overwriteGetLocale(() => getTranslationLocale(getUILanguage()))
+    overwriteGetLocale(() => getTranslationLocale(getUILanguage()));
 
-    document.documentElement.lang = getTranslationLocale(getUILanguage())
+    document.documentElement.lang = getTranslationLocale(getUILanguage());
 
-    const promise = getInitialState()
+    const promise = getInitialState();
 </script>
 
 {#await promise}

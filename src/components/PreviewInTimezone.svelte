@@ -1,22 +1,22 @@
 <script lang="ts">
-    import { m } from '../paraglide/messages'
-    import { getUILanguage } from '../util/browser'
-    import type { ParsedDate } from '../util/date-utils'
-    import { getTzInfo } from '../util/timezone-info'
+    import { m } from '../paraglide/messages';
+    import { getUILanguage } from '../util/browser';
+    import type { ParsedDate } from '../util/date-utils';
+    import { getTzInfo } from '../util/timezone-info';
 
     interface Props {
-        parsedDate: ParsedDate
-        timezone: string
+        parsedDate: ParsedDate;
+        timezone: string;
     }
-    let { parsedDate, timezone }: Props = $props()
+    let { parsedDate, timezone }: Props = $props();
 
-    const tzInfo = $derived(parsedDate.isValid ? getTzInfo(getUILanguage(), parsedDate.date, timezone) : null)
+    const tzInfo = $derived(parsedDate.isValid ? getTzInfo(getUILanguage(), parsedDate.date, timezone) : null);
     const timeZoneLabel = $derived.by(() => {
         if (!tzInfo || tzInfo.tzName === timezone) {
-            return timezone
+            return timezone;
         }
-        return `${timezone} (${tzInfo?.tzName})`
-    })
+        return `${timezone} (${tzInfo?.tzName})`;
+    });
 </script>
 
 <div class="preview">

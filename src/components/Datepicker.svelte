@@ -1,86 +1,86 @@
 <script lang="ts">
-    import { DatePicker } from '@svelte-plugins/datepicker'
-    import { tick } from 'svelte'
-    import { m } from '../paraglide/messages'
-    import { getUILanguage } from '../util/browser'
-    import { formatLocalDate, overwriteDatePart, parseDate } from '../util/date-utils'
-    import { getFirstDayOfWeek } from '../util/i18n'
-    import PreviewInTimezone from './PreviewInTimezone.svelte'
-    import TimePicker from './TimePicker.svelte'
+    import { DatePicker } from '@svelte-plugins/datepicker';
+    import { tick } from 'svelte';
+    import { m } from '../paraglide/messages';
+    import { getUILanguage } from '../util/browser';
+    import { formatLocalDate, overwriteDatePart, parseDate } from '../util/date-utils';
+    import { getFirstDayOfWeek } from '../util/i18n';
+    import PreviewInTimezone from './PreviewInTimezone.svelte';
+    import TimePicker from './TimePicker.svelte';
 
     // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
-    const startOfWeek = getFirstDayOfWeek(getUILanguage()) % 7
+    const startOfWeek = getFirstDayOfWeek(getUILanguage()) % 7;
 
     interface Props {
-        fakeDate: string
-        onEnterKey?: () => void
-        timezone: string // IANA time zone identifier or '' for browser default
+        fakeDate: string;
+        onEnterKey?: () => void;
+        timezone: string; // IANA time zone identifier or '' for browser default
     }
-    let { fakeDate = $bindable(), onEnterKey, timezone }: Props = $props()
-    let parsedDate = $derived(parseDate(fakeDate))
+    let { fakeDate = $bindable(), onEnterKey, timezone }: Props = $props();
+    let parsedDate = $derived(parseDate(fakeDate));
     // Note: the datepicker internally works with timestamps in UTC. When choosing a date, pickerDate will be set to 00:00 local time.
-    const initialParsedDate = parseDate(fakeDate)
-    let pickerDate: number = $state(initialParsedDate.isValid ? initialParsedDate.date.getTime() : Date.now())
-    let inputRef: HTMLInputElement
+    const initialParsedDate = parseDate(fakeDate);
+    let pickerDate: number = $state(initialParsedDate.isValid ? initialParsedDate.date.getTime() : Date.now());
+    let inputRef: HTMLInputElement;
 
     function onkeydown(event: KeyboardEvent) {
         if (!parsedDate.isValid) {
-            return
+            return;
         }
 
         if (event.key === 'ArrowDown') {
-            event.preventDefault()
+            event.preventDefault();
             if (event.ctrlKey || event.metaKey) {
-                adjustSeconds(-60 * 60)
+                adjustSeconds(-60 * 60);
             } else if (event.shiftKey) {
-                adjustSeconds(-10 * 60)
+                adjustSeconds(-10 * 60);
             } else if (event.altKey) {
-                adjustSeconds(-1)
+                adjustSeconds(-1);
             } else {
-                adjustSeconds(-60)
+                adjustSeconds(-60);
             }
         } else if (event.key === 'ArrowUp') {
-            event.preventDefault()
+            event.preventDefault();
             if (event.ctrlKey || event.metaKey) {
-                adjustSeconds(60 * 60)
+                adjustSeconds(60 * 60);
             } else if (event.shiftKey) {
-                adjustSeconds(10 * 60)
+                adjustSeconds(10 * 60);
             } else if (event.altKey) {
-                adjustSeconds(1)
+                adjustSeconds(1);
             } else {
-                adjustSeconds(60)
+                adjustSeconds(60);
             }
         } else if (event.key === 'Enter' && onEnterKey) {
-            event.preventDefault()
-            onEnterKey()
+            event.preventDefault();
+            onEnterKey();
         }
     }
     function focus(node: HTMLInputElement) {
-        node.focus()
-        node.setSelectionRange(-1, -1)
+        node.focus();
+        node.setSelectionRange(-1, -1);
     }
     async function acceptPickerDate() {
-        const newDate = new Date(pickerDate)
-        fakeDate = overwriteDatePart(fakeDate, newDate)
+        const newDate = new Date(pickerDate);
+        fakeDate = overwriteDatePart(fakeDate, newDate);
 
-        inputRef.focus()
-        await tick() // wait for next DOM update
-        const dateAndTimeSeparator = fakeDate.indexOf(' ')
-        inputRef.setSelectionRange(dateAndTimeSeparator + 1, -1) // select hh:mm (and everything afterwards)
+        inputRef.focus();
+        await tick(); // wait for next DOM update
+        const dateAndTimeSeparator = fakeDate.indexOf(' ');
+        inputRef.setSelectionRange(dateAndTimeSeparator + 1, -1); // select hh:mm (and everything afterwards)
     }
     function onInput() {
         if (!parsedDate.isValid) {
-            return
+            return;
         }
-        pickerDate = parsedDate.date.getTime()
+        pickerDate = parsedDate.date.getTime();
     }
     function adjustSeconds(seconds: number) {
         if (!parsedDate.isValid) {
-            return
+            return;
         }
         // adjust UTC timestamp
-        pickerDate = parsedDate.date.getTime() + seconds * 1000
-        fakeDate = formatLocalDate(new Date(pickerDate), { fullPrecision: true })
+        pickerDate = parsedDate.date.getTime() + seconds * 1000;
+        fakeDate = formatLocalDate(new Date(pickerDate), { fullPrecision: true });
     }
 </script>
 
