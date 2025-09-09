@@ -1,5 +1,11 @@
 # Change Log
 
+## [2.4.1]
+
+- On Firefox for Android, show clock icon next to input field to open native time picker.
+- Some adjustments to texts, focus/disabled styles and the time zone preview.
+- Refactorings and minor performance optimizations.
+
 ## [2.4.0]
 
 - Avoid compatibility issues with the `privacy.resistFingerprinting` option in Firefox. With this option enabled, the page would always use GMT and a fake date set in the browser time zone would be set as UTC instead.
