@@ -154,7 +154,7 @@
     input {
         width: 100%;
         box-sizing: border-box;
-        padding: 5px 10px;
+        padding: 5px 8px;
         color: var(--text-color);
         background: white;
         border: 1px solid var(--border-color);

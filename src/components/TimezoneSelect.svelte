@@ -90,7 +90,7 @@
     }
     select {
         width: 100%;
-        padding: 5px 10px;
+        padding: 5px 8px;
         border-radius: 3px;
         border: 1px solid var(--border-color);
         background: white;
