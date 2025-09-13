@@ -3,14 +3,17 @@
     import { m } from '../paraglide/messages';
     import { getUILanguage } from '../util/browser';
     import { getTimezoneOptions, type Timezone } from '../util/timezone-info';
+    import Toggle from './Toggle.svelte';
 
     interface Props {
-        value: string;
-        onSelect?: (timezone: string) => void;
+        value: string; // IANA time zone ID or '' when disabled
+        onSelect: (timezone: string) => void;
         recentTimezones: string[];
     }
 
-    const { value, onSelect, recentTimezones }: Props = $props();
+    const { value: activeValue, onSelect, recentTimezones }: Props = $props();
+    let isEnabled = $state(!!activeValue);
+    let value = $state(activeValue || recentTimezones[0] || 'UTC');
 
     let timezones: { keys: string[]; groups: Record<string, Timezone[]> } | null = $state(null);
 
@@ -53,16 +56,21 @@
 
     function onChange(event: Event) {
         const select = event.target as HTMLSelectElement;
+        value = select.value;
         onSelect?.(select.value);
+    }
+    function onToggle() {
+        onSelect(isEnabled ? value : '');
     }
 </script>
 
-<label>
-    {m.timezone_selector_label()}
+<div class="container">
+    <Toggle label={m.timezone_selector_label()} bind:checked={isEnabled} onChange={onToggle} />
+
     {#if !timezones}
         <select disabled></select>
     {:else}
-        <select value={value ?? ''} onchange={onChange}>
+        <select {value} onchange={onChange} disabled={!isEnabled}>
             {#each timezones.keys as group}
                 <optgroup label={groupLabel(group)}>
                     {#each timezones.groups[group] as option}
@@ -72,23 +80,22 @@
             {/each}
         </select>
     {/if}
-</label>
+</div>
 
 <style>
-    label {
+    .container {
         display: flex;
         flex-direction: column;
+        gap: 5px;
     }
     select {
         width: 100%;
         padding: 5px 10px;
-        margin-top: 5px;
         border-radius: 3px;
         border: 1px solid var(--border-color);
         background: white;
         color: var(--text-color);
-        cursor: pointer;
-        transition: all 0.3s ease-in;
+        transition: filter 0.3s ease-in;
     }
     select:not(:disabled):hover {
         filter: drop-shadow(0 0 2px var(--primary-color));
