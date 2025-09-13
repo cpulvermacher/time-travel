@@ -60,7 +60,7 @@
 <label>
     {m.timezone_selector_label()}
     {#if !timezones}
-        <div>...</div>
+        <select disabled></select>
     {:else}
         <select value={value ?? ''} onchange={onChange}>
             {#each timezones.keys as group}
