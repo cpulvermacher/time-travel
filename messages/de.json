@@ -47,7 +47,6 @@
     "timezone_selector_label": "Zeitzone (EXPERIMENTELL)",
     "timezone_group_common": "Allgemein",
     "timezone_group_recent": "Zuletzt",
-    "timezone_browser_default": "Standard",
     "date_in_timezone_info": "In Seitenzeitzone:",
     "dst_info": "Sommerzeit ist für dieses Datum aktiv."
 }

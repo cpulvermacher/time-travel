@@ -1,5 +1,3 @@
-import { m } from '../paraglide/messages';
-
 export type Timezone = {
     tz: string; // IANA time zone identifier, e.g., "America/New_York". Empty string for browser default.
     label: string; // label, e.g. 'America/New_York (UTC-05:00)'
@@ -17,10 +15,6 @@ export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone
         return timezoneOptions;
     }
 
-    const defaultOffset = getOffset(locale, undefined).replace('GMT', 'UTC');
-    const defaultTzName = getTimezoneName(locale, undefined, undefined, 'shortGeneric');
-    const defaultZoneLabel = `${m.timezone_browser_default()} - ${defaultTzName} (${defaultOffset})`;
-
     const buildOption = (tz: string) => {
         const offset = getOffset(locale, tz).replace('GMT', 'UTC');
         const tzParts = tz.split('/');
@@ -34,7 +28,6 @@ export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone
         };
     };
     timezoneOptions = [
-        { tz: '', label: defaultZoneLabel, group: '_common' },
         { tz: 'UTC', label: 'UTC', group: '_common' },
         ...recentTz
             .filter((tz) => tz) // filter ''
