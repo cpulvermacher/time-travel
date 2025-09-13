@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { isAndroid } from '../util/browser';
     import { formatLocalTime, overwriteTimePart, parseDate } from '../util/date-utils';
 
     interface Props {
@@ -9,8 +10,6 @@
 
     let parsedDate = $derived(parseDate(value));
     let localTime = $derived(parsedDate.isValid ? formatLocalTime(parsedDate.date) : '');
-
-    const hasTouchScreen = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
     function onChange(event: Event & { currentTarget: EventTarget & HTMLInputElement }) {
         const input = event.target as HTMLInputElement;
@@ -26,11 +25,13 @@
     }
 </script>
 
-{#if hasTouchScreen}
-    <div class="icon">
-        <input type="time" id="time-picker" class="time-input-icon" onchange={onChange} value={localTime} />
-    </div>
-{/if}
+{#await isAndroid() then showTimePicker}
+    {#if showTimePicker}
+        <div class="icon">
+            <input type="time" id="time-picker" class="time-input-icon" onchange={onChange} value={localTime} />
+        </div>
+    {/if}
+{/await}
 
 <style>
     .icon {
@@ -41,12 +42,6 @@
         background-size: 80%;
         border: 1px solid var(--border-color);
         border-radius: 30px;
-
-        /** only show on mobile screens */
-        display: none;
-        @media (min-width: 400px) {
-            display: block;
-        }
     }
 
     .icon:focus-within {

@@ -144,3 +144,10 @@ export function getSettingsStorage(): chrome.storage.StorageArea | undefined {
     }
     return undefined;
 }
+
+/** check if the extension is running on Android */
+export async function isAndroid(): Promise<boolean> {
+    const platformInfo = await chrome.runtime.getPlatformInfo();
+
+    return platformInfo.os === 'android';
+}
