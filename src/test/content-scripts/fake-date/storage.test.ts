@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { setFakeDate, setTickStartTimestamp } from '../../../util/inject';
 import { getFakeDate, getTickStartTimestamp, getTimezone } from '../../../content-scripts/fake-date/storage';
+import { setFakeDate, setTickStartTimestamp } from '../../../util/inject';
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
 import '../../../content-scripts/replace-date';
@@ -49,7 +49,7 @@ describe('setTickStartTimestamp/setTickStartTimestamp', () => {
     });
 
     it('returns null for invalid timestamp', () => {
-        setTickStartTimestamp('not an muber');
+        setTickStartTimestamp('not an number');
 
         expect(getTickStartTimestamp()).toBeNull();
     });
