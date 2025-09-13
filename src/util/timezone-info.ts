@@ -3,6 +3,8 @@ export type Timezone = {
     label: string; // label, e.g. 'America/New_York (UTC-05:00)'
     group: string; // grouping label, e.g. 'America'
 };
+export const TZGROUP_RECENT = '_recent';
+export const TZGROUP_COMMON = '_common';
 
 let timezoneOptions: Timezone[] | null = null;
 
@@ -28,13 +30,13 @@ export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone
         };
     };
     timezoneOptions = [
-        { tz: 'UTC', label: 'UTC', group: '_common' },
+        { tz: 'UTC', label: 'UTC', group: TZGROUP_COMMON },
         ...recentTz
             .filter((tz) => tz) // filter ''
             .map(buildOption)
             .map((option) => ({
                 ...option,
-                group: '_recent',
+                group: TZGROUP_RECENT,
             })),
     ];
 

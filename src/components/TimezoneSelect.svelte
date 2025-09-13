@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import { m } from '../paraglide/messages';
     import { getUILanguage } from '../util/browser';
-    import { getTimezoneOptions, type Timezone } from '../util/timezone-info';
+    import { getTimezoneOptions, TZGROUP_COMMON, TZGROUP_RECENT, type Timezone } from '../util/timezone-info';
     import Toggle from './Toggle.svelte';
 
     interface Props {
@@ -18,7 +18,7 @@
     let timezones: { keys: string[]; groups: Record<string, Timezone[]> } | null = $state(null);
 
     // generating this list for hundreds of timezones takes some time, do it after first render
-    onMount(async () => {
+    onMount(() => {
         const timezoneOptions = getTimezoneOptions(getUILanguage(), recentTimezones);
 
         // Group options by their group attribute
@@ -34,10 +34,10 @@
             {} as Record<string, Timezone[]>
         );
 
-        // Sort the group keys alphabetically, but ensure _recent is first
+        // Sort the group keys alphabetically, but ensure recent group is first
         const groupKeys = Object.keys(groupedOptions).sort((a, b) => {
-            if (!a || a === '_recent') return -1;
-            if (!b || b === '_recent') return 1;
+            if (!a || a === TZGROUP_RECENT) return -1;
+            if (!b || b === TZGROUP_RECENT) return 1;
             return a.localeCompare(b);
         });
 
@@ -45,9 +45,9 @@
     });
 
     function groupLabel(key: string) {
-        if (key === '_common') {
+        if (key === TZGROUP_COMMON) {
             return m.timezone_group_common();
-        } else if (key === '_recent') {
+        } else if (key === TZGROUP_RECENT) {
             return m.timezone_group_recent();
         } else {
             return key;
