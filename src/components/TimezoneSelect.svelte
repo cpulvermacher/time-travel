@@ -34,10 +34,10 @@
             {} as Record<string, Timezone[]>
         );
 
-        // Sort the group keys alphabetically, but ensure undefined is first
+        // Sort the group keys alphabetically, but ensure _recent is first
         const groupKeys = Object.keys(groupedOptions).sort((a, b) => {
-            if (!a) return -1;
-            if (!b) return 1;
+            if (!a || a === '_recent') return -1;
+            if (!b || b === '_recent') return 1;
             return a.localeCompare(b);
         });
 
