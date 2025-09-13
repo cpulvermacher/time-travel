@@ -154,3 +154,36 @@ export async function isAndroid(): Promise<boolean> {
         return false;
     }
 }
+
+/** check if the active tab is currently loading */
+async function isTabLoading(): Promise<boolean> {
+    try {
+        const tabId = await getActiveTabId();
+        const tab = await chrome.tabs.get(tabId);
+        return tab.status === 'loading';
+    } catch {
+        return false;
+    }
+}
+
+/** sleep for given number of milliseconds */
+async function sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** retry a function if it fails and the tab is loading */
+export async function withTabLoadingRetry<T>(fn: () => Promise<T>, maxRetries = 3, baseDelayMs = 100): Promise<T> {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+            return await fn();
+        } catch (error) {
+            if (attempt < maxRetries - 1 && (await isTabLoading())) {
+                console.log(`Retrying due to loading tab (attempt ${attempt + 1}/${maxRetries}):`, error);
+                await sleep(baseDelayMs * Math.pow(2, attempt));
+                continue;
+            }
+            throw error;
+        }
+    }
+    throw new Error('Unreachable code');
+}

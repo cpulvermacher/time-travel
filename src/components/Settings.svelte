@@ -1,6 +1,6 @@
 <script lang="ts">
     import { m } from '../paraglide/messages';
-    import { reloadTab } from '../util/browser';
+    import { reloadTab, withTabLoadingRetry } from '../util/browser';
     import { disableFakeDate, setClockState, setFakeDate } from '../util/content-script-state';
     import { parseDate } from '../util/date-utils';
     import { updateExtensionIcon } from '../util/icon';
@@ -33,36 +33,42 @@
 
     async function updateClockState() {
         try {
-            await setClockState(settings.stopClock);
-            await updateExtensionIcon();
-            // Note: no need to reload the tab here, stop/resume applies immediately
+            await withTabLoadingRetry(async () => {
+                await setClockState(settings.stopClock);
+                await updateExtensionIcon();
+                // Note: no need to reload the tab here, stop/resume applies immediately
+            });
         } catch (e) {
             setError(m.error_toggle_clock_failed(), e);
         }
     }
     async function applyAndEnable(date: Date) {
         try {
-            await setClockState(settings.stopClock);
-            const needReload = await setFakeDate(date, settings.timezone);
-            if (needReload && !settings.autoReload) {
-                showReloadModal = true;
-            }
-            await updateExtensionIcon();
-            if (settings.autoReload) {
-                await reloadTab();
-            }
+            await withTabLoadingRetry(async () => {
+                await setClockState(settings.stopClock);
+                const needReload = await setFakeDate(date, settings.timezone);
+                if (needReload && !settings.autoReload) {
+                    showReloadModal = true;
+                }
+                await updateExtensionIcon();
+                if (settings.autoReload) {
+                    await reloadTab();
+                }
+            });
         } catch (e) {
             setError(m.error_setting_date_failed(), e);
         }
     }
     async function reset() {
         try {
-            await disableFakeDate();
-            await setClockState(true);
-            await updateExtensionIcon();
-            if (settings.autoReload) {
-                await reloadTab();
-            }
+            await withTabLoadingRetry(async () => {
+                await disableFakeDate();
+                await setClockState(true);
+                await updateExtensionIcon();
+                if (settings.autoReload) {
+                    await reloadTab();
+                }
+            });
         } catch (e) {
             setError(m.error_reset_failed(), e);
         }
