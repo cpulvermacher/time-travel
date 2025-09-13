@@ -6,7 +6,7 @@ const OriginalDate = Date;
 
 export function updateState() {
     const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY);
-    if (fakeDate === null) {
+    if (fakeDate === null || isNaN(Date.parse(fakeDate))) {
         window['__timeTravelState'] = undefined;
         return;
     }
