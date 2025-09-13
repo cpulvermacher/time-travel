@@ -25,6 +25,11 @@ export async function getInitialState(): Promise<InitialState> {
     }
 
     const tabId = await getActiveTabId();
+    if (await isAboutUrl(tabId)) {
+        // can fail silently on about: URLs, abort early
+        throw new Error(m.permission_error_generic());
+    }
+
     try {
         let initialFakeDate;
         const state = await getContentScriptState(tabId);
@@ -59,8 +64,6 @@ export async function getInitialState(): Promise<InitialState> {
             throw new Error(m.permission_error_file_url());
         } else if (await isExtensionGalleryUrl(tabId)) {
             throw new Error(m.permission_error_extension_gallery());
-        } else if (await isAboutUrl(tabId)) {
-            throw new Error(m.permission_error_generic());
         } else {
             const message = error instanceof Error ? error.message : '';
             throw new Error(m.permission_error_generic_with_message({ message }));
