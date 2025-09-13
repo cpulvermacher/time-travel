@@ -102,19 +102,16 @@ export type ResetDate = {
     isReset: true;
 };
 
-/** Tries parsing a date string */
+/** Try parsing a date string */
 export function parseDate(dateString: string): ParsedDate {
     if (dateString.trim() === '') {
         return { dateString, isValid: false, isReset: true };
     }
 
+    const maybeTimestamp = parseTimestamp(dateString);
     try {
-        let date;
-        if (Number.isInteger(+dateString)) {
-            date = new Date(Number.parseInt(dateString));
-        } else {
-            date = new Date(dateString);
-        }
+        const date = maybeTimestamp !== null ? new Date(maybeTimestamp) : new Date(dateString);
+
         if (isNaN(date.getTime())) {
             return { dateString, isValid: false, isReset: false };
         }
@@ -122,4 +119,19 @@ export function parseDate(dateString: string): ParsedDate {
     } catch {
         return { dateString, isValid: false, isReset: false };
     }
+}
+
+/** Try parsing a timestamp, return null if the string is not a valid integer */
+export function parseTimestamp(timestamp: string | null): number | null {
+    if (timestamp === null) {
+        return null;
+    }
+
+    if (Number.isInteger(+timestamp)) {
+        const parsed = Number.parseInt(timestamp, 10);
+        if (!isNaN(parsed)) {
+            return parsed;
+        }
+    }
+    return null;
 }

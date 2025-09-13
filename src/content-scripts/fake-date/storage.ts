@@ -12,16 +12,7 @@ export function updateState() {
     }
 
     const timezone = getFromStorage(TIMEZONE_STORAGE_KEY) || null;
-    const startTimestamp = getFromStorage(TICK_START_STORAGE_KEY);
-
-    let tickStartTimestamp: number | null = null;
-    if (startTimestamp !== null) {
-        try {
-            tickStartTimestamp = Number.parseInt(startTimestamp);
-        } catch {
-            //ignore errors, leave value unchanged
-        }
-    }
+    const tickStartTimestamp = parseTimestamp(getFromStorage(TICK_START_STORAGE_KEY));
 
     window['__timeTravelState'] = {
         fakeDate,
@@ -74,4 +65,22 @@ export function fakeNowDate(): Date {
     } else {
         return new OriginalDate();
     }
+}
+
+/** Try parsing a timestamp, return null if the string is not a valid integer.
+ *
+ * Note: identical to function in date-utils.ts. Needs to be copied to avoid bundle splitting.
+ */
+function parseTimestamp(timestamp: string | null): number | null {
+    if (timestamp === null) {
+        return null;
+    }
+
+    if (Number.isInteger(+timestamp)) {
+        const parsed = Number.parseInt(timestamp, 10);
+        if (!isNaN(parsed)) {
+            return parsed;
+        }
+    }
+    return null;
 }

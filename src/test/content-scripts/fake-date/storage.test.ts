@@ -49,9 +49,17 @@ describe('setTickStartTimestamp/setTickStartTimestamp', () => {
     });
 
     it('returns null for invalid timestamp', () => {
+        setFakeDate('2023-01-01T00:00:00.000Z');
         setTickStartTimestamp('not an number');
 
         expect(getTickStartTimestamp()).toBeNull();
+    });
+
+    it('parses as decimal value', () => {
+        setFakeDate('2023-01-01T00:00:00.000Z');
+        setTickStartTimestamp('0x4123');
+
+        expect(getTickStartTimestamp()).toBe(0); // 'x4123' after 0 is ignored
     });
 });
 
