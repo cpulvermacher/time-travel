@@ -107,16 +107,17 @@ export function getOffsetMinutes(longOffset?: string): number {
         return 0;
     }
     const match = longOffset.match(/GMT([+-]\d{2}):(\d{2})/);
-    if (match) {
-        const hours = parseInt(match[1], 10);
-        const minutes = parseInt(match[2], 10);
-        if (hours < 0) {
-            return -(hours * 60 - minutes);
-        } else {
-            return -(hours * 60 + minutes);
-        }
+    if (!match) {
+        return 0;
     }
-    return 0;
+
+    const hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    if (hours < 0) {
+        return -(hours * 60 - minutes);
+    } else {
+        return -(hours * 60 + minutes);
+    }
 }
 
 /** Gets time zone offset in seconds for given date and time zone.
@@ -139,13 +140,11 @@ export function getOffsetSeconds(date: number, timezone: string): number {
     const hours = parseInt(match[1], 10);
     const minutes = parseInt(match[2], 10);
     const seconds = match[3] ? parseInt(match[3], 10) : 0;
-    let offset = -hours * 60 * 60;
     if (hours < 0) {
-        offset += minutes * 60 + seconds;
+        return -(hours * 60 * 60 - minutes * 60 - seconds);
     } else {
-        offset -= minutes * 60 + seconds;
+        return -(hours * 60 * 60 + minutes * 60 + seconds);
     }
-    return offset;
 }
 
 /** Gets a cached formatter */
