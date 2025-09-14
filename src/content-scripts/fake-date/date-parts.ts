@@ -119,6 +119,35 @@ export function getOffsetMinutes(longOffset?: string): number {
     return 0;
 }
 
+/** Gets time zone offset in seconds for given date and time zone.
+ *
+ * Sign convention is the same as for `Date.getTimezoneOffset()`, i.e. positive values are west of UTC.
+ */
+export function getOffsetSeconds(date: number, timezone: string): number {
+    const parts = getDateParts(date, timezone);
+    if (!parts) {
+        return 0;
+    }
+    const longOffset = parts.offsetName;
+
+    //match offset with optional seconds part, e.g. "GMT+02:00", "GMT-05:30", "GMT+05:30:45"
+    const match = longOffset.match(/GMT([+-]\d{2}):(\d{2})(?::(\d{2}))?/);
+    if (!match) {
+        return 0;
+    }
+
+    const hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    const seconds = match[3] ? parseInt(match[3], 10) : 0;
+    let offset = -hours * 60 * 60;
+    if (hours < 0) {
+        offset += minutes * 60 + seconds;
+    } else {
+        offset -= minutes * 60 + seconds;
+    }
+    return offset;
+}
+
 /** Gets a cached formatter */
 function getFormatterForTimezone(timezone: string | undefined): Intl.DateTimeFormat {
     if (cachedFormatterForTimezone === timezone && cachedFormatter !== null) {

@@ -1,4 +1,4 @@
-import { type LocalDateParts, compareDateParts, getDateParts } from './date-parts';
+import { type LocalDateParts, compareDateParts, getDateParts, getOffsetSeconds } from './date-parts';
 
 const msPerSecond = 1000;
 const msPerMinute = 60 * msPerSecond;
@@ -14,13 +14,11 @@ const msPerDay = 24 * msPerHour;
  */
 export function disambiguateDate(desiredDate: LocalDateParts, timezone: string): number {
     // create an initial UTC timestamp based on any offset somewhere within 24h
-    const timestamp =
-        desiredDate.localTimestamp + new Date(desiredDate.localTimestamp).getTimezoneOffset() * msPerMinute;
-    const oneDayBefore = new Date(timestamp - msPerDay);
-    const oneDayAfter = new Date(timestamp + msPerDay);
+    const timestamp = desiredDate.localTimestamp + getOffsetSeconds(desiredDate.localTimestamp, timezone) * msPerSecond;
 
-    const offsetBefore = oneDayBefore.getTimezoneOffset();
-    const offsetAfter = oneDayAfter.getTimezoneOffset();
+    // check the offsets one day before and after the initial timestamp
+    const offsetBefore = getOffsetSeconds(timestamp - msPerDay, timezone);
+    const offsetAfter = getOffsetSeconds(timestamp + msPerDay, timezone);
     // if offsets are the same, there is no transition, we can return the timestamp directly
     if (offsetBefore === offsetAfter) {
         return timestamp;
@@ -28,8 +26,8 @@ export function disambiguateDate(desiredDate: LocalDateParts, timezone: string):
 
     //if offsets differ, there was a transition => check whether each candidate produces the desired local date
     const candidateTimestamps = [
-        desiredDate.localTimestamp + offsetBefore * msPerMinute,
-        desiredDate.localTimestamp + offsetAfter * msPerMinute,
+        desiredDate.localTimestamp + offsetBefore * msPerSecond,
+        desiredDate.localTimestamp + offsetAfter * msPerSecond,
     ].sort((a, b) => a - b);
     const validTimestamps = candidateTimestamps.filter((ts) => {
         const candidateDate = getDateParts(ts, timezone);
