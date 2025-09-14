@@ -55,11 +55,11 @@ describe('setTickStartTimestamp/setTickStartTimestamp', () => {
         expect(getTickStartTimestamp()).toBeNull();
     });
 
-    it('parses as decimal value', () => {
+    it('returns null for non-decimal values', () => {
         setFakeDate('2023-01-01T00:00:00.000Z');
         setTickStartTimestamp('0x4123');
 
-        expect(getTickStartTimestamp()).toBe(0); // 'x4123' after 0 is ignored
+        expect(getTickStartTimestamp()).toBeNull();
     });
 });
 

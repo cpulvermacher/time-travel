@@ -127,7 +127,7 @@ export function parseTimestamp(timestamp: string | null): number | null {
         return null;
     }
 
-    if (Number.isInteger(+timestamp)) {
+    if (/^-?\d+$/.test(timestamp)) {
         const parsed = Number.parseInt(timestamp, 10);
         if (!isNaN(parsed)) {
             return parsed;

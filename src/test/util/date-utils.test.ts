@@ -5,6 +5,7 @@ import {
     overwriteDatePart,
     overwriteTimePart,
     parseDate,
+    parseTimestamp,
     type ValidDate,
 } from '../../util/date-utils';
 
@@ -235,5 +236,31 @@ describe('parseDate', () => {
         expect(dateWhitespace.isReset).toBe(true);
         expect(dateWhitespace.isValid).toBe(false);
         expect(dateWhitespace.dateString).toBe('   ');
+    });
+});
+
+describe('parseTimestamp', () => {
+    it('parses valid integer strings', () => {
+        expect(parseTimestamp('1757807835230')).toBe(1757807835230);
+        expect(parseTimestamp('-1757807835230')).toBe(-1757807835230);
+        expect(parseTimestamp('123')).toBe(123);
+        expect(parseTimestamp('-123')).toBe(-123);
+        expect(parseTimestamp('0')).toBe(0);
+        expect(parseTimestamp('-0')).toBe(-0);
+    });
+
+    it('returns null for non-integer strings', () => {
+        expect(parseTimestamp(null)).toBe(null);
+        expect(parseTimestamp('')).toBe(null);
+        expect(parseTimestamp('   ')).toBe(null);
+        expect(parseTimestamp('123.45')).toBe(null);
+        expect(parseTimestamp('abc')).toBe(null);
+        expect(parseTimestamp('123abc')).toBe(null);
+        expect(parseTimestamp('12 34')).toBe(null);
+        expect(parseTimestamp('0x123')).toBe(null);
+        expect(parseTimestamp('NaN')).toBe(null);
+        expect(parseTimestamp('123,456')).toBe(null);
+        expect(parseTimestamp('12-34')).toBe(null);
+        expect(parseTimestamp('123.0')).toBe(null);
     });
 });
