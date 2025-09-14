@@ -297,6 +297,30 @@ describe('replace-date with time zone', () => {
         runTestCases();
     });
 
+    it('parse() handles local time with seconds in offset', () => {
+        // for year 100, many timezones have an offset including seconds, e.g. 09:18:59 for Asia/Tokyo
+
+        const checkDate = () => {
+            const date = new Date('100');
+            expect(date.getTime()).toBe(Date.parse('100'));
+            // in local time, this should be Jan 1st, 00:00:00.000
+            expect(date.getFullYear()).toBe(100);
+            expect(date.getMonth()).toBe(0);
+            expect(date.getDate()).toBe(1);
+            expect(date.getHours()).toBe(0);
+            expect(date.getMinutes()).toBe(0);
+            expect(date.getSeconds()).toBe(0);
+            expect(date.getMilliseconds()).toBe(0);
+        };
+
+        checkDate();
+
+        const fakeDate = '2023-01-01T03:01:02.345Z'; // value irrelevant, just needs to be set
+        setFakeDate(fakeDate, 'Asia/Tokyo');
+
+        checkDate();
+    });
+
     it('parse() handles AM/PM for toString() format', () => {
         const fakeDate = '2023-01-01T03:01:02.345Z'; // value irrelevant, just needs to be set
         setFakeDate(fakeDate, 'America/New_York');
