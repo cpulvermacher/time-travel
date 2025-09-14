@@ -2,7 +2,7 @@
     import { DatePicker } from '@svelte-plugins/datepicker';
     import { tick } from 'svelte';
     import { m } from '../paraglide/messages';
-    import { getUILanguage } from '../util/browser';
+    import { getUILanguage, isAndroid } from '../util/browser';
     import { formatLocalDate, overwriteDatePart, parseDate } from '../util/date-utils';
     import { getFirstDayOfWeek } from '../util/i18n';
     import PreviewInTimezone from './PreviewInTimezone.svelte';
@@ -22,6 +22,7 @@
     const initialParsedDate = parseDate(fakeDate);
     let pickerDate: number = $state(initialParsedDate.isValid ? initialParsedDate.date.getTime() : Date.now());
     let inputRef: HTMLInputElement;
+    let timePickerRef: TimePicker;
 
     function onkeydown(event: KeyboardEvent) {
         if (!parsedDate.isValid) {
@@ -63,10 +64,16 @@
         const newDate = new Date(pickerDate);
         fakeDate = overwriteDatePart(fakeDate, newDate);
 
-        inputRef.focus();
-        await tick(); // wait for next DOM update
-        const dateAndTimeSeparator = fakeDate.indexOf(' ');
-        inputRef.setSelectionRange(dateAndTimeSeparator + 1, -1); // select hh:mm (and everything afterwards)
+        if (await isAndroid()) {
+            // on Android, automatically open the time picker after selecting a date
+            timePickerRef?.showPicker();
+        } else {
+            // on desktop, select hh:mm (and everything afterwards)
+            inputRef.focus();
+            await tick(); // wait for next DOM update
+            const dateAndTimeSeparator = fakeDate.indexOf(' ');
+            inputRef.setSelectionRange(dateAndTimeSeparator + 1, -1);
+        }
     }
     function onInput() {
         if (!parsedDate.isValid) {
@@ -133,7 +140,7 @@
                 class={{ error: !parsedDate.isValid && !parsedDate.isReset }}
                 title={m.date_input_hint()}
             />
-            <TimePicker bind:value={fakeDate} onChange={onInput} />
+            <TimePicker bind:value={fakeDate} onChange={onInput} bind:this={timePickerRef} />
         </div>
         {#if timezone}
             <PreviewInTimezone {parsedDate} {timezone} />

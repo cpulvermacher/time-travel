@@ -8,8 +8,14 @@
     }
     let { value = $bindable() }: Props = $props();
 
+    /** trigger opening the browser/system time picker */
+    export function showPicker() {
+        inputRef?.showPicker?.();
+    }
+
     let parsedDate = $derived(parseDate(value));
     let localTime = $derived(parsedDate.isValid ? formatLocalTime(parsedDate.date) : '');
+    let inputRef: HTMLInputElement | undefined = $state(); // need $state since bind:this is used inside if block
 
     function onChange(event: Event & { currentTarget: EventTarget & HTMLInputElement }) {
         const input = event.target as HTMLInputElement;
@@ -28,7 +34,14 @@
 {#await isAndroid() then showTimePicker}
     {#if showTimePicker}
         <div class="icon">
-            <input type="time" id="time-picker" class="time-input-icon" onchange={onChange} value={localTime} />
+            <input
+                type="time"
+                id="time-picker"
+                class="time-input-icon"
+                onchange={onChange}
+                value={localTime}
+                bind:this={inputRef}
+            />
         </div>
     {/if}
 {/await}
