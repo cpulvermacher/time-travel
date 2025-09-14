@@ -82,8 +82,13 @@ function patchDateMethods(datePrototype: Date): void {
         }
 
         const monthLabel = shortMonths[parts.month] || parts.month;
+        //year is at least 4 digits (but no extended 6-digits year like for toISOString())
+        let year = String(Math.abs(parts.year)).padStart(4, '0');
+        if (parts.year < 0) {
+            year = `-${year}`;
+        }
 
-        return `${parts.weekday} ${monthLabel} ${parts.rawFormat.day} ${parts.rawFormat.year}`;
+        return `${parts.weekday} ${monthLabel} ${parts.rawFormat.day} ${year}`;
     };
     datePrototype.toTimeString = function () {
         const timezone = getTimezone();

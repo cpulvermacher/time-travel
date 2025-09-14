@@ -311,6 +311,8 @@ describe('replace-date with time zone', () => {
             expect(date.getMinutes()).toBe(0);
             expect(date.getSeconds()).toBe(0);
             expect(date.getMilliseconds()).toBe(0);
+            expect(date.toDateString()).toBe('Fri Jan 01 0100'); // with leading zero
+            expect(date.toTimeString().startsWith('00:00:00')).toBe(true);
         };
 
         checkDate();
