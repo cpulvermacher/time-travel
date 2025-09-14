@@ -6,6 +6,7 @@
 - Firefox: Fix "Missing host permissions on tab" error when changing settings quickly.
 - Firefox: Always disable extension on `about:` URLs.
 - Android: Show time picker automatically after choosing a date in the calendar.
+- Fix Date parsing if local time zone includes secconds in offset. (only with time zone feature enabled)
 - Make detection of Android platform more robust.
 
 ## [2.4.1]
