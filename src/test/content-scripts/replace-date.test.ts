@@ -67,7 +67,7 @@ describe('replace-date', () => {
 
         expect(dateStr).toBe(new Date().toString());
 
-        //check whether it's within 1min of fakeDate (e.g. Africa/Monrovia in 1970 has -44:30 offset, so this could be 29s of)
+        //check whether it's within 1min of fakeDate (e.g. Africa/Monrovia in 1970 has -44:30 offset, so this could be 29s off)
         expect(Date.parse(dateStr)).toBeLessThanOrEqual(fakeDateInMsSinceEpoch);
         expect(Date.parse(dateStr) + 1000 * 60).toBeGreaterThan(fakeDateInMsSinceEpoch);
     });
@@ -82,7 +82,7 @@ describe('replace-date', () => {
 
         expect(dateStr).toBe(new Date().toString());
 
-        //check whether it's within 1min of fakeDate (e.g. Africa/Monrovia in 1970 has -44:30 offset, so this could be 29s of)
+        //check whether it's within 1min of fakeDate (e.g. Africa/Monrovia in 1970 has -44:30 offset, so this could be 29s off)
         expect(Date.parse(dateStr)).toBeLessThanOrEqual(fakeDateInMsSinceEpoch);
         expect(Date.parse(dateStr) + 1000 * 60).toBeGreaterThan(fakeDateInMsSinceEpoch);
     });
