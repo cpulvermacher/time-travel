@@ -21,7 +21,8 @@ export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone
         const offset = getOffset(locale, tz).replace('GMT', 'UTC');
         const tzParts = tz.split('/');
         const group = tzParts.length > 1 ? tzParts[0] : 'Etc'; // Firefox has a number of funky time zones like 'CST6CDT', put them in 'Etc'
-        const tzName = tzParts.length > 1 ? tzParts.slice(1).join('/') : tz;
+        let tzName = tzParts.length > 1 ? tzParts.slice(1).join('/') : tz;
+        tzName = tzName.replace(/_/g, ' ');
 
         return {
             tz,
