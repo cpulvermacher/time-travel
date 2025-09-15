@@ -43,7 +43,7 @@ export async function getInitialState(): Promise<InitialState> {
                 const fakeDateNow = new Date(fakeDate.date.getTime() + elapsed);
                 initialFakeDate = formatLocalDate(fakeDateNow);
             } else {
-                initialFakeDate = state.fakeDate;
+                initialFakeDate = formatLocalDate(fakeDate.date);
             }
         }
         const isEnabled = !!initialFakeDate;
