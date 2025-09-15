@@ -2,7 +2,7 @@
 
 ## [2.4.2]
 
-- Add a "Change Time Zone" toggle, Instead of requiring selecting the "Default" time zone to turn the feature off.
+- Add a "Change Time Zone" toggle instead of requiring selecting the "Default" time zone to turn the feature off.
 - Firefox: Fix "Missing host permissions on tab" error when changing settings quickly.
 - Firefox: Always disable extension on `about:` URLs.
 - Android: Show time picker automatically after choosing a date in the calendar.
