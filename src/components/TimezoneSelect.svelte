@@ -75,9 +75,9 @@
         <select disabled></select>
     {:else}
         <select {value} onchange={onChange} disabled={!isEnabled}>
-            {#each timezones.keys as group}
+            {#each timezones.keys as group (group)}
                 <optgroup label={groupLabel(group)}>
-                    {#each timezones.groups[group] as option}
+                    {#each timezones.groups[group] as option (option)}
                         <option value={option.tz}>{option.label}</option>
                     {/each}
                 </optgroup>
