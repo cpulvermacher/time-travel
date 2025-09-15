@@ -6,7 +6,7 @@
         value: string;
         onChange?: () => void;
     }
-    let { value = $bindable() }: Props = $props();
+    let { value = $bindable(), onChange: onChangeProp }: Props = $props();
 
     /** trigger opening the browser/system time picker */
     export function showPicker() {
@@ -28,6 +28,7 @@
         const minutesNum = parseInt(minutes, 10);
 
         value = overwriteTimePart(value, hoursNum, minutesNum);
+        onChangeProp?.();
     }
 </script>
 
