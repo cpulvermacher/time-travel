@@ -1,5 +1,27 @@
 import { describe, expect, it } from 'vitest';
-import { getFirstDayOfWeek } from '../../util/i18n';
+import { getFirstDayOfWeek, getTranslationLocale } from '../../util/i18n';
+
+describe('getTranslationLocale', () => {
+    it('returns available locale', () => {
+        expect(getTranslationLocale('en')).toBe('en');
+        expect(getTranslationLocale('en-GB')).toBe('en');
+        expect(getTranslationLocale('en-US')).toBe('en');
+        expect(getTranslationLocale('de')).toBe('de');
+        expect(getTranslationLocale('de-AT')).toBe('de');
+        expect(getTranslationLocale('de-DE')).toBe('de');
+        expect(getTranslationLocale('ja')).toBe('ja');
+        expect(getTranslationLocale('ja-JP')).toBe('ja');
+    });
+
+    it('falls back to en if not available', () => {
+        expect(getTranslationLocale('fr')).toBe('en');
+        expect(getTranslationLocale('fr-CA')).toBe('en');
+        expect(getTranslationLocale('es')).toBe('en');
+        expect(getTranslationLocale('it')).toBe('en');
+        expect(getTranslationLocale('xx')).toBe('en');
+        expect(getTranslationLocale('')).toBe('en');
+    });
+});
 
 describe('getFirstDayOfWeek', () => {
     it('returns Monday where applicable', () => {

@@ -1,10 +1,14 @@
-import type { Locale } from '../paraglide/runtime';
+import { locales, type Locale } from '../paraglide/runtime';
 
+/**
+ * for a language string like 'en' or 'de-AT', return available locale.
+ * defaults to 'en' if not available.
+ */
 export function getTranslationLocale(language: string): Locale {
-    if (language.startsWith('de')) {
-        return 'de';
-    } else if (language.startsWith('ja')) {
-        return 'ja';
+    for (const locale of locales) {
+        if (language.startsWith(locale)) {
+            return locale;
+        }
     }
     return 'en';
 }
