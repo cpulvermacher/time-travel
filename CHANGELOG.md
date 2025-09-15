@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.4.3]
+
+- Fix: If seconds/miliseconds were set in date, show them when opening popup again (with extension enabled + clock stopped).
+- Remove underscores from time zone labels.
+
 ## [2.4.2]
 
 - Add a "Change Time Zone" toggle instead of requiring selecting the "Default" time zone to turn the feature off.
