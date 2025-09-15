@@ -4,7 +4,7 @@
     interface Props {
         effectiveDate: Date | undefined;
     }
-    let { effectiveDate }: Props = $props();
+    const { effectiveDate }: Props = $props();
 
     let lastEffectiveDate = $state(effectiveDate);
     let numSpins: number | undefined = $state();

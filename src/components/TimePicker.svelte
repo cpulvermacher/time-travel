@@ -23,7 +23,7 @@
             return;
         }
 
-        let [hours, minutes] = input.value.split(':');
+        const [hours, minutes] = input.value.split(':');
         const hoursNum = parseInt(hours, 10);
         const minutesNum = parseInt(minutes, 10);
 

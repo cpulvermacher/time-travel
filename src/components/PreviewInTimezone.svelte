@@ -8,7 +8,7 @@
         parsedDate: ParsedDate;
         timezone: string;
     }
-    let { parsedDate, timezone }: Props = $props();
+    const { parsedDate, timezone }: Props = $props();
 
     const tzInfo = $derived(parsedDate.isValid ? getTzInfo(getUILanguage(), parsedDate.date, timezone) : null);
     const timeZoneLabel = $derived.by(() => {
