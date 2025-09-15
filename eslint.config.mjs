@@ -11,7 +11,7 @@ export default defineConfig(
     },
     eslint.configs.recommended,
     ...tseslint.configs.recommendedTypeChecked,
-    ...svelte.configs.base,
+    ...svelte.configs.recommended,
     {
         languageOptions: {
             globals: {
@@ -51,4 +51,9 @@ export default defineConfig(
             }
         }
     },
+    {
+        rules: {
+            "svelte/no-at-html-tags": "off"
+        }
+    }
 )
