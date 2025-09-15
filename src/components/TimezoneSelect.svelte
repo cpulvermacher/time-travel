@@ -36,8 +36,12 @@
 
         // Sort the group keys alphabetically, but ensure recent group is first
         const groupKeys = Object.keys(groupedOptions).sort((a, b) => {
-            if (!a || a === TZGROUP_RECENT) return -1;
-            if (!b || b === TZGROUP_RECENT) return 1;
+            if (!a || a === TZGROUP_RECENT) {
+                return -1;
+            }
+            if (!b || b === TZGROUP_RECENT) {
+                return 1;
+            }
             return a.localeCompare(b);
         });
 

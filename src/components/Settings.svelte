@@ -81,41 +81,41 @@
         if (parsedDate.isReset) {
             isEnabled = false;
             effectiveDate = undefined;
-            reset();
+            void reset();
         } else if (parsedDate.isValid) {
             isEnabled = true;
             effectiveDate = parsedDate.date;
-            applyAndEnable(effectiveDate);
+            void applyAndEnable(effectiveDate);
         }
     }
     function onAdvancedSettingsToggle(open: boolean) {
-        saveSetting('advancedSettingsOpen', open);
+        void saveSetting('advancedSettingsOpen', open);
     }
     function onClockToggle() {
         if (isEnabled) {
-            updateClockState();
+            void updateClockState();
         }
-        saveSetting('stopClock', settings.stopClock);
+        void saveSetting('stopClock', settings.stopClock);
     }
     function onAutoReloadToggle() {
-        saveSetting('autoReload', settings.autoReload);
+        void saveSetting('autoReload', settings.autoReload);
     }
     function onTimezoneChange(timezone: string) {
         settings.timezone = timezone;
-        saveSetting('timezone', timezone);
-        saveMostRecentTimezone(timezone);
+        void saveSetting('timezone', timezone);
+        void saveMostRecentTimezone(timezone);
 
         if (isEnabled && effectiveDate) {
-            applyAndEnable(effectiveDate);
+            void applyAndEnable(effectiveDate);
         }
     }
     function onEnableToggle(enabled: boolean) {
         if (enabled && parsedDate.isValid) {
             effectiveDate = parsedDate.date;
-            applyAndEnable(effectiveDate);
+            void applyAndEnable(effectiveDate);
         } else {
             effectiveDate = undefined;
-            reset();
+            void reset();
         }
     }
     function isApplyButtonEnabled(): boolean {

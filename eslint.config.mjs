@@ -1,4 +1,7 @@
 import eslint from '@eslint/js';
+import globals from 'globals';
+import svelte from 'eslint-plugin-svelte';
+import svelteConfig from './svelte.config.mjs';
 import tseslint from 'typescript-eslint';
 import { defineConfig } from 'eslint/config';
 
@@ -8,8 +11,12 @@ export default defineConfig(
     },
     eslint.configs.recommended,
     ...tseslint.configs.recommendedTypeChecked,
+    ...svelte.configs.base,
     {
         languageOptions: {
+            globals: {
+                ...globals.browser,
+            },
             parserOptions: {
                 projectService: {
                     allowDefaultProject: ['eslint.config.mjs'],
@@ -31,6 +38,17 @@ export default defineConfig(
         files: ["src/test/unit/**/*.ts"],
         rules: {
             "@typescript-eslint/unbound-method": "off"
+        }
+    },
+    {
+        files: ['**/*.svelte', '**/*.svelte.ts'],
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+                extraFileExtensions: ['.svelte'], // Add support for additional file extensions, such as .svelte
+                parser: tseslint.parser,
+                svelteConfig
+            }
         }
     },
 )

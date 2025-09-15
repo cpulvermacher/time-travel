@@ -66,6 +66,7 @@
 
         if (await isAndroid()) {
             // on Android, automatically open the time picker after selecting a date
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             timePickerRef?.showPicker();
         } else {
             // on desktop, select hh:mm (and everything afterwards)
