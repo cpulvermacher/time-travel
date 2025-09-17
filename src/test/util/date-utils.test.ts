@@ -144,7 +144,7 @@ describe('overwriteTimePart', () => {
         expect(overwriteTimePart('2025-02-10 12:34Z', 0, 0).endsWith('Z')).toBe(false);
     });
 
-    it('discards seconds and miliseconds', () => {
+    it('discards seconds and milliseconds', () => {
         expect(overwriteTimePart('2025-02-10 12:34:01', 12, 34)).toBe('2025-02-10 12:34');
         expect(overwriteTimePart('2025-02-10 12:40:00.120', 12, 40)).toBe('2025-02-10 12:40');
 

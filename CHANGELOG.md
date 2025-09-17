@@ -3,7 +3,7 @@
 ## [2.4.3]
 
 - Add French translation (closes #52). Many thanks to @Pallandos.
-- Fix: If seconds/miliseconds were set in date, show them when opening popup again (with extension enabled + clock stopped).
+- Fix: If seconds/milliseconds were set in date, show them when opening popup again (with extension enabled + clock stopped).
 - Remove underscores from time zone labels.
 
 ## [2.4.2]
