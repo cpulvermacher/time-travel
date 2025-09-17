@@ -6,6 +6,9 @@ describe('getTranslationLocale', () => {
         expect(getTranslationLocale('en')).toBe('en');
         expect(getTranslationLocale('en-GB')).toBe('en');
         expect(getTranslationLocale('en-US')).toBe('en');
+        expect(getTranslationLocale('fr')).toBe('fr');
+        expect(getTranslationLocale('fr-CA')).toBe('fr');
+        expect(getTranslationLocale('fr-FR')).toBe('fr');
         expect(getTranslationLocale('de')).toBe('de');
         expect(getTranslationLocale('de-AT')).toBe('de');
         expect(getTranslationLocale('de-DE')).toBe('de');
@@ -14,8 +17,6 @@ describe('getTranslationLocale', () => {
     });
 
     it('falls back to en if not available', () => {
-        expect(getTranslationLocale('fr')).toBe('en');
-        expect(getTranslationLocale('fr-CA')).toBe('en');
         expect(getTranslationLocale('es')).toBe('en');
         expect(getTranslationLocale('it')).toBe('en');
         expect(getTranslationLocale('xx')).toBe('en');
