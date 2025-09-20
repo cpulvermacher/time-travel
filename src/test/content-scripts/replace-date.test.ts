@@ -357,6 +357,10 @@ describe('replace-date', () => {
                 expect(utcDate.toUTCString()).toEqual('Wed, 15 Sep 2021 12:34:56 GMT');
             });
 
+            it('toGMTString()', () => {
+                expect(utcDate.toGMTString()).toEqual('Wed, 15 Sep 2021 12:34:56 GMT');
+            });
+
             it('getTime()', () => {
                 expect(utcDate.getTime()).toEqual(1631709296789);
             });

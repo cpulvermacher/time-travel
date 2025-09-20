@@ -17,5 +17,8 @@ declare global {
     interface Date {
         /** deprecated, but still supported by Chrome and Firefox */
         getYear(): number;
+
+        /** alias for getUTCString() */
+        toGMTString(): string;
     }
 }
