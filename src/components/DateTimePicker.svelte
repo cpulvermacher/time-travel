@@ -226,10 +226,10 @@
         --datepicker-border-radius-xxlarge: 1rem;
         --datepicker-border-radius-xxxlarge: 1.125rem; */
 
-        --datepicker-state-active: #6060f4;
+        --datepicker-state-active: var(--primary-color);
         --datepicker-state-hover: #e7f7fc;
 
-        --datepicker-color: #6060f4;
+        --datepicker-color: var(--primary-color);
 
         --datepicker-font-family: var(--font-family);
 
