@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => ({
         paraglideVitePlugin({
             project: './project.inlang',
             outdir: './src/paraglide',
-            strategy: ['preferredLanguage', 'baseLocale'],
+            strategy: ['baseLocale'], // locale configured via overrideGetLocale()
         }),
     ],
     root: 'src',

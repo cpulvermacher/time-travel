@@ -7,9 +7,9 @@
     import { getTranslationLocale } from '../util/i18n';
     import { getInitialState } from './initial-state';
 
-    overwriteGetLocale(() => getTranslationLocale(getUILanguage()));
-
-    document.documentElement.lang = getTranslationLocale(getUILanguage());
+    const locale = getTranslationLocale(getUILanguage());
+    overwriteGetLocale(() => locale);
+    document.documentElement.lang = locale;
 
     const promise = getInitialState();
 </script>
