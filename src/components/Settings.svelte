@@ -7,7 +7,7 @@
     import { saveMostRecentTimezone, saveSetting, type Settings } from '../util/settings';
     import Accordion from './Accordion.svelte';
     import Background from './Background.svelte';
-    import Datepicker from './Datepicker.svelte';
+    import DateTimePicker from './DateTimePicker.svelte';
     import ErrorModal from './ErrorModal.svelte';
     import ReloadModal from './ReloadModal.svelte';
     import TimezoneSelect from './TimezoneSelect.svelte';
@@ -128,7 +128,7 @@
 
 <Background {effectiveDate} />
 <main>
-    <Datepicker bind:fakeDate onEnterKey={onApply} timezone={settings.timezone} />
+    <DateTimePicker bind:fakeDate onEnterKey={onApply} timezone={settings.timezone} />
     <div class="right-aligned">
         <button disabled={!isApplyButtonEnabled()} onclick={onApply}>{m.change_date_btn()}</button>
     </div>

@@ -5,10 +5,10 @@
     import { getUILanguage, isAndroid } from '../util/browser';
     import { formatLocalDate, overwriteDatePart, parseDate } from '../util/date-utils';
     import { getFirstDayOfWeek } from '../util/i18n';
+    import DateFormatInfo from './DateFormatInfo.svelte';
+    import LinkButton from './LinkButton.svelte';
     import PreviewInTimezone from './PreviewInTimezone.svelte';
     import TimePicker from './TimePicker.svelte';
-    import LinkButton from './LinkButton.svelte';
-    import DateFormatInfo from './DateFormatInfo.svelte';
 
     // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
     const startOfWeek = getFirstDayOfWeek(getUILanguage()) % 7;
