@@ -41,6 +41,7 @@ export default defineConfig(({ mode }) => ({
                         return 'assets/[name]-[hash].js';
                     }
                 },
+                minifyInternalExports: false, // since minification is off, this makes it worse
             },
         },
     },
