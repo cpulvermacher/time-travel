@@ -5,7 +5,7 @@ import { FakeDate } from './fake-date/FakeDate';
 import { FakeIntlDateTimeFormat } from './fake-date/FakeIntlDateTimeFormat';
 import { getFakeDate, getTimezone, updateState } from './fake-date/storage';
 
-const devVersion = import.meta.env.VITE_VERSION ? `\nVersion: ${import.meta.env.VITE_VERSION}` : '';
+const devVersion = import.meta.env.VITE_VERSION ? `Version: ${import.meta.env.VITE_VERSION}` : '';
 console.log(`Time Travel: injected content-script (${devVersion}) for host ${window.location.host}`);
 
 const OriginalDate = Date;
