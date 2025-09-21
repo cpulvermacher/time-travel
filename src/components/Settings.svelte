@@ -7,10 +7,8 @@
     import { saveMostRecentTimezone, saveSetting, type Settings } from '../util/settings';
     import Accordion from './Accordion.svelte';
     import Background from './Background.svelte';
-    import DateFormatInfo from './DateFormatInfo.svelte';
     import Datepicker from './Datepicker.svelte';
     import ErrorModal from './ErrorModal.svelte';
-    import LinkButton from './LinkButton.svelte';
     import ReloadModal from './ReloadModal.svelte';
     import TimezoneSelect from './TimezoneSelect.svelte';
     import Toggle from './Toggle.svelte';
@@ -23,7 +21,6 @@
     const initialState: Props = $props();
 
     let errorMsg = $state<string>();
-    let showFormatHelp = $state(false);
     let showReloadModal = $state(false);
     let settings = $state(initialState.settings);
     let isEnabled = $state(initialState.isEnabled);
@@ -131,15 +128,8 @@
 
 <Background {effectiveDate} />
 <main>
-    <div class="row">
-        <label>
-            {m.datetime_input_label()}
-            <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
-            {#if import.meta.env.DEV}<span class="mock-active">[mock]</span>{/if}
-            <Datepicker bind:fakeDate onEnterKey={onApply} timezone={settings.timezone} />
-        </label>
-    </div>
-    <div class="row right-aligned">
+    <Datepicker bind:fakeDate onEnterKey={onApply} timezone={settings.timezone} />
+    <div class="right-aligned">
         <button disabled={!isApplyButtonEnabled()} onclick={onApply}>{m.change_date_btn()}</button>
     </div>
     <hr />
@@ -165,9 +155,6 @@
     </Accordion>
 </main>
 
-{#if showFormatHelp}
-    <DateFormatInfo onClose={() => (showFormatHelp = false)} />
-{/if}
 {#if showReloadModal}
     <ReloadModal />
 {/if}
@@ -183,18 +170,9 @@
         gap: 10px;
         padding: 8px 15px;
     }
-    .mock-active {
-        color: red;
-        font-weight: bold;
-    }
 
-    .row {
+    .right-aligned {
         display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        align-items: flex-end;
-    }
-    .row.right-aligned {
         justify-content: flex-end;
     }
 

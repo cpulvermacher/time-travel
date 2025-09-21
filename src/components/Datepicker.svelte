@@ -7,6 +7,8 @@
     import { getFirstDayOfWeek } from '../util/i18n';
     import PreviewInTimezone from './PreviewInTimezone.svelte';
     import TimePicker from './TimePicker.svelte';
+    import LinkButton from './LinkButton.svelte';
+    import DateFormatInfo from './DateFormatInfo.svelte';
 
     // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
     const startOfWeek = getFirstDayOfWeek(getUILanguage()) % 7;
@@ -21,6 +23,7 @@
     // Note: the datepicker internally works with timestamps in UTC. When choosing a date, pickerDate will be set to 00:00 local time.
     const initialParsedDate = parseDate(fakeDate);
     let pickerDate: number = $state(initialParsedDate.isValid ? initialParsedDate.date.getTime() : Date.now());
+    let showFormatHelp = $state(false);
     let inputRef: HTMLInputElement;
     let timePickerRef: TimePicker;
 
@@ -92,40 +95,11 @@
     }
 </script>
 
-<div class="container">
-    <DatePicker
-        bind:startDate={pickerDate}
-        onDateChange={acceptPickerDate}
-        enableFutureDates
-        dowLabels={[
-            m.dow_sunday(),
-            m.dow_monday(),
-            m.dow_tuesday(),
-            m.dow_wednesday(),
-            m.dow_thursday(),
-            m.dow_friday(),
-            m.dow_saturday(),
-        ]}
-        monthLabels={[
-            m.january(),
-            m.february(),
-            m.march(),
-            m.april(),
-            m.may(),
-            m.june(),
-            m.july(),
-            m.august(),
-            m.september(),
-            m.october(),
-            m.november(),
-            m.december(),
-        ]}
-        {startOfWeek}
-        isOpen={true}
-        alwaysShow={true}
-        includeFont={false}
-        theme="theme"
-    >
+<div>
+    <label>
+        {m.datetime_input_label()}
+        <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
+        {#if import.meta.env.DEV}<span class="mock-active">[mock]</span>{/if}
         <div class="input-fields">
             <input
                 {onkeydown}
@@ -143,15 +117,62 @@
             />
             <TimePicker bind:value={fakeDate} onChange={onInput} bind:this={timePickerRef} />
         </div>
-        {#if timezone}
-            <PreviewInTimezone {parsedDate} {timezone} />
-        {/if}
-    </DatePicker>
+    </label>
+    {#if timezone}
+        <PreviewInTimezone {parsedDate} {timezone} />
+    {/if}
+    <div class="datepicker-container">
+        <DatePicker
+            bind:startDate={pickerDate}
+            onDateChange={acceptPickerDate}
+            enableFutureDates
+            dowLabels={[
+                m.dow_sunday(),
+                m.dow_monday(),
+                m.dow_tuesday(),
+                m.dow_wednesday(),
+                m.dow_thursday(),
+                m.dow_friday(),
+                m.dow_saturday(),
+            ]}
+            monthLabels={[
+                m.january(),
+                m.february(),
+                m.march(),
+                m.april(),
+                m.may(),
+                m.june(),
+                m.july(),
+                m.august(),
+                m.september(),
+                m.october(),
+                m.november(),
+                m.december(),
+            ]}
+            {startOfWeek}
+            isOpen={true}
+            alwaysShow={true}
+            includeFont={false}
+            theme="theme"
+        />
+    </div>
 </div>
 
+{#if showFormatHelp}
+    <DateFormatInfo onClose={() => (showFormatHelp = false)} />
+{/if}
+
 <style>
-    .container {
-        min-height: 245px; /** height of input plus DatePicker for 6 weeks to avoid jumps*/
+    .datepicker-container {
+        min-height: 206px; /** height of DatePicker for 6 weeks to avoid jumps */
+
+        @media (min-width: 400px) {
+            min-height: 230px;
+        }
+    }
+    .mock-active {
+        color: red;
+        font-weight: bold;
     }
     .input-fields {
         display: flex;
