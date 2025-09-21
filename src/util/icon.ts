@@ -5,11 +5,8 @@ import { getContentScriptState, type ContentScriptState } from './content-script
 import { getTranslationLocale } from './i18n';
 import { getTzInfo } from './timezone-info';
 
-declare const __EXT_VERSION__: string;
-declare const __MODE__: 'dev' | 'production';
-
 const defaultTitleText = 'Time Travel';
-const devVersion = __MODE__ === 'dev' ? `\nVersion: ${__EXT_VERSION__}` : '';
+const devVersion = import.meta.env.VITE_VERSION ? `\nVersion: ${import.meta.env.VITE_VERSION}` : '';
 
 /** Set icon badge and mouseover text based on state of content script in current tab */
 export async function setIconBadgeAndTitle(tabId: number, state: ContentScriptState) {
