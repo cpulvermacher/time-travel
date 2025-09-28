@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.4.4]
+
+- Handle months with six weeks without layout shift.
+
 ## [2.4.3]
 
 - Add French translation (closes #52). Many thanks to @Pallandos.
