@@ -25,12 +25,7 @@ rm -rf dist
 
 mkdir -p dist/chrome
 vite build -m "${MODE}"
-
-# wrap main content script in an IIFE to avoid polluting the global scope
-cat dist/chrome/content-scripts/replace-date.js |
-    sed '1s/^/(() => {\n/' |
-    sed '$s/$/\n})();/' >dist/chrome/content-scripts/replace-date.js.iife
-mv dist/chrome/content-scripts/replace-date.js.iife dist/chrome/content-scripts/replace-date.js
+vite build -m "${MODE}" --config vite.config.content-script.mts
 
 # copy extra assets
 mkdir dist/chrome/images/
