@@ -3,11 +3,7 @@
     "compilerOptions": {
         "target": "ESNext",
         "useDefineForClassFields": true,
-        "lib": [
-            "DOM",
-            "DOM.Iterable",
-            "ESNext"
-        ],
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
         "allowJs": true,
         "skipLibCheck": true,
         "esModuleInterop": false,
@@ -21,12 +17,7 @@
         "verbatimModuleSyntax": true,
         "noEmit": true,
         "sourceMap": false,
-        "types": [
-            "chrome"
-        ]
+        "types": ["chrome"]
     },
-    "include": [
-        "src/",
-        "vite.config.mts"
-    ]
+    "include": ["src/", "*.mts"]
 }
