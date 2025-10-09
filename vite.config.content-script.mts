@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => ({
         modulePreload: false /* we don't need to preload things */,
         rollupOptions: {
             output: {
-                entryFileNames: 'replace-date.js',
+                entryFileNames: 'content-scripts/replace-date.js',
                 minifyInternalExports: false, // since minification is off, this makes it worse
             },
         },

@@ -64,9 +64,11 @@ function getOffset(locale: string, tz: string | undefined, date?: Date) {
 
 /** Gets time zone offset in minutes from a longOffset string.
  *
- * Note: identical to function in date-parts.ts. Needs to be copied to avoid bundle splitting.
+ * This matches the output of `Date.getTimezoneOffset()`, including the sign.
+ *
+ * Example: "GMT+02:00" -> -120
  */
-function getOffsetMinutes(longOffset?: string): number {
+export function getOffsetMinutes(longOffset?: string): number {
     if (!longOffset) {
         return 0;
     }

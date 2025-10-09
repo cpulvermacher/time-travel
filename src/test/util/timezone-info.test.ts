@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { getTzInfo } from '../../util/timezone-info';
+
+import { getOffsetMinutes, getTzInfo } from '../../util/timezone-info';
 
 describe('getTzInfo', () => {
     it('detects DST for positive offset (Berlin)', () => {
@@ -74,5 +75,24 @@ describe('getTzInfo', () => {
         const infoDe = getTzInfo('de', '2025-07-01T10:00Z', 'America/New_York')!;
         expect(infoDe.dateString).toBe('1. Juli 2025');
         expect(infoDe.timeString).toBe('06:00');
+    });
+});
+
+describe('getOffsetMinutes', () => {
+    it('returns 0 for UTC', () => {
+        expect(getOffsetMinutes('GMT')).toBe(0);
+    });
+
+    it('returns correct minute offset', () => {
+        expect(getOffsetMinutes('GMT-05:00')).toBe(300);
+        expect(getOffsetMinutes('GMT+02:00')).toBe(-120);
+        expect(getOffsetMinutes('GMT+00:30')).toBe(-30);
+        expect(getOffsetMinutes('GMT+12:45')).toBe(-765);
+    });
+
+    it('returns 0 for invalid timezone', () => {
+        expect(getOffsetMinutes('abcd')).toBe(0);
+        expect(getOffsetMinutes('')).toBe(0);
+        expect(getOffsetMinutes(undefined)).toBe(0);
     });
 });

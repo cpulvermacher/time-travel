@@ -1,4 +1,5 @@
-import { getDateParts, getDatePartsForLocalDate, getOffsetMinutes } from './date-parts';
+import { getOffsetMinutes } from '../../util/timezone-info';
+import { getDateParts, getDatePartsForLocalDate } from './date-parts';
 import { disambiguateDate } from './disambiguateDate';
 import { optionsWithDefaultTz } from './FakeIntlDateTimeFormat';
 import { getTimezoneName } from './getTimezoneName';
