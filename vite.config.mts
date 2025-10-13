@@ -5,7 +5,7 @@ import { defineConfig } from 'vitest/config';
 const entryPoints = ['/content-scripts/send-active.ts', '/worker.ts'];
 // get basename without extension
 const scriptNames = entryPoints.map((path) => path.split('/').pop()?.split('.').shift() || '');
-export default defineConfig(({ mode }) => ({
+export default defineConfig(() => ({
     plugins: [
         svelte(),
         paraglideVitePlugin({
@@ -19,9 +19,6 @@ export default defineConfig(({ mode }) => ({
         environment: 'happy-dom',
     },
     server: { open: 'test/popup.html' },
-    esbuild: {
-        pure: mode === 'production' ? ['console.log'] : [],
-    },
     build: {
         outDir: '../dist/chrome',
         emptyOutDir: true,

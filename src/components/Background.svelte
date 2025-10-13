@@ -1,5 +1,6 @@
 <script lang="ts">
     import { untrack } from 'svelte';
+    import { debugLog } from '../util/log';
 
     interface Props {
         effectiveDate: Date | undefined;
@@ -30,7 +31,7 @@
         const lastDate = untrack(() => lastEffectiveDate ?? new Date());
         const newDate = effectiveDate ?? new Date();
         if (isNaN(newDate.getTime()) || isNaN(lastDate.getTime())) {
-            console.log('Invalid date in spin()', newDate, lastDate);
+            debugLog('Invalid date in spin()', newDate, lastDate);
             return;
         }
         numSpins = calculateNumSpins(newDate.getTime() - lastDate.getTime());

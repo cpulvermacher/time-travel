@@ -1,5 +1,7 @@
 // browser-specific APIs should only be used in this file
 
+import { debugLog } from './log';
+
 /** get id for current tab, or throw */
 export async function getActiveTabId(): Promise<number> {
     const queryOptions = { active: true, currentWindow: true };
@@ -94,7 +96,7 @@ export async function registerContentScript() {
         await registerOrUpdate(contentScripts);
     } catch (error) {
         //matchOriginAsFallback needs Chrome 119+
-        console.log(
+        debugLog(
             'Encountered error when trying to register content script (maybe Chrome < 119?). Retrying without `matchOriginAsFallback` option. Error was: ',
             error
         );
@@ -178,7 +180,7 @@ export async function withTabLoadingRetry<T>(fn: () => Promise<T>, maxRetries = 
             return await fn();
         } catch (error) {
             if (attempt < maxRetries - 1 && (await isTabLoading())) {
-                console.log(`Retrying due to loading tab (attempt ${attempt + 1}/${maxRetries}):`, error);
+                debugLog(`Retrying due to loading tab (attempt ${attempt + 1}/${maxRetries}):`, error);
                 await sleep(baseDelayMs * Math.pow(2, attempt));
                 continue;
             }

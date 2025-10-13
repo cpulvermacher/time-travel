@@ -17,7 +17,6 @@ try {
             isClockStopped: !tickStartTimestamp,
         });
     }
-} catch (exception) {
+} catch {
     //document possibly sandboxed
-    console.log('send-active: Reading from sessionStorage was blocked:', exception);
 }

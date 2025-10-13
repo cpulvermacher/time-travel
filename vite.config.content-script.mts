@@ -1,11 +1,8 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vite';
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig({
     plugins: [],
     root: 'src',
-    esbuild: {
-        pure: mode === 'production' ? ['console.log'] : [],
-    },
     build: {
         lib: {
             entry: '/content-scripts/replace-date.ts',
@@ -25,4 +22,4 @@ export default defineConfig(({ mode }) => ({
             },
         },
     },
-}));
+});

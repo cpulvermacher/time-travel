@@ -1,5 +1,6 @@
 import type { ActivationMessage } from './types/ActivationMessage';
 import { setIconBadgeAndTitle, updateExtensionIcon } from './util/icon';
+import { debugLog } from './util/log';
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
     void updateBadgeAndTitle(activeInfo.tabId);
@@ -32,6 +33,6 @@ async function updateBadgeAndTitle(tabId: number) {
         await updateExtensionIcon(tabId);
     } catch (e) {
         //ignore errors
-        console.log(e);
+        debugLog(e);
     }
 }
