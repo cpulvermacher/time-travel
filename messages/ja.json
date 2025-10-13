@@ -44,7 +44,7 @@
     "icon_title_off": "（オフ）",
     "enable_auto_reload": "自動再読み込みする",
     "advanced_settings": "オプション",
-    "timezone_selector_label": "タイムゾーンを変更 (実験的)",
+    "timezone_selector_label": "タイムゾーンを変更",
     "timezone_group_common": "主要",
     "timezone_group_recent": "最近",
     "date_in_timezone_info": "ページタイムゾーンでは",

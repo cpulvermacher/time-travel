@@ -38,7 +38,7 @@ To change the time zone, open "Options", enable "Change Time Zone" and select a 
 ## Features
 
 - Fakes date and time for all methods of `Date` and `Intl.DateTimeFormat` objects.
-- (experimental) Time zone can be changed, with full support for DST transitions.
+- Time zone can be changed, with full support for DST transitions.
 - Time can be stopped and resumed.
 - Option to automatically reload page after changing date.
 - Only affects current tab after clicking the extension icon.

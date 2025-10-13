@@ -44,7 +44,7 @@
     "icon_title_off": "(Off)",
     "enable_auto_reload": "Rechargement automatique de la page",
     "advanced_settings": "Options avancées",
-    "timezone_selector_label": "Changer de fuseau horaire (EXPÉRIMENTAL)",
+    "timezone_selector_label": "Changer de fuseau horaire",
     "timezone_group_common": "Commun",
     "timezone_group_recent": "Récent",
     "date_in_timezone_info": "Fuseau horaire de la page :",
