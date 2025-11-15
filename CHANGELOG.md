@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.4.5]
+
+- Remove "experimental" label from time zone support.
+- Remove all debug logging from production build.
+
 ## [2.4.4]
 
 - Handle months with six weeks without layout shift.
