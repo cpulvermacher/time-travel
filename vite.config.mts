@@ -7,7 +7,9 @@ const entryPoints = ['/content-scripts/send-active.ts', '/worker.ts'];
 const scriptNames = entryPoints.map((path) => path.split('/').pop()?.split('.').shift() || '');
 export default defineConfig(() => ({
     plugins: [
-        svelte(),
+        svelte({
+            configFile: '../svelte.config.mjs',
+        }),
         paraglideVitePlugin({
             project: './project.inlang',
             outdir: './src/paraglide',
