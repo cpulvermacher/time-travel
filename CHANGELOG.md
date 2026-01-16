@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.4.6]
+
+- Update dependencies.
+
 ## [2.4.5]
 
 - Remove "experimental" label from time zone support.
