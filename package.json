@@ -6,7 +6,7 @@
     "scripts": {
         "build": "sh ./util/build.sh production",
         "dev": "sh ./util/build.sh dev",
-        "lint": "tsc && eslint *.mts src/ && prettier src --check && svelte-check --tsconfig ./tsconfig.json && pnpm lint:translations",
+        "lint": "tsc && biome check src/ && svelte-check --tsconfig ./tsconfig.json && pnpm lint:translations",
         "lint:translations": "bash ./util/check-translations.sh",
         "prettier": "prettier src --write",
         "test": "vitest --run",
@@ -14,22 +14,19 @@
         "machine-translate": "inlang machine translate --project project.inlang"
     },
     "devDependencies": {
-        "@eslint/js": "^9.39.2",
+        "@biomejs/biome": "2.4.12",
         "@inlang/cli": "^3.1.9",
         "@inlang/paraglide-js": "^2.5.0",
         "@sveltejs/vite-plugin-svelte": "^7.0.0",
         "@tsconfig/svelte": "^5.0.8",
         "@types/chrome": "^0.1.37",
         "chrome-webstore-upload-cli": "^3.5.0",
-        "eslint": "^9.39.2",
-        "eslint-plugin-svelte": "^3.17.0",
         "globals": "^17.4.0",
         "happy-dom": "^20.8.9",
         "prettier": "^3.8.1",
         "prettier-plugin-svelte": "^3.5.1",
         "svelte-check": "^4.4.6",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.58.1",
         "vite": "^8.0.0",
         "vitest": "^4.1.0",
         "web-ext": "^10.1.0"
