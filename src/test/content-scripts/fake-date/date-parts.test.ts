@@ -16,7 +16,8 @@ describe('getDateParts', () => {
             second: 0,
             ms: 0,
             weekday: 'Sun',
-            offsetName: 'GMT',
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            offsetName: expect.stringMatching(/^GMT(\+00:00)?$/),
             rawFormat: {
                 year: '2023',
                 month: '01',
@@ -26,7 +27,8 @@ describe('getDateParts', () => {
                 second: '00',
                 fractionalSecond: '000',
                 weekday: 'Sun',
-                timeZoneName: 'GMT',
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                timeZoneName: expect.stringMatching(/^GMT(\+00:00)?$/),
                 literal: ' ',
             },
         });

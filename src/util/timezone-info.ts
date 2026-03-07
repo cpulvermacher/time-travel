@@ -79,7 +79,7 @@ export function getOffsetMinutes(longOffset?: string): number {
         if (hours < 0) {
             return -(hours * 60 - minutes);
         } else {
-            return -(hours * 60 + minutes);
+            return -(hours * 60 + minutes) || 0; // avoid -0 for UTC
         }
     }
     return 0;
