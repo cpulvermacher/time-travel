@@ -92,10 +92,13 @@ describe('getInitialState', () => {
 
             vi.mocked(getContentScriptState).mockResolvedValue(mockState);
 
+            vi.useFakeTimers();
+            vi.setSystemTime(new Date('2026-01-01 12:34'));
+
             const result = await getInitialState();
 
             expect(result.isEnabled).toBe(false);
-            expect(result.fakeDate).toBeUndefined();
+            expect(result.fakeDate).toBe('2026-01-01 12:34');
             expect(result.settings.timezone).toBe(defaultSettings.timezone);
             expect(result.settings.stopClock).toBe(defaultSettings.stopClock);
         });
@@ -132,10 +135,13 @@ describe('getInitialState', () => {
 
             vi.mocked(getContentScriptState).mockResolvedValue(mockState);
 
+            vi.useFakeTimers();
+            vi.setSystemTime(new Date('2026-01-01 12:34'));
+
             const result = await getInitialState();
 
             expect(result.isEnabled).toBe(false);
-            expect(result.fakeDate).toBeUndefined();
+            expect(result.fakeDate).toBe('2026-01-01 12:34');
         });
 
         it('handles timezone settings correctly', async () => {

@@ -3,7 +3,6 @@
     import { m } from '../paraglide/messages';
     import { overwriteGetLocale } from '../paraglide/runtime';
     import { getUILanguage } from '../util/browser';
-    import { formatLocalDate } from '../util/date-utils';
     import { getTranslationLocale } from '../util/i18n';
     import { getInitialState } from './initial-state';
 
@@ -19,11 +18,7 @@
         <div class="loading-spinner"></div>
     </div>
 {:then initialState}
-    <Settings
-        fakeDate={initialState.fakeDate ?? formatLocalDate(new Date())}
-        isEnabled={!!initialState.isEnabled}
-        settings={initialState.settings}
-    />
+    <Settings fakeDate={initialState.fakeDate} isEnabled={!!initialState.isEnabled} settings={initialState.settings} />
 {:catch error}
     <div class="error">
         <p>{error instanceof Error ? error.message : ''}</p>

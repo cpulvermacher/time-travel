@@ -7,7 +7,7 @@ import { loadSettings, type Settings } from '../util/settings';
 
 type InitialState = {
     isEnabled: boolean;
-    fakeDate?: string;
+    fakeDate: string; // current fake date, or current time as fallback
     settings: Settings; // stored settings, but possibly overridden by tab state if active
 };
 
@@ -50,7 +50,7 @@ export async function getInitialState(): Promise<InitialState> {
 
         return {
             isEnabled,
-            fakeDate: initialFakeDate,
+            fakeDate: initialFakeDate ?? formatLocalDate(new Date()),
             settings: {
                 autoReload: settings.autoReload,
                 advancedSettingsOpen: settings.advancedSettingsOpen,
