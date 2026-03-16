@@ -1,10 +1,11 @@
 <script lang="ts">
+    import { untrack } from 'svelte';
     import { m } from '../paraglide/messages';
     import { reloadTab, withTabLoadingRetry } from '../util/browser';
     import { disableFakeDate, setClockState, setFakeDate } from '../util/content-script-state';
     import { parseDate } from '../util/date-utils';
     import { updateExtensionIcon } from '../util/icon';
-    import { saveMostRecentTimezone, saveSetting, type Settings } from '../util/settings';
+    import { saveMostRecentTimezone, saveSetting } from '../util/settings';
     import Accordion from './Accordion.svelte';
     import Background from './Background.svelte';
     import DateTimePicker from './DateTimePicker.svelte';
@@ -12,13 +13,13 @@
     import ReloadModal from './ReloadModal.svelte';
     import TimezoneSelect from './TimezoneSelect.svelte';
     import Toggle from './Toggle.svelte';
+    import type { InitialState } from '../popup/initial-state';
 
     interface Props {
-        isEnabled: boolean;
-        fakeDate: string;
-        settings: Settings;
+        initialState: InitialState;
     }
-    const initialState: Props = $props();
+    const props: Props = $props();
+    const initialState = untrack(() => props.initialState);
 
     let errorMsg = $state<string>();
     let showReloadModal = $state(false);

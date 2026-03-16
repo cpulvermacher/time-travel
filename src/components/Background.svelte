@@ -5,7 +5,8 @@
     interface Props {
         effectiveDate: Date | undefined;
     }
-    const { effectiveDate }: Props = $props();
+    const props: Props = $props();
+    const effectiveDate = untrack(() => props.effectiveDate);
 
     let lastEffectiveDate = $state(effectiveDate);
     let numSpins: number | undefined = $state();

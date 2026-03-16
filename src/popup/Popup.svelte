@@ -18,7 +18,7 @@
         <div class="loading-spinner"></div>
     </div>
 {:then initialState}
-    <Settings fakeDate={initialState.fakeDate} isEnabled={!!initialState.isEnabled} settings={initialState.settings} />
+    <Settings {initialState} />
 {:catch error}
     <div class="error">
         <p>{error instanceof Error ? error.message : ''}</p>

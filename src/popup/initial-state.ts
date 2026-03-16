@@ -5,7 +5,7 @@ import { getContentScriptState } from '../util/content-script-state';
 import { formatLocalDate, parseDate, parseTimestamp } from '../util/date-utils';
 import { loadSettings, type Settings } from '../util/settings';
 
-type InitialState = {
+export type InitialState = {
     isEnabled: boolean;
     fakeDate: string; // current fake date, or current time as fallback
     settings: Settings; // stored settings, but possibly overridden by tab state if active
