@@ -5,6 +5,10 @@ import * as contentScriptState from '../../util/content-script-state';
 import * as settings from '../../util/settings';
 import { getContentScriptState } from '../../util/content-script-state';
 
+vi.mock('../../util/browser');
+vi.mock('../../util/content-script-state');
+vi.mock('../../util/settings');
+
 const defaultSettings: settings.Settings = {
     autoReload: true,
     stopClock: false,
@@ -14,10 +18,6 @@ const defaultSettings: settings.Settings = {
 };
 
 describe('getInitialState', () => {
-    vi.mock('../../util/browser');
-    vi.mock('../../util/content-script-state');
-    vi.mock('../../util/settings');
-
     const mockedBrowser = vi.mocked(browser);
     const mockedSettings = vi.mocked(settings);
 
