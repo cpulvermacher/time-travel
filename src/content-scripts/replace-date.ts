@@ -18,12 +18,12 @@ const updateStateAndReplaceDate = () => {
     if (fakeDate !== null) {
         const timezone = getTimezone();
         debugLog(`Time Travel: Enabling fake date: ${fakeDate} (TZ: ${timezone ?? 'browser default'})`);
-        // eslint-disable-next-line no-global-assign
+        // biome-ignore lint/suspicious/noGlobalAssign: this is what we came here to do
         Date = FakeDate as DateConstructor;
         Intl.DateTimeFormat = FakeIntlDateTimeFormat as typeof Intl.DateTimeFormat;
     } else {
         debugLog('Time Travel: Disabling');
-        // eslint-disable-next-line no-global-assign
+        // biome-ignore lint/suspicious/noGlobalAssign: this is what we came here to do
         Date = OriginalDate;
         Intl.DateTimeFormat = OriginalIntlDateTimeFormat;
     }

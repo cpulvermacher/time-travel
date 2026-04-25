@@ -547,9 +547,7 @@ describe('replace-date', () => {
                 }
 
                 // override a method to check that the prototype chain is still intact (date-fns/tz does this)
-                MyDate.prototype['getMonth'] = function () {
-                    return 99;
-                };
+                MyDate.prototype.getMonth = () => 99;
 
                 const myDate = new MyDate();
 
@@ -698,7 +696,7 @@ describe('replace-date', () => {
         setFakeDate('');
         const dateString = '2010-07-01T00:00:00.000Z';
         const originalOffset = new Date(dateString).getTimezoneOffset();
-        expect(isFinite(originalOffset)).toBeTruthy();
+        expect(Number.isFinite(originalOffset)).toBeTruthy();
 
         setFakeDate('2010-01-01T00:00:00.000Z');
         //should be the same value for the same dateString

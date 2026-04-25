@@ -181,7 +181,7 @@ export async function withTabLoadingRetry<T>(fn: () => Promise<T>, maxRetries = 
         } catch (error) {
             if (attempt < maxRetries - 1 && (await isTabLoading())) {
                 debugLog(`Retrying due to loading tab (attempt ${attempt + 1}/${maxRetries}):`, error);
-                await sleep(baseDelayMs * Math.pow(2, attempt));
+                await sleep(baseDelayMs * 2 ** attempt);
                 continue;
             }
             throw error;

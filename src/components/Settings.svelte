@@ -131,7 +131,7 @@
 <main>
     <DateTimePicker bind:fakeDate onEnterKey={onApply} timezone={settings.timezone} />
     <div class="right-aligned">
-        <button disabled={!isApplyButtonEnabled()} onclick={onApply}>{m.change_date_btn()}</button>
+        <button type="button" disabled={!isApplyButtonEnabled()} onclick={onApply}>{m.change_date_btn()}</button>
     </div>
     <hr />
     <Toggle

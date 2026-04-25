@@ -8,6 +8,7 @@
     }
     const { children, onClose, closeOnCancel }: Props = $props();
 
+    // biome-ignore lint/correctness/noUnusedVariables: used in template with use:show
     function show(node: HTMLDialogElement) {
         node.showModal();
     }
@@ -45,7 +46,7 @@
 
 <dialog use:show {oncancel} onclose={onClose} onclick={onDialogClick} class="modal {onClose ? 'closable' : ''}">
     {#if onClose}
-        <button class="close" onclick={onClose}>✕</button>
+        <button type="button" class="close" onclick={onClose}>✕</button>
     {/if}
     {@render children?.()}
 </dialog>

@@ -19,7 +19,7 @@ export async function setFakeDate(date: Date, timezone?: string): Promise<boolea
         return true;
     }
 
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
         throw new Error('setFakeDate(): Invalid date');
     }
 

@@ -16,7 +16,7 @@
 
 <Modal>
     <p>{m.please_reload_message()}</p>
-    <button use:focusButton onclick={reload}>{m.reload_btn()}</button>
+    <button type="button" use:focusButton onclick={reload}>{m.reload_btn()}</button>
 </Modal>
 
 <style>

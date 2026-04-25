@@ -7,7 +7,7 @@ export type FormatOptions = {
  * If options.fullPrecision is true, returns seconds and milliseconds if they are non-zero
  */
 export function formatLocalDate(date: Date, options?: FormatOptions): string {
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
         return 'Invalid Date';
     }
 
@@ -37,7 +37,7 @@ export function formatLocalDate(date: Date, options?: FormatOptions): string {
 
 /** Returns time in format "HH:mm" in local time, or "Invalid Date" if invalid */
 export function formatLocalTime(date: Date): string {
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
         return 'Invalid Date';
     }
 
@@ -112,7 +112,7 @@ export function parseDate(dateString: string): ParsedDate {
     try {
         const date = maybeTimestamp !== null ? new Date(maybeTimestamp) : new Date(dateString);
 
-        if (isNaN(date.getTime())) {
+        if (Number.isNaN(date.getTime())) {
             return { dateString, isValid: false, isReset: false };
         }
         return { dateString, date, isValid: true, isReset: false };
@@ -129,7 +129,7 @@ export function parseTimestamp(timestamp: string | null): number | null {
 
     if (/^-?\d+$/.test(timestamp)) {
         const parsed = Number.parseInt(timestamp, 10);
-        if (!isNaN(parsed)) {
+        if (!Number.isNaN(parsed)) {
             return parsed;
         }
     }

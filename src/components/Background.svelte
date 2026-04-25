@@ -31,7 +31,7 @@
     $effect(() => {
         const lastDate = untrack(() => lastEffectiveDate ?? new Date());
         const newDate = effectiveDate ?? new Date();
-        if (isNaN(newDate.getTime()) || isNaN(lastDate.getTime())) {
+        if (Number.isNaN(newDate.getTime()) || Number.isNaN(lastDate.getTime())) {
             debugLog('Invalid date in spin()', newDate, lastDate);
             return;
         }

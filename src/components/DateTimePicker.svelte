@@ -59,6 +59,7 @@
             onEnterKey();
         }
     }
+    // biome-ignore lint/correctness/noUnusedVariables: used in template with use:focus
     function focus(node: HTMLInputElement) {
         node.focus();
         node.setSelectionRange(-1, -1);
@@ -315,7 +316,6 @@
         --datepicker-calendar-header-month-nav-cursor: pointer;
         --datepicker-calendar-header-month-nav-border-radius: 3px;
         --datepicker-calendar-header-month-nav-color: var(--datepicker-color);
-        --datepicker-calendar-header-month-nav-cursor: pointer;
         --datepicker-calendar-header-month-nav-font-size: var(--datepicker-font-size-large);
         --datepicker-calendar-header-month-nav-height: 32px;
         --datepicker-calendar-header-month-nav-margin-left: -8px;

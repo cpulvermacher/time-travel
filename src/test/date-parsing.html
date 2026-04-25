@@ -198,7 +198,7 @@
 
                     let actualOutput = '';
 
-                    if (isNaN(date.getTime())) {
+                    if (Number.isNaN(date.getTime())) {
                         resultCell.className = 'error';
                         const errorP = document.createElement('p');
                         errorP.textContent = 'Invalid Date';

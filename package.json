@@ -8,6 +8,7 @@
         "dev": "sh ./util/build.sh dev",
         "lint": "tsc && biome check src/ && svelte-check --tsconfig ./tsconfig.json && pnpm lint:translations",
         "lint:translations": "bash ./util/check-translations.sh",
+        "fix": "biome check --write src/",
         "prettier": "prettier src --write",
         "test": "vitest --run",
         "checkall": "pnpm test && pnpm lint && pnpm build",

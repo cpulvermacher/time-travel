@@ -25,6 +25,9 @@
         "enabled": true,
         "rules": {
             "recommended": true,
+            "complexity": {
+                "useDateNow": "off"
+            },
             "style": {
                 "useImportType": "off"
             },
@@ -52,6 +55,18 @@
         },
         "globals": []
     },
+    "overrides": [
+        {
+            "includes": ["src/test/**"],
+            "linter": {
+                "rules": {
+                    "style": {
+                        "noNonNullAssertion": "off"
+                    }
+                }
+            }
+        }
+    ],
     "assist": {
         "enabled": false,
         "actions": {
