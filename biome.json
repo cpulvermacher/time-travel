@@ -9,7 +9,7 @@
         "ignoreUnknown": false
     },
     "formatter": {
-        "enabled": true,
+        "enabled": false,
         "formatWithErrors": false,
         "indentStyle": "space",
         "indentWidth": 4,
@@ -53,7 +53,7 @@
         "globals": []
     },
     "assist": {
-        "enabled": true,
+        "enabled": false,
         "actions": {
             "source": {
                 "organizeImports": "on"
