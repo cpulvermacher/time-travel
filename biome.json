@@ -29,7 +29,9 @@
                 "useDateNow": "off"
             },
             "style": {
-                "useImportType": "off"
+                "useImportType": "off",
+                "useThrowOnlyError": "warn",
+                "useBlockStatements": "warn"
             },
             "suspicious": {
                 "noExplicitAny": "error",
