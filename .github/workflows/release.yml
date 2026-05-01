@@ -51,4 +51,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: >-
-        bash .github/workflows/release.sh ${{ github.ref_name }}
+        bash .github/workflows/release.sh ${GITHUB_REF_NAME}
