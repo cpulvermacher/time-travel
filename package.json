@@ -9,7 +9,6 @@
         "lint": "tsc && biome check src/ && svelte-check --tsconfig ./tsconfig.json && pnpm lint:translations",
         "lint:translations": "bash ./util/check-translations.sh",
         "fix": "biome check --write src/",
-        "prettier": "prettier src --write",
         "test": "vitest --run",
         "checkall": "pnpm test && pnpm lint && pnpm build",
         "machine-translate": "inlang machine translate --project project.inlang"
@@ -24,8 +23,6 @@
         "chrome-webstore-upload-cli": "^3.5.0",
         "globals": "^17.4.0",
         "happy-dom": "^20.8.9",
-        "prettier": "^3.8.1",
-        "prettier-plugin-svelte": "^3.5.1",
         "svelte-check": "^4.4.6",
         "typescript": "^5.9.3",
         "vite": "^8.0.0",

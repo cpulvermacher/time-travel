@@ -9,17 +9,9 @@
         "ignoreUnknown": false
     },
     "formatter": {
-        "enabled": false,
-        "formatWithErrors": false,
-        "indentStyle": "space",
-        "indentWidth": 4,
-        "lineEnding": "lf",
-        "lineWidth": 80,
-        "attributePosition": "auto",
-        "bracketSameLine": false,
-        "bracketSpacing": true,
-        "expand": "auto",
-        "useEditorconfig": true
+        "enabled": true,
+        "useEditorconfig": true,
+        "lineWidth": 120
     },
     "linter": {
         "enabled": true,
