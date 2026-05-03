@@ -8,7 +8,9 @@
 </script>
 
 <Modal onClose={() => window.close()}>
-    <p class="modal__text">{text}</p>
+    <p class="modal__text">
+        {text}
+    </p>
 </Modal>
 
 <style>

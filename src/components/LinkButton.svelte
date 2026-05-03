@@ -26,9 +26,7 @@
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <!-- svelte-ignore a11y_missing_attribute -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<a tabindex="0" class="linkbutton" {onclick} {onkeydown}>
-    {@render children?.()}
-</a>
+<a tabindex="0" class="linkbutton" {onclick} {onkeydown}> {@render children?.()} </a>
 
 <style>
     .linkbutton {

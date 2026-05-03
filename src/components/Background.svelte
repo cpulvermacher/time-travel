@@ -67,7 +67,7 @@
         left: -50%;
         width: 200%;
         height: 200%;
-        background-image: url('../../images/icon-128.png');
+        background-image: url("../../images/icon-128.png");
         background-size: cover;
         filter: saturate(1) brightness(1.25) blur(35px);
         transition: filter 3s;

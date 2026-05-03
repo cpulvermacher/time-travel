@@ -100,7 +100,9 @@
     <label>
         {m.datetime_input_label()}
         <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
-        {#if import.meta.env.DEV}<span class="mock-active">[mock]</span>{/if}
+        {#if import.meta.env.DEV}
+            <span class="mock-active">[mock]</span>
+        {/if}
         <div class="input-fields">
             <input
                 {onkeydown}
@@ -210,22 +212,22 @@
     /* for Japanese, add a suffix to the year*/
     :lang(ja) :global {
         .datepicker header span div:not(.years)::after {
-            content: '年';
+            content: "年";
         }
     }
 
-    :global(.datepicker[data-picker-theme='theme']) {
+    :global(.datepicker[data-picker-theme="theme"]) {
         /**
-   * Common Variables
-   */
+         * Common Variables
+         */
         --datepicker-border-color: #e8e9ea;
 
         /* --datepicker-border-radius-small: 0.125rem;
-        --datepicker-border-radius-base: 0.25rem;
-        --datepicker-border-radius-large: 0.5rem;
-        --datepicker-border-radius-xlarge: 0.75rem;
-        --datepicker-border-radius-xxlarge: 1rem;
-        --datepicker-border-radius-xxxlarge: 1.125rem; */
+            --datepicker-border-radius-base: 0.25rem;
+            --datepicker-border-radius-large: 0.5rem;
+            --datepicker-border-radius-xlarge: 0.75rem;
+            --datepicker-border-radius-xxlarge: 1rem;
+            --datepicker-border-radius-xxxlarge: 1.125rem; */
 
         --datepicker-state-active: var(--primary-color);
         --datepicker-state-hover: #e7f7fc;
@@ -236,21 +238,21 @@
 
         --datepicker-font-size-base: 1rem;
         /* --datepicker-font-size-jumbo: 1.75rem;
-        --datepicker-font-size-xxxlarge: 1.5rem;
-        --datepicker-font-size-xxlarge: 1.375rem;
-        --datepicker-font-size-xlarge: 1.25rem;
-        --datepicker-font-size-large: 1.125rem;
-        --datepicker-font-size-medium: 0.89rem;
-        --datepicker-font-size-small: 0.75rem;
-        --datepicker-font-size-xsmall: 0.625rem;
-        --datepicker-font-size-xxsmall: 0.5rem;
-        --datepicker-font-size-xxxsmall: 0.375rem;
-        --datepicker-font-weight-thin: 100;
-        --datepicker-font-weight-light: 300;
-        --datepicker-font-weight-base: 400;
-        --datepicker-font-weight-medium: 500;
-        --datepicker-font-weight-bold: 700;
-        --datepicker-font-weight-black: 900; */
+            --datepicker-font-size-xxxlarge: 1.5rem;
+            --datepicker-font-size-xxlarge: 1.375rem;
+            --datepicker-font-size-xlarge: 1.25rem;
+            --datepicker-font-size-large: 1.125rem;
+            --datepicker-font-size-medium: 0.89rem;
+            --datepicker-font-size-small: 0.75rem;
+            --datepicker-font-size-xsmall: 0.625rem;
+            --datepicker-font-size-xxsmall: 0.5rem;
+            --datepicker-font-size-xxxsmall: 0.375rem;
+            --datepicker-font-weight-thin: 100;
+            --datepicker-font-weight-light: 300;
+            --datepicker-font-weight-base: 400;
+            --datepicker-font-weight-medium: 500;
+            --datepicker-font-weight-bold: 700;
+            --datepicker-font-weight-black: 900; */
 
         --datepicker-spacing: 4px;
 
@@ -273,8 +275,8 @@
         --datepicker-padding-jumbo: calc(var(--datepicker-spacing) * 6);
 
         /**
-   * Container
-   */
+         * Container
+         */
         --datepicker-container-background: none;
         --datepicker-container-border: none;
         --datepicker-container-box-shadow: none;
@@ -286,8 +288,8 @@
         --datepicker-container-zindex: auto;
 
         /**
-   * Calendar
-   */
+         * Calendar
+         */
         --datepicker-calendar-border: 0;
         --datepicker-calendar-padding: 0;
         --datepicker-calendar-position: relative;
@@ -296,8 +298,8 @@
         --datepicker-calendar-split-border: 1px solid var(--datepicker-border-color);
 
         /**
-   * Calendar Header
-   */
+         * Calendar Header
+         */
         --datepicker-calendar-header-align-items: center;
         --datepicker-calendar-header-color: var(--datepicker-color);
         --datepicker-calendar-header-display: flex;
@@ -308,8 +310,8 @@
         --datepicker-calendar-header-user-select: none;
 
         /**
-   * Calendar Header Month Navigation
-   */
+         * Calendar Header Month Navigation
+         */
         --datepicker-calendar-header-month-nav-background: transparent;
         --datepicker-calendar-header-month-nav-background-hover: transparent;
         --datepicker-calendar-header-month-nav-border: 0;
@@ -336,8 +338,8 @@
         --datepicker-calendar-header-month-nav-icon-prev-width: 16px;
 
         /**
-   * Calendar Header Text
-   */
+         * Calendar Header Text
+         */
         --datepicker-calendar-header-text-align-items: center;
         --datepicker-calendar-header-text-color: var(--text-color);
         --datepicker-calendar-header-text-display: flex;
@@ -346,16 +348,16 @@
         --datepicker-calendar-header-text-gap: 8px;
 
         /**
-   * Calendar Header Year Navigation Container
-   */
+         * Calendar Header Year Navigation Container
+         */
         --datepicker-calendar-header-year-align-items: center;
         --datepicker-calendar-header-year-display: flex;
         --datepicker-calendar-header-year-flex-direction: column;
         --datepicker-calendar-header-year-margin: 0;
 
         /**
-   * Calendar Header Year Navigation Controls
-   */
+         * Calendar Header Year Navigation Controls
+         */
         --datepicker-calendar-header-year-nav-display: block;
         --datepicker-calendar-header-year-nav-color: var(--datepicker-color);
         --datepicker-calendar-header-year-nav-height: 12px;
@@ -378,8 +380,8 @@
         --datepicker-calendar-header-year-nav-icon-prev-width: 12px;
 
         /**
-   * Calendar DOW (Days of Week)
-   */
+         * Calendar DOW (Days of Week)
+         */
         --datepicker-calendar-dow-color: var(--secondary-text-color);
         --datepicker-calendar-dow-font-size: var(--datepicker-font-size-base);
         --datepicker-calendar-dow-font-weight: var(--datepicker-font-weight-medium);
@@ -387,16 +389,16 @@
         --datepicker-calendar-dow-text-align: center;
 
         /**
-   * Calendar Month
-   */
+         * Calendar Month
+         */
         --datepicker-calendar-container-display: grid;
         --datepicker-calendar-container-grid-template-columns: repeat(7, 1fr);
         --datepicker-calendar-container-grid-gap: 0;
         --datepicker-calendar-container-width: fit-content;
 
         /**
-   * Calendar Day Container
-   */
+         * Calendar Day Container
+         */
         --datepicker-calendar-day-container-appearance: none;
         --datepicker-calendar-day-container-background: inherit;
         --datepicker-calendar-day-container-border: 0;
@@ -406,8 +408,8 @@
         --datepicker-calendar-day-container-text-align: center;
 
         /**
-   * Calendar Day
-   */
+         * Calendar Day
+         */
         --datepicker-calendar-day-align-items: center;
         --datepicker-calendar-day-background-hover: transparent;
         --datepicker-calendar-day-border: none;
@@ -429,22 +431,22 @@
         --datepicker-calendar-day-zindex-focus: 12;
 
         /**
-   * Calendar Days Outside of Month
-   */
+         * Calendar Days Outside of Month
+         */
         --datepicker-calendar-day-other-border: 0;
         --datepicker-calendar-day-other-box-shadow: none;
         --datepicker-calendar-day-other-color: #d1d3d6;
 
         /**
-   * Calendar Today
-   */
+         * Calendar Today
+         */
         --datepicker-calendar-today-background: transparent;
         --datepicker-calendar-today-border: none;
         --datepicker-calendar-today-cursor: default;
         --datepicker-calendar-today-font-weight: var(--datepicker-font-weight-bold);
         /**
-   * Calendar Range
-   */
+         * Calendar Range
+         */
         --datepicker-calendar-range-background: var(--datepicker-state-hover);
         --datepicker-calendar-range-background-disabled: var(--datepicker-state-hover);
         --datepicker-calendar-range-border: 0;
@@ -455,8 +457,8 @@
         --datepicker-calendar-range-font-weight: var(--datepicker-font-weight-base);
 
         /**
-   * Calendar Range Start & End
-   */
+         * Calendar Range Start & End
+         */
         --datepicker-calendar-range-start-box-shadow: none;
         --datepicker-calendar-range-end-box-shadow: none;
         --datepicker-calendar-range-start-box-shadow-selected: none;
@@ -466,8 +468,8 @@
         --datepicker-calendar-range-start-end-color: #232a32;
 
         /**
-   * Calendar Range Selected
-   */
+         * Calendar Range Selected
+         */
         --datepicker-calendar-range-selected-background: var(--datepicker-state-active);
         --datepicker-calendar-range-selected-border-radius: 20px;
         --datepicker-calendar-range-selected-color: #fff;
@@ -475,8 +477,8 @@
         --datepicker-calendar-range-selected-start-border-radius: 20px;
 
         /**
-   * Calendar Range Hover
-   */
+         * Calendar Range Hover
+         */
         --datepicker-calendar-range-included-background: #eceff1;
         --datepicker-calendar-range-included-box-shadow: none;
         --datepicker-calendar-range-included-color: #232a32;
