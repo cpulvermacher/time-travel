@@ -15,8 +15,8 @@
     },
     "devDependencies": {
         "@biomejs/biome": "2.4.14",
-        "@inlang/cli": "^3.1.9",
-        "@inlang/paraglide-js": "^2.5.0",
+        "@inlang/cli": "^3.1.11",
+        "@inlang/paraglide-js": "^2.18.0",
         "@sveltejs/vite-plugin-svelte": "^7.0.0",
         "@tsconfig/svelte": "^5.0.8",
         "@types/chrome": "^0.1.37",
