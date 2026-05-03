@@ -1,6 +1,7 @@
 <script lang="ts">
     import { untrack } from 'svelte';
     import { m } from '../paraglide/messages';
+    import type { InitialState } from '../popup/initial-state';
     import { reloadTab, withTabLoadingRetry } from '../util/browser';
     import { disableFakeDate, setClockState, setFakeDate } from '../util/content-script-state';
     import { parseDate } from '../util/date-utils';
@@ -13,7 +14,6 @@
     import ReloadModal from './ReloadModal.svelte';
     import TimezoneSelect from './TimezoneSelect.svelte';
     import Toggle from './Toggle.svelte';
-    import type { InitialState } from '../popup/initial-state';
 
     interface Props {
         initialState: InitialState;

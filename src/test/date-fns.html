@@ -29,7 +29,7 @@
             <p>fromZonedTime('2025-03-09 01:00', 'America/New_York'): <span id="fromZonedTime"></span></p>
 
             <script type="module">
-                import { toZonedTime, fromZonedTime } from 'https://cdn.jsdelivr.net/npm/date-fns-tz@3.0.0/+esm';
+                import { fromZonedTime, toZonedTime } from 'https://cdn.jsdelivr.net/npm/date-fns-tz@3.0.0/+esm';
 
                 document.getElementById('toZonedTime').textContent = toZonedTime(new Date(), 'America/New_York');
                 document.getElementById('fromZonedTime').textContent = fromZonedTime(

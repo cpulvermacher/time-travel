@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import { m } from '../paraglide/messages';
     import { getUILanguage } from '../util/browser';
-    import { getTimezoneOptions, TZGROUP_COMMON, TZGROUP_RECENT, type Timezone } from '../util/timezone-info';
+    import { getTimezoneOptions, type Timezone, TZGROUP_COMMON, TZGROUP_RECENT } from '../util/timezone-info';
     import Toggle from './Toggle.svelte';
 
     interface Props {
