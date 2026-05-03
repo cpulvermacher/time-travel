@@ -1,13 +1,11 @@
 {
     "extends": "@tsconfig/svelte/tsconfig.json",
     "compilerOptions": {
-        "target": "ESNext",
+        "target": "ES2023",
         "useDefineForClassFields": true,
-        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        "lib": ["DOM", "DOM.Iterable", "ES2023"],
         "allowJs": true,
         "skipLibCheck": true,
-        "esModuleInterop": false,
-        "allowSyntheticDefaultImports": true,
         "incremental": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,
@@ -15,9 +13,7 @@
         "moduleResolution": "bundler",
         "resolveJsonModule": true,
         "isolatedModules": false,
-        "verbatimModuleSyntax": true,
         "noEmit": true,
-        "sourceMap": false,
         "types": ["chrome"]
     },
     "include": ["src/", "*.mts"]

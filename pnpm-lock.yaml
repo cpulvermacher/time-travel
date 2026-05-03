@@ -27,7 +27,7 @@ importers:
         version: 3.1.11
       '@inlang/paraglide-js':
         specifier: ^2.18.0
-        version: 2.18.0(typescript@5.9.3)
+        version: 2.18.0(typescript@6.0.3)
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.0.0
         version: 7.0.0(svelte@5.55.5)(vite@8.0.10(@types/node@20.19.1)(esbuild@0.27.2))
@@ -48,10 +48,10 @@ importers:
         version: 20.9.0
       svelte-check:
         specifier: ^4.4.6
-        version: 4.4.6(picomatch@4.0.3)(svelte@5.55.5)(typescript@5.9.3)
+        version: 4.4.6(picomatch@4.0.3)(svelte@5.55.5)(typescript@6.0.3)
       typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
       vite:
         specifier: ^8.0.10
         version: 8.0.10(@types/node@20.19.1)(esbuild@0.27.2)
@@ -1980,8 +1980,8 @@ packages:
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
-  typescript@5.9.3:
-    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+  typescript@6.0.3:
+    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -2466,7 +2466,7 @@ snapshots:
     transitivePeerDependencies:
       - babel-plugin-macros
 
-  '@inlang/paraglide-js@2.18.0(typescript@5.9.3)':
+  '@inlang/paraglide-js@2.18.0(typescript@6.0.3)':
     dependencies:
       '@inlang/recommend-sherlock': 0.2.1
       '@inlang/sdk': 2.9.3
@@ -2476,7 +2476,7 @@ snapshots:
       unplugin: 2.2.1
       urlpattern-polyfill: 10.0.0
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - babel-plugin-macros
 
@@ -3931,7 +3931,7 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
 
-  svelte-check@4.4.6(picomatch@4.0.3)(svelte@5.55.5)(typescript@5.9.3):
+  svelte-check@4.4.6(picomatch@4.0.3)(svelte@5.55.5)(typescript@6.0.3):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       chokidar: 4.0.3
@@ -3939,7 +3939,7 @@ snapshots:
       picocolors: 1.1.1
       sade: 1.8.1
       svelte: 5.55.5
-      typescript: 5.9.3
+      typescript: 6.0.3
     transitivePeerDependencies:
       - picomatch
 
@@ -3999,7 +3999,7 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typescript@5.9.3: {}
+  typescript@6.0.3: {}
 
   undici-types@6.21.0: {}
 
