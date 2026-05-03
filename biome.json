@@ -33,7 +33,12 @@
         "includes": ["**", "!out", "!dist", "!coverage"]
     },
     "html": {
-        "experimentalFullSupportEnabled": true
+        "experimentalFullSupportEnabled": true,
+        "formatter": {
+            "enabled": true,
+            "indentScriptAndStyle": true,
+            "selfCloseVoidElements": "always"
+        }
     },
     "javascript": {
         "formatter": {
