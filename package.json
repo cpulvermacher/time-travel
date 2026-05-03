@@ -19,7 +19,7 @@
         "@inlang/paraglide-js": "^2.18.0",
         "@sveltejs/vite-plugin-svelte": "^7.0.0",
         "@tsconfig/svelte": "^5.0.8",
-        "@types/chrome": "^0.1.37",
+        "@types/chrome": "^0.1.40",
         "chrome-webstore-upload-cli": "^3.5.0",
         "globals": "^17.4.0",
         "happy-dom": "^20.9.0",
