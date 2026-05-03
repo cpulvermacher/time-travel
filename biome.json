@@ -64,6 +64,12 @@
                     }
                 }
             }
+        },
+        {
+            "includes": ["src/test/frames.html"],
+            "formatter": {
+                "enabled": false
+            }
         }
     ],
     "assist": {

@@ -222,37 +222,12 @@
          */
         --datepicker-border-color: #e8e9ea;
 
-        /* --datepicker-border-radius-small: 0.125rem;
-            --datepicker-border-radius-base: 0.25rem;
-            --datepicker-border-radius-large: 0.5rem;
-            --datepicker-border-radius-xlarge: 0.75rem;
-            --datepicker-border-radius-xxlarge: 1rem;
-            --datepicker-border-radius-xxxlarge: 1.125rem; */
-
         --datepicker-state-active: var(--primary-color);
         --datepicker-state-hover: #e7f7fc;
 
         --datepicker-color: var(--primary-color);
-
         --datepicker-font-family: var(--font-family);
-
         --datepicker-font-size-base: 1rem;
-        /* --datepicker-font-size-jumbo: 1.75rem;
-            --datepicker-font-size-xxxlarge: 1.5rem;
-            --datepicker-font-size-xxlarge: 1.375rem;
-            --datepicker-font-size-xlarge: 1.25rem;
-            --datepicker-font-size-large: 1.125rem;
-            --datepicker-font-size-medium: 0.89rem;
-            --datepicker-font-size-small: 0.75rem;
-            --datepicker-font-size-xsmall: 0.625rem;
-            --datepicker-font-size-xxsmall: 0.5rem;
-            --datepicker-font-size-xxxsmall: 0.375rem;
-            --datepicker-font-weight-thin: 100;
-            --datepicker-font-weight-light: 300;
-            --datepicker-font-weight-base: 400;
-            --datepicker-font-weight-medium: 500;
-            --datepicker-font-weight-bold: 700;
-            --datepicker-font-weight-black: 900; */
 
         --datepicker-spacing: 4px;
 
