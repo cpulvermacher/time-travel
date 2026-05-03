@@ -24,10 +24,6 @@
                 "useImportType": "off",
                 "useThrowOnlyError": "warn",
                 "useBlockStatements": "warn"
-            },
-            "suspicious": {
-                "noExplicitAny": "error",
-                "noImplicitAnyLet": "off"
             }
         },
         "includes": ["**", "!out", "!dist", "!coverage"]

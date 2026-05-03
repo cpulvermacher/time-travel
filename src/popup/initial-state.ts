@@ -31,7 +31,7 @@ export async function getInitialState(): Promise<InitialState> {
     }
 
     try {
-        let initialFakeDate;
+        let initialFakeDate: string | undefined;
         const state = await getContentScriptState(tabId);
         if (state.fakeDateActive && state.fakeDate) {
             const fakeDate = parseDate(state.fakeDate);
