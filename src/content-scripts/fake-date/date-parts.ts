@@ -82,7 +82,7 @@ export function compareDateParts(
     if (a === undefined || b === undefined) {
         return a === b;
     }
-    if ('offsetName' in a && 'offsetName' in b && a['offsetName'] !== b['offsetName']) {
+    if ('offsetName' in a && 'offsetName' in b && a.offsetName !== b.offsetName) {
         return false;
     }
     return (

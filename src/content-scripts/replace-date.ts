@@ -29,10 +29,10 @@ const updateStateAndReplaceDate = () => {
     }
 };
 
-if (window['__timeTravelUpdateState'] !== undefined) {
+if (window.__timeTravelUpdateState !== undefined) {
     // this can happen if multiple versions of the extension are installed
     debugLog('Time Travel: content script was already injected, aborting.');
 } else {
     updateStateAndReplaceDate();
-    window['__timeTravelUpdateState'] = updateStateAndReplaceDate;
+    window.__timeTravelUpdateState = updateStateAndReplaceDate;
 }

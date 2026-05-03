@@ -9,14 +9,14 @@ const OriginalDate = Date;
 export function updateState() {
     const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY);
     if (fakeDate === null || Number.isNaN(Date.parse(fakeDate))) {
-        window['__timeTravelState'] = undefined;
+        window.__timeTravelState = undefined;
         return;
     }
 
     const timezone = getFromStorage(TIMEZONE_STORAGE_KEY) || null;
     const tickStartTimestamp = parseTimestamp(getFromStorage(TICK_START_STORAGE_KEY));
 
-    window['__timeTravelState'] = {
+    window.__timeTravelState = {
         fakeDate,
         timezone,
         tickStartTimestamp,
@@ -35,17 +35,17 @@ function getFromStorage(key: string): string | null {
 
 /** return fake date, or null if unset */
 export function getFakeDate(): string | null {
-    return window['__timeTravelState']?.fakeDate ?? null;
+    return window.__timeTravelState?.fakeDate ?? null;
 }
 
 /** return tick start time, or null if unset/invalid */
 export function getTickStartTimestamp(): number | null {
-    return window['__timeTravelState']?.tickStartTimestamp ?? null;
+    return window.__timeTravelState?.tickStartTimestamp ?? null;
 }
 
 /** return time zone setting, or null to use browser default */
 export function getTimezone(): string | null {
-    return window['__timeTravelState']?.timezone ?? null;
+    return window.__timeTravelState?.timezone ?? null;
 }
 
 /** return the current date/time we want the page to see.
