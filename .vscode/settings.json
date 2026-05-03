@@ -2,8 +2,11 @@
     "editor.detectIndentation": false,
     "editor.tabSize": 4,
     "typescript.format.semicolons": "insert",
-    "[typescript][json][css][html]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "[typescript]": {
+        "editor.defaultFormatter": "biomejs.biome"
+    },
+    "[svelte]": {
+        "editor.defaultFormatter": "biomejs.biome"
     },
     "[yaml]": {
         "editor.formatOnSave": false
