@@ -14,7 +14,7 @@
         "machine-translate": "inlang machine translate --project project.inlang"
     },
     "devDependencies": {
-        "@biomejs/biome": "2.4.12",
+        "@biomejs/biome": "2.4.14",
         "@inlang/cli": "^3.1.9",
         "@inlang/paraglide-js": "^2.5.0",
         "@sveltejs/vite-plugin-svelte": "^7.0.0",
