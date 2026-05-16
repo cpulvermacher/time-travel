@@ -19,6 +19,7 @@ export default defineConfig(() => ({
     root: 'src',
     test: {
         environment: 'happy-dom',
+        setupFiles: ['test/setup.ts'],
     },
     server: { open: 'test/popup.html' },
     build: {
