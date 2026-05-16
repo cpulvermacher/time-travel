@@ -1,7 +1,7 @@
 # ![](/images/icon-32.png) Time Travel
 
 [![Latest Release](https://flat.badgen.net/github/release/cpulvermacher/time-travel)](https://github.com/cpulvermacher/time-travel/releases)
-[![Chrome Web Store](https://flat.badgen.net/chrome-web-store/v/jfdbpgcmmenmelcghpbbkldkcfiejcjg)](https://chrome.google.com/webstore/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg)
+[![Chrome Web Store](https://flat.badgen.net/chrome-web-store/v/jfdbpgcmmenmelcghpbbkldkcfiejcjg)](https://chromewebstore.google.com/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg)
 [![Mozilla Add-on Version](https://img.shields.io/amo/v/timetravel?style=flat-square)](https://addons.mozilla.org/en-US/firefox/addon/timetravel/)
 [![Installs](https://flat.badgen.net/chrome-web-store/users/jfdbpgcmmenmelcghpbbkldkcfiejcjg)](https://chrome.google.com/webstore/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg)
 [![Status](https://flat.badgen.net/github/checks/cpulvermacher/time-travel)](https://github.com/cpulvermacher/time-travel/actions/workflows/node.js.yml)
@@ -54,7 +54,7 @@ To change the time zone, open "Options", enable "Change Time Zone" and select a 
 
 This extension is compatible with Chromium-based browsers (version 109+) and Firefox (version 128+).
 
-For Chrome, Opera, Edge, and other Chromium-based browsers, install the extension from the Chrome Web Store: https://chrome.google.com/webstore/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg
+For Chrome, Opera, Edge, and other Chromium-based browsers, install the extension from the Chrome Web Store: https://chromewebstore.google.com/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg
 
 For Firefox (Desktop or Android), install it from: https://addons.mozilla.org/en-US/firefox/addon/timetravel/
 
@@ -72,7 +72,7 @@ To build and use a local version:
 
 ### Firefox
 
-Start a new Firefox instance with the extension loaded using `(cd dist/firefox; npx web-ext run)`, or install manually via:
+Start a new Firefox instance with the extension loaded using `(cd dist/firefox; pnpm exec web-ext run)`, or install manually via:
 
 - Open about:debugging
 - Navigate to 'This Firefox'
