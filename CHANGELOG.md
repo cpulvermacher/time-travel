@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.4.7]
+
+- Dependency updates and internal improvements.
+
 ## [2.4.6]
 
 - Update dependencies.
