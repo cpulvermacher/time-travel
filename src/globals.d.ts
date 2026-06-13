@@ -6,7 +6,7 @@ declare global {
         __timeTravelUpdateState?: () => void;
         /** state used by content script, updated by __timeTravelUpdateState() */
         __timeTravelState?: {
-            fakeDate: string | null;
+            fakeDate: string;
             timezone: string | null;
             tickStartTimestamp?: number | null;
         };

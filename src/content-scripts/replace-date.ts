@@ -4,7 +4,7 @@
 import { debugLog } from '../util/log';
 import { FakeDate } from './fake-date/FakeDate';
 import { FakeIntlDateTimeFormat } from './fake-date/FakeIntlDateTimeFormat';
-import { getFakeDate, getTimezone, UPDATE_STATE_EVENT, updateState } from './fake-date/storage';
+import { getFakeDate, getTimezone, persistState, UPDATE_STATE_EVENT, updateState } from './fake-date/storage';
 
 const devVersion = import.meta.env.VITE_VERSION ? `Version: ${import.meta.env.VITE_VERSION}` : '';
 debugLog(`Time Travel: injected content-script (${devVersion}) for host ${window.location.host}`);
@@ -38,4 +38,7 @@ if (window.__timeTravelUpdateState !== undefined) {
     // state updates are signaled from the ISOLATED world (see util/inject.ts); registering
     // at document_start means this listener always runs before any the page might add
     document.addEventListener(UPDATE_STATE_EVENT, updateStateAndReplaceDate);
+    // re-persist state into sessionStorage before unload, so it survives a reload even if
+    // the page cleared or blocked sessionStorage (issues #45/#54)
+    window.addEventListener('pagehide', persistState);
 }

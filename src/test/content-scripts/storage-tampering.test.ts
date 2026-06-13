@@ -50,8 +50,10 @@ function restoreSessionStorage() {
     Object.defineProperty(window, 'sessionStorage', { configurable: true, get: () => nativeSessionStorage });
 }
 
-/** simulate a page reload: in-memory state is lost, state is re-read from storage at document_start */
+/** simulate a page reload: the pagehide handler persists state, then a fresh load loses the
+ * in-memory state and re-reads it from storage at document_start */
 function simulateReload() {
+    window.dispatchEvent(new Event('pagehide'));
     window.__timeTravelState = undefined;
     updateState();
 }
@@ -80,7 +82,7 @@ describe('page clears sessionStorage (issue #45)', () => {
         expect(getTickStartTimestamp()).toBe(1234);
     });
 
-    it.fails('fake date survives a reload after the page cleared sessionStorage', () => {
+    it('fake date survives a reload after the page cleared sessionStorage', () => {
         const dateStr = '2023-01-01T00:00:00.000Z';
         setFakeDate(dateStr);
 
@@ -88,6 +90,41 @@ describe('page clears sessionStorage (issue #45)', () => {
         simulateReload();
 
         expect(getFakeDate()).toBe(dateStr);
+    });
+
+    it('clock tick state survives a reload after the page cleared sessionStorage', () => {
+        setFakeDate('2023-01-01T00:00:00.000Z', 'Europe/London');
+        setTickStartTimestamp('1234');
+
+        window.sessionStorage.clear();
+        simulateReload();
+
+        expect(getFakeDate()).toBe('2023-01-01T00:00:00.000Z');
+        expect(getTickStartTimestamp()).toBe(1234);
+    });
+
+    it('fake date survives repeated reloads when the page clears sessionStorage on every load', () => {
+        const dateStr = '2023-01-01T00:00:00.000Z';
+        setFakeDate(dateStr);
+
+        for (let i = 0; i < 3; i++) {
+            // page wipes our keys during the load; the in-memory copy keeps it active
+            window.sessionStorage.clear();
+            expect(getFakeDate()).toBe(dateStr);
+
+            simulateReload();
+        }
+
+        expect(getFakeDate()).toBe(dateStr);
+    });
+
+    it('a disabled fake date is not resurrected on reload', () => {
+        setFakeDate('2023-01-01T00:00:00.000Z');
+        setFakeDate(''); // user disables it
+
+        simulateReload();
+
+        expect(getFakeDate()).toBeNull();
     });
 });
 
@@ -146,5 +183,16 @@ describe('page blocks sessionStorage access (issue #54)', () => {
         document.dispatchEvent(new CustomEvent(UPDATE_STATE_EVENT));
 
         expect(getFakeDate()).toBeNull();
+    });
+
+    it('fake date survives a reload while sessionStorage stays blocked', () => {
+        const dateStr = '2023-01-01T00:00:00.000Z';
+        setFakeDate(dateStr);
+        blockSessionStorage();
+
+        // pagehide persists via the original methods, document_start re-reads the same way
+        simulateReload();
+
+        expect(getFakeDate()).toBe(dateStr);
     });
 });
