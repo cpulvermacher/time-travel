@@ -4,7 +4,23 @@ const FAKE_DATE_STORAGE_KEY = 'timeTravelDate';
 const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp';
 const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone';
 
+/** dispatched on `document` to request a state update (must match the literals in util/inject.ts) */
+export const UPDATE_STATE_EVENT = 'timeTravelStateUpdate';
+
 const OriginalDate = Date;
+
+// this module is loaded at document_start, before any page script can tamper with
+// sessionStorage (e.g. linkedin.com replaces it with a wrapper that throws, see issue #54).
+// Keep private references to the original storage object and its getItem method for all later reads.
+const originalSessionStorage = (() => {
+    try {
+        const storage = window.sessionStorage;
+        return { getItem: storage.getItem.bind(storage) as Storage['getItem'] };
+    } catch {
+        //in sandbox, we might not be able to access sessionStorage
+        return null;
+    }
+})();
 
 export function updateState() {
     const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY);
@@ -25,10 +41,12 @@ export function updateState() {
 
 /** return key from storage, or null if unset */
 function getFromStorage(key: string): string | null {
+    if (originalSessionStorage === null) {
+        return null;
+    }
     try {
-        return window.sessionStorage.getItem(key);
+        return originalSessionStorage.getItem(key);
     } catch {
-        //in sandbox, we might not be able to access sessionStorage
         return null;
     }
 }

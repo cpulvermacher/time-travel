@@ -35,17 +35,22 @@ export async function isAboutUrl(tabId: number): Promise<boolean> {
     return !!tabDetails.url?.startsWith('about:');
 }
 
-/** inject function into MAIN world */
+/** inject function into the given world.
+ *
+ * Note: prefer ISOLATED for anything touching sessionStorage; its storage APIs cannot
+ * be tampered with by the page, while the data is shared with the page (see issue #54).
+ */
 export async function injectFunction<Args extends [string] | [string, string], Result>(
     tabId: number,
     func: (...args: Args) => Result,
-    args: Args
+    args: Args,
+    world: `${chrome.scripting.ExecutionWorld}` = 'MAIN'
 ): Promise<chrome.scripting.Awaited<Result> | null> {
     const result = await chrome.scripting.executeScript({
         target: { tabId },
         func,
         args,
-        world: 'MAIN',
+        world,
         injectImmediately: true,
     });
 
