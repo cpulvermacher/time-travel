@@ -15,6 +15,9 @@ export function getTranslationLocale(language: string): Locale {
 
 /** get the first day of the week (1=Monday, 7: Sunday) */
 export function getFirstDayOfWeek(lang: string): number {
+    /* v8 ignore start -- environment-dependent: `getWeekInfo` exists on newer runtimes
+       (Chrome 130+, Node 24+) but not on older ones, so exactly one of the two paths below
+       is reachable per environment. Excluded so coverage stays stable across Node versions. */
     // Chrome supports `getWeekInfo()` since version 130
     const locale = new Intl.Locale(lang);
     if ('getWeekInfo' in locale) {
@@ -50,4 +53,5 @@ export function getFirstDayOfWeek(lang: string): number {
     }
 
     return 7;
+    /* v8 ignore stop */
 }
