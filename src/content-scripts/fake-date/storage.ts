@@ -4,8 +4,10 @@ const FAKE_DATE_STORAGE_KEY = 'timeTravelDate';
 const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp';
 const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone';
 
-/** dispatched on `document` to request a state update (must match the literals in util/inject.ts) */
+/** dispatched on `document` to request a full state update (must match the literals in util/inject.ts) */
 export const UPDATE_STATE_EVENT = 'timeTravelStateUpdate';
+/** dispatched on `document` to update only the clock tick state (must match the literals in util/inject.ts) */
+export const UPDATE_TICK_EVENT = 'timeTravelTickUpdate';
 
 const OriginalDate = Date;
 
@@ -42,6 +44,20 @@ export function updateState() {
         timezone,
         tickStartTimestamp,
     };
+}
+
+/** update only the clock tick state, keeping the rest of the in-memory state.
+ *
+ * Toggling the clock writes only the tick key. Rebuilding the whole state from sessionStorage
+ * (via updateState) would drop the fake date if the page had since cleared it (issue #45), so
+ * we merge the tick value into the existing state instead. No-op if no fake date is active.
+ */
+export function updateTickState() {
+    const state = window.__timeTravelState;
+    if (state === undefined) {
+        return;
+    }
+    state.tickStartTimestamp = parseTimestamp(getFromStorage(TICK_START_STORAGE_KEY));
 }
 
 /** return key from storage, or null if unset */

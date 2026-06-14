@@ -121,6 +121,22 @@ describe('page clears sessionStorage (issue #45)', () => {
         expect(getFakeDate()).toBe(dateStr);
     });
 
+    it('toggling the clock keeps the fake date active after the page cleared sessionStorage', () => {
+        const dateStr = '2023-01-01T00:00:00.000Z';
+        setFakeDate(dateStr);
+
+        window.sessionStorage.clear(); // page wipes our keys, including the date
+
+        // stop/resume the clock only writes the tick key; the fake date must stay active
+        setTickStartTimestamp('5000');
+        expect(getFakeDate()).toBe(dateStr);
+        expect(getTickStartTimestamp()).toBe(5000);
+
+        setTickStartTimestamp('');
+        expect(getFakeDate()).toBe(dateStr);
+        expect(getTickStartTimestamp()).toBeNull();
+    });
+
     it('a disabled fake date is not resurrected on reload', () => {
         setFakeDate('2023-01-01T00:00:00.000Z');
         setFakeDate(''); // user disables it

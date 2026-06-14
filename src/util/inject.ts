@@ -8,8 +8,10 @@
 //
 // Writers (setFakeDate/setTickStartTimestamp) run in the ISOLATED world, where sessionStorage
 // cannot be tampered with by the page (see issue #54). After a write they signal the MAIN world
-// content script via a CustomEvent on `document` (event name must match UPDATE_STATE_EVENT in
-// content-scripts/fake-date/storage.ts), which refreshes `window.__timeTravelState`.
+// content script via a CustomEvent on `document` (event names must match the constants in
+// content-scripts/fake-date/storage.ts). setFakeDate triggers a full refresh of
+// `window.__timeTravelState`; setTickStartTimestamp triggers a tick-only merge, so toggling the
+// clock does not drop the fake date if the page had cleared sessionStorage (issue #45).
 
 export function getFakeDate() {
     return window.__timeTravelState?.fakeDate ?? null;
@@ -58,7 +60,7 @@ export function getTickStartTimestamp(): string | null {
  */
 export function setTickStartTimestamp(nowTimestampStr: string): boolean {
     const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp';
-    const UPDATE_STATE_EVENT = 'timeTravelStateUpdate';
+    const UPDATE_TICK_EVENT = 'timeTravelTickUpdate';
 
     if (!nowTimestampStr) {
         window.sessionStorage.removeItem(TICK_START_STORAGE_KEY);
@@ -66,7 +68,7 @@ export function setTickStartTimestamp(nowTimestampStr: string): boolean {
         window.sessionStorage.setItem(TICK_START_STORAGE_KEY, nowTimestampStr);
     }
 
-    document.dispatchEvent(new CustomEvent(UPDATE_STATE_EVENT));
+    document.dispatchEvent(new CustomEvent(UPDATE_TICK_EVENT));
     return true;
 }
 

@@ -4,7 +4,15 @@
 import { debugLog } from '../util/log';
 import { FakeDate } from './fake-date/FakeDate';
 import { FakeIntlDateTimeFormat } from './fake-date/FakeIntlDateTimeFormat';
-import { getFakeDate, getTimezone, persistState, UPDATE_STATE_EVENT, updateState } from './fake-date/storage';
+import {
+    getFakeDate,
+    getTimezone,
+    persistState,
+    UPDATE_STATE_EVENT,
+    UPDATE_TICK_EVENT,
+    updateState,
+    updateTickState,
+} from './fake-date/storage';
 
 const devVersion = import.meta.env.VITE_VERSION ? `Version: ${import.meta.env.VITE_VERSION}` : '';
 debugLog(`Time Travel: injected content-script (${devVersion}) for host ${window.location.host}`);
@@ -38,6 +46,9 @@ if (window.__timeTravelActive) {
     // state updates are signaled from the ISOLATED world (see util/inject.ts); registering
     // at document_start means this listener always runs before any the page might add
     document.addEventListener(UPDATE_STATE_EVENT, updateStateAndReplaceDate);
+    // a tick-only update keeps the fake date but refreshes the clock state; Date is already
+    // replaced (if active), so no need to re-run updateStateAndReplaceDate
+    document.addEventListener(UPDATE_TICK_EVENT, updateTickState);
     // re-persist state into sessionStorage before unload, so it survives a reload even if
     // the page cleared or blocked sessionStorage (issues #45/#54)
     window.addEventListener('pagehide', persistState);
