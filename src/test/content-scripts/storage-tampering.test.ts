@@ -5,7 +5,13 @@ import {
     UPDATE_STATE_EVENT,
     updateState,
 } from '../../content-scripts/fake-date/storage';
-import { setFakeDate, setTickStartTimestamp } from '../../util/inject';
+import {
+    getFakeDate as popupGetFakeDate,
+    getTickStartTimestamp as popupGetTickStartTimestamp,
+    getTimezone as popupGetTimezone,
+    setFakeDate,
+    setTickStartTimestamp,
+} from '../../util/inject';
 
 // importing this is the equivalent of the content script running at document_start,
 // i.e. before any of the tampering done in the tests below
@@ -194,5 +200,46 @@ describe('page blocks sessionStorage access (issue #54)', () => {
         simulateReload();
 
         expect(getFakeDate()).toBe(dateStr);
+    });
+});
+
+// the popup and toolbar icon read state via util/inject.ts (injected into the MAIN world).
+// These must report the active state from the in-memory copy, not from raw sessionStorage,
+// otherwise the icon drops its ON badge and the popup shows the fake date as disabled once
+// the page has cleared/blocked sessionStorage.
+describe('popup/icon readers report active state after tampering', () => {
+    afterEach(() => {
+        restoreSessionStorage();
+        setFakeDate('');
+        setTickStartTimestamp('');
+    });
+
+    it('report the fake date, timezone and tick state as active after sessionStorage.clear()', () => {
+        const dateStr = '2023-01-01T00:00:00.000Z';
+        setFakeDate(dateStr, 'Europe/London');
+        setTickStartTimestamp('1234');
+
+        window.sessionStorage.clear();
+
+        expect(popupGetFakeDate()).toBe(dateStr);
+        expect(popupGetTimezone()).toBe('Europe/London');
+        expect(popupGetTickStartTimestamp()).toBe('1234');
+    });
+
+    it('report the fake date as active while sessionStorage is blocked', () => {
+        const dateStr = '2023-01-01T00:00:00.000Z';
+        setFakeDate(dateStr);
+        blockSessionStorage();
+
+        expect(popupGetFakeDate()).toBe(dateStr);
+    });
+
+    it('report disabled once the fake date is turned off', () => {
+        setFakeDate('2023-01-01T00:00:00.000Z');
+        setFakeDate('');
+
+        expect(popupGetFakeDate()).toBeNull();
+        expect(popupGetTimezone()).toBeNull();
+        expect(popupGetTickStartTimestamp()).toBeNull();
     });
 });

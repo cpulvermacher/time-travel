@@ -70,11 +70,13 @@ export async function isContentScriptActive(tabId: number) {
 }
 
 export async function getContentScriptState(tabId: number): Promise<ContentScriptState> {
+    // these read the content script's in-memory state in the MAIN world (see util/inject.ts),
+    // which survives the page clearing or blocking sessionStorage (issues #45/#54)
     const [contentScriptActive, fakeDate, tickStartTimestamp, timezone] = await Promise.all([
         isContentScriptActive(tabId),
-        injectFunction(tabId, inject.getFakeDate, [''], 'ISOLATED'),
-        injectFunction(tabId, inject.getTickStartTimestamp, [''], 'ISOLATED'),
-        injectFunction(tabId, inject.getTimezone, [''], 'ISOLATED'),
+        injectFunction(tabId, inject.getFakeDate, ['']),
+        injectFunction(tabId, inject.getTickStartTimestamp, ['']),
+        injectFunction(tabId, inject.getTimezone, ['']),
     ]);
 
     return {

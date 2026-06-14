@@ -1,20 +1,22 @@
 // all functions here are meant to be injected into the target page.
 // They must be self-contained (no imports/closures), since they are serialized for injection.
 //
-// Except for isContentScriptActive(), they are injected into the ISOLATED world, where
-// sessionStorage cannot be tampered with by the page (see issue #54). State updates are
-// signaled to the MAIN world content script via a CustomEvent on `document`
-// (event name must match UPDATE_STATE_EVENT in content-scripts/fake-date/storage.ts).
+// Readers (getFakeDate/getTimezone/getTickStartTimestamp/isContentScriptActive) run in the
+// MAIN world and read the content script's in-memory state (`window.__timeTravelState`), so the
+// popup and toolbar icon reflect the active state even after the page clears or blocks
+// sessionStorage (issues #45/#54).
+//
+// Writers (setFakeDate/setTickStartTimestamp) run in the ISOLATED world, where sessionStorage
+// cannot be tampered with by the page (see issue #54). After a write they signal the MAIN world
+// content script via a CustomEvent on `document` (event name must match UPDATE_STATE_EVENT in
+// content-scripts/fake-date/storage.ts), which refreshes `window.__timeTravelState`.
 
 export function getFakeDate() {
-    //needs to be defined locally!
-    const FAKE_DATE_STORAGE_KEY = 'timeTravelDate';
-    return window.sessionStorage.getItem(FAKE_DATE_STORAGE_KEY);
+    return window.__timeTravelState?.fakeDate ?? null;
 }
 
 export function getTimezone() {
-    const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone';
-    return window.sessionStorage.getItem(TIMEZONE_STORAGE_KEY);
+    return window.__timeTravelState?.timezone ?? null;
 }
 
 /** sets fake date and timezone and triggers a state update. empty date will disable the fake date
@@ -46,8 +48,8 @@ export function setFakeDate(date: string, timezone?: string): boolean {
 }
 
 export function getTickStartTimestamp(): string | null {
-    const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp';
-    return window.sessionStorage.getItem(TICK_START_STORAGE_KEY);
+    const tickStartTimestamp = window.__timeTravelState?.tickStartTimestamp;
+    return tickStartTimestamp != null ? String(tickStartTimestamp) : null;
 }
 
 /** enables clock ticking if nowTimestampStr is non-empty
