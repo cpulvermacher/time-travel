@@ -24,11 +24,10 @@ export default defineConfig(() => ({
             exclude: ['paraglide/**'],
             reporter: ['text'],
             thresholds: {
-                autoUpdate: true,
-                statements: 74.96,
-                branches: 74.93,
-                functions: 70,
-                lines: 75.18,
+                // NOTE: keep autoUpdate disabled. Coverage varies slightly between Node versions
+                autoUpdate: false,
+                statements: 86,
+                branches: 81,
             },
         },
     },
