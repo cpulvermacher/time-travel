@@ -22,9 +22,6 @@ import '../../content-scripts/replace-date';
 // - https://github.com/cpulvermacher/time-travel/issues/54 (linkedin.com replaces sessionStorage
 //   with a wrapper that throws for keys not on an allowlist)
 //
-// Tests marked with `it.fails` describe the desired behavior and should be
-// flipped to `it` once fixed.
-//
 // Note: happy-dom is a single JavaScript world, so the fact that the functions in
 // util/inject.ts run in the ISOLATED world (where the page cannot tamper with
 // sessionStorage) cannot be simulated here. Tests below simulate the isolated-world

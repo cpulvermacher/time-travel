@@ -35,8 +35,8 @@
 
             if (mode === 'clear') {
                 // mimics apps that wipe sessionStorage on load (issue #45).
-                // With the extension enabled, the fake date survives the first reload
-                // (keys are read at document_start, before this runs) but not the second.
+                // With the extension enabled, the fake date survives repeated reloads: the keys
+                // are read at document_start (before this runs) and written back on pagehide.
                 window.sessionStorage.clear();
             } else if (mode === 'block') {
                 // issue #54: replace the sessionStorage object itself

@@ -6,7 +6,7 @@
 - content-scripts/replace-date.ts - Content script to replace `Date` and `Intl.DateTimeFormat` implementations. Runs in 'MAIN' (non-isolated) mode to be able to interfere with scripts in page context.
 - content-scripts/send-active.ts - Content script that sends an event when the extension is active in the current tab. (used for keeping icon state in sync.) Runs in isolated mode to allow calling extension APIs.
 - worker.ts - Background script / service worker to update UI state when changing tabs, navigating between sites, or when receiving events from send-active.ts.
-- util/inject.ts - Functions injected by the popup (via `chrome.scripting`) to read and write the extension state. These run in 'ISOLATED' mode (see State Storage below).
+- util/inject.ts - Functions injected by the popup (via `chrome.scripting`) to read and write the extension state. Writers run in 'ISOLATED' mode, readers in 'MAIN' mode (see State Storage below).
 
 ![Component diagram](./components.svg)
 
