@@ -20,6 +20,17 @@ export default defineConfig(() => ({
     test: {
         environment: 'happy-dom',
         setupFiles: ['test/setup.ts'],
+        coverage: {
+            exclude: ['paraglide/**'],
+            reporter: ['text'],
+            thresholds: {
+                autoUpdate: true,
+                statements: 74.96,
+                branches: 74.93,
+                functions: 70,
+                lines: 75.18,
+            },
+        },
     },
     server: { open: 'test/popup.html' },
     build: {

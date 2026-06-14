@@ -10,6 +10,7 @@
         "lint:translations": "bash ./util/check-translations.sh",
         "fix": "biome check --write src/",
         "test": "vitest --run",
+        "coverage": "vitest --run --coverage",
         "checkall": "pnpm test && pnpm lint && pnpm build",
         "machine-translate": "inlang machine translate --project project.inlang"
     },
@@ -20,6 +21,7 @@
         "@sveltejs/vite-plugin-svelte": "^7.1.2",
         "@tsconfig/svelte": "^5.0.8",
         "@types/chrome": "^0.1.42",
+        "@vitest/coverage-v8": "^4.1.8",
         "chrome-webstore-upload-cli": "^3.5.0",
         "globals": "^17.6.0",
         "happy-dom": "^20.9.0",
