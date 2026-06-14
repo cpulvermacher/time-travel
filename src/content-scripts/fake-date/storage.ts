@@ -4,17 +4,16 @@ const FAKE_DATE_STORAGE_KEY = 'timeTravelDate';
 const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp';
 const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone';
 
-/** dispatched on `document` to request a full state update (must match the literals in util/inject.ts) */
+// event names must match the literals in util/inject.ts
+/** dispatched on `document` to request a full state update */
 export const UPDATE_STATE_EVENT = 'timeTravelStateUpdate';
-/** dispatched on `document` to update only the clock tick state (must match the literals in util/inject.ts) */
+/** dispatched on `document` to update only the clock tick state */
 export const UPDATE_TICK_EVENT = 'timeTravelTickUpdate';
 
 const OriginalDate = Date;
 
-// this module is loaded at document_start, before any page script can tamper with
-// sessionStorage (e.g. linkedin.com replaces it with a wrapper that throws, see issue #54).
-// Keep private references to the original storage methods, bound to the original object,
-// for all later reads and writes.
+// References to the original storage methods, captured at document_start before any page script
+// can replace or block sessionStorage (issue #54). Used for all later reads and writes.
 const originalSessionStorage = (() => {
     try {
         const storage = window.sessionStorage;
@@ -48,9 +47,8 @@ export function updateState() {
 
 /** update only the clock tick state, keeping the rest of the in-memory state.
  *
- * Toggling the clock writes only the tick key. Rebuilding the whole state from sessionStorage
- * (via updateState) would drop the fake date if the page had since cleared it (issue #45), so
- * we merge the tick value into the existing state instead. No-op if no fake date is active.
+ * A full rebuild (updateState) would drop the fake date if the page had cleared sessionStorage
+ * (issue #45), so toggling the clock merges just the tick value. No-op if no fake date is active.
  */
 export function updateTickState() {
     const state = window.__timeTravelState;
@@ -72,16 +70,11 @@ function getFromStorage(key: string): string | null {
     }
 }
 
-/** write the current in-memory state back into sessionStorage.
+/** write the in-memory state back into sessionStorage (called on `pagehide`).
  *
- * Pages that clear sessionStorage (issue #45) wipe our keys, but the in-memory
- * state in `window.__timeTravelState` survives for the lifetime of the page.
- * Persisting on `pagehide` puts the keys back so the next load can read them at
- * document_start, even if the page clears storage on every load. Uses the original
- * bound methods, so a page replacing/blocking sessionStorage (issue #54) cannot stop it.
- *
- * Best-effort: writes can still fail (quota exceeded, sandboxed document), in which
- * case the state is lost on the next load, as it was before this measure existed.
+ * Restores keys a page may have cleared (issue #45) so the next load reads them at
+ * document_start. Uses the original bound methods, so a page blocking sessionStorage (issue #54)
+ * cannot stop it. Best-effort: writes can still fail (quota, sandbox), losing state on next load.
  */
 export function persistState() {
     const state = window.__timeTravelState;

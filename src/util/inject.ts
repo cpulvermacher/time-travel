@@ -1,17 +1,12 @@
-// all functions here are meant to be injected into the target page.
-// They must be self-contained (no imports/closures), since they are serialized for injection.
+// Functions injected into the target page. Must be self-contained (no imports/closures), since
+// they are serialized for injection. See content-scripts/fake-date/storage.ts for the event names.
 //
-// Readers (getFakeDate/getTimezone/getTickStartTimestamp/isContentScriptActive) run in the
-// MAIN world and read the content script's in-memory state (`window.__timeTravelState`), so the
-// popup and toolbar icon reflect the active state even after the page clears or blocks
-// sessionStorage (issues #45/#54).
+// Readers run in the MAIN world and read the in-memory state (`window.__timeTravelState`), so the
+// popup and icon stay correct even after the page clears or blocks sessionStorage (issues #45/#54).
 //
-// Writers (setFakeDate/setTickStartTimestamp) run in the ISOLATED world, where sessionStorage
-// cannot be tampered with by the page (see issue #54). After a write they signal the MAIN world
-// content script via a CustomEvent on `document` (event names must match the constants in
-// content-scripts/fake-date/storage.ts). setFakeDate triggers a full refresh of
-// `window.__timeTravelState`; setTickStartTimestamp triggers a tick-only merge, so toggling the
-// clock does not drop the fake date if the page had cleared sessionStorage (issue #45).
+// Writers run in the ISOLATED world, where the page cannot tamper with sessionStorage (issue #54),
+// then signal the MAIN world via a `document` CustomEvent: setFakeDate triggers a full refresh,
+// setTickStartTimestamp a tick-only merge (so toggling the clock keeps a cleared fake date).
 
 export function getFakeDate() {
     return window.__timeTravelState?.fakeDate ?? null;

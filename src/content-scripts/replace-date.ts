@@ -43,13 +43,12 @@ if (window.__timeTravelActive) {
 } else {
     updateStateAndReplaceDate();
     window.__timeTravelActive = true;
-    // state updates are signaled from the ISOLATED world (see util/inject.ts); registering
-    // at document_start means this listener always runs before any the page might add
+    // state updates are signaled from the ISOLATED world (see util/inject.ts); registering at
+    // document_start means these run before any listener the page might add. A tick-only update
+    // skips re-running updateStateAndReplaceDate since Date is already replaced (if active).
     document.addEventListener(UPDATE_STATE_EVENT, updateStateAndReplaceDate);
-    // a tick-only update keeps the fake date but refreshes the clock state; Date is already
-    // replaced (if active), so no need to re-run updateStateAndReplaceDate
     document.addEventListener(UPDATE_TICK_EVENT, updateTickState);
-    // re-persist state into sessionStorage before unload, so it survives a reload even if
-    // the page cleared or blocked sessionStorage (issues #45/#54)
+    // re-persist state before unload so it survives a reload even if the page
+    // cleared or blocked sessionStorage (issues #45/#54)
     window.addEventListener('pagehide', persistState);
 }

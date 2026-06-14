@@ -37,8 +37,8 @@ export async function isAboutUrl(tabId: number): Promise<boolean> {
 
 /** inject function into the given world.
  *
- * Note: prefer ISOLATED for anything touching sessionStorage; its storage APIs cannot
- * be tampered with by the page, while the data is shared with the page (see issue #54).
+ * Prefer ISOLATED for writing sessionStorage; the page cannot tamper with its storage
+ * APIs, while the data is still shared with the page (see issue #54).
  */
 export async function injectFunction<Args extends [string] | [string, string], Result>(
     tabId: number,
