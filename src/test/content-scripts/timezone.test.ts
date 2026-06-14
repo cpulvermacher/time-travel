@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import { UPDATE_STATE_EVENT } from '../../content-scripts/fake-date/storage';
 import { setFakeDate } from '../../util/inject';
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
@@ -104,9 +105,7 @@ describe('replace-date with time zone', () => {
         const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone';
         window.sessionStorage.removeItem(FAKE_DATE_STORAGE_KEY);
         window.sessionStorage.setItem(TIMEZONE_STORAGE_KEY, timezone);
-        if (window.__timeTravelUpdateState) {
-            window.__timeTravelUpdateState();
-        }
+        document.dispatchEvent(new CustomEvent(UPDATE_STATE_EVENT));
 
         //validate TZ did NOT change
         expect(Intl.DateTimeFormat().resolvedOptions().timeZone).toBe(currentTimezone);

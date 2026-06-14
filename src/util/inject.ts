@@ -72,5 +72,5 @@ export function setTickStartTimestamp(nowTimestampStr: string): boolean {
 
 /** must be injected into the MAIN world, where the content script sets the marker */
 export function isContentScriptActive() {
-    return window.__timeTravelUpdateState !== undefined;
+    return window.__timeTravelActive === true;
 }

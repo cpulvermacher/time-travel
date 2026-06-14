@@ -29,12 +29,12 @@ const updateStateAndReplaceDate = () => {
     }
 };
 
-if (window.__timeTravelUpdateState !== undefined) {
+if (window.__timeTravelActive) {
     // this can happen if multiple versions of the extension are installed
     debugLog('Time Travel: content script was already injected, aborting.');
 } else {
     updateStateAndReplaceDate();
-    window.__timeTravelUpdateState = updateStateAndReplaceDate;
+    window.__timeTravelActive = true;
     // state updates are signaled from the ISOLATED world (see util/inject.ts); registering
     // at document_start means this listener always runs before any the page might add
     document.addEventListener(UPDATE_STATE_EVENT, updateStateAndReplaceDate);
