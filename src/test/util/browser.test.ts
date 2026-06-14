@@ -143,6 +143,33 @@ describe('injectFunction', () => {
             injectImmediately: true,
         });
     });
+
+    it('targets all frames when allFrames is true', async () => {
+        chromeMock.scripting.executeScript.mockResolvedValue([{ result: true }]);
+
+        await injectFunction(7, func, ['arg'], 'ISOLATED', true);
+
+        expect(chromeMock.scripting.executeScript).toHaveBeenCalledWith({
+            target: { tabId: 7, allFrames: true },
+            func,
+            args: ['arg'],
+            world: 'ISOLATED',
+            injectImmediately: true,
+        });
+    });
+
+    it('returns the first truthy result across frames (any frame succeeding counts)', async () => {
+        // e.g. a frameset where one child frame could not write its sessionStorage
+        chromeMock.scripting.executeScript.mockResolvedValue([{ result: false }, { result: true }]);
+
+        await expect(injectFunction(1, func, ['x'], 'ISOLATED', true)).resolves.toBe(true);
+    });
+
+    it('returns null when no frame succeeds', async () => {
+        chromeMock.scripting.executeScript.mockResolvedValue([{ result: false }, { result: false }]);
+
+        await expect(injectFunction(1, func, ['x'], 'ISOLATED', true)).resolves.toBeNull();
+    });
 });
 
 describe('registerContentScript', () => {

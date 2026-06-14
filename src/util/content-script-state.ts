@@ -32,8 +32,9 @@ export async function setFakeDate(date: Date, timezone?: string): Promise<boolea
     }
 
     // store UTC time (also avoids issues with `resistFingerprinting` on Firefox)
+    // inject into all frames so framesets (real content in child frames) are covered too
     const fakeDateUtc = date.toISOString();
-    const result = await injectFunction(tabId, inject.setFakeDate, [fakeDateUtc, timezone || ''], 'ISOLATED');
+    const result = await injectFunction(tabId, inject.setFakeDate, [fakeDateUtc, timezone || ''], 'ISOLATED', true);
     if (result !== true) {
         throw new Error('setFakeDate(): failed to store fake date');
     }
@@ -48,7 +49,8 @@ export async function disableFakeDate(): Promise<void> {
     }
 
     const tabId = await getActiveTabId();
-    const result = await injectFunction(tabId, inject.setFakeDate, ['', ''], 'ISOLATED');
+    // clear in all frames, matching how the date is set
+    const result = await injectFunction(tabId, inject.setFakeDate, ['', ''], 'ISOLATED', true);
     if (result !== true) {
         throw new Error('disableFakeDate(): failed to clear fake date');
     }
@@ -59,7 +61,8 @@ export async function setClockState(stopClock: boolean): Promise<void> {
     const tabId = await getActiveTabId();
 
     const timestamp = stopClock ? '' : new Date().getTime().toString();
-    const result = await injectFunction(tabId, inject.setTickStartTimestamp, [timestamp], 'ISOLATED');
+    // update all frames, matching how the date is set
+    const result = await injectFunction(tabId, inject.setTickStartTimestamp, [timestamp], 'ISOLATED', true);
     if (result !== true) {
         throw new Error('setClockState(): failed to store clock state');
     }

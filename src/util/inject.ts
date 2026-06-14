@@ -28,16 +28,22 @@ export function setFakeDate(date: string, timezone?: string): boolean {
     const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone';
     const UPDATE_STATE_EVENT = 'timeTravelStateUpdate';
 
-    if (date) {
-        window.sessionStorage.setItem(FAKE_DATE_STORAGE_KEY, date);
-        if (timezone && timezone.trim() !== '') {
-            window.sessionStorage.setItem(TIMEZONE_STORAGE_KEY, timezone);
+    try {
+        if (date) {
+            window.sessionStorage.setItem(FAKE_DATE_STORAGE_KEY, date);
+            if (timezone && timezone.trim() !== '') {
+                window.sessionStorage.setItem(TIMEZONE_STORAGE_KEY, timezone);
+            } else {
+                window.sessionStorage.removeItem(TIMEZONE_STORAGE_KEY);
+            }
         } else {
+            window.sessionStorage.removeItem(FAKE_DATE_STORAGE_KEY);
             window.sessionStorage.removeItem(TIMEZONE_STORAGE_KEY);
         }
-    } else {
-        window.sessionStorage.removeItem(FAKE_DATE_STORAGE_KEY);
-        window.sessionStorage.removeItem(TIMEZONE_STORAGE_KEY);
+    } catch {
+        // sandboxed frame may block sessionStorage access (issue #54); report failure so an
+        // allFrames injection isn't rejected by a single unwritable child frame
+        return false;
     }
 
     document.dispatchEvent(new CustomEvent(UPDATE_STATE_EVENT));
@@ -57,10 +63,16 @@ export function setTickStartTimestamp(nowTimestampStr: string): boolean {
     const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp';
     const UPDATE_TICK_EVENT = 'timeTravelTickUpdate';
 
-    if (!nowTimestampStr) {
-        window.sessionStorage.removeItem(TICK_START_STORAGE_KEY);
-    } else {
-        window.sessionStorage.setItem(TICK_START_STORAGE_KEY, nowTimestampStr);
+    try {
+        if (!nowTimestampStr) {
+            window.sessionStorage.removeItem(TICK_START_STORAGE_KEY);
+        } else {
+            window.sessionStorage.setItem(TICK_START_STORAGE_KEY, nowTimestampStr);
+        }
+    } catch {
+        // sandboxed frame may block sessionStorage access (issue #54); report failure so an
+        // allFrames injection isn't rejected by a single unwritable child frame
+        return false;
     }
 
     document.dispatchEvent(new CustomEvent(UPDATE_TICK_EVENT));

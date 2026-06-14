@@ -39,15 +39,21 @@ export async function isAboutUrl(tabId: number): Promise<boolean> {
  *
  * Prefer ISOLATED for writing sessionStorage; the page cannot tamper with its storage
  * APIs, while the data is still shared with the page (see issue #54).
+ *
+ * With `allFrames`, the function runs in every frame of the tab (needed for framesets, where
+ * the real content lives in child frames). The returned value is the first truthy result across
+ * frames, i.e. injection counts as successful if at least one frame succeeded. Use this only for
+ * write/activation calls; reads expect a single frame's value.
  */
 export async function injectFunction<Args extends [string] | [string, string], Result>(
     tabId: number,
     func: (...args: Args) => Result,
     args: Args,
-    world: `${chrome.scripting.ExecutionWorld}` = 'MAIN'
+    world: `${chrome.scripting.ExecutionWorld}` = 'MAIN',
+    allFrames = false
 ): Promise<chrome.scripting.Awaited<Result> | null> {
     const result = await chrome.scripting.executeScript({
-        target: { tabId },
+        target: allFrames ? { tabId, allFrames: true } : { tabId },
         func,
         args,
         world,
