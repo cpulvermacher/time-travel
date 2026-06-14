@@ -1,25 +1,32 @@
-// all functions here are meant to be injected into the target page
+// Functions injected into the target page. Must be self-contained (no imports/closures), since
+// they are serialized for injection. See content-scripts/fake-date/storage.ts for the event names.
+//
+// Readers run in the MAIN world and read the in-memory state (`window.__timeTravelState`), so the
+// popup and icon stay correct even after the page clears or blocks sessionStorage (issues #45/#54).
+//
+// Writers run in the ISOLATED world, where the page cannot tamper with sessionStorage (issue #54),
+// then signal the MAIN world via a `document` CustomEvent: setFakeDate triggers a full refresh,
+// setTickStartTimestamp a tick-only merge (so toggling the clock keeps a cleared fake date).
 
 export function getFakeDate() {
-    //needs to be defined locally!
-    const FAKE_DATE_STORAGE_KEY = 'timeTravelDate';
-    return window.sessionStorage.getItem(FAKE_DATE_STORAGE_KEY);
+    return window.__timeTravelState?.fakeDate ?? null;
 }
 
 export function getTimezone() {
-    const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone';
-    return window.sessionStorage.getItem(TIMEZONE_STORAGE_KEY);
+    return window.__timeTravelState?.timezone ?? null;
 }
 
 /** sets fake date and timezone and triggers a state update. empty date will disable the fake date
  *
  * @param date date string in ISO format (UTC) or empty string to disable
  * @param timezone IANA time zone string, e.g. "Europe/Berlin" or empty string | undefined to use system timezone
+ * @returns true on success (so the caller can detect silently failing injections)
  */
-export function setFakeDate(date: string, timezone?: string) {
+export function setFakeDate(date: string, timezone?: string): boolean {
     //needs to be defined locally!
     const FAKE_DATE_STORAGE_KEY = 'timeTravelDate';
     const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone';
+    const UPDATE_STATE_EVENT = 'timeTravelStateUpdate';
 
     if (date) {
         window.sessionStorage.setItem(FAKE_DATE_STORAGE_KEY, date);
@@ -33,19 +40,22 @@ export function setFakeDate(date: string, timezone?: string) {
         window.sessionStorage.removeItem(TIMEZONE_STORAGE_KEY);
     }
 
-    if (window.__timeTravelUpdateState) {
-        window.__timeTravelUpdateState();
-    }
+    document.dispatchEvent(new CustomEvent(UPDATE_STATE_EVENT));
+    return true;
 }
 
 export function getTickStartTimestamp(): string | null {
-    const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp';
-    return window.sessionStorage.getItem(TICK_START_STORAGE_KEY);
+    const tickStartTimestamp = window.__timeTravelState?.tickStartTimestamp;
+    return tickStartTimestamp != null ? String(tickStartTimestamp) : null;
 }
 
-/** enables clock ticking if nowTimestampStr is non-empty */
-export function setTickStartTimestamp(nowTimestampStr: string) {
+/** enables clock ticking if nowTimestampStr is non-empty
+ *
+ * @returns true on success (so the caller can detect silently failing injections)
+ */
+export function setTickStartTimestamp(nowTimestampStr: string): boolean {
     const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp';
+    const UPDATE_TICK_EVENT = 'timeTravelTickUpdate';
 
     if (!nowTimestampStr) {
         window.sessionStorage.removeItem(TICK_START_STORAGE_KEY);
@@ -53,11 +63,11 @@ export function setTickStartTimestamp(nowTimestampStr: string) {
         window.sessionStorage.setItem(TICK_START_STORAGE_KEY, nowTimestampStr);
     }
 
-    if (window.__timeTravelUpdateState) {
-        window.__timeTravelUpdateState();
-    }
+    document.dispatchEvent(new CustomEvent(UPDATE_TICK_EVENT));
+    return true;
 }
 
+/** must be injected into the MAIN world, where the content script sets the marker */
 export function isContentScriptActive() {
-    return window.__timeTravelUpdateState !== undefined;
+    return window.__timeTravelActive === true;
 }

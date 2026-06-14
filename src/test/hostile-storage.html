@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Time Travel Hostile Storage Demo</title>
+        <link rel="stylesheet" href="demo.css" />
+        <script>
+            // Simulates pages that tamper with sessionStorage, as early as a page can
+            // (content scripts at document_start still run before this).
+            // See https://github.com/cpulvermacher/time-travel/issues/45 and
+            // https://github.com/cpulvermacher/time-travel/issues/54
+            const mode = new URLSearchParams(location.search).get('mode') ?? 'none';
+
+            function blockUnapprovedKeys(storage) {
+                // mimics linkedin.com (issue #54): storage methods throw for keys not on an allowlist
+                const approvedKeys = ['approved-demo-key'];
+                const guard =
+                    (fn) =>
+                    (key, ...args) => {
+                        if (!approvedKeys.includes(key)) {
+                            throw new Error(`Access to the browser storage for the unapproved key ${key} was blocked.`);
+                        }
+                        return fn.call(storage, key, ...args);
+                    };
+                return {
+                    getItem: guard(storage.getItem),
+                    setItem: guard(storage.setItem),
+                    removeItem: guard(storage.removeItem),
+                    clear: () => storage.clear(),
+                    key: (index) => storage.key(index),
+                    get length() {
+                        return storage.length;
+                    },
+                };
+            }
+
+            if (mode === 'clear') {
+                // mimics apps that wipe sessionStorage on load (issue #45).
+                // With the extension enabled, the fake date survives repeated reloads: the keys
+                // are read at document_start (before this runs) and written back on pagehide.
+                window.sessionStorage.clear();
+            } else if (mode === 'block') {
+                // issue #54: replace the sessionStorage object itself
+                const wrapper = blockUnapprovedKeys(window.sessionStorage);
+                Object.defineProperty(window, 'sessionStorage', { get: () => wrapper });
+            } else if (mode === 'patch') {
+                // issue #54 variant: patch the methods on Storage.prototype instead
+                const original = {
+                    getItem: Storage.prototype.getItem,
+                    setItem: Storage.prototype.setItem,
+                    removeItem: Storage.prototype.removeItem,
+                };
+                const approvedKeys = ['approved-demo-key'];
+                for (const name of ['getItem', 'setItem', 'removeItem']) {
+                    Storage.prototype[name] = function (key, ...args) {
+                        if (!approvedKeys.includes(key)) {
+                            throw new Error(`Access to the browser storage for the unapproved key ${key} was blocked.`);
+                        }
+                        return original[name].call(this, key, ...args);
+                    };
+                }
+            }
+        </script>
+    </head>
+
+    <body>
+        <main>
+            <h3>Hostile sessionStorage Demo</h3>
+            <p>Active mode: <strong id="mode"></strong></p>
+            <nav>
+                <ul>
+                    <li><a href="?mode=clear">clear &mdash; wipe sessionStorage on load (issue #45)</a></li>
+                    <li>
+                        <a href="?mode=block">block &mdash; replace sessionStorage, LinkedIn-style (issue #54)</a>
+                    </li>
+                    <li><a href="?mode=patch">patch &mdash; patch Storage.prototype methods (issue #54)</a></li>
+                    <li><a href="?">none &mdash; no tampering</a></li>
+                </ul>
+            </nav>
+            <p><button id="clearNow" type="button">Call sessionStorage.clear() now</button></p>
+
+            <h3>Current JavaScript Date &amp; Time</h3>
+            <h4>Date</h4>
+            <p id="now"></p>
+            <h4>Intl.DateTimeFormat</h4>
+            <p id="nowIntl"></p>
+
+            <h4>sessionStorage keys visible to page</h4>
+            <p id="keys"></p>
+
+            <script>
+                document.getElementById('mode').textContent = mode;
+
+                document.getElementById('clearNow').addEventListener('click', () => {
+                    window.sessionStorage.clear();
+                });
+
+                setInterval(() => {
+                    document.getElementById('now').textContent = new Date().toString();
+                    document.getElementById('nowIntl').textContent = new Intl.DateTimeFormat('en-US', {
+                        dateStyle: 'full',
+                        timeStyle: 'long',
+                    }).format();
+
+                    const keys = [];
+                    for (let i = 0; i < window.sessionStorage.length; i++) {
+                        keys.push(window.sessionStorage.key(i));
+                    }
+                    document.getElementById('keys').textContent = keys.length > 0 ? keys.join(', ') : '(none)';
+                }, 1000);
+            </script>
+        </main>
+    </body>
+</html>

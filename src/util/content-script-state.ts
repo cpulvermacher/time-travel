@@ -33,7 +33,10 @@ export async function setFakeDate(date: Date, timezone?: string): Promise<boolea
 
     // store UTC time (also avoids issues with `resistFingerprinting` on Firefox)
     const fakeDateUtc = date.toISOString();
-    await injectFunction(tabId, inject.setFakeDate, [fakeDateUtc, timezone || '']);
+    const result = await injectFunction(tabId, inject.setFakeDate, [fakeDateUtc, timezone || ''], 'ISOLATED');
+    if (result !== true) {
+        throw new Error('setFakeDate(): failed to store fake date');
+    }
 
     return needsReload;
 }
@@ -45,7 +48,10 @@ export async function disableFakeDate(): Promise<void> {
     }
 
     const tabId = await getActiveTabId();
-    await injectFunction(tabId, inject.setFakeDate, ['', '']);
+    const result = await injectFunction(tabId, inject.setFakeDate, ['', ''], 'ISOLATED');
+    if (result !== true) {
+        throw new Error('disableFakeDate(): failed to clear fake date');
+    }
 }
 
 /** set clock ticking state. `setClockState(false)` also resets the start time to now. */
@@ -53,7 +59,10 @@ export async function setClockState(stopClock: boolean): Promise<void> {
     const tabId = await getActiveTabId();
 
     const timestamp = stopClock ? '' : new Date().getTime().toString();
-    await injectFunction(tabId, inject.setTickStartTimestamp, [timestamp]);
+    const result = await injectFunction(tabId, inject.setTickStartTimestamp, [timestamp], 'ISOLATED');
+    if (result !== true) {
+        throw new Error('setClockState(): failed to store clock state');
+    }
 }
 
 export async function isContentScriptActive(tabId: number) {
@@ -61,6 +70,8 @@ export async function isContentScriptActive(tabId: number) {
 }
 
 export async function getContentScriptState(tabId: number): Promise<ContentScriptState> {
+    // read from the MAIN-world in-memory state (see util/inject.ts), which survives
+    // the page clearing or blocking sessionStorage (issues #45/#54)
     const [contentScriptActive, fakeDate, tickStartTimestamp, timezone] = await Promise.all([
         isContentScriptActive(tabId),
         injectFunction(tabId, inject.getFakeDate, ['']),
