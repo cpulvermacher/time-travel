@@ -9,7 +9,7 @@ export const TZGROUP_COMMON = '_common';
 let timezoneOptions: Timezone[] | null = null;
 
 /** Returns true if `tz` is a valid IANA time zone identifier usable with the Intl APIs. */
-export function isValidTimezone(tz: string): boolean {
+export function isValidTimezone(tz: string | null | undefined): tz is string {
     if (!tz) {
         return false;
     }

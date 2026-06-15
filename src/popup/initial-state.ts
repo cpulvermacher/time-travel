@@ -4,12 +4,18 @@ import { getActiveTabId, isAboutUrl, isExtensionGalleryUrl, isFileUrl } from '..
 import { getContentScriptState } from '../util/content-script-state';
 import { formatLocalDate, parseDate, parseTimestamp } from '../util/date-utils';
 import { loadSettings, type Settings } from '../util/settings';
+import { isValidTimezone } from '../util/timezone-info';
 
 export type InitialState = {
     isEnabled: boolean;
     fakeDate: string; // current fake date, or current time as fallback
     settings: Settings; // stored settings, but possibly overridden by tab state if active
 };
+
+/** map a page-controlled timezone to a valid IANA zone, or '' (browser default) if invalid */
+function sanitizeTimezone(timezone: string | null): string {
+    return isValidTimezone(timezone) ? timezone : '';
+}
 
 /** get current state of extension. Throws on permission errors */
 export async function getInitialState(): Promise<InitialState> {
@@ -55,7 +61,7 @@ export async function getInitialState(): Promise<InitialState> {
                 autoReload: settings.autoReload,
                 advancedSettingsOpen: settings.advancedSettingsOpen,
                 stopClock: isEnabled ? state.isClockStopped : settings.stopClock,
-                timezone: isEnabled ? state.timezone || '' : settings.timezone,
+                timezone: isEnabled ? sanitizeTimezone(state.timezone) : settings.timezone,
                 recentTimezones: settings.recentTimezones,
             },
         };
