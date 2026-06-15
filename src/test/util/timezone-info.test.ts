@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { getOffsetMinutes, getTzInfo } from '../../util/timezone-info';
+import { getOffsetMinutes, getTzInfo, isValidTimezone } from '../../util/timezone-info';
 
 describe('getTzInfo', () => {
     it('detects DST for positive offset (Berlin)', () => {
@@ -75,6 +75,50 @@ describe('getTzInfo', () => {
         const infoDe = getTzInfo('de', '2025-07-01T10:00Z', 'America/New_York')!;
         expect(infoDe.dateString).toBe('1. Juli 2025');
         expect(infoDe.timeString).toBe('06:00');
+    });
+});
+
+describe('isValidTimezone', () => {
+    it('accepts valid IANA zones', () => {
+        expect(isValidTimezone('America/New_York')).toBe(true);
+        expect(isValidTimezone('Europe/Berlin')).toBe(true);
+        expect(isValidTimezone('UTC')).toBe(true);
+    });
+
+    it('rejects non-IANA / page-controlled strings', () => {
+        expect(isValidTimezone('Evil/Not_A_Zone')).toBe(false);
+        expect(isValidTimezone('<img src=x onerror=alert(1)>')).toBe(false);
+        expect(isValidTimezone('')).toBe(false);
+    });
+});
+
+describe('getTimezoneOptions', () => {
+    // result is memoized, so re-import a fresh module per test
+    beforeEach(() => {
+        vi.resetModules();
+    });
+
+    async function freshGetTimezoneOptions() {
+        return (await import('../../util/timezone-info')).getTimezoneOptions;
+    }
+
+    it('drops an invalid recent timezone instead of throwing', async () => {
+        const getTimezoneOptions = await freshGetTimezoneOptions();
+
+        const options = getTimezoneOptions('en', ['Evil/Not_A_Zone', 'Europe/London']);
+
+        const tzs = options.map((o) => o.tz);
+        expect(tzs).not.toContain('Evil/Not_A_Zone');
+        expect(tzs).toContain('Europe/London');
+    });
+
+    it('still returns the full list when a recent entry is invalid', async () => {
+        const getTimezoneOptions = await freshGetTimezoneOptions();
+
+        const options = getTimezoneOptions('en', ['Evil/Not_A_Zone']);
+
+        expect(options.length).toBeGreaterThan(100);
+        expect(options.map((o) => o.tz)).toContain('America/New_York');
     });
 });
 

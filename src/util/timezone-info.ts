@@ -8,6 +8,19 @@ export const TZGROUP_COMMON = '_common';
 
 let timezoneOptions: Timezone[] | null = null;
 
+/** Returns true if `tz` is a valid IANA time zone identifier usable with the Intl APIs. */
+export function isValidTimezone(tz: string): boolean {
+    if (!tz) {
+        return false;
+    }
+    try {
+        new Intl.DateTimeFormat('en', { timeZone: tz });
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 /* returns the full list of supported browser time zones.
  *
  * (Assumes locale does not change during the lifetime of the extension)
@@ -33,7 +46,7 @@ export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone
     timezoneOptions = [
         { tz: 'UTC', label: 'UTC', group: TZGROUP_COMMON },
         ...recentTz
-            .filter((tz) => tz) // filter ''
+            .filter((tz) => tz && isValidTimezone(tz))
             .map(buildOption)
             .map((option) => ({
                 ...option,
