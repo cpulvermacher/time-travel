@@ -161,6 +161,24 @@ describe('getInitialState', () => {
             expect(result.isEnabled).toBe(true);
             expect(result.settings.timezone).toBe(''); // Empty string when state.timezone is null
         });
+
+        it('ignores an invalid (page-controlled) timezone from state', async () => {
+            const mockState: contentScriptState.ContentScriptState = {
+                contentScriptActive: true,
+                fakeDate: '2023-01-01T12:00:00.000Z',
+                tickStartTimestamp: '1640995200000',
+                timezone: 'Evil/Not_A_Zone',
+                isClockStopped: false,
+                fakeDateActive: true,
+            };
+
+            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+
+            const result = await getInitialState();
+
+            expect(result.isEnabled).toBe(true);
+            expect(result.settings.timezone).toBe(''); // falls back to browser default
+        });
     });
 
     describe('error handling', () => {
