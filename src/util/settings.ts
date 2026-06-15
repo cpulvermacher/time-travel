@@ -1,4 +1,5 @@
 import { getSettingsStorage } from './browser';
+import { isValidTimezone } from './timezone-info';
 
 type SettingName = keyof Settings;
 
@@ -31,8 +32,8 @@ export async function saveSetting<T>(key: SettingName, value: T): Promise<void> 
 
 /** save most recent timezone to 'recentTimezones' history */
 export async function saveMostRecentTimezone(timezone: string) {
-    if (timezone === '') {
-        return; // don't save disabled values
+    if (!isValidTimezone(timezone)) {
+        return;
     }
     let timezones = await loadSetting('recentTimezones', []);
 

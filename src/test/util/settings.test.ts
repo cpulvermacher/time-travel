@@ -114,6 +114,13 @@ describe('saveMostRecentTimezone', () => {
         expect(mockStorage.set).not.toHaveBeenCalled();
     });
 
+    it('does not save an invalid (page-controlled, non-IANA) timezone', async () => {
+        await saveMostRecentTimezone('Evil/Not_A_Zone');
+
+        expect(mockStorage.set).not.toHaveBeenCalled();
+        expect(mockStorage.data.recentTimezones).toBeUndefined();
+    });
+
     it('adds a timezone to an empty history', async () => {
         await saveMostRecentTimezone('Europe/London');
 
@@ -139,8 +146,8 @@ describe('saveMostRecentTimezone', () => {
     it('caps the history at 5 entries', async () => {
         mockStorage.data.recentTimezones = ['a', 'b', 'c', 'd', 'e'];
 
-        await saveMostRecentTimezone('f');
+        await saveMostRecentTimezone('Europe/London');
 
-        expect(mockStorage.data.recentTimezones).toEqual(['f', 'a', 'b', 'c', 'd']);
+        expect(mockStorage.data.recentTimezones).toEqual(['Europe/London', 'a', 'b', 'c', 'd']);
     });
 });
