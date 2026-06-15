@@ -9,6 +9,7 @@ import '../../content-scripts/replace-date';
 describe('replace-date with time zone', () => {
     afterEach(() => {
         setFakeDate('');
+        window.sessionStorage.clear();
     });
 
     // ----- Date ----
@@ -101,9 +102,7 @@ describe('replace-date with time zone', () => {
         const timezone = currentTimezone !== 'America/New_York' ? 'America/New_York' : 'America/Los_Angeles';
 
         // like setFakeDate(), but only set TZ
-        const FAKE_DATE_STORAGE_KEY = 'timeTravelDate';
         const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone';
-        window.sessionStorage.removeItem(FAKE_DATE_STORAGE_KEY);
         window.sessionStorage.setItem(TIMEZONE_STORAGE_KEY, timezone);
         document.dispatchEvent(new CustomEvent(UPDATE_STATE_EVENT));
 

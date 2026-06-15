@@ -1,11 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { setFakeDate, setTickStartTimestamp } from '../../util/inject';
 
 describe('inject writers', () => {
-    beforeEach(() => {
-        window.sessionStorage.clear();
-    });
-
     afterEach(() => {
         vi.restoreAllMocks();
         window.sessionStorage.clear();

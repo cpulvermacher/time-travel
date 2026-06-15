@@ -65,6 +65,7 @@ describe('page clears sessionStorage (issue #45)', () => {
     afterEach(() => {
         setFakeDate('');
         setTickStartTimestamp('');
+        window.sessionStorage.clear();
     });
 
     it('fake date stays active in current page after sessionStorage.clear()', () => {
@@ -150,6 +151,7 @@ describe('page clears sessionStorage (issue #45)', () => {
 describe('page blocks sessionStorage access (issue #54)', () => {
     afterEach(() => {
         restoreSessionStorage();
+        window.sessionStorage.clear();
         setFakeDate('');
         setTickStartTimestamp('');
     });
@@ -223,6 +225,7 @@ describe('page blocks sessionStorage access (issue #54)', () => {
 describe('popup/icon readers report active state after tampering', () => {
     afterEach(() => {
         restoreSessionStorage();
+        window.sessionStorage.clear();
         setFakeDate('');
         setTickStartTimestamp('');
     });
