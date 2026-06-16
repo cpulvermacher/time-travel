@@ -3,7 +3,7 @@ import { overwriteGetLocale } from '../paraglide/runtime';
 import { getActiveTabId, getUILanguage, setBadgeText, setTitle } from './browser';
 import { type ContentScriptState, getContentScriptState } from './content-script-state';
 import { getTranslationLocale } from './i18n';
-import { getTzInfo } from './timezone-info';
+import { getTzInfo, isValidTimezone } from './timezone-info';
 
 const defaultTitleText = 'Time Travel';
 const devVersion = import.meta.env.VITE_VERSION ? `\nVersion: ${import.meta.env.VITE_VERSION}` : '';
@@ -21,7 +21,8 @@ export async function setIconBadgeAndTitle(tabId: number, state: ContentScriptSt
 
     let title = defaultTitleText;
     if (state.fakeDateActive && state.fakeDate) {
-        const tzInfo = getTzInfo(getUILanguage(), state.fakeDate, state.timezone || undefined);
+        const timezone = isValidTimezone(state.timezone) ? state.timezone : undefined;
+        const tzInfo = getTzInfo(getUILanguage(), state.fakeDate, timezone);
 
         let formattedFakeDate = '';
         if (tzInfo) {
