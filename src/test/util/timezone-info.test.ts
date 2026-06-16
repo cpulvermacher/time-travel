@@ -89,6 +89,8 @@ describe('isValidTimezone', () => {
         expect(isValidTimezone('Evil/Not_A_Zone')).toBe(false);
         expect(isValidTimezone('<img src=x onerror=alert(1)>')).toBe(false);
         expect(isValidTimezone('')).toBe(false);
+        expect(isValidTimezone(null)).toBe(false);
+        expect(isValidTimezone(undefined)).toBe(false);
     });
 });
 
