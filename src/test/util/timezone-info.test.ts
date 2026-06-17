@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { getOffsetMinutes, getTzInfo, isValidTimezone } from '../../util/timezone-info';
+import { getOffsetMinutes, getTzInfo, isValidTimezone, TZGROUP_RECENT } from '../../util/timezone-info';
 
 describe('getTzInfo', () => {
     it('detects DST for positive offset (Berlin)', () => {
@@ -103,6 +103,37 @@ describe('getTimezoneOptions', () => {
     async function freshGetTimezoneOptions() {
         return (await import('../../util/timezone-info')).getTimezoneOptions;
     }
+
+    it('returns a non-empty list that adds normal and recent timezones in the correct format', async () => {
+        const getTimezoneOptions = await freshGetTimezoneOptions();
+
+        const options = getTimezoneOptions('en', ['Europe/London']);
+
+        expect(options.length).toBeGreaterThan(0);
+
+        // every option follows the { tz, label, group } shape
+        for (const option of options) {
+            expect(typeof option.tz).toBe('string');
+            expect(option.tz).not.toBe('');
+            expect(typeof option.label).toBe('string');
+            expect(option.label).not.toBe('');
+            expect(typeof option.group).toBe('string');
+            expect(option.group).not.toBe('');
+        }
+
+        // a normal timezone is added with its region as the group and a UTC offset in the label
+        const newYork = options.find((o) => o.tz === 'America/New_York');
+        expect(newYork).toEqual({
+            tz: 'America/New_York',
+            label: expect.stringMatching(/^New York \(UTC[+-]\d{2}:\d{2}\)$/),
+            group: 'America',
+        });
+
+        // the recent timezone is added under the recent group
+        const recentLondon = options.find((o) => o.tz === 'Europe/London' && o.group === TZGROUP_RECENT);
+        expect(recentLondon).toBeDefined();
+        expect(recentLondon!.label).toMatch(/^London \(UTC[+-]\d{2}:\d{2}\)$/);
+    });
 
     it('drops an invalid recent timezone instead of throwing', async () => {
         const getTimezoneOptions = await freshGetTimezoneOptions();
