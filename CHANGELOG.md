@@ -3,8 +3,7 @@
 ## [2.5.0]
 
 - Improved support for frames, now changes are immediately reflected in all frames of the current tab.
-- Keep working on pages that block `sessionStorage` access (fixes #54).
-- Keep working on pages that call `sessionStorage.clear()` (fixes #45).
+- Keep working on pages that block `sessionStorage` access or call `sessionStorage.clear()` (fixes #54 or #45).
 
 ## [2.4.7]
 
