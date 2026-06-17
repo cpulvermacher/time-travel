@@ -46,7 +46,7 @@ export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone
     timezoneOptions = [
         { tz: 'UTC', label: 'UTC', group: TZGROUP_COMMON },
         ...recentTz
-            .filter((tz) => tz && isValidTimezone(tz))
+            .filter(isValidTimezone)
             .map(buildOption)
             .map((option) => ({
                 ...option,
