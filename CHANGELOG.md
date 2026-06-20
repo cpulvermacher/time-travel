@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.5.1]
+
+- Fix: restore background color change when changing the date.
+
 ## [2.5.0]
 
 - Improved support for frames, now changes are immediately reflected in all frames of the current tab.
