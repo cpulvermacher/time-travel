@@ -6,9 +6,9 @@
         effectiveDate: Date | undefined;
     }
     const props: Props = $props();
-    const effectiveDate = untrack(() => props.effectiveDate);
+    const effectiveDate = $derived(props.effectiveDate);
 
-    let lastEffectiveDate = $state(effectiveDate);
+    let lastEffectiveDate = $state(untrack(() => effectiveDate));
     let numSpins: number | undefined = $state();
     let desaturated = $derived(effectiveDate === undefined);
 
