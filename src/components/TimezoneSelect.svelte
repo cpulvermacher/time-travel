@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { onMount, untrack } from 'svelte';
     import { m } from '../paraglide/messages';
     import { getUILanguage } from '../util/browser';
     import { getTimezoneOptions, type Timezone, TZGROUP_COMMON, TZGROUP_RECENT } from '../util/timezone-info';
@@ -12,8 +12,8 @@
     }
 
     const { value: activeValue, onSelect, recentTimezones }: Props = $props();
-    let isEnabled = $state(!!activeValue);
-    let value = $state(activeValue || recentTimezones[0] || 'UTC');
+    let isEnabled = $state(untrack(() => !!activeValue));
+    let value = $state(untrack(() => activeValue || recentTimezones[0] || 'UTC'));
 
     let timezones: { keys: string[]; groups: Record<string, Timezone[]> } | null = $state(null);
 
