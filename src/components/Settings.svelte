@@ -40,6 +40,9 @@
         }
     }
     async function applyAndEnable(date: Date) {
+        void saveSetting('timezone', settings.timezone);
+        void saveMostRecentTimezone(settings.timezone);
+
         try {
             await withTabLoadingRetry(async () => {
                 await setClockState(settings.stopClock);
@@ -96,12 +99,6 @@
     }
     function onTimezoneChange(timezone: string) {
         settings.timezone = timezone;
-        void saveSetting('timezone', timezone);
-        void saveMostRecentTimezone(timezone);
-
-        if (isEnabled && effectiveDate) {
-            void applyAndEnable(effectiveDate);
-        }
     }
     function onEnableToggle(enabled: boolean) {
         if (enabled && parsedDate.isValid) {
@@ -119,7 +116,7 @@
         if (parsedDate.isReset) {
             return isEnabled;
         }
-        return parsedDate.date.getTime() !== effectiveDate?.getTime();
+        return parsedDate.date.getTime() !== effectiveDate?.getTime() || settings.timezone !== effectiveTimezone;
     }
 </script>
 
