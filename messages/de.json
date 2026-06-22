@@ -48,5 +48,7 @@
     "timezone_group_common": "Allgemein",
     "timezone_group_recent": "Zuletzt",
     "date_in_timezone_info": "In Seitenzeitzone:",
+    "page_uses_real_date": "Seite verwendet echtes Datum",
+    "effective_page_date": "Effektives Datum auf Seite:",
     "dst_info": "Sommerzeit ist für dieses Datum aktiv."
 }

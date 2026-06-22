@@ -1,16 +1,15 @@
 <script lang="ts">
     import { m } from '../paraglide/messages';
     import { getUILanguage } from '../util/browser';
-    import type { ParsedDate } from '../util/date-utils';
     import { getTzInfo } from '../util/timezone-info';
 
     interface Props {
-        parsedDate: ParsedDate;
-        timezone: string;
+        date: Date | undefined;
+        timezone: string; // IANA time zone identifier or '' for browser default
     }
-    const { parsedDate, timezone }: Props = $props();
+    const { date, timezone }: Props = $props();
 
-    const tzInfo = $derived(parsedDate.isValid ? getTzInfo(getUILanguage(), parsedDate.date, timezone) : null);
+    const tzInfo = $derived(date !== undefined ? getTzInfo(getUILanguage(), date, timezone) : null);
     const timeZoneLabel = $derived.by(() => {
         if (!tzInfo || tzInfo.tzName === timezone) {
             return timezone;
@@ -20,26 +19,32 @@
 </script>
 
 <div class="preview">
-    <div class="timezone-label">{m.date_in_timezone_info()}</div>
-    {#if tzInfo}
-        <div class="time-block">
-            <div class="datetime">{tzInfo?.dateString} {tzInfo?.timeString}</div>
-            {#if tzInfo?.isYearWithDst || tzInfo?.isOffsetDifferentFromNow}
-                <span
-                    class={{ badge: true, 'badge--dst': tzInfo?.isDst }}
-                    title={tzInfo?.isDst ? m.dst_info() : undefined}
-                >
-                    {tzInfo.offset}
-                </span>
-            {/if}
-        </div>
+    {#if date === undefined}
+        {m.page_uses_real_date()}
+    {:else}
+        <div>{m.effective_page_date()}</div>
+        {#if tzInfo}
+            <div class="time-block">
+                <div class="datetime">
+                    {tzInfo?.dateString}
+                    {tzInfo?.timeString}
+                </div>
+                {#if tzInfo?.isYearWithDst || tzInfo?.isOffsetDifferentFromNow}
+                    <span
+                        class={{ badge: true, "badge--dst": tzInfo?.isDst }}
+                        title={tzInfo?.isDst ? m.dst_info() : undefined}
+                    >
+                        {tzInfo.offset}
+                    </span>
+                {/if}
+            </div>
+        {/if}
+        <div>{timeZoneLabel}</div>
     {/if}
-    <div class="timezone-label">{timeZoneLabel}</div>
 </div>
 
 <style>
     .preview {
-        min-height: 58px;
         margin-top: 5px;
         display: flex;
         flex-direction: column;

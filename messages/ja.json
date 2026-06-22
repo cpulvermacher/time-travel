@@ -48,5 +48,7 @@
     "timezone_group_common": "主要",
     "timezone_group_recent": "最近",
     "date_in_timezone_info": "ページタイムゾーンでは",
+    "page_uses_real_date": "ページは実際の日時を使用しています",
+    "effective_page_date": "ページに適用される日時:",
     "dst_info": "この日時は夏時間が適用されています。"
 }

@@ -7,7 +7,6 @@
     import { getFirstDayOfWeek } from '../util/i18n';
     import DateFormatInfo from './DateFormatInfo.svelte';
     import LinkButton from './LinkButton.svelte';
-    import PreviewInTimezone from './PreviewInTimezone.svelte';
     import TimePicker from './TimePicker.svelte';
 
     // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
@@ -16,9 +15,8 @@
     interface Props {
         fakeDate: string;
         onEnterKey?: () => void;
-        timezone: string; // IANA time zone identifier or '' for browser default
     }
-    let { fakeDate = $bindable(), onEnterKey, timezone }: Props = $props();
+    let { fakeDate = $bindable(), onEnterKey }: Props = $props();
     let parsedDate = $derived(parseDate(fakeDate));
     // Note: the datepicker internally works with timestamps in UTC. When choosing a date, pickerDate will be set to 00:00 local time.
     const initialParsedDate = parseDate(fakeDate);
@@ -92,7 +90,9 @@
         }
         // adjust UTC timestamp
         pickerDate = parsedDate.date.getTime() + seconds * 1000;
-        fakeDate = formatLocalDate(new Date(pickerDate), { fullPrecision: true });
+        fakeDate = formatLocalDate(new Date(pickerDate), {
+            fullPrecision: true,
+        });
     }
 </script>
 
@@ -121,9 +121,6 @@
             <TimePicker bind:value={fakeDate} onChange={onInput} bind:this={timePickerRef} />
         </div>
     </label>
-    {#if timezone}
-        <PreviewInTimezone {parsedDate} {timezone} />
-    {/if}
     <div class="datepicker-container">
         <DatePicker
             bind:startDate={pickerDate}

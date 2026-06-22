@@ -48,5 +48,7 @@
     "timezone_group_common": "Common",
     "timezone_group_recent": "Recent",
     "date_in_timezone_info": "In page time zone:",
+    "page_uses_real_date": "Page uses real date",
+    "effective_page_date": "Effective date in page:",
     "dst_info": "Daylight Saving Time (DST) is in effect for this date."
 }

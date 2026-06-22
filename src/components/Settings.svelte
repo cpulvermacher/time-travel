@@ -10,6 +10,7 @@
     import Background from './Background.svelte';
     import DateTimePicker from './DateTimePicker.svelte';
     import ErrorModal from './ErrorModal.svelte';
+    import PreviewInTimezone from './PreviewInTimezone.svelte';
     import ReloadModal from './ReloadModal.svelte';
     import TimezoneSelect from './TimezoneSelect.svelte';
     import Toggle from './Toggle.svelte';
@@ -27,6 +28,8 @@
     let fakeDate = $state(initialState.fakeDate);
     let parsedDate = $derived(parseDate(fakeDate));
     let effectiveDate = $state(initialState.isEnabled ? new Date(initialState.fakeDate) : undefined);
+    //TODO this should use the tab state, not settings
+    let effectiveTimezone = $state(initialState.isEnabled ? settings.timezone : '');
 
     async function updateClockState() {
         try {
@@ -58,6 +61,9 @@
         } catch (e) {
             setError(m.error_setting_date_failed(), e);
         }
+
+        effectiveDate = date;
+        effectiveTimezone = settings.timezone;
     }
     async function reset() {
         try {
@@ -72,6 +78,8 @@
         } catch (e) {
             setError(m.error_reset_failed(), e);
         }
+        effectiveDate = undefined;
+        effectiveTimezone = '';
     }
     function setError(msg: string, err: unknown) {
         errorMsg = msg + (err instanceof Error ? err.message : '');
@@ -80,12 +88,10 @@
     function onApply() {
         if (parsedDate.isReset) {
             isEnabled = false;
-            effectiveDate = undefined;
             void reset();
         } else if (parsedDate.isValid) {
             isEnabled = true;
-            effectiveDate = parsedDate.date;
-            void applyAndEnable(effectiveDate);
+            void applyAndEnable(parsedDate.date);
         }
     }
     function onClockToggle() {
@@ -102,10 +108,8 @@
     }
     function onEnableToggle(enabled: boolean) {
         if (enabled && parsedDate.isValid) {
-            effectiveDate = parsedDate.date;
-            void applyAndEnable(effectiveDate);
+            void applyAndEnable(parsedDate.date);
         } else {
-            effectiveDate = undefined;
             void reset();
         }
     }
@@ -128,7 +132,8 @@
         onChange={onEnableToggle}
         label={m.enable_fake_date_toggle()}
     />
-    <DateTimePicker bind:fakeDate onEnterKey={onApply} timezone={settings.timezone} />
+    <PreviewInTimezone date={effectiveDate} timezone={effectiveTimezone} />
+    <DateTimePicker bind:fakeDate onEnterKey={onApply} />
     <TimezoneSelect value={settings.timezone} onSelect={onTimezoneChange} recentTimezones={settings.recentTimezones} />
     <div class="right-aligned">
         <button type="button" class="primary" disabled={!isApplyButtonEnabled()} onclick={onApply}>

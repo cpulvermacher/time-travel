@@ -136,6 +136,10 @@ export function getTzInfo(locale: string, date: Date | string, timezone: string 
         if (typeof date === 'string') {
             date = new Date(date);
         }
+        if (timezone === '') {
+            timezone = undefined;
+        }
+
         const summerDate = new Date(date.getFullYear(), 5, 1); // June 1st
         const winterDate = new Date(date.getFullYear(), 11, 1); // December 1st
 
