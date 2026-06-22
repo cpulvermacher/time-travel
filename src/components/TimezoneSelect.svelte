@@ -1,5 +1,7 @@
 <script lang="ts">
     import { onMount, untrack } from 'svelte';
+    import { cubicOut } from 'svelte/easing';
+    import { slide } from 'svelte/transition';
     import { m } from '../paraglide/messages';
     import { getUILanguage } from '../util/browser';
     import { getTimezoneOptions, type Timezone, TZGROUP_COMMON, TZGROUP_RECENT } from '../util/timezone-info';
@@ -15,7 +17,10 @@
     let isEnabled = $state(untrack(() => !!activeValue));
     let value = $state(untrack(() => activeValue || recentTimezones[0] || 'UTC'));
 
-    let timezones: { keys: string[]; groups: Record<string, Timezone[]> } | null = $state(null);
+    let timezones: {
+        keys: string[];
+        groups: Record<string, Timezone[]>;
+    } | null = $state(null);
 
     // generating this list for hundreds of timezones takes some time, do it after first render
     onMount(() => {
@@ -71,18 +76,22 @@
 <div class="container">
     <Toggle label={m.timezone_selector_label()} bind:checked={isEnabled} onChange={onToggle} />
 
-    {#if !timezones}
-        <select disabled></select>
-    {:else}
-        <select {value} onchange={onChange} disabled={!isEnabled}>
-            {#each timezones.keys as group (group)}
-                <optgroup label={groupLabel(group)}>
-                    {#each timezones.groups[group] as option (option)}
-                        <option value={option.tz}>{option.label}</option>
+    {#if isEnabled}
+        <div transition:slide={{ duration: 200, easing: cubicOut }}>
+            {#if !timezones}
+                <select disabled></select>
+            {:else}
+                <select {value} onchange={onChange} disabled={!isEnabled}>
+                    {#each timezones.keys as group (group)}
+                        <optgroup label={groupLabel(group)}>
+                            {#each timezones.groups[group] as option (option)}
+                                <option value={option.tz}>{option.label}</option>
+                            {/each}
+                        </optgroup>
                     {/each}
-                </optgroup>
-            {/each}
-        </select>
+                </select>
+            {/if}
+        </div>
     {/if}
 </div>
 
