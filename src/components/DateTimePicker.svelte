@@ -185,12 +185,6 @@
     }
     input {
         width: 100%;
-        box-sizing: border-box;
-        padding: 5px 8px;
-        color: var(--text-color);
-        background: white;
-        border: 1px solid var(--border-color);
-        border-radius: 3px;
     }
     input.error {
         border-color: var(--error-color);

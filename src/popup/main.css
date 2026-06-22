@@ -50,19 +50,27 @@ label {
 }
 
 input,
-button {
+button,
+select {
     font-family: var(--font-family);
     font-size: 1rem;
+    box-sizing: border-box;
+    padding: 5px 8px;
+    color: var(--text-color);
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
 }
 
 button {
     line-height: 1;
-    border: 1px solid var(--border-color);
-    border-radius: 3px;
     padding: 7px 10px;
-    background: white;
-    color: var(--text-color);
     transition: all 0.3s ease-in;
+}
+
+button.primary {
+    background: var(--primary-color);
+    color: white;
 }
 
 button:disabled {

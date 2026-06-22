@@ -103,11 +103,6 @@
     }
     select {
         width: 100%;
-        padding: 5px 8px;
-        border-radius: 3px;
-        border: 1px solid var(--border-color);
-        background: white;
-        color: var(--text-color);
         transition: filter 0.3s ease-in;
     }
     select:disabled {
