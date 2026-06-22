@@ -7,7 +7,6 @@
     import { parseDate } from '../util/date-utils';
     import { updateExtensionIcon } from '../util/icon';
     import { saveMostRecentTimezone, saveSetting } from '../util/settings';
-    import Accordion from './Accordion.svelte';
     import Background from './Background.svelte';
     import DateTimePicker from './DateTimePicker.svelte';
     import ErrorModal from './ErrorModal.svelte';
@@ -86,9 +85,6 @@
             void applyAndEnable(effectiveDate);
         }
     }
-    function onAdvancedSettingsToggle(open: boolean) {
-        void saveSetting('advancedSettingsOpen', open);
-    }
     function onClockToggle() {
         if (isEnabled) {
             void updateClockState();
@@ -129,31 +125,25 @@
 
 <Background {effectiveDate} />
 <main>
-    <DateTimePicker bind:fakeDate onEnterKey={onApply} timezone={settings.timezone} />
-    <div class="right-aligned">
-        <button type="button" disabled={!isApplyButtonEnabled()} onclick={onApply}>{m.change_date_btn()}</button>
-    </div>
-    <hr />
     <Toggle
         bind:checked={isEnabled}
         disabled={!parsedDate.isValid && !isEnabled}
         onChange={onEnableToggle}
         label={m.enable_fake_date_toggle()}
     />
-    <Accordion title={m.advanced_settings()} open={settings.advancedSettingsOpen} onToggle={onAdvancedSettingsToggle}>
-        <Toggle
-            bind:checked={settings.stopClock}
-            disabled={!parsedDate.isValid}
-            onChange={onClockToggle}
-            label={m.stop_time_toggle()}
-        />
-        <Toggle bind:checked={settings.autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
-        <TimezoneSelect
-            value={settings.timezone}
-            onSelect={onTimezoneChange}
-            recentTimezones={settings.recentTimezones}
-        />
-    </Accordion>
+    <DateTimePicker bind:fakeDate onEnterKey={onApply} timezone={settings.timezone} />
+    <TimezoneSelect value={settings.timezone} onSelect={onTimezoneChange} recentTimezones={settings.recentTimezones} />
+    <div class="right-aligned">
+        <button type="button" disabled={!isApplyButtonEnabled()} onclick={onApply}>{m.change_date_btn()}</button>
+    </div>
+    <hr />
+    <Toggle
+        bind:checked={settings.stopClock}
+        disabled={!parsedDate.isValid}
+        onChange={onClockToggle}
+        label={m.stop_time_toggle()}
+    />
+    <Toggle bind:checked={settings.autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
 </main>
 
 {#if showReloadModal}
