@@ -32,17 +32,22 @@ describe('getInitialState', () => {
     });
 
     describe('in development environment', () => {
-        it('returns  dummy state', async () => {
+        it('derives state from the (mocked) content-script state', async () => {
             import.meta.env.DEV = true;
+            vi.mocked(getContentScriptState).mockResolvedValue({
+                contentScriptActive: true,
+                fakeDate: '2023-01-01T12:34:56.789Z',
+                tickStartTimestamp: null,
+                timezone: 'Asia/Tokyo',
+                isClockStopped: true,
+                fakeDateActive: true,
+            });
 
             const result = await getInitialState();
 
-            expect(result).toEqual({
-                isEnabled: true,
-                fakeDate: '2005-06-07 08:09',
-                settings: defaultSettings,
-            });
-
+            expect(getContentScriptState).toHaveBeenCalledWith(0);
+            expect(result.isEnabled).toBe(true);
+            expect(result.settings.timezone).toBe('Asia/Tokyo');
             expect(mockedSettings.loadSettings).toHaveBeenCalled();
         });
     });

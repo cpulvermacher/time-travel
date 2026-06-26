@@ -48,13 +48,17 @@ function createChromeMock() {
 }
 
 let chromeMock: ReturnType<typeof createChromeMock>;
+const originalEnvDev = import.meta.env.DEV;
 
 beforeEach(() => {
+    // these tests exercise the real extension (chrome) code paths, not the dev-server mocks
+    import.meta.env.DEV = false;
     chromeMock = createChromeMock();
     vi.stubGlobal('chrome', chromeMock);
 });
 
 afterEach(() => {
+    import.meta.env.DEV = originalEnvDev;
     vi.unstubAllGlobals();
 });
 

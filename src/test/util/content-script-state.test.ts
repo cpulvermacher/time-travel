@@ -19,6 +19,7 @@ const originalEnvDev = import.meta.env.DEV;
 
 beforeEach(() => {
     vi.resetAllMocks();
+    localStorage.clear();
     import.meta.env.DEV = false;
     mockedBrowser.getActiveTabId.mockResolvedValue(123);
 });
@@ -29,10 +30,10 @@ afterEach(() => {
 });
 
 describe('setFakeDate', () => {
-    it('returns true without injecting in development', async () => {
+    it('persists to localStorage without injecting in development', async () => {
         import.meta.env.DEV = true;
 
-        await expect(setFakeDate(new Date('2023-01-01T00:00:00Z'))).resolves.toBe(true);
+        await expect(setFakeDate(new Date('2023-01-01T00:00:00Z'))).resolves.toBe(false);
         expect(mockedBrowser.injectFunction).not.toHaveBeenCalled();
     });
 

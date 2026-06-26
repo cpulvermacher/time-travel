@@ -4,6 +4,10 @@ import { debugLog } from './log';
 
 /** get id for current tab, or throw */
 export async function getActiveTabId(): Promise<number> {
+    if (import.meta.env.DEV) {
+        return 0; // no tabs API on the dev server; a placeholder id is enough for the mocked state
+    }
+
     const queryOptions = { active: true, currentWindow: true };
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
     const [tab] = await chrome.tabs.query(queryOptions);
@@ -120,6 +124,9 @@ export async function registerContentScript() {
 
 /** set badge for icon */
 export async function setBadgeText(tabId: number | undefined, text: string) {
+    if (import.meta.env.DEV) {
+        return; // no action API on the dev server
+    }
     await chrome.action.setBadgeBackgroundColor({ color: '#6060f4' });
     await chrome.action.setBadgeText({
         tabId,
@@ -129,6 +136,9 @@ export async function setBadgeText(tabId: number | undefined, text: string) {
 
 /** set icon tooltip title */
 export async function setTitle(tabId: number | undefined, title: string) {
+    if (import.meta.env.DEV) {
+        return; // no action API on the dev server
+    }
     await chrome.action.setTitle({
         tabId,
         title,
@@ -137,6 +147,9 @@ export async function setTitle(tabId: number | undefined, title: string) {
 
 /** reload the current tab */
 export async function reloadTab() {
+    if (import.meta.env.DEV) {
+        return; // no tabs API on the dev server
+    }
     const tabId = await getActiveTabId();
     await chrome.tabs.reload(tabId);
 }
@@ -155,7 +168,42 @@ export function getSettingsStorage(): chrome.storage.StorageArea | undefined {
     if (typeof chrome !== 'undefined' && chrome?.storage !== undefined) {
         return chrome.storage.sync || chrome.storage.local;
     }
+    if (import.meta.env.DEV) {
+        // running in a plain browser via the Vite dev server: persist settings in
+        // localStorage so the popup UI is actually testable across reloads
+        return getDevStorage();
+    }
     return undefined;
+}
+
+/** localStorage-backed StorageArea mock for DEV builds (no extension storage available).
+ * Only the array-of-keys `get` and object `set` overloads used in this codebase are implemented. */
+function getDevStorage(): chrome.storage.StorageArea {
+    const storageKey = 'timeTravelDevSettings';
+    const readAll = (): Record<string, unknown> => {
+        try {
+            return JSON.parse(localStorage.getItem(storageKey) ?? '{}');
+        } catch {
+            return {};
+        }
+    };
+
+    return {
+        get: async (keys?: string | string[]) => {
+            const data = readAll();
+            const wanted = Array.isArray(keys) ? keys : keys ? [keys] : Object.keys(data);
+            const result: Record<string, unknown> = {};
+            for (const key of wanted) {
+                if (key in data) {
+                    result[key] = data[key];
+                }
+            }
+            return result;
+        },
+        set: async (items: Record<string, unknown>) => {
+            localStorage.setItem(storageKey, JSON.stringify({ ...readAll(), ...items }));
+        },
+    } as unknown as chrome.storage.StorageArea;
 }
 
 /** check if the extension is running on Android */

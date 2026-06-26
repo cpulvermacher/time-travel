@@ -10,13 +10,32 @@ export type ContentScriptState = {
     fakeDateActive: boolean;
 };
 
+// DEV-only: persist the would-be content-script/tab state in localStorage so the popup UI
+// (enable toggle, applied date, clock, timezone) is testable across reloads via the Vite dev server.
+type DevTabState = Pick<ContentScriptState, 'fakeDate' | 'tickStartTimestamp' | 'timezone'>;
+const devTabStateKey = 'timeTravelDevTabState';
+
+function readDevTabState(): DevTabState {
+    const empty: DevTabState = { fakeDate: null, tickStartTimestamp: null, timezone: null };
+    try {
+        return { ...empty, ...JSON.parse(localStorage.getItem(devTabStateKey) ?? '{}') };
+    } catch {
+        return empty;
+    }
+}
+
+function writeDevTabState(state: DevTabState) {
+    localStorage.setItem(devTabStateKey, JSON.stringify(state));
+}
+
 /** sets & enables fake date, returns whether page needs reload for content script to be injected
  *
  * @param date a valid date to set
  */
 export async function setFakeDate(date: Date, timezone?: string): Promise<boolean> {
     if (import.meta.env.DEV) {
-        return true;
+        writeDevTabState({ ...readDevTabState(), fakeDate: date.toISOString(), timezone: timezone || '' });
+        return false; // no reload prompt needed in the dev preview
     }
 
     if (Number.isNaN(date.getTime())) {
@@ -45,6 +64,7 @@ export async function setFakeDate(date: Date, timezone?: string): Promise<boolea
 /** unsets fake date */
 export async function disableFakeDate(): Promise<void> {
     if (import.meta.env.DEV) {
+        writeDevTabState({ ...readDevTabState(), fakeDate: null });
         return;
     }
 
@@ -58,6 +78,11 @@ export async function disableFakeDate(): Promise<void> {
 
 /** set clock ticking state. `setClockState(false)` also resets the start time to now. */
 export async function setClockState(stopClock: boolean): Promise<void> {
+    if (import.meta.env.DEV) {
+        writeDevTabState({ ...readDevTabState(), tickStartTimestamp: stopClock ? null : Date.now().toString() });
+        return;
+    }
+
     const tabId = await getActiveTabId();
 
     const timestamp = stopClock ? '' : new Date().getTime().toString();
@@ -73,6 +98,18 @@ export async function isContentScriptActive(tabId: number) {
 }
 
 export async function getContentScriptState(tabId: number): Promise<ContentScriptState> {
+    if (import.meta.env.DEV) {
+        const { fakeDate, tickStartTimestamp, timezone } = readDevTabState();
+        return {
+            contentScriptActive: true,
+            fakeDate,
+            tickStartTimestamp,
+            timezone,
+            isClockStopped: !!fakeDate && !tickStartTimestamp,
+            fakeDateActive: !!fakeDate,
+        };
+    }
+
     // read from the MAIN-world in-memory state (see util/inject.ts), which survives
     // the page clearing or blocking sessionStorage (issues #45/#54)
     const [contentScriptActive, fakeDate, tickStartTimestamp, timezone] = await Promise.all([
