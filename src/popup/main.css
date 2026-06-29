@@ -45,6 +45,14 @@ body {
     }
 }
 
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 15px;
+}
+
 label {
     width: 100%;
 }

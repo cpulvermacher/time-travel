@@ -158,21 +158,13 @@
 {/if}
 
 <style>
-    main {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        gap: 10px;
-        padding: 8px 15px;
-    }
-
     .right-aligned {
         display: flex;
         justify-content: flex-end;
     }
 
     hr {
-        width: 90%;
+        width: 100%;
         border: none;
         border-top: 1px solid var(--border-color);
         margin: 0 auto;
