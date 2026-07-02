@@ -193,11 +193,32 @@
             box-shadow: 0 0 0 0 var(--error-color);
         }
         70% {
-            box-shadow: 0 0 0 5px rgba(255, 0, 0, 0);
+            box-shadow: 0 0 0 5px transparent;
         }
         100% {
-            box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+            box-shadow: 0 0 0 0 transparent;
         }
+    }
+
+    /* Center each day's circle within its (wider) grid cell */
+    :global(.datepicker[data-picker-theme="theme"] .date span) {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* override some hard coded radii on start/end of range  */
+    :global(.datepicker[data-picker-theme="theme"] .calendars-container .calendar .date.range.start.end span) {
+        border-radius: 50%;
+    }
+
+    :global(.datepicker[data-picker-theme="theme"] .date:focus-visible) {
+        /* biome-ignore lint/complexity/noImportantStyles: needed to override svelte-datepicker's chrome-specific style */
+        outline: none !important;
+    }
+
+    :global(.datepicker[data-picker-theme="theme"] .date:focus-visible span) {
+        /* biome-ignore lint/complexity/noImportantStyles: needed to override svelte-datepicker's chrome-specific style */
+        outline: 2px solid var(--primary-color) !important;
     }
 
     /* for Japanese, add a suffix to the year*/
@@ -211,10 +232,10 @@
         /**
          * Common Variables
          */
-        --datepicker-border-color: #e8e9ea;
+        --datepicker-border-color: var(--border-color);
 
         --datepicker-state-active: var(--primary-color);
-        --datepicker-state-hover: #e7f7fc;
+        --datepicker-state-hover: color-mix(in srgb, var(--primary-color) 12%, white);
 
         --datepicker-color: var(--primary-color);
         --datepicker-font-family: var(--font-family);
@@ -377,22 +398,22 @@
          * Calendar Day
          */
         --datepicker-calendar-day-align-items: center;
-        --datepicker-calendar-day-background-hover: transparent;
+        --datepicker-calendar-day-background-hover: var(--datepicker-state-hover);
         --datepicker-calendar-day-border: none;
-        --datepicker-calendar-day-border-radius: 20px;
+        --datepicker-calendar-day-border-radius: 50%;
         --datepicker-calendar-day-color: var(--text-color);
-        --datepicker-calendar-day-color-disabled: #b9bdc1;
+        --datepicker-calendar-day-color-disabled: var(--secondary-text-color);
         --datepicker-calendar-day-color-hover: var(--text-color);
         --datepicker-calendar-day-cursor: pointer;
         --datepicker-calendar-day-cursor-disabled: default;
         --datepicker-calendar-day-display: flex;
-        --datepicker-calendar-day-height: auto;
-        --datepicker-calendar-day-width: auto;
+        --datepicker-calendar-day-height: 2rem;
+        --datepicker-calendar-day-width: 2rem;
         --datepicker-calendar-day-justify-content: center;
         --datepicker-calendar-day-font-family: var(--datepicker-font-family);
         --datepicker-calendar-day-font-size: var(--datepicker-font-size-base);
         --datepicker-calendar-day-margin-bottom: 1px;
-        --datepicker-calendar-day-padding: var(--datepicker-padding-base);
+        --datepicker-calendar-day-padding: 0;
         --datepicker-calendar-day-text-align: center;
         --datepicker-calendar-day-zindex-focus: 12;
 
@@ -437,10 +458,10 @@
          * Calendar Range Selected
          */
         --datepicker-calendar-range-selected-background: var(--datepicker-state-active);
-        --datepicker-calendar-range-selected-border-radius: 20px;
+        --datepicker-calendar-range-selected-border-radius: 50%;
         --datepicker-calendar-range-selected-color: #fff;
         --datepicker-calendar-range-selected-font-weight: var(--datepicker-font-weight-medium);
-        --datepicker-calendar-range-selected-start-border-radius: 20px;
+        --datepicker-calendar-range-selected-start-border-radius: 50%;
 
         /**
          * Calendar Range Hover

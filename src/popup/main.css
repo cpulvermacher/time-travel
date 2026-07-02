@@ -94,13 +94,9 @@ button:not(:disabled):hover {
 }
 
 a:focus-visible,
+button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 summary:focus-visible {
     outline: 2px solid var(--primary-color);
-}
-
-button:focus-visible {
-    /* biome-ignore lint/complexity/noImportantStyles: needed to override svelte-datepicker's chrome-specific style */
-    outline: 2px solid var(--primary-color) !important;
 }
