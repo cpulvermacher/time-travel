@@ -103,7 +103,7 @@ function getTimezoneName(
     locale: string,
     tz: string | undefined,
     date: Date | undefined,
-    format: 'short' | 'shortGeneric' | 'longOffset'
+    format: 'short' | 'long' | 'shortOffset' | 'longOffset' | 'shortGeneric' | 'longGeneric'
 ) {
     const formatter = new Intl.DateTimeFormat(locale, {
         timeZone: tz,
@@ -153,7 +153,7 @@ export function getTzInfo(locale: string, date: Date | string, timezone: string 
             getOffsetMinutes(offsetDate) < getOffsetMinutes(offsetWinter) ||
             getOffsetMinutes(offsetDate) < getOffsetMinutes(offsetSummer);
 
-        let tzName = getTimezoneName(locale, timezone, date, 'short');
+        let tzName = getTimezoneName(locale, timezone, date, 'long');
         if (tzName !== 'GMT' && tzName.includes('GMT')) {
             tzName = getTimezoneName(locale, timezone, date, 'shortGeneric');
         }

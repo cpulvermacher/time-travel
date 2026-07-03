@@ -10,11 +10,17 @@
     const { date, timezone }: Props = $props();
 
     const tzInfo = $derived(date !== undefined ? getTzInfo(getUILanguage(), date, timezone) : null);
-    const timeZoneLabel = $derived.by(() => {
-        if (!tzInfo || tzInfo.tzName === timezone) {
-            return timezone;
+    const offsetBadgeTitle = $derived.by(() => {
+        let title = timezone || tzInfo?.tzName || '';
+
+        if (title && tzInfo?.tzName !== title) {
+            title += ` (${tzInfo?.tzName})`;
         }
-        return `${timezone} (${tzInfo?.tzName})`;
+
+        if (tzInfo?.isDst) {
+            title += `\n${m.dst_info()}`;
+        }
+        return title;
     });
 </script>
 
@@ -29,17 +35,13 @@
                     {tzInfo?.dateString}
                     {tzInfo?.timeString}
                 </div>
-                {#if tzInfo?.isYearWithDst || tzInfo?.isOffsetDifferentFromNow}
-                    <span
-                        class={{ badge: true, "badge--dst": tzInfo?.isDst }}
-                        title={tzInfo?.isDst ? m.dst_info() : undefined}
-                    >
+                {#if (timezone && tzInfo?.isYearWithDst) || tzInfo?.isOffsetDifferentFromNow}
+                    <span class={{ badge: true, "badge--dst": tzInfo?.isDst }} title={offsetBadgeTitle}>
                         {tzInfo.offset}
                     </span>
                 {/if}
             </div>
         {/if}
-        <div>{timeZoneLabel}</div>
     {/if}
 </div>
 

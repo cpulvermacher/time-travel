@@ -3,6 +3,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getOffsetMinutes, getTzInfo, isValidTimezone, TZGROUP_RECENT } from '../../util/timezone-info';
 
 describe('getTzInfo', () => {
+    it('returns short tzName', () => {
+        const cet = getTzInfo('en', '2025-01-01', 'Europe/Berlin')!;
+        expect(cet.tzName).toBe('Central European Standard Time');
+        const cest = getTzInfo('en', '2025-07-01', 'Europe/Berlin')!;
+        expect(cest.tzName).toBe('Central European Summer Time');
+        const jst = getTzInfo('en', '2025-07-01', 'Asia/Tokyo')!;
+        expect(jst.tzName).toBe('Japan Standard Time');
+    });
+
     it('detects DST for positive offset (Berlin)', () => {
         const timezone = 'Europe/Berlin';
 
