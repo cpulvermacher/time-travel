@@ -4,7 +4,7 @@
     import type { InitialState } from '../popup/initial-state';
     import { reloadTab, withTabLoadingRetry } from '../util/browser';
     import { disableFakeDate, setClockState, setFakeDate } from '../util/content-script-state';
-    import { parseDate } from '../util/date-utils';
+    import { formatLocalDate, parseDate } from '../util/date-utils';
     import { updateExtensionIcon } from '../util/icon';
     import { saveMostRecentTimezone, saveSetting } from '../util/settings';
     import Background from './Background.svelte';
@@ -122,6 +122,26 @@
         }
         return parsedDate.date.getTime() !== effectiveDate?.getTime() || settings.timezone !== effectiveTimezone;
     }
+    function getApplyButtonLabel(): string {
+        if (parsedDate.isReset) {
+            if (isEnabled) {
+                return m.change_date_btn_reset();
+            } else {
+                return m.change_date_btn_no_changes();
+            }
+        }
+        if (!parsedDate.isValid) {
+            return m.change_date_btn_invalid();
+        }
+        const changed =
+            parsedDate.date.getTime() !== effectiveDate?.getTime() || settings.timezone !== effectiveTimezone;
+        if (changed) {
+            return m.change_date_btn({
+                fakeDate: formatLocalDate(new Date(fakeDate)),
+            });
+        }
+        return m.change_date_btn_no_changes();
+    }
 </script>
 
 <Background {effectiveDate} />
@@ -137,7 +157,7 @@
     <TimezoneSelect value={settings.timezone} onSelect={onTimezoneChange} recentTimezones={settings.recentTimezones} />
     <div class="right-aligned">
         <button type="button" class="primary" disabled={!isApplyButtonEnabled()} onclick={onApply}>
-            {m.change_date_btn()}
+            {getApplyButtonLabel()}
         </button>
     </div>
     <hr />
