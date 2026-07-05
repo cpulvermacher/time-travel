@@ -9,22 +9,18 @@
     const effectiveDate = $derived(props.effectiveDate);
 
     let lastEffectiveDate = $state(untrack(() => effectiveDate));
-    let numSpins: number | undefined = $state();
+    let rotation = $state(0);
     let desaturated = $derived(effectiveDate === undefined);
 
-    function calculateNumSpins(diffMs: number): number | undefined {
-        if (diffMs === 0) {
-            return undefined;
+    function calculateSpinAngle(diffMs: number): number {
+        const sign = diffMs > 0 ? 1 : -1;
+        const days = Math.abs(diffMs / 1000 / 60 / 60 / 24);
+        if (days <= 30) {
+            return sign * 120;
+        } else if (days <= 365) {
+            return sign * 240;
         } else {
-            const sign = diffMs > 0 ? 1 : -1;
-            const days = Math.abs(diffMs / 1000 / 60 / 60 / 24);
-            if (days <= 30) {
-                return sign * 1;
-            } else if (days <= 365) {
-                return sign * 2;
-            } else {
-                return sign * 3;
-            }
+            return sign * 360;
         }
     }
 
@@ -35,33 +31,19 @@
             debugLog('Invalid date in spin()', newDate, lastDate);
             return;
         }
-        numSpins = calculateNumSpins(newDate.getTime() - lastDate.getTime());
+        const diffMs = newDate.getTime() - lastDate.getTime();
+        if (diffMs !== 0) {
+            rotation += calculateSpinAngle(diffMs);
+        }
         lastEffectiveDate = effectiveDate;
     });
-
-    $effect(() => {
-        // Reset spinState after finishing the animation
-        if (numSpins === undefined) {
-            return;
-        }
-        const id = setTimeout(() => {
-            numSpins = undefined;
-        }, 2000);
-        return () => clearTimeout(id);
-    });
-
-    const spinForwards = $derived(numSpins && numSpins > 0);
-    const spinBackwards = $derived(numSpins && numSpins < 0);
 </script>
 
-<div
-    class={['background', { spinBackwards, spinForwards, desaturated }]}
-    style="--num-spins: {Math.abs(numSpins || 1)}; --spin-duration: 2s;"
-></div>
+<div class={['background', { desaturated }]} style="transform: rotate({rotation}deg);"></div>
 
 <style>
     .background {
-        position: fixed;
+        position: absolute;
         z-index: -1;
         top: -50%;
         left: -50%;
@@ -70,21 +52,11 @@
         background-image: url("../../images/icon-128.png");
         background-size: cover;
         filter: saturate(1) brightness(1.25) blur(35px);
-        transition: filter 3s;
+        transition:
+            filter 3s,
+            transform 2s ease-in-out;
     }
     .background.desaturated {
         filter: saturate(0) brightness(1.4) blur(35px);
-    }
-    .background.spinBackwards {
-        transition:
-            filter 3s,
-            transform var(--spin-duration) ease-in-out;
-        transform: rotate(calc(-360deg * var(--num-spins)));
-    }
-    .background.spinForwards {
-        transition:
-            filter 3s,
-            transform var(--spin-duration) ease-in-out;
-        transform: rotate(calc(360deg * var(--num-spins)));
     }
 </style>
