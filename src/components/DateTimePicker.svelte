@@ -100,9 +100,6 @@
     <label>
         {m.datetime_input_label()}
         <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
-        {#if import.meta.env.DEV}
-            <span class="mock-active">[mock]</span>
-        {/if}
         <div class="input-fields">
             <input
                 {onkeydown}
@@ -169,10 +166,6 @@
         @media (min-width: 400px) {
             min-height: 230px;
         }
-    }
-    .mock-active {
-        color: red;
-        font-weight: bold;
     }
     .input-fields {
         display: flex;
