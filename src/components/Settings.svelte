@@ -88,6 +88,7 @@
         if (parsedDate.isReset) {
             isEnabled = false;
             void reset();
+            fakeDate = formatLocalDate(new Date());
         } else if (parsedDate.isValid) {
             isEnabled = true;
             void applyAndEnable(parsedDate.date);

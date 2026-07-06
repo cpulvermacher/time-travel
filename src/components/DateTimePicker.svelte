@@ -26,6 +26,12 @@
     let timePickerRef: TimePicker;
 
     function onkeydown(event: KeyboardEvent) {
+        if (event.key === 'Enter' && onEnterKey) {
+            event.preventDefault();
+            onEnterKey();
+            return;
+        }
+
         if (!parsedDate.isValid) {
             return;
         }
@@ -52,9 +58,6 @@
             } else {
                 adjustSeconds(60);
             }
-        } else if (event.key === 'Enter' && onEnterKey) {
-            event.preventDefault();
-            onEnterKey();
         }
     }
     // biome-ignore lint/correctness/noUnusedVariables: used in template with use:focus
