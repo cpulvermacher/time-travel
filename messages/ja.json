@@ -12,7 +12,7 @@
     "change_date_btn_invalid": "無効な日付",
     "change_date_btn": "日時を{fakeDate}に変更",
     "stop_time_toggle": "時計を停止する",
-    "enable_fake_date_toggle": "仮想日時を有効にする",
+    "enable_fake_date_toggle": "仮想JavaScript日時",
     "error_toggle_clock_failed": "時計の開始/停止に失敗しました。 ",
     "error_setting_date_failed": "日時の設定に失敗しました。 ",
     "error_reset_failed": "リセットに失敗しました。 ",

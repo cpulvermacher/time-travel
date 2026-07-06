@@ -12,7 +12,7 @@
     "change_date_btn_invalid": "Ungültiges Datum",
     "change_date_btn": "Datum ändern zu {fakeDate}",
     "stop_time_toggle": "Uhr anhalten",
-    "enable_fake_date_toggle": "Falsches Datum aktivieren",
+    "enable_fake_date_toggle": "JavaScript-Datum fälschen",
     "error_toggle_clock_failed": "Uhr starten/anhalten fehlgeschlagen: ",
     "error_setting_date_failed": "Datum konnte nicht geändert werden: ",
     "error_reset_failed": "Zurücksetzen fehlgeschlagen: ",
