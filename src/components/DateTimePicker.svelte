@@ -25,6 +25,12 @@
     let inputRef: HTMLInputElement;
     let timePickerRef: TimePicker;
 
+    $effect(() => {
+        if (parsedDate.isValid) {
+            pickerDate = parsedDate.date.getTime();
+        }
+    });
+
     function onkeydown(event: KeyboardEvent) {
         if (event.key === 'Enter' && onEnterKey) {
             event.preventDefault();
@@ -81,12 +87,6 @@
             inputRef.setSelectionRange(dateAndTimeSeparator + 1, -1);
         }
     }
-    function onInput() {
-        if (!parsedDate.isValid) {
-            return;
-        }
-        pickerDate = parsedDate.date.getTime();
-    }
     function adjustSeconds(seconds: number) {
         if (!parsedDate.isValid) {
             return;
@@ -109,7 +109,6 @@
                 bind:value={fakeDate}
                 use:focus
                 bind:this={inputRef}
-                oninput={onInput}
                 type="text"
                 size="28"
                 maxlength="28"
@@ -118,7 +117,7 @@
                 class={{ error: !parsedDate.isValid && !parsedDate.isReset }}
                 title={m.date_input_hint()}
             />
-            <TimePicker bind:value={fakeDate} onChange={onInput} bind:this={timePickerRef} />
+            <TimePicker bind:value={fakeDate} bind:this={timePickerRef} />
         </div>
     </label>
     <div class="datepicker-container">
