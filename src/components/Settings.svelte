@@ -154,7 +154,7 @@
     <DateTimePicker bind:fakeDate onEnterKey={onApply} />
     <TimezoneSelect value={settings.timezone} onSelect={onTimezoneChange} recentTimezones={settings.recentTimezones} />
     <div class="right-aligned">
-        <button type="button" class="primary" disabled={!isApplyButtonEnabled()} onclick={onApply}>
+        <button type="button" class="primary apply-button" disabled={!isApplyButtonEnabled()} onclick={onApply}>
             {getApplyButtonLabel()}
         </button>
     </div>
@@ -179,6 +179,16 @@
     .right-aligned {
         display: flex;
         justify-content: flex-end;
+    }
+
+    .apply-button {
+        width: 100%;
+    }
+
+    @media (min-width: 400px) {
+        .apply-button {
+            width: auto;
+        }
     }
 
     hr {
