@@ -5,9 +5,10 @@
         checked: boolean;
         disabled?: boolean;
         bold?: boolean;
+        light?: boolean;
         onChange?: (checked: boolean) => void;
     }
-    let { label, description, checked = $bindable(), disabled, bold, onChange }: Props = $props();
+    let { label, description, checked = $bindable(), disabled, bold, light, onChange }: Props = $props();
 
     function onchange() {
         onChange?.(checked);
@@ -16,9 +17,9 @@
 
 <label class="toggle">
     <div class="row">
-        <div class={['label', { disabled, bold }]}>{label}</div>
+        <div class={['label', { disabled, bold, light }]}>{label}</div>
         <input type="checkbox" bind:checked {onchange} {disabled} />
-        <div class="toggle-bg">
+        <div class={['toggle-bg', { light }]}>
             <span class="slider"></span>
         </div>
     </div>
@@ -46,6 +47,9 @@
     }
     .label.bold {
         font-weight: bold;
+    }
+    .label.light {
+        color: white;
     }
     .description {
         color: var(--secondary-text-color);
@@ -82,6 +86,17 @@
     }
     input:disabled + .toggle-bg {
         border-color: var(--border-color);
+    }
+    .toggle-bg.light {
+        background-color: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+    input:not(:disabled):checked + .toggle-bg.light {
+        background-color: white;
+        border-color: white;
+    }
+    input:not(:disabled):checked + .toggle-bg.light .slider {
+        background-color: var(--primary-color);
     }
 
     .slider {
