@@ -33,7 +33,7 @@
             {m.page_uses_real_date()}
         </div>
     {:else}
-        <div>
+        <div class="label">
             {#if import.meta.env.DEV}
                 <span class="mock-active">[mock]</span>
             {/if}
@@ -65,11 +65,15 @@
         justify-items: center;
         color: var(--secondary-text-color);
     }
+    .label {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.85rem;
+    }
     .time-block {
         display: flex;
         gap: 5px;
         align-items: center;
-        color: var(--text-color);
+        color: white;
         font-size: 1rem;
         animation: date-change 0.2s ease-in-out;
     }
@@ -84,8 +88,12 @@
             filter: blur(0);
         }
     }
+    .datetime {
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
     .badge {
-        background-color: #9f9f9f;
+        background-color: rgba(255, 255, 255, 0.3);
         color: white;
         padding: 0 5px;
         border-radius: 8px;
@@ -97,5 +105,8 @@
     .mock-active {
         color: #c026d3;
         font-weight: bold;
+    }
+    .label .mock-active {
+        color: #f0abfc;
     }
 </style>

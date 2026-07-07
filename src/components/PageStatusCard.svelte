@@ -1,6 +1,5 @@
 <script lang="ts">
     import { m } from '../paraglide/messages';
-    import Background from './Background.svelte';
     import DateTimePreview from './DateTimePreview.svelte';
     import Toggle from './Toggle.svelte';
 
@@ -14,10 +13,15 @@
     let { effectiveDate, effectiveTimezone, isEnabled = $bindable(), disabled, onChange }: Props = $props();
 </script>
 
-<div class="card">
-    <Background {effectiveDate} />
+<div class={["card", { active: effectiveDate !== undefined }]}>
     <div class="content">
-        <Toggle bind:checked={isEnabled} {disabled} {onChange} label={m.enable_fake_date_toggle()} />
+        <Toggle
+            bind:checked={isEnabled}
+            {disabled}
+            {onChange}
+            label={m.enable_fake_date_toggle()}
+            light={effectiveDate !== undefined}
+        />
         <DateTimePreview date={effectiveDate} timezone={effectiveTimezone} />
     </div>
 </div>
@@ -26,8 +30,13 @@
     .card {
         position: relative;
         overflow: hidden;
-        border-radius: 8px;
+        border-radius: 16px;
         border: 1px solid var(--border-color);
+        transition: all 0.3s ease-in-out;
+    }
+    .card.active {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
     }
     .content {
         position: relative;
