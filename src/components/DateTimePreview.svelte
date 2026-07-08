@@ -40,17 +40,19 @@
             {m.effective_page_date()}
         </div>
         {#if tzInfo}
-            <div class="time-block">
-                <div class="datetime">
-                    {tzInfo?.dateString}
-                    {tzInfo?.timeString}
+            {#key date?.getTime()}
+                <div class="time-block">
+                    <div class="datetime">
+                        {tzInfo?.dateString}
+                        {tzInfo?.timeString}
+                    </div>
+                    {#if (timezone && tzInfo?.isYearWithDst) || tzInfo?.isOffsetDifferentFromNow}
+                        <span class={{ badge: true, "badge--dst": tzInfo?.isDst }} title={offsetBadgeTitle}>
+                            {tzInfo.offset}
+                        </span>
+                    {/if}
                 </div>
-                {#if (timezone && tzInfo?.isYearWithDst) || tzInfo?.isOffsetDifferentFromNow}
-                    <span class={{ badge: true, "badge--dst": tzInfo?.isDst }} title={offsetBadgeTitle}>
-                        {tzInfo.offset}
-                    </span>
-                {/if}
-            </div>
+            {/key}
         {/if}
     {/if}
 </div>
@@ -69,6 +71,18 @@
         align-items: center;
         color: var(--text-color);
         font-size: 1rem;
+        animation: date-change 0.2s ease-in-out;
+    }
+    @keyframes date-change {
+        from {
+            opacity: 0;
+            filter: blur(4px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+            filter: blur(0);
+        }
     }
     .badge {
         background-color: #9f9f9f;
