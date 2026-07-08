@@ -133,12 +133,18 @@
         if (!parsedDate.isValid) {
             return m.change_date_btn_invalid();
         }
-        const changed =
-            parsedDate.date.getTime() !== effectiveDate?.getTime() || settings.timezone !== effectiveTimezone;
-        if (changed) {
-            return m.change_date_btn({
-                fakeDate: formatLocalDate(new Date(fakeDate)),
-            });
+        const dateChanged = parsedDate.date.getTime() !== effectiveDate?.getTime();
+        const tzChanged = settings.timezone !== effectiveTimezone;
+        const fakeDateLabel = formatLocalDate(parsedDate.date);
+        const timezoneLabel = settings.timezone || m.timezone_browser_default();
+        if (dateChanged && tzChanged) {
+            return m.change_date_btn_date_and_tz({ fakeDate: fakeDateLabel, timezone: timezoneLabel });
+        }
+        if (tzChanged) {
+            return m.change_date_btn_tz({ timezone: timezoneLabel });
+        }
+        if (dateChanged) {
+            return m.change_date_btn({ fakeDate: fakeDateLabel });
         }
         return m.change_date_btn_no_changes();
     }
