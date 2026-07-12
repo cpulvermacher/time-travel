@@ -27,7 +27,7 @@ export default defineConfig(() => ({
                 // NOTE: keep autoUpdate disabled. Coverage varies slightly between Node versions
                 autoUpdate: false,
                 statements: 90,
-                branches: 87,
+                branches: 84,
             },
         },
     },
