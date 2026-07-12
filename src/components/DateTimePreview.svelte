@@ -26,19 +26,9 @@
 
 <div class="preview">
     {#if date === undefined}
-        <div>
-            {#if import.meta.env.DEV}
-                <span class="mock-active">[mock]</span>
-            {/if}
-            {m.page_uses_real_date()}
-        </div>
+        <div>{m.page_uses_real_date()}</div>
     {:else}
-        <div class="label">
-            {#if import.meta.env.DEV}
-                <span class="mock-active">[mock]</span>
-            {/if}
-            {m.effective_page_date()}
-        </div>
+        <div class="label">{m.effective_page_date()}</div>
         {#if tzInfo}
             {#key date?.getTime()}
                 <div class="time-block">
@@ -101,12 +91,5 @@
     }
     .badge--dst {
         background-color: orange;
-    }
-    .mock-active {
-        color: #c026d3;
-        font-weight: bold;
-    }
-    .label .mock-active {
-        color: #f0abfc;
     }
 </style>
