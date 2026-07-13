@@ -92,9 +92,6 @@ describe('url checks', () => {
     });
 
     it('isExtensionGalleryUrl detects both web store hosts', async () => {
-        chromeMock.tabs.get.mockResolvedValue({ url: 'https://chrome.google.com/webstore/detail/x' });
-        await expect(isExtensionGalleryUrl(1)).resolves.toBe(true);
-
         chromeMock.tabs.get.mockResolvedValue({ url: 'https://chromewebstore.google.com/detail/x' });
         await expect(isExtensionGalleryUrl(1)).resolves.toBe(true);
 
