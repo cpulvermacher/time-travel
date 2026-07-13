@@ -10,6 +10,20 @@
     const { date, timezone }: Props = $props();
 
     const tzInfo = $derived(date !== undefined ? getTzInfo(getUILanguage(), date, timezone) : null);
+
+    // real system time, only shown (and ticking) while no date is faked
+    let now = $state(new Date());
+    $effect(() => {
+        if (date !== undefined) {
+            return;
+        }
+        const interval = setInterval(() => {
+            now = new Date();
+        }, 1000);
+        return () => clearInterval(interval);
+    });
+    const realTzInfo = $derived(getTzInfo(getUILanguage(), now, ''));
+
     const offsetBadgeTitle = $derived.by(() => {
         let title = timezone || tzInfo?.tzName || '';
 
@@ -24,26 +38,31 @@
     });
 </script>
 
-<div class={['preview', { active: date !== undefined }]}>
+<div class={["preview", { active: date !== undefined }]}>
+    <div class="label">
+        {date === undefined ? m.page_uses_real_date() : m.effective_page_date()}
+    </div>
     {#if date === undefined}
-        <div>{m.page_uses_real_date()}</div>
-    {:else}
-        <div class="label">{m.effective_page_date()}</div>
-        {#if tzInfo}
-            {#key date?.getTime()}
-                <div class="time-block">
-                    <div class="datetime">
-                        {tzInfo?.dateString}
-                        {tzInfo?.timeString}
-                    </div>
-                    {#if (timezone && tzInfo?.isYearWithDst) || tzInfo?.isOffsetDifferentFromNow}
-                        <span class={{ badge: true, "badge--dst": tzInfo?.isDst }} title={offsetBadgeTitle}>
-                            {tzInfo.offset}
-                        </span>
-                    {/if}
+        <div class="time-block real-time">
+            <div class="datetime">
+                {realTzInfo?.dateString}
+                {realTzInfo?.timeString}
+            </div>
+        </div>
+    {:else if tzInfo}
+        {#key date.getTime()}
+            <div class="time-block">
+                <div class="datetime">
+                    {tzInfo.dateString}
+                    {tzInfo.timeString}
                 </div>
-            {/key}
-        {/if}
+                {#if (timezone && tzInfo.isYearWithDst) || tzInfo.isOffsetDifferentFromNow}
+                    <span class={{ badge: true, "badge--dst": tzInfo.isDst }} title={offsetBadgeTitle}>
+                        {tzInfo.offset}
+                    </span>
+                {/if}
+            </div>
+        {/key}
     {/if}
 </div>
 
@@ -60,6 +79,9 @@
     }
     .label {
         font-size: 0.85rem;
+    }
+    .real-time {
+        color: var(--secondary-text-color);
     }
     .time-block {
         display: flex;
