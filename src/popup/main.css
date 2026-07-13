@@ -4,6 +4,7 @@
     --secondary-text-color: #9f9f9f;
     --border-color: #dcdcdc;
     --error-color: #8f4242;
+    --main-padding: 15px;
     --font-family: -apple-system, BlinkMacSystemFont, Inter, Helvetica, Arial, "Liberation Sans", sans-serif;
 }
 
@@ -50,7 +51,7 @@ main {
     flex-direction: column;
     justify-content: space-between;
     gap: 10px;
-    padding: 15px;
+    padding: var(--main-padding);
 }
 
 label {

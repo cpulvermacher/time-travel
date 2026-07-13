@@ -199,9 +199,8 @@
     }
 
     hr {
-        width: 100%;
         border: none;
         border-top: 1px solid var(--border-color);
-        margin: 0 auto;
+        margin: 0 calc(-1 * var(--main-padding));
     }
 </style>
