@@ -24,7 +24,7 @@
     });
 </script>
 
-<div class="preview">
+<div class={['preview', { active: date !== undefined }]}>
     {#if date === undefined}
         <div>{m.page_uses_real_date()}</div>
     {:else}
@@ -53,17 +53,18 @@
         display: flex;
         flex-direction: column;
         justify-items: center;
-        color: var(--secondary-text-color);
+        transition: all 0.3s ease-in-out;
+    }
+    .preview.active {
+        color: var(--primary-color);
     }
     .label {
-        color: rgba(255, 255, 255, 0.85);
         font-size: 0.85rem;
     }
     .time-block {
         display: flex;
         gap: 5px;
         align-items: center;
-        color: white;
         font-size: 1rem;
         animation: date-change 0.2s ease-in-out;
     }

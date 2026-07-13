@@ -8,8 +8,8 @@
     import { updateExtensionIcon } from '../util/icon';
     import { saveMostRecentTimezone, saveSetting } from '../util/settings';
     import DateTimePicker from './DateTimePicker.svelte';
+    import DateTimePreview from './DateTimePreview.svelte';
     import ErrorModal from './ErrorModal.svelte';
-    import PageStatusCard from './PageStatusCard.svelte';
     import ReloadModal from './ReloadModal.svelte';
     import TimezoneSelect from './TimezoneSelect.svelte';
     import Toggle from './Toggle.svelte';
@@ -138,7 +138,10 @@
         const fakeDateLabel = formatLocalDate(parsedDate.date);
         const timezoneLabel = settings.timezone || m.timezone_browser_default();
         if (dateChanged && tzChanged) {
-            return m.change_date_btn_date_and_tz({ fakeDate: fakeDateLabel, timezone: timezoneLabel });
+            return m.change_date_btn_date_and_tz({
+                fakeDate: fakeDateLabel,
+                timezone: timezoneLabel,
+            });
         }
         if (tzChanged) {
             return m.change_date_btn_tz({ timezone: timezoneLabel });
@@ -151,13 +154,14 @@
 </script>
 
 <main>
-    <PageStatusCard
-        bind:isEnabled
+    <Toggle
+        bind:checked={isEnabled}
         disabled={!parsedDate.isValid && !isEnabled}
         onChange={onEnableToggle}
-        {effectiveDate}
-        {effectiveTimezone}
+        label={m.enable_fake_date_toggle()}
     />
+    <hr />
+    <DateTimePreview date={effectiveDate} timezone={effectiveTimezone} />
     <DateTimePicker bind:fakeDate onEnterKey={onApply} />
     <TimezoneSelect value={settings.timezone} onSelect={onTimezoneChange} recentTimezones={settings.recentTimezones} />
     <div class="right-aligned">
