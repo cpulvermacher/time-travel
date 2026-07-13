@@ -29,6 +29,7 @@
     let effectiveDate = $state(initialState.isEnabled ? new Date(initialState.fakeDate) : undefined);
     //TODO this should use the tab state, not settings
     let effectiveTimezone = $state(initialState.isEnabled ? settings.timezone : '');
+    let pageClock = $state(initialState.pageClock);
 
     async function updateClockState() {
         try {
@@ -39,6 +40,13 @@
             });
         } catch (e) {
             setError(m.error_toggle_clock_failed(), e);
+        }
+        if (pageClock) {
+            // stopping makes the page fall back to its stored date, resuming ticks from now on
+            pageClock = {
+                ...pageClock,
+                tickStart: settings.stopClock ? null : Date.now(),
+            };
         }
     }
     async function applyAndEnable(date: Date) {
@@ -63,6 +71,7 @@
 
         effectiveDate = date;
         effectiveTimezone = settings.timezone;
+        pageClock = { date, tickStart: settings.stopClock ? null : Date.now() };
     }
     async function reset() {
         try {
@@ -79,6 +88,7 @@
         }
         effectiveDate = undefined;
         effectiveTimezone = '';
+        pageClock = undefined;
     }
     function setError(msg: string, err: unknown) {
         errorMsg = msg + (err instanceof Error ? err.message : '');
@@ -161,7 +171,7 @@
         label={m.enable_fake_date_toggle()}
     />
     <hr />
-    <DateTimePreview date={effectiveDate} timezone={effectiveTimezone} />
+    <DateTimePreview clock={pageClock} timezone={effectiveTimezone} />
     <DateTimePicker bind:fakeDate onEnterKey={onApply} />
     <TimezoneSelect value={settings.timezone} onSelect={onTimezoneChange} recentTimezones={settings.recentTimezones} />
     <div class="right-aligned">

@@ -1,28 +1,36 @@
 <script lang="ts">
     import { m } from '../paraglide/messages';
+    import type { PageClock } from '../popup/initial-state';
     import { getUILanguage } from '../util/browser';
     import { getTzInfo } from '../util/timezone-info';
 
     interface Props {
-        date: Date | undefined;
+        clock: PageClock | undefined; // fake clock set in the page, undefined if the page uses the real date
         timezone: string; // IANA time zone identifier or '' for browser default
     }
-    const { date, timezone }: Props = $props();
+    const { clock, timezone }: Props = $props();
 
-    const tzInfo = $derived(date !== undefined ? getTzInfo(getUILanguage(), date, timezone) : null);
-
-    // real system time, only shown (and ticking) while no date is faked
+    // real system time, ticking
     let now = $state(new Date());
     $effect(() => {
-        if (date !== undefined) {
-            return;
-        }
         const interval = setInterval(() => {
             now = new Date();
         }, 1000);
         return () => clearInterval(interval);
     });
     const realTzInfo = $derived(getTzInfo(getUILanguage(), now, ''));
+
+    // while the clock runs, the page advances the fake date with real time (see fakeNowDate())
+    const fakeNow = $derived.by(() => {
+        if (clock === undefined || clock.tickStart === null) {
+            return clock?.date;
+        }
+        // `now` is only sampled once a second, so it can still predate a just-applied `tickStart`
+        const elapsed = Math.max(0, now.getTime() - clock.tickStart);
+        return new Date(clock.date.getTime() + elapsed);
+    });
+
+    const tzInfo = $derived(fakeNow !== undefined ? getTzInfo(getUILanguage(), fakeNow, timezone) : null);
 
     const offsetBadgeTitle = $derived.by(() => {
         let title = timezone || tzInfo?.tzName || '';
@@ -38,11 +46,13 @@
     });
 </script>
 
-<div class={["preview", { active: date !== undefined }]}>
+<div class={["preview", { active: clock !== undefined }]}>
     <div class="label">
-        {date === undefined ? m.page_uses_real_date() : m.effective_page_date()}
+        {clock === undefined
+            ? m.page_uses_real_date()
+            : m.effective_page_date()}
     </div>
-    {#if date === undefined}
+    {#if clock === undefined}
         <div class="time-block real-time">
             <div class="datetime">
                 {realTzInfo?.dateString}
@@ -50,7 +60,7 @@
             </div>
         </div>
     {:else if tzInfo}
-        {#key date.getTime()}
+        {#key clock.date.getTime()}
             <div class="time-block">
                 <div class="datetime">
                     {tzInfo.dateString}

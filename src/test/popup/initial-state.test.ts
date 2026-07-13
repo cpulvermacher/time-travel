@@ -83,6 +83,7 @@ describe('getInitialState', () => {
             expect(result.fakeDate).toBe('2023-01-01 12:35');
             expect(result.settings.timezone).toBe('Europe/London');
             expect(result.settings.stopClock).toBe(false);
+            expect(result.pageClock).toEqual({ date: fakeDate, tickStart: fakeDate.getTime() });
         });
 
         it('handles disabled state correctly', async () => {
@@ -106,6 +107,7 @@ describe('getInitialState', () => {
             expect(result.fakeDate).toBe('2026-01-01 12:34');
             expect(result.settings.timezone).toBe(defaultSettings.timezone);
             expect(result.settings.stopClock).toBe(defaultSettings.stopClock);
+            expect(result.pageClock).toBeUndefined();
         });
 
         it('handles stopped clock correctly', async () => {
@@ -126,6 +128,7 @@ describe('getInitialState', () => {
             expect(result.fakeDate).toBe('2023-01-01 12:34:56.789');
             expect(result.settings.stopClock).toBe(true);
             expect(result.settings.timezone).toBe('Europe/London');
+            expect(result.pageClock).toEqual({ date: fakeDate, tickStart: null });
         });
 
         it('handles invalid fake date correctly', async () => {
