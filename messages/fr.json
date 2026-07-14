@@ -54,7 +54,6 @@
     "timezone_group_common": "Commun",
     "timezone_group_recent": "Récent",
     "date_in_timezone_info": "Fuseau horaire de la page :",
-    "page_uses_real_date": "La page utilise la date réelle",
-    "effective_page_date": "Date effective dans la page :",
+    "page_sees_label": "La page voit :",
     "dst_info": "L'heure d'été (DST) est en vigueur pour cette date."
 }

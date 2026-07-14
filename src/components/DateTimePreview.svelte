@@ -47,11 +47,7 @@
 </script>
 
 <div class={["preview", { active: clock !== undefined }]}>
-    <div class="label">
-        {clock === undefined
-            ? m.page_uses_real_date()
-            : m.effective_page_date()}
-    </div>
+    <div class="label">{m.page_sees_label()}</div>
     {#if clock === undefined}
         <div class="time-block real-time">
             <div class="datetime">
