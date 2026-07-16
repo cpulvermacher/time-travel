@@ -94,20 +94,17 @@
         color: var(--primary-color);
     }
     .label {
-        font-size: 0.85rem;
+        font-size: 1rem;
     }
     .real-time {
         color: var(--secondary-text-color);
     }
     .note {
-        font-size: 0.85rem;
         white-space: nowrap;
     }
     .time-block {
         display: flex;
         gap: 5px;
-        /* the note is smaller than the date, so line up the text baselines, not the boxes */
-        align-items: baseline;
         font-size: 1rem;
         animation: date-change 0.2s ease-in-out;
     }
@@ -124,10 +121,11 @@
     }
     .datetime {
         font-weight: bold;
-        font-size: 1.2rem;
+        font-size: 1rem;
         font-variant-numeric: tabular-nums;
     }
     .badge {
+        align-self: center;
         background-color: rgba(255, 255, 255, 0.3);
         color: white;
         padding: 0 5px;
