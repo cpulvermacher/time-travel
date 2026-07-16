@@ -63,6 +63,7 @@
                 {realTzInfo?.dateString}
                 {realTzInfo?.timeString}
             </div>
+            <span class="note">· {m.real_time_note()}</span>
         </div>
     {:else if tzInfo}
         {#key clock.date.getTime()}
@@ -98,10 +99,15 @@
     .real-time {
         color: var(--secondary-text-color);
     }
+    .note {
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
     .time-block {
         display: flex;
         gap: 5px;
-        align-items: center;
+        /* the note is smaller than the date, so line up the text baselines, not the boxes */
+        align-items: baseline;
         font-size: 1rem;
         animation: date-change 0.2s ease-in-out;
     }
