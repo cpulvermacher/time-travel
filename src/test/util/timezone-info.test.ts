@@ -85,6 +85,23 @@ describe('getTzInfo', () => {
         expect(infoDe.dateString).toBe('1. Juli 2025');
         expect(infoDe.timeString).toBe('06:00');
     });
+
+    it('omits seconds by default', () => {
+        const info = getTzInfo('de', '2025-07-01T10:00:07Z', 'America/New_York')!;
+        expect(info.timeString).toBe('06:00');
+    });
+
+    it('includes seconds if requested', () => {
+        // seconds are zero-padded, so the ticking preview doesn't change width
+        const infoDe = getTzInfo('de', '2025-07-01T10:00:07Z', 'America/New_York', { seconds: true })!;
+        expect(infoDe.timeString).toBe('06:00:07');
+
+        const infoJa = getTzInfo('ja', '2025-07-01T10:00:07Z', 'America/New_York', { seconds: true })!;
+        expect(infoJa.timeString).toBe('6:00:07');
+
+        // the date is unaffected by the time format
+        expect(infoDe.dateString).toBe('1. Juli 2025');
+    });
 });
 
 describe('isValidTimezone', () => {

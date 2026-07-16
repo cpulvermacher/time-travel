@@ -10,12 +10,18 @@
     }
     const { clock, timezone }: Props = $props();
 
-    // real system time, ticking
+    // the preview only moves while the real date shows, or while the fake clock ticks; a frozen fake clock needs no timer
+    const isTicking = $derived(clock === undefined || clock.tickStart !== null);
+
+    // real system time, sampled faster than once a second so the ticking seconds don't visibly skip
     let now = $state(new Date());
     $effect(() => {
+        if (!isTicking) {
+            return;
+        }
         const interval = setInterval(() => {
             now = new Date();
-        }, 1000);
+        }, 250);
         return () => clearInterval(interval);
     });
     const realTzInfo = $derived(getTzInfo(getUILanguage(), now, ''));
@@ -25,12 +31,15 @@
         if (clock === undefined || clock.tickStart === null) {
             return clock?.date;
         }
-        // `now` is only sampled once a second, so it can still predate a just-applied `tickStart`
+        // `now` is only sampled periodically, so it can still predate a just-applied `tickStart`
         const elapsed = Math.max(0, now.getTime() - clock.tickStart);
         return new Date(clock.date.getTime() + elapsed);
     });
 
-    const tzInfo = $derived(fakeNow !== undefined ? getTzInfo(getUILanguage(), fakeNow, timezone) : null);
+    // the fake date shows seconds, so a running clock is visibly alive and a stopped one visibly still
+    const tzInfo = $derived(
+        fakeNow !== undefined ? getTzInfo(getUILanguage(), fakeNow, timezone, { seconds: true }) : null
+    );
 
     const offsetBadgeTitle = $derived.by(() => {
         let title = timezone || tzInfo?.tzName || '';
@@ -110,6 +119,7 @@
     .datetime {
         font-weight: bold;
         font-size: 1.2rem;
+        font-variant-numeric: tabular-nums;
     }
     .badge {
         background-color: rgba(255, 255, 255, 0.3);

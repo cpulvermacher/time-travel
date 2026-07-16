@@ -127,11 +127,20 @@ type TzInfo = {
     isDst: boolean;
     isYearWithDst: boolean;
     isOffsetDifferentFromNow: boolean;
-    timeString: string; // localized time string without seconds, e.g. "13:34" or "01:34 PM"
+    timeString: string; // localized time string, e.g. "13:34" or "01:34 PM"
     dateString: string; // date string, e.g. "Aug 6, 2025" or "2025年8月6日"
 };
 
-export function getTzInfo(locale: string, date: Date | string, timezone: string | undefined): TzInfo | null {
+export type TzInfoFormat = {
+    seconds?: boolean; // include seconds in the time, e.g. "13:34:07"
+};
+
+export function getTzInfo(
+    locale: string,
+    date: Date | string,
+    timezone: string | undefined,
+    format: TzInfoFormat = {}
+): TzInfo | null {
     try {
         if (typeof date === 'string') {
             date = new Date(date);
@@ -167,7 +176,12 @@ export function getTzInfo(locale: string, date: Date | string, timezone: string 
             isDst,
             isYearWithDst: yearWithDst,
             isOffsetDifferentFromNow: offsetDate !== offsetNow,
-            timeString: date.toLocaleTimeString(locale, { timeZone: timezone, hour: 'numeric', minute: 'numeric' }),
+            timeString: date.toLocaleTimeString(locale, {
+                timeZone: timezone,
+                hour: 'numeric',
+                minute: 'numeric',
+                ...(format.seconds ? { second: '2-digit' } : {}),
+            }),
             dateString: date.toLocaleDateString(locale, {
                 timeZone: timezone,
                 year: 'numeric',
