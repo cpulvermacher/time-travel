@@ -8,6 +8,12 @@ export const TZGROUP_COMMON = '_common';
 
 let timezoneOptions: Timezone[] | null = null;
 
+/** Shortens an IANA time zone id to just its city part, e.g. 'America/Argentina/Buenos_Aires' -> 'Buenos Aires' */
+export function getTimezoneCity(tz: string): string {
+    const tzParts = tz.split('/');
+    return tzParts[tzParts.length - 1].replace(/_/g, ' ');
+}
+
 /** Returns true if `tz` is a valid IANA time zone identifier usable with the Intl APIs. */
 export function isValidTimezone(tz: string | null | undefined): tz is string {
     if (!tz) {
@@ -34,8 +40,7 @@ export function getTimezoneOptions(locale: string, recentTz: string[]): Timezone
         const offset = getOffset(locale, tz).replace('GMT', 'UTC');
         const tzParts = tz.split('/');
         const group = tzParts.length > 1 ? tzParts[0] : 'Etc'; // Firefox has a number of funky time zones like 'CST6CDT', put them in 'Etc'
-        let tzName = tzParts.length > 1 ? tzParts.slice(1).join('/') : tz;
-        tzName = tzName.replace(/_/g, ' ');
+        const tzName = (tzParts.length > 1 ? tzParts.slice(1).join('/') : tz).replace(/_/g, ' ');
 
         return {
             tz,

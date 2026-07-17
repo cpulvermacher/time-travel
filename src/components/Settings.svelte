@@ -7,6 +7,7 @@
     import { formatLocalDate, parseDate } from '../util/date-utils';
     import { updateExtensionIcon } from '../util/icon';
     import { saveMostRecentTimezone, saveSetting } from '../util/settings';
+    import { getTimezoneCity } from '../util/timezone-info';
     import DateTimePicker from './DateTimePicker.svelte';
     import DateTimePreview from './DateTimePreview.svelte';
     import ErrorModal from './ErrorModal.svelte';
@@ -146,15 +147,14 @@
         const dateChanged = parsedDate.date.getTime() !== effectiveDate?.getTime();
         const tzChanged = settings.timezone !== effectiveTimezone;
         const fakeDateLabel = formatLocalDate(parsedDate.date);
-        const timezoneLabel = settings.timezone || m.timezone_browser_default();
+        const timezoneLabel = settings.timezone && getTimezoneCity(settings.timezone);
         if (dateChanged && tzChanged) {
-            return m.change_date_btn_date_and_tz({
-                fakeDate: fakeDateLabel,
-                timezone: timezoneLabel,
-            });
+            return timezoneLabel
+                ? m.change_date_btn_date_and_tz({ fakeDate: fakeDateLabel, timezone: timezoneLabel })
+                : m.change_date_btn_date_and_tz_default({ fakeDate: fakeDateLabel });
         }
         if (tzChanged) {
-            return m.change_date_btn_tz({ timezone: timezoneLabel });
+            return timezoneLabel ? m.change_date_btn_tz({ timezone: timezoneLabel }) : m.change_date_btn_tz_default();
         }
         if (dateChanged) {
             return m.change_date_btn({ fakeDate: fakeDateLabel });
