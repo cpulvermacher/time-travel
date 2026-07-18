@@ -2,12 +2,12 @@
     import { untrack } from 'svelte';
     import { m } from '../paraglide/messages';
     import type { InitialState } from '../popup/initial-state';
-    import { reloadTab, withTabLoadingRetry } from '../util/browser';
+    import { getUILanguage, reloadTab, withTabLoadingRetry } from '../util/browser';
     import { disableFakeDate, setClockState, setFakeDate } from '../util/content-script-state';
     import { formatLocalDate, parseDate } from '../util/date-utils';
     import { updateExtensionIcon } from '../util/icon';
     import { saveMostRecentTimezone, saveSetting } from '../util/settings';
-    import { getTimezoneCity } from '../util/timezone-info';
+    import { getTimezoneCity, getTzInfo } from '../util/timezone-info';
     import DateTimePicker from './DateTimePicker.svelte';
     import DateTimePreview from './DateTimePreview.svelte';
     import ErrorModal from './ErrorModal.svelte';
@@ -146,7 +146,8 @@
         }
         const dateChanged = parsedDate.date.getTime() !== effectiveDate?.getTime();
         const tzChanged = settings.timezone !== effectiveTimezone;
-        const fakeDateLabel = formatLocalDate(parsedDate.date);
+        const tzInfo = getTzInfo(getUILanguage(), parsedDate.date, settings.timezone);
+        const fakeDateLabel = tzInfo ? `${tzInfo.dateString} ${tzInfo.timeString}` : formatLocalDate(parsedDate.date);
         const timezoneLabel = settings.timezone && getTimezoneCity(settings.timezone);
         if (dateChanged && tzChanged) {
             return timezoneLabel
