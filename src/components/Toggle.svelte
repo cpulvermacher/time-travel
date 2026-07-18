@@ -91,13 +91,6 @@
         background-color: rgba(255, 255, 255, 0.3);
         border-color: rgba(255, 255, 255, 0.5);
     }
-    input:not(:disabled):checked + .toggle-bg.light {
-        background-color: white;
-        border-color: white;
-    }
-    input:not(:disabled):checked + .toggle-bg.light .slider {
-        background-color: var(--primary-color);
-    }
 
     .slider {
         position: absolute;
@@ -115,5 +108,13 @@
     }
     input:disabled + .toggle-bg .slider {
         background-color: #eee;
+    }
+
+    input:not(:disabled):checked + .toggle-bg.light {
+        background-color: white;
+        border-color: white;
+    }
+    input:not(:disabled):checked + .toggle-bg.light .slider {
+        background-color: var(--primary-color);
     }
 </style>
