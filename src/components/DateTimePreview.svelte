@@ -72,7 +72,7 @@
                     {tzInfo.dateString}
                     {tzInfo.timeString}
                 </div>
-                {#if (timezone && tzInfo.isYearWithDst) || tzInfo.isOffsetDifferentFromNow}
+                {#if timezone || tzInfo.isOffsetDifferentFromNow}
                     <span class={{ badge: true, "badge--dst": tzInfo.isDst }} title={offsetBadgeTitle}>
                         {tzInfo.offset}
                     </span>
@@ -126,13 +126,14 @@
     }
     .badge {
         align-self: center;
-        background-color: rgba(255, 255, 255, 0.3);
-        color: white;
+        background-color: var(--primary-color);
+        color: #ffffff;
         padding: 0 5px;
         border-radius: 8px;
         font-size: 0.8rem;
     }
     .badge--dst {
         background-color: orange;
+        color: #ffffff;
     }
 </style>
