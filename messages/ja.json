@@ -57,5 +57,6 @@
     "date_in_timezone_info": "ページタイムゾーンでは",
     "page_sees_label": "ページの日時:",
     "real_time_note": "実時間",
-    "dst_info": "この日時は夏時間が適用されています。"
+    "dst_info": "この日時は夏時間が適用されています。",
+    "dst_other_time_info": "このタイムゾーンでは、年内の他の時期に夏時間が適用されます。"
 }

@@ -57,5 +57,6 @@
     "date_in_timezone_info": "In Seitenzeitzone:",
     "page_sees_label": "Seite sieht:",
     "real_time_note": "Echtzeit",
-    "dst_info": "Sommerzeit ist für dieses Datum aktiv."
+    "dst_info": "Sommerzeit ist für dieses Datum aktiv.",
+    "dst_other_time_info": "In dieser Zeitzone gilt zu anderen Zeiten des Jahres Sommerzeit."
 }

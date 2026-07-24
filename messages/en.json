@@ -57,5 +57,6 @@
     "date_in_timezone_info": "In page time zone:",
     "page_sees_label": "Page sees:",
     "real_time_note": "real time",
-    "dst_info": "Daylight Saving Time (DST) is in effect for this date."
+    "dst_info": "Daylight Saving Time (DST) is in effect for this date.",
+    "dst_other_time_info": "This time zone observes Daylight Saving Time (DST) at other times of the year."
 }

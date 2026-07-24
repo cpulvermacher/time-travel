@@ -57,5 +57,6 @@
     "date_in_timezone_info": "Fuseau horaire de la page :",
     "page_sees_label": "La page voit :",
     "real_time_note": "heure réelle",
-    "dst_info": "L'heure d'été (DST) est en vigueur pour cette date."
+    "dst_info": "L'heure d'été (DST) est en vigueur pour cette date.",
+    "dst_other_time_info": "Ce fuseau horaire applique l'heure d'été (DST) à d'autres périodes de l'année."
 }

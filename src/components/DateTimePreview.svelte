@@ -50,6 +50,8 @@
 
         if (tzInfo?.isDst) {
             title += `\n${m.dst_info()}`;
+        } else if (tzInfo?.isYearWithDst) {
+            title += `\n${m.dst_other_time_info()}`;
         }
         return title;
     });
