@@ -27,7 +27,7 @@ export async function setIconBadgeAndTitle(tabId: number, state: ContentScriptSt
         let formattedFakeDate = '';
         if (tzInfo) {
             formattedFakeDate = tzInfo.dateString + ' ' + tzInfo.timeString + ' ' + tzInfo.tzName;
-            if (tzInfo.isYearWithDst || tzInfo.isOffsetDifferentFromNow) {
+            if (timezone || tzInfo.isOffsetDifferentFromNow) {
                 formattedFakeDate += ` (${tzInfo.offset})`;
             }
         }
