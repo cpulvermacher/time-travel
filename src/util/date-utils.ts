@@ -1,3 +1,4 @@
+import { parseWithTimezone } from '../content-scripts/fake-date/parseWithTimezone';
 export type FormatOptions = {
     fullPrecision: boolean;
 };
@@ -102,15 +103,21 @@ export type ResetDate = {
     isReset: true;
 };
 
-/** Try parsing a date string */
-export function parseDate(dateString: string): ParsedDate {
+/** Try parsing a date string
+ *
+ * If `timezone` is set, strings without offset information are interpreted as local time in that
+ * time zone instead of the browser's time zone. UNIX timestamps and strings with an explicit offset
+ * (or `Z`) denote an absolute instant and are unaffected.
+ */
+export function parseDate(dateString: string, timezone?: string): ParsedDate {
     if (dateString.trim() === '') {
         return { dateString, isValid: false, isReset: true };
     }
 
     const maybeTimestamp = parseTimestamp(dateString);
     try {
-        const date = maybeTimestamp !== null ? new Date(maybeTimestamp) : new Date(dateString);
+        const date =
+            maybeTimestamp !== null ? new Date(maybeTimestamp) : new Date(parseWithTimezone(dateString, timezone));
 
         if (Number.isNaN(date.getTime())) {
             return { dateString, isValid: false, isReset: false };
