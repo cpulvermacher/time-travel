@@ -69,6 +69,71 @@ describe('formatLocalDate', () => {
         expect(formatLocalDate(new Date('2025-02-10 12:34'), full)).toBe('2025-02-10 12:34');
         expect(formatLocalDate(new Date('2025-02-10 00:00'), full)).toBe('2025-02-10 00:00');
     });
+
+    describe('with a time zone', () => {
+        it('formats as local time in the given time zone', () => {
+            const date = new Date('2025-02-10T12:34:55.123Z');
+            expect(formatLocalDate(date, { timezone: 'UTC' })).toBe('2025-02-10 12:34');
+            expect(formatLocalDate(date, { timezone: 'Europe/London' })).toBe('2025-02-10 12:34');
+            expect(formatLocalDate(date, { timezone: 'Europe/Berlin' })).toBe('2025-02-10 13:34');
+            expect(formatLocalDate(date, { timezone: 'America/New_York' })).toBe('2025-02-10 07:34');
+            expect(formatLocalDate(date, { timezone: 'Asia/Kolkata' })).toBe('2025-02-10 18:04');
+            // one day later
+            expect(formatLocalDate(date, { timezone: 'Pacific/Auckland' })).toBe('2025-02-11 01:34');
+        });
+
+        it('uses the browser time zone for an empty time zone', () => {
+            const date = new Date('2025-02-10T12:34:55.123Z');
+            expect(formatLocalDate(date, { timezone: '' })).toBe(formatLocalDate(date));
+        });
+
+        it('applies the offset in effect at the given date (DST)', () => {
+            // Europe/London is GMT in winter and BST (GMT+01:00) in summer
+            expect(formatLocalDate(new Date('2025-01-15T12:00Z'), { timezone: 'Europe/London' })).toBe(
+                '2025-01-15 12:00'
+            );
+            expect(formatLocalDate(new Date('2025-07-15T12:00Z'), { timezone: 'Europe/London' })).toBe(
+                '2025-07-15 13:00'
+            );
+            // 1 second before and after the spring transition (2025-03-30 01:00 GMT)
+            expect(formatLocalDate(new Date('2025-03-30T00:59:59Z'), { timezone: 'Europe/London', ...full })).toBe(
+                '2025-03-30 00:59:59'
+            );
+            expect(formatLocalDate(new Date('2025-03-30T01:00:00Z'), { timezone: 'Europe/London', ...full })).toBe(
+                '2025-03-30 02:00'
+            );
+        });
+
+        it('handles offsets with a seconds part', () => {
+            // Africa/Monrovia used GMT-00:44:30 until 1972
+            expect(formatLocalDate(new Date('1970-01-01T12:00Z'), { timezone: 'Africa/Monrovia', ...full })).toBe(
+                '1970-01-01 11:15:30'
+            );
+        });
+
+        it('handles years outside the four-digit range', () => {
+            expect(formatLocalDate(new Date('+010000-02-10T00:00Z'), { timezone: 'UTC' })).toBe('10000-02-10 00:00');
+            expect(formatLocalDate(new Date('0001-02-10T00:00Z'), { timezone: 'UTC' })).toBe('0001-02-10 00:00');
+            expect(formatLocalDate(new Date('-000001-02-10T00:00Z'), { timezone: 'UTC' })).toBe('-000001-02-10 00:00');
+        });
+
+        it('handles invalid dates and time zones', () => {
+            expect(formatLocalDate(new Date('abcdefgh'), { timezone: 'UTC' })).toBe('Invalid Date');
+            // invalid zones cannot be formatted, fall back to UTC rather than throwing
+            expect(formatLocalDate(new Date('2025-02-10T12:34Z'), { timezone: 'Evil/Not_A_Zone' })).toBe(
+                '2025-02-10 12:34'
+            );
+        });
+
+        it('round-trips with parseDate', () => {
+            const timezone = 'Pacific/Chatham'; // GMT+12:45 / GMT+13:45
+            for (const iso of ['2025-02-10T12:34:55.123Z', '2025-07-10T12:34:55.123Z']) {
+                const date = new Date(iso);
+                const formatted = formatLocalDate(date, { timezone, ...full });
+                expect(parseDate(formatted, timezone)).toMatchObject({ isValid: true, date });
+            }
+        });
+    });
 });
 
 describe('formatLocalTime', () => {

@@ -1,10 +1,19 @@
+import {
+    getDatePartsForLocalTimestamp,
+    getOffsetSeconds,
+    type SharedDateParts,
+} from '../content-scripts/fake-date/date-parts';
 import { parseWithTimezone } from '../content-scripts/fake-date/parseWithTimezone';
+
 export type FormatOptions = {
-    fullPrecision: boolean;
+    fullPrecision?: boolean;
+    timezone?: string; // IANA time zone to format in, defaults to the browser time zone
 };
 
-/** Returns date in format "YYYY-MM-DD HH:mm" in local time, or "Invalid Date" if invalid
+/** Formats an instant into a string of the form "YYYY-MM-DD HH:mm" in local time, or "Invalid Date" if invalid
  *
+ * If options.timezone is set, the wall clock time in that time zone is returned instead of the
+ * browser's local time.
  * If options.fullPrecision is true, returns seconds and milliseconds if they are non-zero
  */
 export function formatLocalDate(date: Date, options?: FormatOptions): string {
@@ -12,24 +21,42 @@ export function formatLocalDate(date: Date, options?: FormatOptions): string {
         return 'Invalid Date';
     }
 
+    if (options?.timezone) {
+        // shift the instant so that reading it as UTC yields the wall clock of the given time zone
+        const offsetMs = getOffsetSeconds(date.getTime(), options.timezone) * 1000;
+        return formatDateParts(getDatePartsForLocalTimestamp(date.getTime() - offsetMs), options);
+    }
+
+    return formatDateParts(
+        {
+            year: date.getFullYear(),
+            month: date.getMonth(),
+            day: date.getDate(),
+            hour: date.getHours(),
+            minute: date.getMinutes(),
+            second: date.getSeconds(),
+            ms: date.getMilliseconds(),
+        },
+        options
+    );
+}
+
+function formatDateParts(parts: SharedDateParts, options?: FormatOptions): string {
     // negative years (=before 1BCE) need to be padded with extra digits for Date() to parse them
-    const YYYY =
-        date.getFullYear() >= 0
-            ? String(date.getFullYear()).padStart(4, '0')
-            : '-' + String(-date.getFullYear()).padStart(6, '0');
-    const MM = String(date.getMonth() + 1).padStart(2, '0');
-    const DD = String(date.getDate()).padStart(2, '0');
-    const HH = String(date.getHours()).padStart(2, '0');
-    const mm = String(date.getMinutes()).padStart(2, '0');
+    const YYYY = parts.year >= 0 ? String(parts.year).padStart(4, '0') : '-' + String(-parts.year).padStart(6, '0');
+    const MM = String(parts.month + 1).padStart(2, '0');
+    const DD = String(parts.day).padStart(2, '0');
+    const HH = String(parts.hour).padStart(2, '0');
+    const mm = String(parts.minute).padStart(2, '0');
     let dateStr = `${YYYY}-${MM}-${DD} ${HH}:${mm}`;
 
     if (options?.fullPrecision) {
-        if (date.getSeconds() !== 0 || date.getMilliseconds() !== 0) {
-            const ss = String(date.getSeconds()).padStart(2, '0');
+        if (parts.second !== 0 || parts.ms !== 0) {
+            const ss = String(parts.second).padStart(2, '0');
             dateStr += ':' + ss;
         }
-        if (date.getMilliseconds() !== 0) {
-            const sss = String(date.getMilliseconds()).padStart(3, '0');
+        if (parts.ms !== 0) {
+            const sss = String(parts.ms).padStart(3, '0');
             dateStr += '.' + sss;
         }
     }
