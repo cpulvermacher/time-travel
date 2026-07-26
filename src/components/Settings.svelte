@@ -26,8 +26,13 @@
     let settings = $state(initialState.settings);
     let isEnabled = $state(initialState.isEnabled);
     let fakeDate = $state(initialState.fakeDate);
-    let parsedDate = $derived(parseDate(fakeDate));
-    let effectiveDate = $state(initialState.isEnabled ? new Date(initialState.fakeDate) : undefined);
+    // the input is local time in the drafted time zone (see settings.timezone), so changing the zone
+    // keeps the entered text but moves the instant it denotes
+    let parsedDate = $derived(parseDate(fakeDate, settings.timezone));
+    const initialParsedDate = parseDate(initialState.fakeDate, initialState.settings.timezone);
+    let effectiveDate = $state(
+        initialState.isEnabled && initialParsedDate.isValid ? initialParsedDate.date : undefined
+    );
     //TODO this should use the tab state, not settings
     let effectiveTimezone = $state(initialState.isEnabled ? settings.timezone : '');
     let pageClock = $state(initialState.pageClock);
