@@ -28,7 +28,9 @@ function sanitizeTimezone(timezone: string | null): string {
 function buildInitialState(state: ContentScriptState, settings: Settings): InitialState {
     let initialFakeDate: string | undefined;
     let pageClock: PageClock | undefined;
+    const timezone = state.fakeDateActive ? sanitizeTimezone(state.timezone) : settings.timezone;
     if (state.fakeDateActive && state.fakeDate) {
+        // note: the stored fake date is an ISO string in UTC, so it is not affected by the time zone
         const fakeDate = parseDate(state.fakeDate);
         const tickStartTimestamp = parseTimestamp(state.tickStartTimestamp);
         if (!fakeDate.isValid) {
@@ -36,10 +38,10 @@ function buildInitialState(state: ContentScriptState, settings: Settings): Initi
         } else if (!state.isClockStopped && tickStartTimestamp !== null) {
             const elapsed = Date.now() - tickStartTimestamp;
             const fakeDateNow = new Date(fakeDate.date.getTime() + elapsed);
-            initialFakeDate = formatLocalDate(fakeDateNow);
+            initialFakeDate = formatLocalDate(fakeDateNow, { timezone });
             pageClock = { date: fakeDate.date, tickStart: tickStartTimestamp };
         } else {
-            initialFakeDate = formatLocalDate(fakeDate.date, { fullPrecision: true });
+            initialFakeDate = formatLocalDate(fakeDate.date, { fullPrecision: true, timezone });
             pageClock = { date: fakeDate.date, tickStart: null };
         }
     }
@@ -47,13 +49,14 @@ function buildInitialState(state: ContentScriptState, settings: Settings): Initi
 
     return {
         isEnabled,
-        fakeDate: initialFakeDate ?? formatLocalDate(new Date()),
+        // fallback: current time, shown in the drafted zone (`timezone` only applies if enabled)
+        fakeDate: initialFakeDate ?? formatLocalDate(new Date(), { timezone: settings.timezone }),
         pageClock: isEnabled ? pageClock : undefined,
         settings: {
             autoReload: settings.autoReload,
             advancedSettingsOpen: settings.advancedSettingsOpen,
             stopClock: isEnabled ? state.isClockStopped : settings.stopClock,
-            timezone: isEnabled ? sanitizeTimezone(state.timezone) : settings.timezone,
+            timezone: isEnabled ? timezone : settings.timezone,
             recentTimezones: settings.recentTimezones,
         },
     };

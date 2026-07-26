@@ -53,7 +53,10 @@ describe('getInitialState', () => {
     });
 
     describe('in production environment', () => {
-        const fakeDate = new Date('2023-01-01 12:34:56.789');
+        // dates are formatted as local time in the active/drafted time zone, so all fixtures use an
+        // explicit UTC instant to stay independent of the machine's time zone.
+        // In January, Europe/London is GMT+00:00 and America/New_York is GMT-05:00.
+        const fakeDate = new Date('2023-01-01T12:34:56.789Z');
         beforeEach(() => {
             import.meta.env.DEV = false;
 
@@ -99,12 +102,13 @@ describe('getInitialState', () => {
             vi.mocked(getContentScriptState).mockResolvedValue(mockState);
 
             vi.useFakeTimers();
-            vi.setSystemTime(new Date('2026-01-01 12:34'));
+            vi.setSystemTime(new Date('2026-01-01T12:34:00Z'));
 
             const result = await getInitialState();
 
             expect(result.isEnabled).toBe(false);
-            expect(result.fakeDate).toBe('2026-01-01 12:34');
+            // current time in the drafted zone (America/New_York), as no fake date is active
+            expect(result.fakeDate).toBe('2026-01-01 07:34');
             expect(result.settings.timezone).toBe(defaultSettings.timezone);
             expect(result.settings.stopClock).toBe(defaultSettings.stopClock);
             expect(result.pageClock).toBeUndefined();
@@ -144,12 +148,32 @@ describe('getInitialState', () => {
             vi.mocked(getContentScriptState).mockResolvedValue(mockState);
 
             vi.useFakeTimers();
-            vi.setSystemTime(new Date('2026-01-01 12:34'));
+            vi.setSystemTime(new Date('2026-01-01T12:34:00Z'));
 
             const result = await getInitialState();
 
             expect(result.isEnabled).toBe(false);
-            expect(result.fakeDate).toBe('2026-01-01 12:34');
+            expect(result.fakeDate).toBe('2026-01-01 07:34');
+        });
+
+        it('shows the fake date as local time in the page time zone', async () => {
+            const mockState: contentScriptState.ContentScriptState = {
+                contentScriptActive: true,
+                fakeDate: fakeDate.toISOString(),
+                tickStartTimestamp: '1640995200000',
+                timezone: 'Asia/Tokyo', // GMT+09:00
+                isClockStopped: true,
+                fakeDateActive: true,
+            };
+
+            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+
+            const result = await getInitialState();
+
+            expect(result.fakeDate).toBe('2023-01-01 21:34:56.789');
+            expect(result.settings.timezone).toBe('Asia/Tokyo');
+            // the page clock keeps the actual instant, only the input string is zone-specific
+            expect(result.pageClock).toEqual({ date: fakeDate, tickStart: null });
         });
 
         it('handles timezone settings correctly', async () => {
