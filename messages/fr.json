@@ -6,6 +6,7 @@
     "permission_error_generic_with_message": "Time Travel ne peut pas être utilisé dans l'onglet actuel. Raison : {message}",
     "permission_error_please_change_tab": "Veuillez passer à un autre onglet pour changer l'heure.",
     "datetime_input_label": "Définir la date et l'heure",
+    "datetime_input_label_tz": "Définir la date et l'heure ({timezone})",
     "format_help_link": "(?)",
     "change_date_btn_no_changes": "Aucun changement",
     "change_date_btn_reset": "Désactiver la date factice",

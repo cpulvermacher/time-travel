@@ -6,6 +6,7 @@
     "permission_error_generic_with_message": "Time Travel kann im aktuellen Tab nicht verwendet werden. Grund: {message}",
     "permission_error_please_change_tab": "Bitte wechseln Sie zu einem anderen Tab, um die Zeit zu ändern.",
     "datetime_input_label": "Datum und Uhrzeit festlegen",
+    "datetime_input_label_tz": "Datum und Uhrzeit festlegen ({timezone})",
     "format_help_link": "(?)",
     "change_date_btn_no_changes": "Keine Änderungen",
     "change_date_btn_reset": "Falsches Datum deaktivieren",

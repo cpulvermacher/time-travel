@@ -6,6 +6,7 @@
     "permission_error_generic_with_message": "現在のタブではTime Travelを使用できません。 {message}",
     "permission_error_please_change_tab": "日時を変更するには、別のタブに切り替えてください。",
     "datetime_input_label": "日時を設定",
+    "datetime_input_label_tz": "日時を設定（{timezone}）",
     "format_help_link": "(?)",
     "change_date_btn_no_changes": "変更なし",
     "change_date_btn_reset": "仮想日時を無効にする",

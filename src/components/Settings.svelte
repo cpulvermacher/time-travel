@@ -178,7 +178,7 @@
     />
     <hr />
     <PageTimeDisplay clock={pageClock} timezone={effectiveTimezone} />
-    <DateTimePicker bind:fakeDate onEnterKey={onApply} />
+    <DateTimePicker bind:fakeDate onEnterKey={onApply} timezone={settings.timezone} />
     <TimezoneSelect
         value={settings.timezone}
         onSelect={onTimezoneChange}

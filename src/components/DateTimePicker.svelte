@@ -5,6 +5,7 @@
     import { getUILanguage, isAndroid } from '../util/browser';
     import { formatLocalDate, overwriteDatePart, parseDate } from '../util/date-utils';
     import { getFirstDayOfWeek } from '../util/i18n';
+    import { getTimezoneCity } from '../util/timezone-info';
     import DateFormatInfo from './DateFormatInfo.svelte';
     import LinkButton from './LinkButton.svelte';
     import TimePicker from './TimePicker.svelte';
@@ -15,8 +16,9 @@
     interface Props {
         fakeDate: string;
         onEnterKey?: () => void;
+        timezone?: string; // if set, the input is interpreted as local time in this zone
     }
-    let { fakeDate = $bindable(), onEnterKey }: Props = $props();
+    let { fakeDate = $bindable(), onEnterKey, timezone = '' }: Props = $props();
     let parsedDate = $derived(parseDate(fakeDate));
     // Note: the datepicker internally works with timestamps in UTC. When choosing a date, pickerDate will be set to 00:00 local time.
     const initialParsedDate = parseDate(fakeDate);
@@ -101,7 +103,7 @@
 
 <div>
     <label>
-        {m.datetime_input_label()}
+        {timezone ? m.datetime_input_label_tz({ timezone: getTimezoneCity(timezone) }) : m.datetime_input_label()}
         <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
         <div class="input-fields">
             <input
@@ -112,7 +114,7 @@
                 type="text"
                 size="28"
                 maxlength="28"
-                placeholder={formatLocalDate(new Date())}
+                placeholder={formatLocalDate(new Date(), { timezone })}
                 spellcheck="false"
                 class={{ error: !parsedDate.isValid && !parsedDate.isReset }}
                 title={m.date_input_hint()}
