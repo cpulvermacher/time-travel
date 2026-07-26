@@ -18,9 +18,8 @@ export type FullDateParts = SharedDateParts & {
 };
 
 export function getDateParts(date: Date | number, timezone: string): FullDateParts | undefined {
-    const formatter = getFormatterForTimezone(timezone);
     try {
-        const parts = formatter.formatToParts(date);
+        const parts = getFormatterForTimezone(timezone).formatToParts(date);
         const partsMap = {} as Record<Intl.DateTimeFormatPartTypes, string>;
         parts.forEach((part) => {
             partsMap[part.type] = part.value;
@@ -126,8 +125,7 @@ function getFormatterForTimezone(timezone: string | undefined): Intl.DateTimeFor
     if (cachedFormatterForTimezone === timezone && cachedFormatter !== null) {
         return cachedFormatter;
     }
-    cachedFormatterForTimezone = timezone;
-    cachedFormatter = new Intl.DateTimeFormat('en-GB', {
+    const formatter = new Intl.DateTimeFormat('en-GB', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -139,7 +137,10 @@ function getFormatterForTimezone(timezone: string | undefined): Intl.DateTimeFor
         timeZoneName: 'longOffset',
         timeZone: timezone,
     });
-    return cachedFormatter;
+    // only cache after successful construction, so an invalid time zone cannot alias a stale formatter
+    cachedFormatterForTimezone = timezone;
+    cachedFormatter = formatter;
+    return formatter;
 }
 
 let cachedFormatter: Intl.DateTimeFormat | null = null;
