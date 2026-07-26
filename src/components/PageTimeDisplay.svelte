@@ -10,7 +10,7 @@
     }
     const { clock, timezone }: Props = $props();
 
-    // the preview only moves while the real date shows, or while the fake clock ticks; a frozen fake clock needs no timer
+    // the display only moves while the real date shows, or while the fake clock ticks; a frozen fake clock needs no timer
     const isTicking = $derived(clock === undefined || clock.tickStart !== null);
 
     // real system time, sampled faster than once a second so the ticking seconds don't visibly skip
@@ -57,7 +57,7 @@
     });
 </script>
 
-<div class={["preview", { active: clock !== undefined }]}>
+<div class={["page-time", { active: clock !== undefined }]}>
     <div class="label">{m.page_sees_label()}</div>
     {#if clock === undefined}
         <div class="time-block real-time">
@@ -85,14 +85,14 @@
 </div>
 
 <style>
-    .preview {
+    .page-time {
         margin-top: 5px;
         display: flex;
         flex-direction: column;
         justify-items: center;
         transition: all 0.3s ease-in-out;
     }
-    .preview.active {
+    .page-time.active {
         color: var(--primary-color);
     }
     .label {

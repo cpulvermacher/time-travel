@@ -9,8 +9,8 @@
     import { saveMostRecentTimezone, saveSetting } from '../util/settings';
     import { getTimezoneCity, getTzInfo } from '../util/timezone-info';
     import DateTimePicker from './DateTimePicker.svelte';
-    import DateTimePreview from './DateTimePreview.svelte';
     import ErrorModal from './ErrorModal.svelte';
+    import PageTimeDisplay from './PageTimeDisplay.svelte';
     import ReloadModal from './ReloadModal.svelte';
     import TimezoneSelect from './TimezoneSelect.svelte';
     import Toggle from './Toggle.svelte';
@@ -172,7 +172,7 @@
         label={m.enable_fake_date_toggle()}
     />
     <hr />
-    <DateTimePreview clock={pageClock} timezone={effectiveTimezone} />
+    <PageTimeDisplay clock={pageClock} timezone={effectiveTimezone} />
     <DateTimePicker bind:fakeDate onEnterKey={onApply} />
     <TimezoneSelect value={settings.timezone} onSelect={onTimezoneChange} recentTimezones={settings.recentTimezones} />
     <div class="right-aligned">
