@@ -1,31 +1,30 @@
 <script lang="ts">
-    import { onMount, untrack } from 'svelte';
+    import { untrack } from 'svelte';
     import { cubicOut } from 'svelte/easing';
     import { slide } from 'svelte/transition';
     import { m } from '../paraglide/messages';
     import { getUILanguage } from '../util/browser';
-    import { getTimezoneOptions, type Timezone, TZGROUP_COMMON, TZGROUP_RECENT } from '../util/timezone-info';
+    import {
+        getTimezoneOffsets,
+        getTimezoneOptions,
+        type Timezone,
+        TZGROUP_COMMON,
+        TZGROUP_RECENT,
+    } from '../util/timezone-info';
     import Toggle from './Toggle.svelte';
 
     interface Props {
         value: string; // IANA time zone ID or '' when disabled
         onSelect: (timezone: string) => void;
         recentTimezones: string[];
+        date?: Date; // date the UTC offsets are shown for, defaults to now
     }
 
-    const { value: activeValue, onSelect, recentTimezones }: Props = $props();
+    const { value: activeValue, onSelect, recentTimezones, date }: Props = $props();
     let isEnabled = $state(untrack(() => !!activeValue));
     let value = $state(untrack(() => activeValue || recentTimezones[0] || 'UTC'));
 
-    let timezones: {
-        keys: string[];
-        groups: Record<string, Timezone[]>;
-    } | null = $state(null);
-
-    // generating this list for hundreds of timezones takes some time, do it after first render
-    onMount(() => {
-        const timezoneOptions = getTimezoneOptions(getUILanguage(), recentTimezones);
-
+    function groupTimezones(timezoneOptions: Timezone[]) {
         // Group options by their group attribute
         const groupedOptions = timezoneOptions.reduce(
             (groups, option) => {
@@ -50,8 +49,20 @@
             return a.localeCompare(b);
         });
 
-        timezones = { keys: groupKeys, groups: groupedOptions };
-    });
+        return { keys: groupKeys, groups: groupedOptions };
+    }
+
+    // building these for hundreds of time zones takes some time. $derived is lazy, so nothing is computed
+    // while the selector is collapsed, and the offsets are only recalculated when the shown date changes.
+    const timezoneOptions = $derived(getTimezoneOptions(recentTimezones));
+    const timezones = $derived(groupTimezones(timezoneOptions));
+    const offsets = $derived(getTimezoneOffsets(getUILanguage(), date ?? new Date(), timezoneOptions));
+
+    /** e.g. 'New York (UTC-05:00)', or just 'UTC' for time zones without a meaningful offset */
+    function optionLabel(option: Timezone) {
+        const offset = offsets[option.tz];
+        return offset ? `${option.name} (${offset})` : option.name;
+    }
 
     function groupLabel(key: string) {
         if (key === TZGROUP_COMMON) {
@@ -78,19 +89,15 @@
 
     {#if isEnabled}
         <div transition:slide={{ duration: 200, easing: cubicOut }}>
-            {#if !timezones}
-                <select disabled></select>
-            {:else}
-                <select {value} onchange={onChange} disabled={!isEnabled}>
-                    {#each timezones.keys as group (group)}
-                        <optgroup label={groupLabel(group)}>
-                            {#each timezones.groups[group] as option (option)}
-                                <option value={option.tz}>{option.label}</option>
-                            {/each}
-                        </optgroup>
-                    {/each}
-                </select>
-            {/if}
+            <select {value} onchange={onChange} disabled={!isEnabled}>
+                {#each timezones.keys as group (group)}
+                    <optgroup label={groupLabel(group)}>
+                        {#each timezones.groups[group] as option (option.tz)}
+                            <option value={option.tz}>{optionLabel(option)}</option>
+                        {/each}
+                    </optgroup>
+                {/each}
+            </select>
         </div>
     {/if}
 </div>

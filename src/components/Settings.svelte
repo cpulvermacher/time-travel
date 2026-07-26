@@ -174,7 +174,12 @@
     <hr />
     <PageTimeDisplay clock={pageClock} timezone={effectiveTimezone} />
     <DateTimePicker bind:fakeDate onEnterKey={onApply} />
-    <TimezoneSelect value={settings.timezone} onSelect={onTimezoneChange} recentTimezones={settings.recentTimezones} />
+    <TimezoneSelect
+        value={settings.timezone}
+        onSelect={onTimezoneChange}
+        recentTimezones={settings.recentTimezones}
+        date={parsedDate.isValid ? parsedDate.date : undefined}
+    />
     <div class="right-aligned">
         <button type="button" class="primary apply-button" disabled={!isApplyButtonEnabled()} onclick={onApply}>
             {getApplyButtonLabel()}
