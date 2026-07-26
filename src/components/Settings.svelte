@@ -104,7 +104,7 @@
         if (parsedDate.isReset) {
             isEnabled = false;
             void reset();
-            fakeDate = formatLocalDate(new Date());
+            fakeDate = formatLocalDate(new Date(), { timezone: settings.timezone });
         } else if (parsedDate.isValid) {
             isEnabled = true;
             void applyAndEnable(parsedDate.date);
