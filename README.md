@@ -23,13 +23,21 @@ To restore the system time, click the extension icon and switch off the "Enable 
 When the fake date is enabled, the clock runs forward from the configured time.
 You can stop the clock by switching on the "Stop Clock" toggle. The fake date will be reset to the last value you set.
 
-To change the time zone, open "Options", enable "Change Time Zone" and select a time zone from the dropdown. When enabled, both `Date` objects and `Intl.DateTimeFormat` will use this time zone instead of the system time zone. The fake date in the Time Travel UI is still shown and configured in the system time zone, but a preview of the time in the configured time zone plus the Daylight Saving Time (DST) offset is shown if applicable.
+To change the time zone, enable "Change time zone" and select a time zone from the dropdown.
+When enabled, both `Date` objects and `Intl.DateTimeFormat` will use this time zone instead of the system time zone.
+Date and time input is then interpreted as local time in the selected time zone as well (input label shows e.g. "Set date and time (London)").
+Switching to a different time zone keeps the entered *local* date and time, which may change the instant (unless the input field contains a UTC instant).
+
+When the timezone is changed, the UTC offset and DST status is shown as a badge next to the effective page time.
+Hovering over it will show further details.
 
 ### Example Dates and Formats
 
+Dates without offset information are interpreted as local time in the selected time zone, or in the system time zone if "Change time zone" is off.
+
 - `2025-04-27 12:40` - Local time
-- `2025-03-30 00:59:55` - Assuming your system time zone is Europe/London (GMT), 5 seconds before a one-hour jump to 2 a.m. (summer time)
-- `2025-04-27T12:40Z` - Set local equivalent for given UTC time
+- `2025-03-30 00:59:55` - Assuming the selected time zone is Europe/London (GMT), 5 seconds before a one-hour jump to 2 a.m. (summer time)
+- `2025-04-27T12:40Z` - Set local equivalent for a given instant in UTC
 - `2025-04-27T12:40+1130` - Set local equivalent for time with +11:30 time zone offset. Note that actual time zone is not changed
 - `2025-03-25T12:40:00.120` - Local time with milliseconds
 - `1731493140025` - UNIX timestamp
