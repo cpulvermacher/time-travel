@@ -108,19 +108,17 @@ export function getOffsetSeconds(date: number, timezone: string): number {
     const longOffset = parts.offsetName;
 
     //match offset with optional seconds part, e.g. "GMT+02:00", "GMT-05:30", "GMT+05:30:45"
-    const match = longOffset.match(/GMT([+-]\d{2}):(\d{2})(?::(\d{2}))?/);
+    const match = longOffset.match(/GMT([+-])(\d{2}):(\d{2})(?::(\d{2}))?/);
     if (!match) {
         return 0;
     }
 
-    const hours = parseInt(match[1], 10);
-    const minutes = parseInt(match[2], 10);
-    const seconds = match[3] ? parseInt(match[3], 10) : 0;
-    if (hours < 0) {
-        return -(hours * 60 * 60 - minutes * 60 - seconds);
-    } else {
-        return -(hours * 60 * 60 + minutes * 60 + seconds);
-    }
+    // the sign must be taken from the matched character: parseInt('-00') is -0, which is not < 0
+    const sign = match[1] === '-' ? -1 : 1;
+    const hours = parseInt(match[2], 10);
+    const minutes = parseInt(match[3], 10);
+    const seconds = match[4] ? parseInt(match[4], 10) : 0;
+    return -sign * (hours * 60 * 60 + minutes * 60 + seconds) || 0; // avoid -0 for UTC
 }
 
 /** Gets a cached formatter */

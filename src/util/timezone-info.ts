@@ -117,15 +117,13 @@ export function getOffsetMinutes(longOffset?: string): number {
     if (!longOffset) {
         return 0;
     }
-    const match = longOffset.match(/GMT([+-]\d{2}):(\d{2})/);
+    const match = longOffset.match(/GMT([+-])(\d{2}):(\d{2})/);
     if (match) {
-        const hours = parseInt(match[1], 10);
-        const minutes = parseInt(match[2], 10);
-        if (hours < 0) {
-            return -(hours * 60 - minutes);
-        } else {
-            return -(hours * 60 + minutes) || 0; // avoid -0 for UTC
-        }
+        // the sign must be taken from the matched character: parseInt('-00') is -0, which is not < 0
+        const sign = match[1] === '-' ? -1 : 1;
+        const hours = parseInt(match[2], 10);
+        const minutes = parseInt(match[3], 10);
+        return -sign * (hours * 60 + minutes) || 0; // avoid -0 for UTC
     }
     return 0;
 }
