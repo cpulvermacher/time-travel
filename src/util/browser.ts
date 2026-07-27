@@ -205,6 +205,12 @@ function getDevStorage(): chrome.storage.StorageArea {
 
 /** check if the extension is running on Android */
 export async function isAndroid(): Promise<boolean> {
+    if (import.meta.env.DEV && new URLSearchParams(location.search).has('mobile')) {
+        // running in a plain browser via the Vite dev server: `?mobile` in the popup URL
+        // emulates Android, so the mobile-only UI can be tested (see test/popup.html)
+        return true;
+    }
+
     try {
         const platformInfo = await chrome.runtime.getPlatformInfo();
         return platformInfo.os === 'android';

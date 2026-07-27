@@ -276,6 +276,19 @@ describe('isAndroid', () => {
         chromeMock.runtime.getPlatformInfo.mockRejectedValue(new Error('nope'));
         await expect(isAndroid()).resolves.toBe(false);
     });
+
+    it('is emulated via `?mobile` in the URL in DEV builds', async () => {
+        import.meta.env.DEV = true;
+        chromeMock.runtime.getPlatformInfo.mockResolvedValue({ os: 'linux' });
+        vi.stubGlobal('location', { search: '?mobile' });
+        await expect(isAndroid()).resolves.toBe(true);
+    });
+
+    it('ignores `?mobile` in production builds', async () => {
+        chromeMock.runtime.getPlatformInfo.mockResolvedValue({ os: 'linux' });
+        vi.stubGlobal('location', { search: '?mobile' });
+        await expect(isAndroid()).resolves.toBe(false);
+    });
 });
 
 describe('withTabLoadingRetry', () => {
