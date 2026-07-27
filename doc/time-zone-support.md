@@ -2,18 +2,20 @@
 
 ## Overview
 
-The Time Zone option in the UI defaults to the browser's time zone. With this setting, no time-zone-related behaviour of Date should be changed when enabling the extension.
+The `Change time zone` toggle in the UI is off by default, so the browser's time zone is used. With this setting, no time-zone-related behaviour of Date should be changed when enabling the extension. Turning the toggle on reveals the time zone selector.
 
-If the time zone option is changed, the instant defined by the `Date and time to set` value will be converted into the given time zone. By default, date/time is shown and entered in the browser's time zone, and the equivalent date/time in the target timezone will be shown in the UI.
+If the time zone option is changed, the `Set date and time` value is shown and entered as local time in the configured time zone, using the same parsing rules as the page (see below). The input label names the configured zone, e.g. `Set date and time (London)`.
 Inside the page's JavaScript environment, all `Date` and `Intl.DateTimeFormat` objects will behave as if they were run in the configured time zone.
 
-This means that if your system time zone is New York (UTC-05:00), and you configure a fake date of `2025-02-05 17:32`, setting the time zone to:
+This means that if you configure a fake date of `2025-02-05 17:32`, the page will see a local time of Feb 5 17:32 in whichever time zone is configured, and the UTC instant differs accordingly:
 
-- London (in February: GMT) will produce a local time of Feb 5 22:32,
-- Tokyo (constant UTC+06:00) will produce Feb 6 07:32 (one day later),
-- Pacific/Chatham (in February: UTC+13:45 with DST) will produce Feb 6 12:17.
+- London (in February: GMT) shows 17:32 (17:32 UTC),
+- Tokyo (constant UTC+09:00) shows 17:32 (08:32 UTC),
+- Pacific/Chatham (in February: UTC+13:45 with DST) shows 17:32 (03:47 UTC).
 
-In all cases, the UTC time is unchanged, and only the local time value will change.
+Changing the time zone therefore keeps the entered local time and moves the instant it denotes. A changed zone is
+not applied immediately, but together with the date when pressing the apply button, which names both, e.g.
+`Change to Feb 5, 2025 5:32 PM (London)`. The browser's own time zone plays no role.
 
 ## Modified Date Behaviour
 
@@ -36,9 +38,13 @@ The following do not change:
 
 Daylight saving time (DST) and other changes in the time zone offset are reflected as well, both for the configured fake date and any other Date objects created at runtime.
 
-While the time zone selector in the UI only shows one offset (for the current real date), the resulting local date and concrete offset is shown below the fake date input. DST offsets are shown in a different colour. In case time zone offsets change for other reasons, this might be falsely shown as DST.
+The time zone selector shows the offset each zone has at the currently entered date, and the date the page sees plus its concrete offset is shown above the fake date input.
 
-Changing offsets can make some times ambiguous. For example, there might be two 2:00 a.m. values during a transition from DST to non-DST. To match browser implementations and the spec, any ambiguity is resolved by using the time zone offset before the transition. This affects the behaviour of local dates passed to Date.parse(), non-UTC setters, and the constructor.
+A DST offset of the effective page date is shown in a different colour. In case time zone offsets change for other reasons, this might be falsely shown as DST. Hovering the offset gives the zone name and states whether DST is in effect for that date, or is observed at other times of the year. The extension icon's tooltip shows the same information for the date the page currently sees.
+
+Changing offsets can make some times ambiguous. For example, there might be two 2:00 a.m. values during a transition from DST to non-DST. To match browser implementations and the spec, any ambiguity is resolved by using the time zone offset before the transition. This affects the behaviour of local dates passed to Date.parse(), non-UTC setters, and the constructor, as well as the date entered in the UI (which uses the same parser).
+
+The second of the two values can therefore only be expressed with an explicit offset, e.g. `2025-10-26 02:30+01:00`. When stepping through such an hour with the arrow keys, the UI adds that offset automatically.
 
 ## Technical Details
 
