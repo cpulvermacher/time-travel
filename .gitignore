@@ -1,6 +1,7 @@
 dist/
 node_modules/
 .vite/
+coverage/
 /tsconfig.tsbuildinfo
 images/archive/
 
