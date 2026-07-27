@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as browser from '../../util/browser';
 import type { ContentScriptState } from '../../util/content-script-state';
-import { setIconBadgeAndTitle } from '../../util/icon';
+import * as contentScriptState from '../../util/content-script-state';
+import { setIconBadgeAndTitle, updateExtensionIcon } from '../../util/icon';
 
 vi.mock('../../util/browser');
+vi.mock('../../util/content-script-state');
 
 beforeEach(() => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -33,5 +35,37 @@ describe('setIconBadgeAndTitle', () => {
 
         expect(browser.setTitle).toHaveBeenCalled();
         expect(console.error).not.toHaveBeenCalled();
+    });
+});
+
+describe('updateExtensionIcon', () => {
+    const inactiveState: ContentScriptState = {
+        contentScriptActive: false,
+        fakeDate: null,
+        tickStartTimestamp: null,
+        timezone: null,
+        isClockStopped: false,
+        fakeDateActive: false,
+    };
+
+    beforeEach(() => {
+        vi.mocked(contentScriptState).getContentScriptState.mockResolvedValue(inactiveState);
+    });
+
+    it('uses the given tab id', async () => {
+        await updateExtensionIcon(7);
+
+        expect(browser.getActiveTabId).not.toHaveBeenCalled();
+        expect(contentScriptState.getContentScriptState).toHaveBeenCalledWith(7);
+        expect(browser.setBadgeText).toHaveBeenCalledWith(7, '');
+    });
+
+    it('falls back to the active tab if no tab id is given', async () => {
+        vi.mocked(browser).getActiveTabId.mockResolvedValue(42);
+
+        await updateExtensionIcon();
+
+        expect(contentScriptState.getContentScriptState).toHaveBeenCalledWith(42);
+        expect(browser.setBadgeText).toHaveBeenCalledWith(42, '');
     });
 });
