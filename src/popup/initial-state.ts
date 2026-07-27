@@ -2,7 +2,7 @@
 import { m } from '../paraglide/messages';
 import { getActiveTabId, isAboutUrl, isExtensionGalleryUrl, isFileUrl } from '../util/browser';
 import { type ContentScriptState, getContentScriptState } from '../util/content-script-state';
-import { formatLocalDate, parseDate, parseTimestamp } from '../util/date-utils';
+import { formatUnambiguousDate, parseDate, parseTimestamp } from '../util/date-utils';
 import { loadSettings, type Settings } from '../util/settings';
 import { isValidTimezone } from '../util/timezone-info';
 
@@ -38,10 +38,10 @@ function buildInitialState(state: ContentScriptState, settings: Settings): Initi
         } else if (!state.isClockStopped && tickStartTimestamp !== null) {
             const elapsed = Date.now() - tickStartTimestamp;
             const fakeDateNow = new Date(fakeDate.date.getTime() + elapsed);
-            initialFakeDate = formatLocalDate(fakeDateNow, { timezone });
+            initialFakeDate = formatUnambiguousDate(fakeDateNow, timezone);
             pageClock = { date: fakeDate.date, tickStart: tickStartTimestamp };
         } else {
-            initialFakeDate = formatLocalDate(fakeDate.date, { fullPrecision: true, timezone });
+            initialFakeDate = formatUnambiguousDate(fakeDate.date, timezone, { fullPrecision: true });
             pageClock = { date: fakeDate.date, tickStart: null };
         }
     }
@@ -50,7 +50,7 @@ function buildInitialState(state: ContentScriptState, settings: Settings): Initi
     return {
         isEnabled,
         // fallback: current time, shown in the drafted zone (`timezone` only applies if enabled)
-        fakeDate: initialFakeDate ?? formatLocalDate(new Date(), { timezone: settings.timezone }),
+        fakeDate: initialFakeDate ?? formatUnambiguousDate(new Date(), settings.timezone),
         pageClock: isEnabled ? pageClock : undefined,
         settings: {
             autoReload: settings.autoReload,

@@ -176,6 +176,46 @@ describe('getInitialState', () => {
             expect(result.pageClock).toEqual({ date: fakeDate, tickStart: null });
         });
 
+        it('keeps the fake date unambiguous during a repeated hour', async () => {
+            // 02:30 happens twice in Europe/Berlin on 2025-10-26, this is the second one (CET)
+            const mockState: contentScriptState.ContentScriptState = {
+                contentScriptActive: true,
+                fakeDate: '2025-10-26T01:30:00.000Z',
+                tickStartTimestamp: '1640995200000',
+                timezone: 'Europe/Berlin',
+                isClockStopped: true,
+                fakeDateActive: true,
+            };
+
+            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+
+            const result = await getInitialState();
+
+            // without the offset, reapplying would silently move the date to the first 02:30
+            expect(result.fakeDate).toBe('2025-10-26 02:30+01:00');
+        });
+
+        it('keeps a running clock unambiguous during a repeated hour', async () => {
+            const mockState: contentScriptState.ContentScriptState = {
+                contentScriptActive: true,
+                fakeDate: '2025-10-26T01:30:00.000Z',
+                tickStartTimestamp: '1640995200000',
+                timezone: 'Europe/Berlin',
+                isClockStopped: false,
+                fakeDateActive: true,
+            };
+
+            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+
+            vi.useFakeTimers();
+            vi.setSystemTime(1640995200000 + 17_500); // 17.5s of tick elapsed
+
+            const result = await getInitialState();
+
+            // the elapsed seconds are not shown, but the offset still has to be
+            expect(result.fakeDate).toBe('2025-10-26 02:30+01:00');
+        });
+
         it('handles timezone settings correctly', async () => {
             const mockState: contentScriptState.ContentScriptState = {
                 contentScriptActive: true,

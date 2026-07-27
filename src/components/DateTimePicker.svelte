@@ -3,7 +3,7 @@
     import { tick } from 'svelte';
     import { m } from '../paraglide/messages';
     import { getUILanguage, isAndroid } from '../util/browser';
-    import { formatLocalDate, overwriteDatePart, parseDate } from '../util/date-utils';
+    import { formatLocalDate, formatUnambiguousDate, overwriteDatePart, parseDate } from '../util/date-utils';
     import { getFirstDayOfWeek } from '../util/i18n';
     import { getTimezoneCity } from '../util/timezone-info';
     import DateFormatInfo from './DateFormatInfo.svelte';
@@ -98,24 +98,19 @@
             return;
         }
         // adjust the actual instant, so stepping over a DST transition of the selected time zone
-        // moves the wall clock the way that time zone does
-        const options = { fullPrecision: true, timezone };
-        const timestamp = parsedDate.date.getTime() + seconds * 1000;
-        const adjusted = formatLocalDate(new Date(timestamp), options);
-        if (adjusted === fakeDate) {
-            // An hour repeated by a DST transition has the same wall clock time twice. Parsing
-            // always resolves to the first one, so stepping into the second one would leave the
-            // input unchanged and get stuck. Step once more to keep moving.
-            fakeDate = formatLocalDate(new Date(timestamp + seconds * 1000), options);
-        } else {
-            fakeDate = adjusted;
-        }
+        // moves the wall clock the way that time zone does. Within an hour repeated by a transition
+        // an explicit offset is added, so every instant stays reachable (see formatUnambiguousDate).
+        fakeDate = formatUnambiguousDate(new Date(parsedDate.date.getTime() + seconds * 1000), timezone, {
+            fullPrecision: true,
+        });
     }
 </script>
 
 <div>
     <label>
-        {timezone ? m.datetime_input_label_tz({ timezone: getTimezoneCity(timezone) }) : m.datetime_input_label()}
+        {timezone
+            ? m.datetime_input_label_tz({ timezone: getTimezoneCity(timezone) })
+            : m.datetime_input_label()}
         <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
         <div class="input-fields">
             <input
@@ -125,7 +120,7 @@
                 bind:this={inputRef}
                 type="text"
                 size="28"
-                maxlength="28"
+                maxlength="32"
                 placeholder={formatLocalDate(new Date(), { timezone })}
                 spellcheck="false"
                 class={{ error: !parsedDate.isValid && !parsedDate.isReset }}

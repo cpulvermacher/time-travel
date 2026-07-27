@@ -4,7 +4,7 @@
     import type { InitialState } from '../popup/initial-state';
     import { getUILanguage, reloadTab, withTabLoadingRetry } from '../util/browser';
     import { disableFakeDate, setClockState, setFakeDate } from '../util/content-script-state';
-    import { formatLocalDate, parseDate } from '../util/date-utils';
+    import { formatLocalDate, formatUnambiguousDate, parseDate } from '../util/date-utils';
     import { updateExtensionIcon } from '../util/icon';
     import { saveMostRecentTimezone, saveSetting } from '../util/settings';
     import { getTimezoneCity, getTzInfo } from '../util/timezone-info';
@@ -104,7 +104,7 @@
         if (parsedDate.isReset) {
             isEnabled = false;
             void reset();
-            fakeDate = formatLocalDate(new Date(), { timezone: settings.timezone });
+            fakeDate = formatUnambiguousDate(new Date(), settings.timezone);
         } else if (parsedDate.isValid) {
             isEnabled = true;
             void applyAndEnable(parsedDate.date);
@@ -156,8 +156,13 @@
         const timezoneLabel = settings.timezone && getTimezoneCity(settings.timezone);
         if (dateChanged && tzChanged) {
             return timezoneLabel
-                ? m.change_date_btn_date_and_tz({ fakeDate: fakeDateLabel, timezone: timezoneLabel })
-                : m.change_date_btn_date_and_tz_default({ fakeDate: fakeDateLabel });
+                ? m.change_date_btn_date_and_tz({
+                      fakeDate: fakeDateLabel,
+                      timezone: timezoneLabel,
+                  })
+                : m.change_date_btn_date_and_tz_default({
+                      fakeDate: fakeDateLabel,
+                  });
         }
         if (tzChanged) {
             return timezoneLabel ? m.change_date_btn_tz({ timezone: timezoneLabel }) : m.change_date_btn_tz_default();

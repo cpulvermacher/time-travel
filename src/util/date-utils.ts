@@ -1,4 +1,5 @@
 import {
+    getDateParts,
     getDatePartsForLocalTimestamp,
     getOffsetSeconds,
     type SharedDateParts,
@@ -39,6 +40,48 @@ export function formatLocalDate(date: Date, options?: FormatOptions): string {
         },
         options
     );
+}
+
+/** Returns `date` as local time in `timezone`, appending an explicit UTC offset if the wall clock
+ * time alone would be ambiguous.
+ *
+ * An hour repeated by a DST transition has the same wall clock time twice. Parsing always resolves
+ * such a time to the first of the two instants (see parseWithTimezone), so the second one can only
+ * be expressed with an explicit offset, e.g. "2025-10-26 02:30+01:00".
+ */
+export function formatUnambiguousDate(date: Date, timezone: string, options?: Omit<FormatOptions, 'timezone'>): string {
+    const formatted = formatLocalDate(date, { ...options, timezone });
+    if (!timezone) {
+        return formatted;
+    }
+
+    // Compare offsets rather than instants: the formatted string may have less precision than the
+    // date (seconds are dropped by default), but an ambiguous time is one that parses back to the
+    // same wall clock with a *different* offset.
+    const offsetSeconds = getOffsetSeconds(date.getTime(), timezone);
+    if (parsesToOffset(formatted, timezone, offsetSeconds)) {
+        return formatted;
+    }
+
+    const withOffset = formatted + getUtcOffset(date, timezone);
+    // offsets with a seconds part (historic zones) cannot be parsed back, keep the ambiguous time
+    return parsesToOffset(withOffset, timezone, offsetSeconds) ? withOffset : formatted;
+}
+
+/** Returns true if `dateString` parses to a date that has the given UTC offset in `timezone` */
+function parsesToOffset(dateString: string, timezone: string, offsetSeconds: number): boolean {
+    const timestamp = parseWithTimezone(dateString, timezone);
+    return !Number.isNaN(timestamp) && getOffsetSeconds(timestamp, timezone) === offsetSeconds;
+}
+
+/** Returns the UTC offset of `timezone` at `date` in the format "+01:00", or '' if unavailable */
+function getUtcOffset(date: Date, timezone: string): string {
+    const offsetName = getDateParts(date, timezone)?.offsetName;
+    if (!offsetName) {
+        return '';
+    }
+    // longOffset is just "GMT" for a zero offset
+    return offsetName === 'GMT' ? '+00:00' : offsetName.replace('GMT', '');
 }
 
 function formatDateParts(parts: SharedDateParts, options?: FormatOptions): string {

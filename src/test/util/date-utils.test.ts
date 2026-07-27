@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
     formatLocalDate,
     formatLocalTime,
+    formatUnambiguousDate,
     overwriteDatePart,
     overwriteTimePart,
     parseDate,
@@ -133,6 +134,60 @@ describe('formatLocalDate', () => {
                 expect(parseDate(formatted, timezone)).toMatchObject({ isValid: true, date });
             }
         });
+    });
+});
+
+describe('formatUnambiguousDate', () => {
+    const full = { fullPrecision: true };
+
+    it('returns a plain wall clock time when it is unambiguous', () => {
+        expect(formatUnambiguousDate(new Date('2025-07-15T12:00Z'), 'Europe/Berlin')).toBe('2025-07-15 14:00');
+        expect(formatUnambiguousDate(new Date('2025-01-15T12:00Z'), 'Europe/Berlin')).toBe('2025-01-15 13:00');
+        expect(formatUnambiguousDate(new Date('2025-01-15T12:00Z'), 'UTC')).toBe('2025-01-15 12:00');
+    });
+
+    it('adds an explicit offset for the second of two identical wall clock times', () => {
+        // 02:00-02:59 happens twice in Europe/Berlin on 2025-10-26 (CEST +02:00, then CET +01:00)
+        expect(formatUnambiguousDate(new Date('2025-10-26T00:30Z'), 'Europe/Berlin')).toBe('2025-10-26 02:30');
+        expect(formatUnambiguousDate(new Date('2025-10-26T01:30Z'), 'Europe/Berlin')).toBe('2025-10-26 02:30+01:00');
+    });
+
+    it('adds an offset of +00:00 for a zero offset', () => {
+        // 01:00-01:59 happens twice in Europe/London on 2025-10-26 (BST +01:00, then GMT)
+        expect(formatUnambiguousDate(new Date('2025-10-26T00:30Z'), 'Europe/London')).toBe('2025-10-26 01:30');
+        expect(formatUnambiguousDate(new Date('2025-10-26T01:30Z'), 'Europe/London')).toBe('2025-10-26 01:30+00:00');
+    });
+
+    it('round-trips through parseDate', () => {
+        for (const iso of ['2025-10-26T00:30Z', '2025-10-26T01:30Z', '2025-10-26T02:30:15.250Z']) {
+            const date = new Date(iso);
+            const formatted = formatUnambiguousDate(date, 'Europe/Berlin', full);
+            expect(parseDate(formatted, 'Europe/Berlin')).toMatchObject({ isValid: true, date });
+        }
+    });
+
+    it('adds the offset even when seconds are dropped from the output', () => {
+        // the formatted string cannot round-trip exactly here, but must still denote the same hour
+        const date = new Date('2025-10-26T01:30:17.500Z');
+        const formatted = formatUnambiguousDate(date, 'Europe/Berlin');
+        expect(formatted).toBe('2025-10-26 02:30+01:00');
+        expect((parseDate(formatted, 'Europe/Berlin') as ValidDate).date.toISOString()).toBe(
+            '2025-10-26T01:30:00.000Z'
+        );
+    });
+
+    it('keeps the offset short enough for the input field', () => {
+        // the date input has maxlength=32
+        const longest = formatUnambiguousDate(new Date('2025-10-26T01:30:15.250Z'), 'Europe/Berlin', full);
+        expect(longest).toBe('2025-10-26 02:30:15.250+01:00');
+        expect(longest.length).toBeLessThanOrEqual(32);
+    });
+
+    it('falls back to the ambiguous time if the offset cannot be parsed back', () => {
+        // no offset is added without a time zone, as there is nothing to disambiguate against
+        expect(formatUnambiguousDate(new Date('2025-10-26T01:30Z'), '')).toBe(
+            formatLocalDate(new Date('2025-10-26T01:30Z'))
+        );
     });
 });
 
