@@ -17,19 +17,14 @@ export function getUtcOffset(date: Date, timezone: string): string {
     return offsetName === 'GMT' ? '+00:00' : offsetName.replace('GMT', '');
 }
 
-/** Gets time zone offset in seconds for given date and time zone.
+/** Gets time zone offset in seconds from a longOffset string, e.g. "GMT+02:00" -> -7200.
  *
  * Sign convention is the same as for `Date.getTimezoneOffset()`, i.e. positive values are west of UTC.
+ * Returns 0 for missing or unparsable input (`longOffset` is just "GMT" for a zero offset).
  */
-export function getOffsetSeconds(date: number, timezone: string): number {
-    const parts = getDateParts(date, timezone);
-    if (!parts) {
-        return 0;
-    }
-    const longOffset = parts.offsetName;
-
-    //match offset with optional seconds part, e.g. "GMT+02:00", "GMT-05:30", "GMT+05:30:45"
-    const match = longOffset.match(/GMT([+-])(\d{2}):(\d{2})(?::(\d{2}))?/);
+export function parseLongOffsetSeconds(longOffset?: string): number {
+    // match offset with optional seconds part, e.g. "GMT+02:00", "GMT-05:30", "GMT+05:30:45"
+    const match = longOffset?.match(/GMT([+-])(\d{2}):(\d{2})(?::(\d{2}))?/);
     if (!match) {
         return 0;
     }
@@ -42,23 +37,21 @@ export function getOffsetSeconds(date: number, timezone: string): number {
     return -sign * (hours * 60 * 60 + minutes * 60 + seconds) || 0; // avoid -0 for UTC
 }
 
+/** Gets time zone offset in seconds for given date and time zone.
+ *
+ * Sign convention is the same as for `Date.getTimezoneOffset()`, i.e. positive values are west of UTC.
+ */
+export function getOffsetSeconds(date: number, timezone: string): number {
+    return parseLongOffsetSeconds(getDateParts(date, timezone)?.offsetName);
+}
+
 /** Gets time zone offset in minutes from a longOffset string.
  *
- * This matches the output of `Date.getTimezoneOffset()`, including the sign.
+ * This matches the output of `Date.getTimezoneOffset()`, including the sign. Zones with a
+ * sub-minute offset (historic LMT) are truncated towards zero, just like the native method.
  *
  * Example: "GMT+02:00" -> -120
  */
 export function getOffsetMinutes(longOffset?: string): number {
-    if (!longOffset) {
-        return 0;
-    }
-    const match = longOffset.match(/GMT([+-])(\d{2}):(\d{2})/);
-    if (match) {
-        // the sign must be taken from the matched character: parseInt('-00') is -0, which is not < 0
-        const sign = match[1] === '-' ? -1 : 1;
-        const hours = parseInt(match[2], 10);
-        const minutes = parseInt(match[3], 10);
-        return -sign * (hours * 60 + minutes) || 0; // avoid -0 for UTC
-    }
-    return 0;
+    return Math.trunc(parseLongOffsetSeconds(longOffset) / 60) || 0; // avoid -0 for UTC
 }
