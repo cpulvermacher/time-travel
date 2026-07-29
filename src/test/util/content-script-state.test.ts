@@ -18,7 +18,6 @@ const mockedBrowser = vi.mocked(browser);
 const originalEnvDev = import.meta.env.DEV;
 
 beforeEach(() => {
-    vi.resetAllMocks();
     localStorage.clear();
     import.meta.env.DEV = false;
     mockedBrowser.getActiveTabId.mockResolvedValue(123);

@@ -20,6 +20,7 @@ export default defineConfig(() => ({
     test: {
         environment: 'happy-dom',
         setupFiles: ['test/setup.ts'],
+        clearMocks: true,
         coverage: {
             exclude: ['paraglide/**'],
             reporter: ['text'],

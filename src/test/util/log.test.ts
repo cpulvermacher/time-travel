@@ -1,9 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { logDuration, timed } from '../../util/log';
-
-beforeEach(() => {
-    vi.mocked(console.log).mockClear();
-});
 
 afterEach(() => {
     vi.unstubAllEnvs();

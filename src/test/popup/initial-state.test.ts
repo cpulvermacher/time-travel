@@ -23,7 +23,6 @@ describe('getInitialState', () => {
 
     const originalEnvDev = import.meta.env.DEV;
     beforeEach(() => {
-        vi.resetAllMocks();
         mockedSettings.loadSettings.mockResolvedValue(defaultSettings);
     });
     afterEach(() => {

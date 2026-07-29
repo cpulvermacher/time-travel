@@ -27,7 +27,6 @@ function createMockStorage() {
 let mockStorage: ReturnType<typeof createMockStorage>;
 
 beforeEach(() => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
     mockStorage = createMockStorage();
     vi.mocked(browser).getSettingsStorage.mockReturnValue(mockStorage as unknown as chrome.storage.StorageArea);
 });

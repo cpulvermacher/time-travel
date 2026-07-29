@@ -8,7 +8,6 @@ vi.mock('../../util/browser');
 vi.mock('../../util/content-script-state');
 
 beforeEach(() => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.mocked(browser).getUILanguage.mockReturnValue('en');
 });
 
