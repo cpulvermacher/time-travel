@@ -1,4 +1,4 @@
-import { parseTimestamp } from '../../util/date-utils';
+import { parseTimestamp } from '@/util/date/parse';
 
 const FAKE_DATE_STORAGE_KEY = 'timeTravelDate';
 const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp';

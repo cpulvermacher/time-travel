@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { logDuration, timed } from '../../util/log';
+import { logDuration, timed } from '@/util/log';
 
 afterEach(() => {
     vi.unstubAllEnvs();

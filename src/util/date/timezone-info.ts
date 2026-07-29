@@ -1,3 +1,5 @@
+import { getOffsetMinutes } from './offset';
+
 export type Timezone = {
     tz: string; // IANA time zone identifier, e.g., "America/New_York". Empty string for browser default.
     name: string; // display name without offset, e.g. 'New York'
@@ -105,27 +107,6 @@ function isSameOffsets(a: Record<string, string>, b: Record<string, string>): bo
 /**  Get offset in localized format like "GMT-08:00" */
 function getOffset(locale: string, tz: string | undefined, date?: Date) {
     return getTimezoneName(locale, tz, date, 'longOffset');
-}
-
-/** Gets time zone offset in minutes from a longOffset string.
- *
- * This matches the output of `Date.getTimezoneOffset()`, including the sign.
- *
- * Example: "GMT+02:00" -> -120
- */
-export function getOffsetMinutes(longOffset?: string): number {
-    if (!longOffset) {
-        return 0;
-    }
-    const match = longOffset.match(/GMT([+-])(\d{2}):(\d{2})/);
-    if (match) {
-        // the sign must be taken from the matched character: parseInt('-00') is -0, which is not < 0
-        const sign = match[1] === '-' ? -1 : 1;
-        const hours = parseInt(match[2], 10);
-        const minutes = parseInt(match[3], 10);
-        return -sign * (hours * 60 + minutes) || 0; // avoid -0 for UTC
-    }
-    return 0;
 }
 
 type TimezoneNameFormat = 'short' | 'long' | 'shortOffset' | 'longOffset' | 'shortGeneric' | 'longGeneric';

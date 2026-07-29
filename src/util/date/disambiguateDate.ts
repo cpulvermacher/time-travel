@@ -1,4 +1,5 @@
-import { compareDateParts, getDateParts, getOffsetSeconds, type LocalDateParts } from './date-parts';
+import { compareDateParts, getDateParts, type LocalDateParts } from './date-parts';
+import { getOffsetSeconds } from './offset';
 
 const msPerSecond = 1000;
 const msPerMinute = 60 * msPerSecond;

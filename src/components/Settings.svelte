@@ -1,13 +1,14 @@
 <script lang="ts">
     import { untrack } from 'svelte';
+    import { formatLocalDate, formatUnambiguousDate } from '@/util/date/format';
+    import { parseDate } from '@/util/date/parse';
+    import { getTimezoneCity, getTzInfo } from '@/util/date/timezone-info';
     import { m } from '../paraglide/messages';
     import type { InitialState } from '../popup/initial-state';
     import { getUILanguage, reloadTab, withTabLoadingRetry } from '../util/browser';
     import { disableFakeDate, setClockState, setFakeDate } from '../util/content-script-state';
-    import { formatLocalDate, formatUnambiguousDate, parseDate } from '../util/date-utils';
     import { updateExtensionIcon } from '../util/icon';
     import { saveMostRecentTimezone, saveSetting } from '../util/settings';
-    import { getTimezoneCity, getTzInfo } from '../util/timezone-info';
     import DateTimePicker from './DateTimePicker.svelte';
     import ErrorModal from './ErrorModal.svelte';
     import PageTimeDisplay from './PageTimeDisplay.svelte';

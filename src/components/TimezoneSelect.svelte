@@ -2,15 +2,15 @@
     import { untrack } from 'svelte';
     import { cubicOut } from 'svelte/easing';
     import { slide } from 'svelte/transition';
-    import { m } from '../paraglide/messages';
-    import { getUILanguage } from '../util/browser';
     import {
         getTimezoneOffsets,
         getTimezoneOptions,
         type Timezone,
         TZGROUP_COMMON,
         TZGROUP_RECENT,
-    } from '../util/timezone-info';
+    } from '@/util/date/timezone-info';
+    import { m } from '../paraglide/messages';
+    import { getUILanguage } from '../util/browser';
     import Toggle from './Toggle.svelte';
 
     interface Props {

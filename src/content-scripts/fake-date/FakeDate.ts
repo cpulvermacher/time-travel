@@ -1,9 +1,9 @@
-import { getOffsetMinutes } from '../../util/timezone-info';
-import { getDateParts, getDatePartsForLocalDate } from './date-parts';
-import { disambiguateDate } from './disambiguateDate';
+import { getDateParts, getDatePartsForLocalDate } from '@/util/date/date-parts';
+import { disambiguateDate } from '@/util/date/disambiguateDate';
+import { getOffsetMinutes } from '@/util/date/offset';
+import { parseWithTimezone } from '@/util/date/parseWithTimezone';
 import { optionsWithDefaultTz } from './FakeIntlDateTimeFormat';
 import { getTimezoneName } from './getTimezoneName';
-import { parseWithTimezone } from './parseWithTimezone';
 import { fakeNowDate, getTimezone } from './storage';
 
 const OriginalDate = Date;

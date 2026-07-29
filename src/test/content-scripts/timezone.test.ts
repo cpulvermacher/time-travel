@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { UPDATE_STATE_EVENT } from '../../content-scripts/fake-date/storage';
-import { setFakeDate } from '../../util/inject';
+import { UPDATE_STATE_EVENT } from '@/content-scripts/fake-date/storage';
+import { setFakeDate } from '@/util/inject';
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
-import '../../content-scripts/replace-date';
+import '@/content-scripts/replace-date';
 
 // Only tests the time zone handling, tests without time zone set are in replace-date.test.ts
 describe('replace-date with time zone', () => {

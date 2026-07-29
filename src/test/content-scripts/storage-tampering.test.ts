@@ -4,18 +4,18 @@ import {
     getTickStartTimestamp,
     UPDATE_STATE_EVENT,
     updateState,
-} from '../../content-scripts/fake-date/storage';
+} from '@/content-scripts/fake-date/storage';
 import {
     getFakeDate as popupGetFakeDate,
     getTickStartTimestamp as popupGetTickStartTimestamp,
     getTimezone as popupGetTimezone,
     setFakeDate,
     setTickStartTimestamp,
-} from '../../util/inject';
+} from '@/util/inject';
 
 // importing this is the equivalent of the content script running at document_start,
 // i.e. before any of the tampering done in the tests below
-import '../../content-scripts/replace-date';
+import '@/content-scripts/replace-date';
 
 // Tests for pages that tamper with sessionStorage after document_start:
 // - https://github.com/cpulvermacher/time-travel/issues/45 (page calls sessionStorage.clear())

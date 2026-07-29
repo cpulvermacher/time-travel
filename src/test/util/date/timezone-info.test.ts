@@ -1,12 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-import {
-    getOffsetMinutes,
-    getTimezoneCity,
-    getTzInfo,
-    isValidTimezone,
-    TZGROUP_RECENT,
-} from '../../util/timezone-info';
+import { getTimezoneCity, getTzInfo, isValidTimezone, TZGROUP_RECENT } from '@/util/date/timezone-info';
 
 describe('getTimezoneCity', () => {
     it('returns the city part of an IANA identifier', () => {
@@ -158,7 +151,7 @@ describe('getTimezoneOptions', () => {
     });
 
     async function freshGetTimezoneOptions() {
-        return (await import('../../util/timezone-info')).getTimezoneOptions;
+        return (await import('@/util/date/timezone-info')).getTimezoneOptions;
     }
 
     it('returns a non-empty list that adds normal and recent timezones in the correct format', async () => {
@@ -219,7 +212,7 @@ describe('getTimezoneOffsets', () => {
     });
 
     async function freshModule() {
-        return await import('../../util/timezone-info');
+        return await import('@/util/date/timezone-info');
     }
 
     it('returns offsets for the given date, not for now', async () => {
@@ -261,31 +254,5 @@ describe('getTimezoneOffsets', () => {
 
         expect(sameDstWindow).toBe(first);
         expect(otherDstWindow).not.toBe(first);
-    });
-});
-
-describe('getOffsetMinutes', () => {
-    it('returns 0 for UTC', () => {
-        expect(getOffsetMinutes('GMT')).toBe(0);
-    });
-
-    it('returns correct minute offset', () => {
-        expect(getOffsetMinutes('GMT-05:00')).toBe(300);
-        expect(getOffsetMinutes('GMT+02:00')).toBe(-120);
-        expect(getOffsetMinutes('GMT+00:30')).toBe(-30);
-        expect(getOffsetMinutes('GMT+12:45')).toBe(-765);
-    });
-
-    it('handles negative offsets of less than an hour', () => {
-        // e.g. Europe/Dublin (-00:25) and Africa/Monrovia (-00:44) before 1916/1972
-        expect(getOffsetMinutes('GMT-00:30')).toBe(30);
-        expect(getOffsetMinutes('GMT-00:44')).toBe(44);
-        expect(getOffsetMinutes('GMT-00:00')).toBe(0);
-    });
-
-    it('returns 0 for invalid timezone', () => {
-        expect(getOffsetMinutes('abcd')).toBe(0);
-        expect(getOffsetMinutes('')).toBe(0);
-        expect(getOffsetMinutes(undefined)).toBe(0);
     });
 });

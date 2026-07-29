@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-
-import { getDateParts } from '../../../content-scripts/fake-date/date-parts';
+import { getDateParts } from '@/util/date/date-parts';
 
 describe('getDateParts', () => {
     it('returns parts for UTC', () => {

@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vitest/config';
@@ -5,7 +6,13 @@ import { defineConfig } from 'vitest/config';
 const entryPoints = ['/content-scripts/send-active.ts', '/worker.ts'];
 // get basename without extension
 const scriptNames = entryPoints.map((path) => path.split('/').pop()?.split('.').shift() || '');
+
 export default defineConfig(() => ({
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, './src'),
+        },
+    },
     plugins: [
         svelte({
             configFile: '../svelte.config.mjs',

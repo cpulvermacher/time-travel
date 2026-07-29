@@ -1,10 +1,6 @@
-import {
-    getDateParts,
-    getDatePartsForLocalTimestamp,
-    getOffsetSeconds,
-    type SharedDateParts,
-} from '../content-scripts/fake-date/date-parts';
-import { parseWithTimezone } from '../content-scripts/fake-date/parseWithTimezone';
+import { getDatePartsForLocalTimestamp, type SharedDateParts } from './date-parts';
+import { getOffsetSeconds, getUtcOffset, parsesToOffset } from './offset';
+import { parseDate } from './parse';
 
 export type FormatOptions = {
     fullPrecision?: boolean;
@@ -66,22 +62,6 @@ export function formatUnambiguousDate(date: Date, timezone: string, options?: Om
     const withOffset = formatted + getUtcOffset(date, timezone);
     // offsets with a seconds part (historic zones) cannot be parsed back, keep the ambiguous time
     return parsesToOffset(withOffset, timezone, offsetSeconds) ? withOffset : formatted;
-}
-
-/** Returns true if `dateString` parses to a date that has the given UTC offset in `timezone` */
-function parsesToOffset(dateString: string, timezone: string, offsetSeconds: number): boolean {
-    const timestamp = parseWithTimezone(dateString, timezone);
-    return !Number.isNaN(timestamp) && getOffsetSeconds(timestamp, timezone) === offsetSeconds;
-}
-
-/** Returns the UTC offset of `timezone` at `date` in the format "+01:00", or '' if unavailable */
-function getUtcOffset(date: Date, timezone: string): string {
-    const offsetName = getDateParts(date, timezone)?.offsetName;
-    if (!offsetName) {
-        return '';
-    }
-    // longOffset is just "GMT" for a zero offset
-    return offsetName === 'GMT' ? '+00:00' : offsetName.replace('GMT', '');
 }
 
 function formatDateParts(parts: SharedDateParts, options?: FormatOptions): string {
@@ -153,62 +133,4 @@ export function overwriteTimePart(dateTimeString: string, hours: number, minutes
     newDate.setSeconds(0);
     newDate.setMilliseconds(0);
     return formatLocalDate(newDate);
-}
-
-export type ParsedDate = ValidDate | InvalidDate | ResetDate;
-export type ValidDate = {
-    dateString: string; // unmodified input string
-    date: Date;
-    isValid: true;
-    isReset: false;
-};
-export type InvalidDate = {
-    dateString: string; // unmodified input string
-    isValid: false;
-    isReset: false;
-};
-export type ResetDate = {
-    dateString: string; // unmodified input string
-    isValid: false;
-    isReset: true;
-};
-
-/** Try parsing a date string
- *
- * If `timezone` is set, strings without offset information are interpreted as local time in that
- * time zone instead of the browser's time zone. UNIX timestamps and strings with an explicit offset
- * (or `Z`) denote an absolute instant and are unaffected.
- */
-export function parseDate(dateString: string, timezone?: string): ParsedDate {
-    if (dateString.trim() === '') {
-        return { dateString, isValid: false, isReset: true };
-    }
-
-    const maybeTimestamp = parseTimestamp(dateString);
-    try {
-        const date =
-            maybeTimestamp !== null ? new Date(maybeTimestamp) : new Date(parseWithTimezone(dateString, timezone));
-
-        if (Number.isNaN(date.getTime())) {
-            return { dateString, isValid: false, isReset: false };
-        }
-        return { dateString, date, isValid: true, isReset: false };
-    } catch {
-        return { dateString, isValid: false, isReset: false };
-    }
-}
-
-/** Try parsing a timestamp, return null if the string is not a valid integer */
-export function parseTimestamp(timestamp: string | null): number | null {
-    if (timestamp === null) {
-        return null;
-    }
-
-    if (/^-?\d+$/.test(timestamp)) {
-        const parsed = Number.parseInt(timestamp, 10);
-        if (!Number.isNaN(parsed)) {
-            return parsed;
-        }
-    }
-    return null;
 }

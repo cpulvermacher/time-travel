@@ -1,14 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-    fakeNowDate,
-    getFakeDate,
-    getTickStartTimestamp,
-    getTimezone,
-} from '../../../content-scripts/fake-date/storage';
-import { setFakeDate, setTickStartTimestamp } from '../../../util/inject';
+
+import { fakeNowDate, getFakeDate, getTickStartTimestamp, getTimezone } from '@/content-scripts/fake-date/storage';
+import { setFakeDate, setTickStartTimestamp } from '@/util/inject';
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
-import '../../../content-scripts/replace-date';
+import '@/content-scripts/replace-date';
 
 describe('setFakeDate/getFakeDate', () => {
     afterEach(() => {
@@ -159,7 +155,7 @@ describe('unreadable sessionStorage', () => {
     /** re-import storage.ts, so it captures the currently installed sessionStorage */
     async function loadStorageAtDocumentStart() {
         vi.resetModules();
-        return await import('../../../content-scripts/fake-date/storage');
+        return await import('@/content-scripts/fake-date/storage');
     }
 
     it('reports no state if sessionStorage is inaccessible (sandboxed frame)', async () => {

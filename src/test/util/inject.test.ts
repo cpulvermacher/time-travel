@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { setFakeDate, setTickStartTimestamp } from '../../util/inject';
+import { setFakeDate, setTickStartTimestamp } from '@/util/inject';
 
 describe('inject writers', () => {
     afterEach(() => {

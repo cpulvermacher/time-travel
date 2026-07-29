@@ -13,7 +13,7 @@ import {
     setBadgeText,
     setTitle,
     withTabLoadingRetry,
-} from '../../util/browser';
+} from '@/util/browser';
 
 /** build a chrome mock with the namespaces used by browser.ts */
 function createChromeMock() {

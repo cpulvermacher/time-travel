@@ -1,5 +1,5 @@
 import { getSettingsStorage } from './browser';
-import { isValidTimezone } from './timezone-info';
+import { isValidTimezone } from './date/timezone-info';
 
 type SettingName = keyof Settings;
 
