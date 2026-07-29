@@ -1,6 +1,37 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { getOffsetMinutes, getTzInfo, isValidTimezone, TZGROUP_RECENT } from '../../util/timezone-info';
+import {
+    getOffsetMinutes,
+    getTimezoneCity,
+    getTzInfo,
+    isValidTimezone,
+    TZGROUP_RECENT,
+} from '../../util/timezone-info';
+
+describe('getTimezoneCity', () => {
+    it('returns the city part of an IANA identifier', () => {
+        expect(getTimezoneCity('America/New_York')).toBe('New York');
+        expect(getTimezoneCity('Europe/Berlin')).toBe('Berlin');
+    });
+
+    it('returns the last part of a three-part identifier', () => {
+        expect(getTimezoneCity('America/Argentina/Buenos_Aires')).toBe('Buenos Aires');
+        expect(getTimezoneCity('America/Indiana/Tell_City')).toBe('Tell City');
+    });
+
+    it('replaces all underscores, not just the first', () => {
+        expect(getTimezoneCity('America/Port_of_Spain')).toBe('Port of Spain');
+    });
+
+    it('returns identifiers without a region unchanged', () => {
+        expect(getTimezoneCity('UTC')).toBe('UTC');
+        expect(getTimezoneCity('CST6CDT')).toBe('CST6CDT'); // Firefox has a number of these funky time zones
+    });
+
+    it('returns an empty string for the browser default timezone', () => {
+        expect(getTimezoneCity('')).toBe('');
+    });
+});
 
 describe('getTzInfo', () => {
     it('returns short tzName', () => {
