@@ -19,6 +19,7 @@ export default defineConfig({
             output: {
                 entryFileNames: 'content-scripts/replace-date.js',
                 minifyInternalExports: false, // since minification is off, this makes it worse
+                comments: false,
             },
         },
     },

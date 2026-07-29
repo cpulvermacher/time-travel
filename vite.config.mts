@@ -13,7 +13,7 @@ export default defineConfig(() => ({
         paraglideVitePlugin({
             project: './project.inlang',
             outdir: './src/paraglide',
-            strategy: ['baseLocale'], // locale configured via overrideGetLocale()
+            strategy: ['baseLocale'], // locale configured via overwriteGetLocale()
         }),
     ],
     root: 'src',
@@ -52,6 +52,7 @@ export default defineConfig(() => ({
                     }
                 },
                 minifyInternalExports: false, // since minification is off, this makes it worse
+                comments: false,
             },
         },
     },
