@@ -23,7 +23,7 @@ export default defineConfig(() => ({
         clearMocks: true,
         coverage: {
             exclude: ['paraglide/**'],
-            reporter: ['text'],
+            reporter: ['text', 'html'],
             thresholds: {
                 // NOTE: keep autoUpdate disabled. Coverage varies slightly between Node versions
                 autoUpdate: false,
