@@ -5,20 +5,18 @@ const devTabStateKey = 'timeTravelDevTabState';
 // what the mocked reloadTab() logs instead of reloading (see src/util/browser.ts)
 const mockTabReloadLog = 'reloading tab (mocked)';
 
-/** A Toggle component. Its checkbox is visually hidden (0x0 and transparent), so it cannot be
- * clicked directly; clicking the switch inside the surrounding <label> activates it instead. */
+/** A Toggle component. */
 class Toggle {
     readonly checkbox: Locator;
-    private readonly control: Locator;
+    private readonly label: Locator;
 
     constructor(page: Page, label: string) {
-        const root = page.locator('label.toggle').filter({ hasText: label });
-        this.checkbox = root.getByRole('checkbox');
-        this.control = root.locator('.toggle-bg');
+        this.label = page.locator('label.toggle').filter({ hasText: label });
+        this.checkbox = this.label.getByRole('checkbox');
     }
 
     async click() {
-        await this.control.click();
+        await this.label.click();
     }
 
     /** click the toggle unless it is already in the wanted state */
