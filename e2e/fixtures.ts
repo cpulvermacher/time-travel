@@ -1,163 +1,41 @@
-import { test as base, expect, type Locator, type Page } from '@playwright/test';
+import { test as base } from '@playwright/test';
+import { Popup } from './pages/popup';
 
-// localStorage key of the mocked tab state (see src/util/content-script-state.ts)
-const devTabStateKey = 'timeTravelDevTabState';
-// what the mocked reloadTab() logs instead of reloading (see src/util/browser.ts)
-const mockTabReloadLog = 'reloading tab (mocked)';
+/** The fake system time the popup runs at, unless a test overrides it with
+ * `test.use({ systemTime: ... })`.
+ *
+ * Europe/Berlin (the browser time zone, see playwright.config.ts) is UTC+2 at that date, so the
+ * popup shows 2:00 PM as the current time. */
+export const defaultSystemTime = '2025-07-15T12:00:00Z';
 
-/** A Toggle component. Its checkbox is visually hidden (0x0 and transparent), so it cannot be
- * clicked directly; clicking the switch inside the surrounding <label> activates it instead. */
-class Toggle {
-    readonly checkbox: Locator;
-    private readonly control: Locator;
-
-    constructor(page: Page, label: string) {
-        const root = page.locator('label.toggle').filter({ hasText: label });
-        this.checkbox = root.getByRole('checkbox');
-        this.control = root.locator('.toggle-bg');
-    }
-
-    async click() {
-        await this.control.click();
-    }
-
-    /** click the toggle unless it is already in the wanted state */
-    async set(checked: boolean) {
-        if ((await this.checkbox.isChecked()) !== checked) {
-            await this.click();
-        }
-    }
-}
-
-/** The extension popup as served by the Vite dev server, where the extension APIs are mocked and
- * the tab state lives in localStorage. */
-export class Popup {
-    readonly dateInput: Locator;
-    readonly dateInputLabel: Locator;
-    readonly applyButton: Locator;
-    readonly pageTime: Locator;
-    readonly pageTimeOffset: Locator;
-    readonly realTimeNote: Locator;
-    readonly timezoneSelect: Locator;
-    readonly calendar: Locator;
-    readonly reloadModal: Locator;
-    readonly reloadButton: Locator;
-    readonly fakeDateToggle: Toggle;
-    readonly stopClockToggle: Toggle;
-    readonly autoReloadToggle: Toggle;
-    readonly timezoneToggle: Toggle;
-    private reloadedTabs = 0;
-
-    constructor(readonly page: Page) {
-        page.on('console', (message) => {
-            if (message.text().includes(mockTabReloadLog)) {
-                this.reloadedTabs++;
-            }
-        });
-
-        this.dateInput = page.locator('.input-fields input[type="text"]');
-        this.dateInputLabel = page.locator('label:has(.input-fields)');
-        this.applyButton = page.locator('button.apply-button');
-        this.pageTime = page.locator('.page-time .datetime');
-        this.pageTimeOffset = page.locator('.page-time .badge');
-        this.realTimeNote = page.locator('.page-time .note');
-        this.timezoneSelect = page.getByRole('combobox');
-        this.calendar = page.locator('.datepicker');
-        this.reloadModal = page.getByRole('dialog').filter({ hasText: 'reload the page' });
-        this.reloadButton = this.reloadModal.getByRole('button', { name: 'Reload' });
-        this.fakeDateToggle = new Toggle(page, 'Fake JavaScript date');
-        this.stopClockToggle = new Toggle(page, 'Stop clock');
-        this.autoReloadToggle = new Toggle(page, 'Reload page on changes');
-        this.timezoneToggle = new Toggle(page, 'Change time zone');
-    }
-
-    /** open the popup */
-    async open() {
-        await this.page.goto('/popup/main.html');
-        await expect(this.dateInput).toBeVisible();
-    }
-
-    /** close and open the popup again, keeping the mocked tab state and settings */
-    async reopen() {
-        await this.page.reload();
-        await expect(this.dateInput).toBeVisible();
-    }
-
-    async setDate(date: string) {
-        await this.dateInput.fill(date);
-    }
-
-    /** Freeze the real system time the popup sees, e.g. to make the comparison of the fake date's
-     * UTC offset with the current one independent of when the tests run.
-     *
-     * Reopens the popup, so the whole UI is rendered with the frozen time. */
-    async setSystemTime(time: string) {
-        await this.page.clock.setFixedTime(time);
-        await this.reopen();
-    }
-
-    /** the option of a time zone in the time zone dropdown */
-    timezoneOption(timezone: string): Locator {
-        return this.timezoneSelect.locator(`option[value="${timezone}"]`);
-    }
-
-    /** the button of a day in the month the calendar currently shows */
-    calendarDay(day: number): Locator {
-        return this.calendar.getByRole('button', { name: String(day), exact: true });
-    }
-
-    /** the part of the date input that is currently selected */
-    selectedDateInputText(): Promise<string> {
-        return this.dateInput.evaluate((input: HTMLInputElement) =>
-            input.value.substring(input.selectionStart ?? 0, input.selectionEnd ?? 0)
-        );
-    }
-
-    /** enter a date and apply it by pressing Enter */
-    async applyWithEnter(date: string) {
-        await this.setDate(date);
-        await this.dateInput.press('Enter');
-    }
-
-    /** enter a date and apply it by clicking the apply button */
-    async applyWithButton(date: string) {
-        await this.setDate(date);
-        await this.applyButton.click();
-    }
-
-    /** number of tab reloads the popup requested since it was created */
-    tabReloads(): number {
-        return this.reloadedTabs;
-    }
-
-    /** pretend the content script is already injected in the tab, i.e. the extension was used
-     * before, so applying a date does not ask for a reload */
-    async markContentScriptActive() {
-        // runs on every navigation, so the rest of the tab state (e.g. the applied date) is kept
-        await this.page.addInitScript((key) => {
-            const state = JSON.parse(localStorage.getItem(key) ?? '{}') as Record<string, unknown>;
-            localStorage.setItem(key, JSON.stringify({ ...state, contentScriptActive: true }));
-        }, devTabStateKey);
-    }
-}
-
-type Fixtures = {
-    /** popup for a tab the extension was already activated in */
-    popup: Popup;
-    /** popup for a tab the extension has never been used in (Chrome needs a reload to inject the content script) */
-    firstUsePopup: Popup;
+type Options = {
+    /** Fake system time the popup sees. It stands still until a test moves it with
+     * `Popup.advanceClock()`, which keeps everything derived from the current time (the prefilled
+     * date, the ticking page time, the UTC offset comparison) stable whenever the tests run. */
+    systemTime: string;
+    /** Whether the extension was already used in the tab, i.e. its content script is injected.
+     * Chrome only injects it on first use, which needs a tab reload. */
+    contentScriptActive: boolean;
 };
 
-export const test = base.extend<Fixtures>({
-    popup: async ({ page }, use) => {
+type Fixtures = {
+    popup: Popup;
+};
+
+export const test = base.extend<Options & Fixtures>({
+    systemTime: [defaultSystemTime, { option: true }],
+    contentScriptActive: [true, { option: true }],
+
+    popup: async ({ page, systemTime, contentScriptActive }, use) => {
+        // must happen before the popup is opened, so the whole UI is rendered with the fake clock
+        await page.clock.install({ time: systemTime });
+
         const popup = new Popup(page);
-        await popup.markContentScriptActive();
+        if (contentScriptActive) {
+            await popup.markContentScriptActive();
+        }
         await popup.open();
-        await use(popup);
-    },
-    firstUsePopup: async ({ page }, use) => {
-        const popup = new Popup(page);
-        await popup.open();
+
         await use(popup);
     },
 });

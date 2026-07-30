@@ -1,20 +1,7 @@
-import { expect, type Popup, test } from './fixtures';
+import { expect, test } from './fixtures';
 
-/** the page time shown for 2025-04-27 12:40 while the clock is running (seconds keep advancing) */
-const runningPageTime = /Apr 27, 2025\s+12:40:\d\d/;
-
-/** wait for the page time to change, i.e. for the clock to be running */
-async function expectClockTicking(popup: Popup) {
-    const before = await popup.pageTime.textContent();
-    await expect.poll(() => popup.pageTime.textContent(), { message: 'page time should advance' }).not.toBe(before);
-}
-
-/** check that the page time stays the same, i.e. that the clock is stopped */
-async function expectClockStopped(popup: Popup) {
-    const before = await popup.pageTime.textContent();
-    await popup.page.waitForTimeout(1500);
-    expect(await popup.pageTime.textContent()).toBe(before);
-}
+/** the page time shown right after applying 2025-04-27 12:40, i.e. before the clock advances */
+const appliedPageTime = 'Apr 27, 2025 12:40:00 PM';
 
 test.describe('setting a date', () => {
     test('applies the date via the apply button', async ({ popup }) => {
@@ -26,7 +13,7 @@ test.describe('setting a date', () => {
         await popup.applyButton.click();
 
         await expect(popup.fakeDateToggle.checkbox).toBeChecked();
-        await expect(popup.pageTime).toHaveText(runningPageTime);
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
         await expect(popup.realTimeNote).not.toBeVisible();
         await expect(popup.applyButton).toHaveText('No changes');
         await expect(popup.applyButton).toBeDisabled();
@@ -34,12 +21,12 @@ test.describe('setting a date', () => {
 
     test('applies the date via the enable toggle', async ({ popup }) => {
         await popup.setDate('2025-04-27 12:40');
-        await expect(popup.pageTime).not.toHaveText(runningPageTime);
+        await expect(popup.pageTime).not.toHaveText(appliedPageTime);
 
         await popup.fakeDateToggle.click();
 
         await expect(popup.fakeDateToggle.checkbox).toBeChecked();
-        await expect(popup.pageTime).toHaveText(runningPageTime);
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
         await expect(popup.applyButton).toHaveText('No changes');
     });
 
@@ -64,23 +51,22 @@ test.describe('setting a date', () => {
 
     test('keeps the fake date when the popup is reopened', async ({ popup }) => {
         await popup.applyWithButton('2025-04-27 12:40');
-        await expect(popup.pageTime).toHaveText(runningPageTime);
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
 
         await popup.reopen();
 
         await expect(popup.fakeDateToggle.checkbox).toBeChecked();
-        await expect(popup.pageTime).toHaveText(runningPageTime);
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
         await expect(popup.dateInput).toHaveValue(/^2025-04-27 12:40/);
     });
 });
 
-test.describe('the current date and time', () => {
-    // the real system time is frozen, so the prefilled date is stable (Europe/Berlin, see
+test.describe('prefilling the current date and time', () => {
+    // the system time is frozen, so the prefilled date is stable (Europe/Berlin, see
     // playwright.config.ts, is UTC+2 in July)
+    test.use({ systemTime: '2025-07-15T12:00:00Z' });
 
     test('prefills the input with the current date and time', async ({ popup }) => {
-        await popup.setSystemTime('2025-07-15T12:00:00Z');
-
         await expect(popup.dateInput).toHaveValue('2025-07-15 14:00');
         await expect(popup.applyButton).toHaveText('Change date to Jul 15, 2025 2:00 PM');
         // nothing is applied yet, the page still sees the real date
@@ -89,8 +75,6 @@ test.describe('the current date and time', () => {
     });
 
     test('opens the calendar on the current month', async ({ popup }) => {
-        await popup.setSystemTime('2025-07-15T12:00:00Z');
-
         await popup.calendarDay(20).click();
 
         await expect(popup.dateInput).toHaveValue('2025-07-20 14:00');
@@ -98,14 +82,17 @@ test.describe('the current date and time', () => {
 });
 
 test.describe('disabling', () => {
+    // the system time is frozen, so the date prefilled after disabling is stable
+    test.use({ systemTime: '2025-07-15T12:00:00Z' });
+
     test('turns off the fake date via the enable toggle', async ({ popup }) => {
         await popup.applyWithButton('2025-04-27 12:40');
-        await expect(popup.pageTime).toHaveText(runningPageTime);
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
 
         await popup.fakeDateToggle.click();
 
         await expect(popup.fakeDateToggle.checkbox).not.toBeChecked();
-        await expect(popup.pageTime).not.toHaveText(runningPageTime);
+        await expect(popup.pageTime).not.toHaveText(appliedPageTime);
         await expect(popup.realTimeNote).toBeVisible();
 
         // and it stays off after reopening the popup
@@ -115,9 +102,8 @@ test.describe('disabling', () => {
     });
 
     test('turns off the fake date when the input is cleared', async ({ popup }) => {
-        await popup.setSystemTime('2025-07-15T12:00:00Z');
         await popup.applyWithButton('2025-04-27 12:40');
-        await expect(popup.pageTime).toHaveText(runningPageTime);
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
 
         await popup.setDate('');
         await expect(popup.applyButton).toHaveText('Disable fake date');
@@ -133,26 +119,34 @@ test.describe('disabling', () => {
 test.describe('stopping the clock', () => {
     test('stops and resumes the clock', async ({ popup }) => {
         await popup.applyWithButton('2025-04-27 12:40');
-        await expectClockTicking(popup);
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
+
+        // while the clock runs, the page time follows the system time
+        await popup.advanceClock(5000);
+        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:05 PM');
 
         await popup.stopClockToggle.set(true);
 
-        // stopping resets the page to the date that was set last
-        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00 PM');
-        await expectClockStopped(popup);
+        // stopping resets the page to the date that was set last, and holds it there
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
+        await popup.advanceClock(5000);
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
 
         await popup.stopClockToggle.set(false);
 
-        await expectClockTicking(popup);
-        await expect(popup.pageTime).toHaveText(runningPageTime);
+        // resuming restarts from that date
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
+        await popup.advanceClock(3000);
+        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:03 PM');
     });
 
     test('applies a date with the clock already stopped', async ({ popup }) => {
         await popup.stopClockToggle.set(true);
         await popup.applyWithButton('2025-04-27 12:40');
 
-        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00 PM');
-        await expectClockStopped(popup);
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
+        await popup.advanceClock(5000);
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
     });
 });
 
@@ -170,7 +164,7 @@ test.describe('auto-reload', () => {
         await expect(popup.autoReloadToggle.checkbox).not.toBeChecked();
 
         await popup.applyWithButton('2025-04-27 12:40');
-        await expect(popup.pageTime).toHaveText(runningPageTime);
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
 
         expect(popup.tabReloads()).toBe(0);
     });
@@ -185,19 +179,20 @@ test.describe('auto-reload', () => {
 });
 
 test.describe('first use in a tab', () => {
+    test.use({ contentScriptActive: false });
     // Firefox injects the content script via its manifest, so it is active without a reload
     test.skip(
         ({ browserName }) => browserName !== 'chromium',
         'only Chrome needs a reload to inject the content script'
     );
 
-    test('asks for a reload after applying a date', async ({ firstUsePopup: popup }) => {
+    test('asks for a reload after applying a date', async ({ popup }) => {
         await popup.applyWithButton('2025-04-27 12:40');
 
         await expect(popup.reloadModal).toBeVisible();
     });
 
-    test('asks for a reload after enabling via the toggle', async ({ firstUsePopup: popup }) => {
+    test('asks for a reload after enabling via the toggle', async ({ popup }) => {
         await popup.setDate('2025-04-27 12:40');
 
         await popup.fakeDateToggle.click();
@@ -205,7 +200,7 @@ test.describe('first use in a tab', () => {
         await expect(popup.reloadModal).toBeVisible();
     });
 
-    test('reloads the tab when confirming the prompt', async ({ firstUsePopup: popup }) => {
+    test('reloads the tab when confirming the prompt', async ({ popup }) => {
         await popup.applyWithButton('2025-04-27 12:40');
         await expect(popup.reloadButton).toBeVisible();
 
@@ -214,7 +209,7 @@ test.describe('first use in a tab', () => {
         await expect.poll(() => popup.tabReloads(), { message: 'tab should be reloaded' }).toBe(1);
     });
 
-    test('does not ask for a reload again on later changes', async ({ firstUsePopup: popup }) => {
+    test('does not ask for a reload again on later changes', async ({ popup }) => {
         await popup.applyWithButton('2025-04-27 12:40');
         await expect(popup.reloadModal).toBeVisible();
 
@@ -225,7 +220,7 @@ test.describe('first use in a tab', () => {
         await expect(popup.reloadModal).toHaveCount(0);
     });
 
-    test('reloads instead of asking when auto-reload is on', async ({ firstUsePopup: popup }) => {
+    test('reloads instead of asking when auto-reload is on', async ({ popup }) => {
         await popup.autoReloadToggle.set(true);
 
         await popup.applyWithButton('2025-04-27 12:40');
@@ -235,11 +230,17 @@ test.describe('first use in a tab', () => {
     });
 });
 
-test('applies a date without a reload on first use in Firefox', async ({ firstUsePopup: popup, browserName }) => {
-    test.skip(browserName !== 'firefox', 'only Firefox injects the content script via its manifest');
+test.describe('first use in a tab in Firefox', () => {
+    test.use({ contentScriptActive: false });
+    test.skip(
+        ({ browserName }) => browserName !== 'firefox',
+        'only Firefox injects the content script via its manifest'
+    );
 
-    await popup.applyWithButton('2025-04-27 12:40');
+    test('applies a date without a reload', async ({ popup }) => {
+        await popup.applyWithButton('2025-04-27 12:40');
 
-    await expect(popup.pageTime).toHaveText(runningPageTime);
-    await expect(popup.reloadModal).toHaveCount(0);
+        await expect(popup.pageTime).toHaveText(appliedPageTime);
+        await expect(popup.reloadModal).toHaveCount(0);
+    });
 });
