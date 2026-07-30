@@ -38,6 +38,7 @@ export class Popup {
     readonly realTimeNote: Locator;
     readonly timezoneSelect: Locator;
     readonly calendar: Locator;
+    readonly calendarWeekdays: Locator;
     readonly reloadModal: Locator;
     readonly reloadButton: Locator;
     readonly fakeDateToggle: Toggle;
@@ -61,6 +62,7 @@ export class Popup {
         this.realTimeNote = page.locator('.page-time .note');
         this.timezoneSelect = page.getByRole('combobox');
         this.calendar = page.locator('.datepicker');
+        this.calendarWeekdays = this.calendar.locator('.dow');
         this.reloadModal = page.getByRole('dialog').filter({ hasText: 'reload the page' });
         this.reloadButton = this.reloadModal.getByRole('button', { name: 'Reload' });
         this.fakeDateToggle = new Toggle(page, 'Fake JavaScript date');
