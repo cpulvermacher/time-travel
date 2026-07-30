@@ -39,6 +39,7 @@ export class Popup {
     readonly pageTimeOffset: Locator;
     readonly realTimeNote: Locator;
     readonly timezoneSelect: Locator;
+    readonly calendar: Locator;
     readonly reloadModal: Locator;
     readonly reloadButton: Locator;
     readonly fakeDateToggle: Toggle;
@@ -61,6 +62,7 @@ export class Popup {
         this.pageTimeOffset = page.locator('.page-time .badge');
         this.realTimeNote = page.locator('.page-time .note');
         this.timezoneSelect = page.getByRole('combobox');
+        this.calendar = page.locator('.datepicker');
         this.reloadModal = page.getByRole('dialog').filter({ hasText: 'reload the page' });
         this.reloadButton = this.reloadModal.getByRole('button', { name: 'Reload' });
         this.fakeDateToggle = new Toggle(page, 'Fake JavaScript date');
@@ -83,6 +85,18 @@ export class Popup {
 
     async setDate(date: string) {
         await this.dateInput.fill(date);
+    }
+
+    /** the button of a day in the month the calendar currently shows */
+    calendarDay(day: number): Locator {
+        return this.calendar.getByRole('button', { name: String(day), exact: true });
+    }
+
+    /** the part of the date input that is currently selected */
+    selectedDateInputText(): Promise<string> {
+        return this.dateInput.evaluate((input: HTMLInputElement) =>
+            input.value.substring(input.selectionStart ?? 0, input.selectionEnd ?? 0)
+        );
     }
 
     /** enter a date and apply it by pressing Enter */

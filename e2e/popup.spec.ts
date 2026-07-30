@@ -43,6 +43,25 @@ test.describe('setting a date', () => {
         await expect(popup.applyButton).toHaveText('No changes');
     });
 
+    test('applies a date picked in the calendar', async ({ popup }) => {
+        await popup.setDate('2025-04-27 12:40');
+
+        await popup.calendarDay(15).click();
+
+        // picking a day only replaces the date, the time is kept
+        await expect(popup.dateInput).toHaveValue('2025-04-15 12:40');
+        // and the time is selected in the focused input, so it can be typed over right away
+        await expect(popup.dateInput).toBeFocused();
+        expect(await popup.selectedDateInputText()).toBe('12:40');
+
+        await popup.page.keyboard.type('08:15');
+        await expect(popup.dateInput).toHaveValue('2025-04-15 08:15');
+        await popup.dateInput.press('Enter');
+
+        await expect(popup.fakeDateToggle.checkbox).toBeChecked();
+        await expect(popup.pageTime).toHaveText(/Apr 15, 2025\s+8:15:\d\d\s*AM/);
+    });
+
     test('keeps the fake date when the popup is reopened', async ({ popup }) => {
         await popup.applyWithButton('2025-04-27 12:40');
         await expect(popup.pageTime).toHaveText(runningPageTime);
