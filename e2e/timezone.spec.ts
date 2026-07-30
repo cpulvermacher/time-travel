@@ -43,7 +43,10 @@ test.describe('changing the time zone', () => {
 
         await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00 PM');
         await expect(popup.pageTimeOffset).toHaveText('+01:00');
-        await expect(popup.pageTimeOffset).toHaveAttribute('title', /Europe\/London/);
+        await expect(popup.pageTimeOffset).toHaveAttribute(
+            'title',
+            'Europe/London (British Summer Time)\nDaylight Saving Time (DST) is in effect for this date.'
+        );
         await expect(popup.applyButton).toHaveText('No changes');
     });
 
@@ -64,6 +67,7 @@ test.describe('changing the time zone', () => {
         // same local time, different instant
         await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00 PM');
         await expect(popup.pageTimeOffset).toHaveText('+09:00');
+        await expect(popup.pageTimeOffset).toHaveAttribute('title', 'Asia/Tokyo (Japan Standard Time)');
     });
 
     test('returns to the browser time zone when switched off', async ({ popup }) => {
@@ -100,5 +104,149 @@ test.describe('changing the time zone', () => {
         await expect(popup.timezoneSelect).toHaveValue('Europe/London');
         await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00 PM');
         await expect(popup.pageTimeOffset).toHaveText('+01:00');
+    });
+});
+
+test.describe('daylight saving time', () => {
+    // The offset badge shows the offset of the selected time zone at the faked date, not at the
+    // real current date, and is highlighted (.badge--dst) while DST is in effect there.
+    const cases = [
+        {
+            name: 'summer time in the northern hemisphere',
+            timezone: 'Europe/London',
+            date: '2025-07-15 12:40',
+            pageTime: 'Jul 15, 2025 12:40:00 PM',
+            offset: '+01:00',
+            isDst: true,
+            title: 'Europe/London (British Summer Time)\nDaylight Saving Time (DST) is in effect for this date.',
+        },
+        {
+            name: 'standard time in the northern hemisphere',
+            timezone: 'Europe/London',
+            date: '2025-01-15 12:40',
+            pageTime: 'Jan 15, 2025 12:40:00 PM',
+            offset: '+00:00',
+            isDst: false,
+            title:
+                'Europe/London (Greenwich Mean Time)\n' +
+                'This time zone observes Daylight Saving Time (DST) at other times of the year.',
+        },
+        {
+            // in the southern hemisphere DST is in effect around the turn of the year
+            name: 'summer time in the southern hemisphere',
+            timezone: 'Australia/Sydney',
+            date: '2025-01-15 12:40',
+            pageTime: 'Jan 15, 2025 12:40:00 PM',
+            offset: '+11:00',
+            isDst: true,
+            title:
+                'Australia/Sydney (Australian Eastern Daylight Time)\n' +
+                'Daylight Saving Time (DST) is in effect for this date.',
+        },
+        {
+            name: 'standard time in the southern hemisphere',
+            timezone: 'Australia/Sydney',
+            date: '2025-07-15 12:40',
+            pageTime: 'Jul 15, 2025 12:40:00 PM',
+            offset: '+10:00',
+            isDst: false,
+            title:
+                'Australia/Sydney (Australian Eastern Standard Time)\n' +
+                'This time zone observes Daylight Saving Time (DST) at other times of the year.',
+        },
+        {
+            name: 'a time zone that never observes DST',
+            timezone: 'Asia/Tokyo',
+            date: '2025-07-15 12:40',
+            pageTime: 'Jul 15, 2025 12:40:00 PM',
+            offset: '+09:00',
+            isDst: false,
+            title: 'Asia/Tokyo (Japan Standard Time)',
+        },
+    ];
+
+    for (const { name, timezone, date, pageTime, offset, isDst, title } of cases) {
+        test(`shows ${name}`, async ({ popup }) => {
+            await popup.stopClockToggle.set(true);
+            await popup.timezoneToggle.set(true);
+            await popup.timezoneSelect.selectOption(timezone);
+
+            await popup.applyWithButton(date);
+
+            await expect(popup.pageTime).toHaveText(pageTime);
+            await expect(popup.pageTimeOffset).toHaveText(offset);
+            await expect(popup.pageTimeOffset).toHaveAttribute('title', title);
+            if (isDst) {
+                await expect(popup.pageTimeOffset).toHaveClass(/badge--dst/);
+            } else {
+                await expect(popup.pageTimeOffset).not.toHaveClass(/badge--dst/);
+            }
+        });
+    }
+
+    test.describe('in the browser time zone', () => {
+        // Without a selected time zone the badge only shows when the fake date's offset differs
+        // from the current one, so the real system time is frozen to make that comparison stable.
+        // Europe/Berlin (see playwright.config.ts) is UTC+1 in winter and UTC+2 in summer.
+
+        test('shows the summer time offset of a fake date while it is winter', async ({ popup }) => {
+            await popup.setSystemTime('2025-01-15T12:00:00Z');
+            await popup.stopClockToggle.set(true);
+
+            await popup.applyWithButton('2025-07-15 12:40');
+
+            await expect(popup.pageTime).toHaveText('Jul 15, 2025 12:40:00 PM');
+            await expect(popup.pageTimeOffset).toHaveText('+02:00');
+            await expect(popup.pageTimeOffset).toHaveClass(/badge--dst/);
+            await expect(popup.pageTimeOffset).toHaveAttribute(
+                'title',
+                'Central European Summer Time\nDaylight Saving Time (DST) is in effect for this date.'
+            );
+        });
+
+        test('shows the winter time offset of a fake date while it is summer', async ({ popup }) => {
+            await popup.setSystemTime('2025-07-15T12:00:00Z');
+            await popup.stopClockToggle.set(true);
+
+            await popup.applyWithButton('2025-01-15 12:40');
+
+            await expect(popup.pageTime).toHaveText('Jan 15, 2025 12:40:00 PM');
+            await expect(popup.pageTimeOffset).toHaveText('+01:00');
+            await expect(popup.pageTimeOffset).not.toHaveClass(/badge--dst/);
+            await expect(popup.pageTimeOffset).toHaveAttribute(
+                'title',
+                'Central European Standard Time\n' +
+                    'This time zone observes Daylight Saving Time (DST) at other times of the year.'
+            );
+        });
+
+        test('shows no offset for a fake date in the same DST period', async ({ popup }) => {
+            await popup.setSystemTime('2025-07-15T12:00:00Z');
+            await popup.stopClockToggle.set(true);
+
+            await popup.applyWithButton('2025-04-27 12:40');
+
+            await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00 PM');
+            await expect(popup.pageTimeOffset).toHaveCount(0);
+        });
+    });
+
+    test('updates the offset when the date crosses a DST transition', async ({ popup }) => {
+        await popup.stopClockToggle.set(true);
+        await popup.timezoneToggle.set(true);
+        await popup.timezoneSelect.selectOption('Europe/London');
+
+        // Europe/London switches to summer time at 01:00 on Mar 30, 2025
+        await popup.applyWithButton('2025-03-30 00:30');
+
+        await expect(popup.pageTime).toHaveText('Mar 30, 2025 12:30:00 AM');
+        await expect(popup.pageTimeOffset).toHaveText('+00:00');
+        await expect(popup.pageTimeOffset).not.toHaveClass(/badge--dst/);
+
+        await popup.applyWithButton('2025-03-30 03:30');
+
+        await expect(popup.pageTime).toHaveText('Mar 30, 2025 3:30:00 AM');
+        await expect(popup.pageTimeOffset).toHaveText('+01:00');
+        await expect(popup.pageTimeOffset).toHaveClass(/badge--dst/);
     });
 });

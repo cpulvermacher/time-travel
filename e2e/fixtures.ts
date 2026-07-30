@@ -87,6 +87,15 @@ export class Popup {
         await this.dateInput.fill(date);
     }
 
+    /** Freeze the real system time the popup sees, e.g. to make the comparison of the fake date's
+     * UTC offset with the current one independent of when the tests run.
+     *
+     * Reopens the popup, so the whole UI is rendered with the frozen time. */
+    async setSystemTime(time: string) {
+        await this.page.clock.setFixedTime(time);
+        await this.reopen();
+    }
+
     /** the button of a day in the month the calendar currently shows */
     calendarDay(day: number): Locator {
         return this.calendar.getByRole('button', { name: String(day), exact: true });
