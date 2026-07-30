@@ -96,6 +96,11 @@ export class Popup {
         await this.reopen();
     }
 
+    /** the option of a time zone in the time zone dropdown */
+    timezoneOption(timezone: string): Locator {
+        return this.timezoneSelect.locator(`option[value="${timezone}"]`);
+    }
+
     /** the button of a day in the month the calendar currently shows */
     calendarDay(day: number): Locator {
         return this.calendar.getByRole('button', { name: String(day), exact: true });

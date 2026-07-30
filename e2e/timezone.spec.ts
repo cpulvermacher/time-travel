@@ -107,6 +107,43 @@ test.describe('changing the time zone', () => {
     });
 });
 
+test.describe('the current date and time', () => {
+    // the real system time is frozen, so the prefilled date is stable (Europe/London is UTC+1 in
+    // July, the browser time zone Europe/Berlin is UTC+2, see playwright.config.ts)
+
+    test('prefills the input with the current time in the selected time zone', async ({ popup }) => {
+        await popup.setSystemTime('2025-07-15T12:00:00Z');
+        await popup.timezoneToggle.set(true);
+        await popup.timezoneSelect.selectOption('Europe/London');
+        await popup.applyButton.click();
+        await expect(popup.dateInput).toHaveValue('2025-07-15 14:00'); // still the browser time zone
+
+        // clearing the input disables the fake date and prefills the current time again
+        await popup.setDate('');
+        await popup.dateInput.press('Enter');
+        await expect(popup.dateInput).toHaveValue('2025-07-15 13:00');
+
+        // and the selected time zone is still used when the popup is reopened
+        await popup.reopen();
+
+        await expect(popup.dateInputLabel).toContainText('(London)');
+        await expect(popup.dateInput).toHaveValue('2025-07-15 13:00');
+    });
+
+    test('shows the current UTC offsets in the time zone dropdown', async ({ popup }) => {
+        await popup.setSystemTime('2025-07-15T12:00:00Z');
+        await popup.timezoneToggle.set(true);
+
+        // without a date the offsets of the options are the current ones
+        await popup.setDate('');
+        await expect(popup.timezoneOption('Europe/London')).toHaveText('London (UTC+01:00)');
+
+        // with a date they follow that date, here across a DST transition
+        await popup.setDate('2025-01-15 12:40');
+        await expect(popup.timezoneOption('Europe/London')).toHaveText('London (UTC+00:00)');
+    });
+});
+
 test.describe('daylight saving time', () => {
     // The offset badge shows the offset of the selected time zone at the faked date, not at the
     // real current date, and is highlighted (.badge--dst) while DST is in effect there.

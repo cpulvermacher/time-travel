@@ -74,6 +74,29 @@ test.describe('setting a date', () => {
     });
 });
 
+test.describe('the current date and time', () => {
+    // the real system time is frozen, so the prefilled date is stable (Europe/Berlin, see
+    // playwright.config.ts, is UTC+2 in July)
+
+    test('prefills the input with the current date and time', async ({ popup }) => {
+        await popup.setSystemTime('2025-07-15T12:00:00Z');
+
+        await expect(popup.dateInput).toHaveValue('2025-07-15 14:00');
+        await expect(popup.applyButton).toHaveText('Change date to Jul 15, 2025 2:00 PM');
+        // nothing is applied yet, the page still sees the real date
+        await expect(popup.fakeDateToggle.checkbox).not.toBeChecked();
+        await expect(popup.realTimeNote).toBeVisible();
+    });
+
+    test('opens the calendar on the current month', async ({ popup }) => {
+        await popup.setSystemTime('2025-07-15T12:00:00Z');
+
+        await popup.calendarDay(20).click();
+
+        await expect(popup.dateInput).toHaveValue('2025-07-20 14:00');
+    });
+});
+
 test.describe('disabling', () => {
     test('turns off the fake date via the enable toggle', async ({ popup }) => {
         await popup.applyWithButton('2025-04-27 12:40');
@@ -92,6 +115,7 @@ test.describe('disabling', () => {
     });
 
     test('turns off the fake date when the input is cleared', async ({ popup }) => {
+        await popup.setSystemTime('2025-07-15T12:00:00Z');
         await popup.applyWithButton('2025-04-27 12:40');
         await expect(popup.pageTime).toHaveText(runningPageTime);
 
@@ -101,6 +125,8 @@ test.describe('disabling', () => {
 
         await expect(popup.fakeDateToggle.checkbox).not.toBeChecked();
         await expect(popup.realTimeNote).toBeVisible();
+        // and the input is prefilled with the current date again
+        await expect(popup.dateInput).toHaveValue('2025-07-15 14:00');
     });
 });
 
