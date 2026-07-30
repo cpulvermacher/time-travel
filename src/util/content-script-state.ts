@@ -12,11 +12,18 @@ export type ContentScriptState = {
 
 // DEV-only: persist the would-be content-script/tab state in localStorage so the popup UI
 // (enable toggle, applied date, clock, timezone) is testable across reloads via the Vite dev server.
-type DevTabState = Pick<ContentScriptState, 'fakeDate' | 'tickStartTimestamp' | 'timezone'>;
+type DevTabState = Pick<ContentScriptState, 'fakeDate' | 'tickStartTimestamp' | 'timezone' | 'contentScriptActive'>;
 const devTabStateKey = 'timeTravelDevTabState';
 
 function readDevTabState(): DevTabState {
-    const empty: DevTabState = { fakeDate: null, tickStartTimestamp: null, timezone: null };
+    const empty: DevTabState = {
+        fakeDate: null,
+        tickStartTimestamp: null,
+        timezone: null,
+        // Firefox declares the content script in its manifest, so it is active from the start.
+        // Chrome registers it on first use, which requires a reload (see setFakeDate()).
+        contentScriptActive: navigator.userAgent.includes('Firefox'),
+    };
     try {
         return { ...empty, ...JSON.parse(localStorage.getItem(devTabStateKey) ?? '{}') };
     } catch {
@@ -34,8 +41,16 @@ function writeDevTabState(state: DevTabState) {
  */
 export async function setFakeDate(date: Date, timezone?: string): Promise<boolean> {
     if (import.meta.env.DEV) {
-        writeDevTabState({ ...readDevTabState(), fakeDate: date.toISOString(), timezone: timezone || '' });
-        return false; // no reload prompt needed in the dev preview
+        const state = readDevTabState();
+        // the mock has no page to reload, so the content script counts as active immediately, i.e. the
+        // reload prompt only shows up on the first activation
+        writeDevTabState({
+            ...state,
+            fakeDate: date.toISOString(),
+            timezone: timezone || '',
+            contentScriptActive: true,
+        });
+        return !state.contentScriptActive;
     }
 
     if (Number.isNaN(date.getTime())) {
@@ -99,14 +114,14 @@ export async function isContentScriptActive(tabId: number) {
 
 export async function getContentScriptState(tabId: number): Promise<ContentScriptState> {
     if (import.meta.env.DEV) {
-        const { fakeDate, tickStartTimestamp, timezone } = readDevTabState();
+        const { fakeDate, tickStartTimestamp, timezone, contentScriptActive } = readDevTabState();
         return {
-            contentScriptActive: true,
+            contentScriptActive,
             fakeDate,
             tickStartTimestamp,
             timezone,
-            isClockStopped: !!fakeDate && !tickStartTimestamp,
-            fakeDateActive: !!fakeDate,
+            isClockStopped: contentScriptActive && !!fakeDate && !tickStartTimestamp,
+            fakeDateActive: contentScriptActive && !!fakeDate,
         };
     }
 

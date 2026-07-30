@@ -32,6 +32,8 @@ describe('setFakeDate', () => {
     it('persists to localStorage without injecting in development', async () => {
         import.meta.env.DEV = true;
 
+        // like in Chrome, only the first activation asks for a reload
+        await expect(setFakeDate(new Date('2023-01-01T00:00:00Z'))).resolves.toBe(true);
         await expect(setFakeDate(new Date('2023-01-01T00:00:00Z'))).resolves.toBe(false);
         expect(mockedBrowser.injectFunction).not.toHaveBeenCalled();
     });

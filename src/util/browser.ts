@@ -145,7 +145,9 @@ export async function setTitle(tabId: number | undefined, title: string) {
 /** reload the current tab */
 export async function reloadTab() {
     if (import.meta.env.DEV) {
-        return; // no tabs API on the dev server
+        // no tabs API on the dev server, so just log what would happen (also checked by the e2e tests)
+        debugLog('Time Travel: reloading tab (mocked)');
+        return;
     }
     const tabId = await getActiveTabId();
     await chrome.tabs.reload(tabId);

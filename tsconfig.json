@@ -19,5 +19,5 @@
         },
         "types": ["chrome"]
     },
-    "include": ["src/", "*.mts"]
+    "include": ["src/", "e2e/", "*.mts", "*.ts"]
 }

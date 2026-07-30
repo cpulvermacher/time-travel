@@ -72,6 +72,13 @@ To build and use a local version:
 - Clone this repository and run `pnpm install`.
 - Run `pnpm dev` (or `pnpm build` for a production version).
 
+### Tests
+
+- `pnpm test` runs the unit tests.
+- `pnpm test:e2e` runs the Playwright end-to-end tests. They drive the popup on the Vite dev server (started automatically),
+  where the extension APIs are mocked and the tab state is kept in `localStorage`. The browsers need to be installed once
+  using `pnpm exec playwright install chromium firefox`. To run a single browser, use e.g. `pnpm test:e2e --project=chromium`.
+
 ### Chrome
 
 - Open chrome://extensions and enable 'Developer Mode'.
