@@ -29,5 +29,5 @@ jobs:
     - run: pnpm --if-present coverage
     - run: pnpm --if-present dev
     - run: pnpm lint
-    - name: web-ext lint
-      run: npx web-ext lint -s dist/firefox
+    - name: web-ext lint (firefox build)
+      run: pnpm exec web-ext lint -s dist/firefox --no-input -o json --pretty
