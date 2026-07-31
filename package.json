@@ -31,7 +31,7 @@
         "typescript": "^6.0.3",
         "vite": "^8.1.5",
         "vitest": "^4.1.10",
-        "web-ext": "^10.4.0"
+        "web-ext": "^10.5.0"
     },
     "dependencies": {
         "@svelte-plugins/datepicker": "^1.0.11",
