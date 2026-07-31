@@ -8,7 +8,6 @@
     }
     const { children, onClose, closeOnCancel }: Props = $props();
 
-    // biome-ignore lint/correctness/noUnusedVariables: used in template with use:show
     function show(node: HTMLDialogElement) {
         node.showModal();
     }
@@ -44,6 +43,7 @@
     }
 </script>
 
+<!-- biome-ignore lint/a11y/useKeyWithClickEvents: onclick only dismisses on backdrop clicks, the keyboard is the close button -->
 <dialog use:show {oncancel} onclose={onClose} onclick={onDialogClick} class="modal {onClose ? 'closable' : ''}">
     {#if onClose}
         <button type="button" class="close" onclick={onClose}>✕</button>

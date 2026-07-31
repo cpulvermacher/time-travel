@@ -73,7 +73,6 @@
             }
         }
     }
-    // biome-ignore lint/correctness/noUnusedVariables: used in template with use:focus
     function focus(node: HTMLInputElement) {
         node.focus();
         node.setSelectionRange(-1, -1);

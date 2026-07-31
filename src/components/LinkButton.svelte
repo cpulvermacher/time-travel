@@ -26,6 +26,7 @@
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <!-- svelte-ignore a11y_missing_attribute -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- biome-ignore lint/a11y/useValidAnchor: intentionally not a <button>, see comment above -->
 <a tabindex="0" class="linkbutton" {onclick} {onkeydown}> {@render children?.()} </a>
 
 <style>

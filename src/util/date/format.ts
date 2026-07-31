@@ -76,11 +76,11 @@ function formatDateParts(parts: SharedDateParts, options?: FormatOptions): strin
     if (options?.fullPrecision) {
         if (parts.second !== 0 || parts.ms !== 0) {
             const ss = String(parts.second).padStart(2, '0');
-            dateStr += ':' + ss;
+            dateStr += `:${ss}`;
         }
         if (parts.ms !== 0) {
             const sss = String(parts.ms).padStart(3, '0');
-            dateStr += '.' + sss;
+            dateStr += `.${sss}`;
         }
     }
     return dateStr;
@@ -94,7 +94,7 @@ export function formatLocalTime(date: Date): string {
 
     const HH = String(date.getHours()).padStart(2, '0');
     const mm = String(date.getMinutes()).padStart(2, '0');
-    return HH + ':' + mm;
+    return `${HH}:${mm}`;
 }
 
 /** Returns a date string in format "YYYY-MM-DD HH:mm..." using the date from `newDate`, and the time from `dateTimeString`.
