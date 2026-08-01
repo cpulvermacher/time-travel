@@ -4,9 +4,9 @@
     import { formatLocalDate, formatUnambiguousDate, overwriteDatePart } from '@/util/date/format';
     import { parseDate } from '@/util/date/parse';
     import { getTimezoneCity } from '@/util/date/timezone-info';
+    import { getFirstDayOfWeek } from '@/util/i18n';
+    import { getUILanguage, isAndroid } from '@/web-ext/browser';
     import { m } from '../paraglide/messages';
-    import { getUILanguage, isAndroid } from '../util/browser';
-    import { getFirstDayOfWeek } from '../util/i18n';
     import DateFormatInfo from './DateFormatInfo.svelte';
     import LinkButton from './LinkButton.svelte';
     import TimePicker from './TimePicker.svelte';

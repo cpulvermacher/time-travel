@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { isAndroid } from '@/util/browser';
     import { formatLocalTime, overwriteTimePart } from '@/util/date/format';
     import { parseDate } from '@/util/date/parse';
+    import { isAndroid } from '@/web-ext/browser';
 
     interface Props {
         value: string;

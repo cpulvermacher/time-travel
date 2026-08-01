@@ -1,6 +1,6 @@
 // browser-specific APIs should only be used in this file
 
-import { debugLog } from './log';
+import { debugLog } from '../util/log';
 
 /** get id for current tab, or throw */
 export async function getActiveTabId(): Promise<number> {

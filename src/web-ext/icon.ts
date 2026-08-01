@@ -1,9 +1,9 @@
 import { m } from '../paraglide/messages';
 import { overwriteGetLocale } from '../paraglide/runtime';
+import { type ContentScriptState, getContentScriptState } from '../util/content-script-state';
+import { getTzInfo, isValidTimezone } from '../util/date/timezone-info';
+import { getTranslationLocale } from '../util/i18n';
 import { getActiveTabId, getUILanguage, setBadgeText, setTitle } from './browser';
-import { type ContentScriptState, getContentScriptState } from './content-script-state';
-import { getTzInfo, isValidTimezone } from './date/timezone-info';
-import { getTranslationLocale } from './i18n';
 
 const defaultTitleText = 'Time Travel';
 const devVersion = import.meta.env.VITE_VERSION ? `\nVersion: ${import.meta.env.VITE_VERSION}` : '';

@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getInitialState } from '@/popup/initial-state';
-import * as browser from '@/util/browser';
 import * as contentScriptState from '@/util/content-script-state';
 import { getContentScriptState } from '@/util/content-script-state';
-import * as settings from '@/util/settings';
+import * as browser from '@/web-ext/browser';
+import * as settings from '@/web-ext/settings';
 
-vi.mock('@/util/browser');
 vi.mock('@/util/content-script-state');
-vi.mock('@/util/settings');
+vi.mock('@/web-ext/browser');
+vi.mock('@/web-ext/settings');
 
 const defaultSettings: settings.Settings = {
     autoReload: true,

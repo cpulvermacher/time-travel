@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as browser from '@/util/browser';
-import { loadSettings, saveMostRecentTimezone, saveSetting } from '@/util/settings';
+import * as browser from '@/web-ext/browser';
+import { loadSettings, saveMostRecentTimezone, saveSetting } from '@/web-ext/settings';
 
-vi.mock('@/util/browser');
+vi.mock('@/web-ext/browser');
 
 /** minimal in-memory stand-in for chrome.storage.StorageArea */
 function createMockStorage() {

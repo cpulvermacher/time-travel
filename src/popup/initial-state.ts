@@ -1,11 +1,11 @@
 /// <reference types="vite/client" />
 import { m } from '@/paraglide/messages';
-import { getActiveTabId, isAboutUrl, isExtensionGalleryUrl, isFileUrl } from '@/util/browser';
 import { type ContentScriptState, getContentScriptState } from '@/util/content-script-state';
 import { formatUnambiguousDate } from '@/util/date/format';
 import { parseDate, parseTimestamp } from '@/util/date/parse';
 import { isValidTimezone } from '@/util/date/timezone-info';
-import { loadSettings, type Settings } from '@/util/settings';
+import { getActiveTabId, isAboutUrl, isExtensionGalleryUrl, isFileUrl } from '@/web-ext/browser';
+import { loadSettings, type Settings } from '@/web-ext/settings';
 
 /** the fake clock as it is set in the page (see fakeNowDate()), i.e. what the page currently reads */
 export type PageClock = {

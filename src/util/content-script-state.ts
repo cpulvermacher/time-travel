@@ -1,5 +1,5 @@
 import * as inject from '../util/inject';
-import { getActiveTabId, injectFunction, registerContentScript } from './browser';
+import { getActiveTabId, injectFunction, registerContentScript } from '../web-ext/browser';
 
 export type ContentScriptState = {
     contentScriptActive: boolean;

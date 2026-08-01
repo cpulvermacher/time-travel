@@ -9,8 +9,8 @@
         TZGROUP_COMMON,
         TZGROUP_RECENT,
     } from '@/util/date/timezone-info';
+    import { getUILanguage } from '@/web-ext/browser';
     import { m } from '../paraglide/messages';
-    import { getUILanguage } from '../util/browser';
     import Toggle from './Toggle.svelte';
 
     interface Props {

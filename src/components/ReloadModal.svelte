@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Action } from 'svelte/action';
+    import { reloadTab } from '@/web-ext/browser';
     import { m } from '../paraglide/messages';
-    import { reloadTab } from '../util/browser';
     import Modal from './Modal.svelte';
 
     const focusButton: Action = (node) => {

@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import * as browser from '@/util/browser';
 import {
     type ContentScriptState,
     disableFakeDate,
@@ -9,8 +8,9 @@ import {
     setFakeDate,
 } from '@/util/content-script-state';
 import * as inject from '@/util/inject';
+import * as browser from '@/web-ext/browser';
 
-vi.mock('@/util/browser');
+vi.mock('@/web-ext/browser');
 vi.mock('@/util/inject');
 
 const mockedBrowser = vi.mocked(browser);

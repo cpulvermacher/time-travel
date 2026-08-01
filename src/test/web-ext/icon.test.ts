@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as browser from '@/util/browser';
 import type { ContentScriptState } from '@/util/content-script-state';
 import * as contentScriptState from '@/util/content-script-state';
-import { setIconBadgeAndTitle, updateExtensionIcon } from '@/util/icon';
+import * as browser from '@/web-ext/browser';
+import { setIconBadgeAndTitle, updateExtensionIcon } from '@/web-ext/icon';
 
-vi.mock('@/util/browser');
+vi.mock('@/web-ext/browser');
 vi.mock('@/util/content-script-state');
 
 beforeEach(() => {
