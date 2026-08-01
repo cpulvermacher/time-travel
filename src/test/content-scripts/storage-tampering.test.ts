@@ -11,7 +11,7 @@ import {
     getTimezone as popupGetTimezone,
     setFakeDate,
     setTickStartTimestamp,
-} from '@/util/inject';
+} from '@/tab-state/inject';
 
 // importing this is the equivalent of the content script running at document_start,
 // i.e. before any of the tampering done in the tests below

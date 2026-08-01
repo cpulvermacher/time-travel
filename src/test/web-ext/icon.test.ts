@@ -1,18 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ContentScriptState } from '@/util/content-script-state';
-import * as contentScriptState from '@/util/content-script-state';
+import { getTabState, type TabState } from '@/tab-state/state';
 import * as browser from '@/web-ext/browser';
 import { setIconBadgeAndTitle, updateExtensionIcon } from '@/web-ext/icon';
 
 vi.mock('@/web-ext/browser');
-vi.mock('@/util/content-script-state');
+vi.mock('@/tab-state/state');
 
 beforeEach(() => {
     vi.mocked(browser).getUILanguage.mockReturnValue('en');
 });
 
 describe('setIconBadgeAndTitle', () => {
-    const activeState: ContentScriptState = {
+    const activeState: TabState = {
         contentScriptActive: true,
         fakeDate: '2025-01-01T00:00:00.000Z',
         tickStartTimestamp: null,
@@ -38,7 +37,7 @@ describe('setIconBadgeAndTitle', () => {
 });
 
 describe('updateExtensionIcon', () => {
-    const inactiveState: ContentScriptState = {
+    const inactiveState: TabState = {
         contentScriptActive: false,
         fakeDate: null,
         tickStartTimestamp: null,
@@ -48,14 +47,14 @@ describe('updateExtensionIcon', () => {
     };
 
     beforeEach(() => {
-        vi.mocked(contentScriptState).getContentScriptState.mockResolvedValue(inactiveState);
+        vi.mocked(getTabState).mockResolvedValue(inactiveState);
     });
 
     it('uses the given tab id', async () => {
         await updateExtensionIcon(7);
 
         expect(browser.getActiveTabId).not.toHaveBeenCalled();
-        expect(contentScriptState.getContentScriptState).toHaveBeenCalledWith(7);
+        expect(getTabState).toHaveBeenCalledWith(7);
         expect(browser.setBadgeText).toHaveBeenCalledWith(7, '');
     });
 
@@ -64,7 +63,7 @@ describe('updateExtensionIcon', () => {
 
         await updateExtensionIcon();
 
-        expect(contentScriptState.getContentScriptState).toHaveBeenCalledWith(42);
+        expect(getTabState).toHaveBeenCalledWith(42);
         expect(browser.setBadgeText).toHaveBeenCalledWith(42, '');
     });
 });

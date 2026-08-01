@@ -1,11 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getInitialState } from '@/popup/initial-state';
-import * as contentScriptState from '@/util/content-script-state';
-import { getContentScriptState } from '@/util/content-script-state';
+import { getTabState, type TabState } from '@/tab-state/state';
 import * as browser from '@/web-ext/browser';
 import * as settings from '@/web-ext/settings';
 
-vi.mock('@/util/content-script-state');
+vi.mock('@/tab-state/state');
 vi.mock('@/web-ext/browser');
 vi.mock('@/web-ext/settings');
 
@@ -33,7 +32,7 @@ describe('getInitialState', () => {
     describe('in development environment', () => {
         it('derives state from the (mocked) content-script state', async () => {
             import.meta.env.DEV = true;
-            vi.mocked(getContentScriptState).mockResolvedValue({
+            vi.mocked(getTabState).mockResolvedValue({
                 contentScriptActive: true,
                 fakeDate: '2023-01-01T12:34:56.789Z',
                 tickStartTimestamp: null,
@@ -44,8 +43,8 @@ describe('getInitialState', () => {
 
             const result = await getInitialState();
 
-            expect(getContentScriptState).toHaveBeenCalledWith(0);
             expect(result.isEnabled).toBe(true);
+            expect(result.fakeDate).toBe('2023-01-01 21:34:56.789'); // +09:00 offset
             expect(result.settings.timezone).toBe('Asia/Tokyo');
             expect(mockedSettings.loadSettings).toHaveBeenCalled();
         });
@@ -64,7 +63,7 @@ describe('getInitialState', () => {
         });
 
         it('handles enabled state with running clock correctly', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
+            const mockState: TabState = {
                 contentScriptActive: true,
                 fakeDate: fakeDate.toISOString(),
                 tickStartTimestamp: fakeDate.getTime().toString(),
@@ -73,7 +72,7 @@ describe('getInitialState', () => {
                 fakeDateActive: true,
             };
 
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+            vi.mocked(getTabState).mockResolvedValue(mockState);
 
             // Use fake timers to control Date.now()
             vi.useFakeTimers();
@@ -89,7 +88,7 @@ describe('getInitialState', () => {
         });
 
         it('handles disabled state correctly', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
+            const mockState: TabState = {
                 contentScriptActive: true,
                 fakeDate: null,
                 tickStartTimestamp: null,
@@ -98,7 +97,7 @@ describe('getInitialState', () => {
                 fakeDateActive: false,
             };
 
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+            vi.mocked(getTabState).mockResolvedValue(mockState);
 
             vi.useFakeTimers();
             vi.setSystemTime(new Date('2026-01-01T12:34:00Z'));
@@ -114,7 +113,7 @@ describe('getInitialState', () => {
         });
 
         it('handles stopped clock correctly', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
+            const mockState: TabState = {
                 contentScriptActive: true,
                 fakeDate: fakeDate.toISOString(),
                 tickStartTimestamp: '1640995200000',
@@ -123,7 +122,7 @@ describe('getInitialState', () => {
                 fakeDateActive: true,
             };
 
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+            vi.mocked(getTabState).mockResolvedValue(mockState);
 
             const result = await getInitialState();
 
@@ -135,7 +134,7 @@ describe('getInitialState', () => {
         });
 
         it('handles invalid fake date correctly', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
+            const mockState: TabState = {
                 contentScriptActive: true,
                 fakeDate: 'invalid-date',
                 tickStartTimestamp: '1640995200000',
@@ -144,7 +143,7 @@ describe('getInitialState', () => {
                 fakeDateActive: true,
             };
 
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+            vi.mocked(getTabState).mockResolvedValue(mockState);
 
             vi.useFakeTimers();
             vi.setSystemTime(new Date('2026-01-01T12:34:00Z'));
@@ -156,7 +155,7 @@ describe('getInitialState', () => {
         });
 
         it('shows the fake date as local time in the page time zone', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
+            const mockState: TabState = {
                 contentScriptActive: true,
                 fakeDate: fakeDate.toISOString(),
                 tickStartTimestamp: '1640995200000',
@@ -165,7 +164,7 @@ describe('getInitialState', () => {
                 fakeDateActive: true,
             };
 
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+            vi.mocked(getTabState).mockResolvedValue(mockState);
 
             const result = await getInitialState();
 
@@ -177,7 +176,7 @@ describe('getInitialState', () => {
 
         it('keeps the fake date unambiguous during a repeated hour', async () => {
             // 02:30 happens twice in Europe/Berlin on 2025-10-26, this is the second one (CET)
-            const mockState: contentScriptState.ContentScriptState = {
+            const mockState: TabState = {
                 contentScriptActive: true,
                 fakeDate: '2025-10-26T01:30:00.000Z',
                 tickStartTimestamp: '1640995200000',
@@ -186,7 +185,7 @@ describe('getInitialState', () => {
                 fakeDateActive: true,
             };
 
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+            vi.mocked(getTabState).mockResolvedValue(mockState);
 
             const result = await getInitialState();
 
@@ -195,7 +194,7 @@ describe('getInitialState', () => {
         });
 
         it('keeps a running clock unambiguous during a repeated hour', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
+            const mockState: TabState = {
                 contentScriptActive: true,
                 fakeDate: '2025-10-26T01:30:00.000Z',
                 tickStartTimestamp: '1640995200000',
@@ -204,7 +203,7 @@ describe('getInitialState', () => {
                 fakeDateActive: true,
             };
 
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+            vi.mocked(getTabState).mockResolvedValue(mockState);
 
             vi.useFakeTimers();
             vi.setSystemTime(1640995200000 + 17_500); // 17.5s of tick elapsed
@@ -216,7 +215,7 @@ describe('getInitialState', () => {
         });
 
         it('handles timezone settings correctly', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
+            const mockState: TabState = {
                 contentScriptActive: true,
                 fakeDate: '2023-01-01T12:00:00.000Z',
                 tickStartTimestamp: '1640995200000',
@@ -225,7 +224,7 @@ describe('getInitialState', () => {
                 fakeDateActive: true,
             };
 
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+            vi.mocked(getTabState).mockResolvedValue(mockState);
 
             const result = await getInitialState();
 
@@ -234,7 +233,7 @@ describe('getInitialState', () => {
         });
 
         it('ignores an invalid (page-controlled) timezone from state', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
+            const mockState: TabState = {
                 contentScriptActive: true,
                 fakeDate: '2023-01-01T12:00:00.000Z',
                 tickStartTimestamp: '1640995200000',
@@ -243,7 +242,7 @@ describe('getInitialState', () => {
                 fakeDateActive: true,
             };
 
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+            vi.mocked(getTabState).mockResolvedValue(mockState);
 
             const result = await getInitialState();
 
@@ -263,14 +262,14 @@ describe('getInitialState', () => {
 
             await expect(getInitialState()).rejects.toThrow('Time Travel cannot be used in the current tab.');
 
-            expect(getContentScriptState).not.toHaveBeenCalled();
+            expect(getTabState).not.toHaveBeenCalled();
         });
 
         it('throws error for file URLs', async () => {
             mockedBrowser.isAboutUrl.mockResolvedValue(false);
             mockedBrowser.isFileUrl.mockResolvedValue(true);
             mockedBrowser.isExtensionGalleryUrl.mockResolvedValue(false);
-            vi.mocked(getContentScriptState).mockRejectedValue(new Error('Content script error'));
+            vi.mocked(getTabState).mockRejectedValue(new Error('Content script error'));
 
             await expect(getInitialState()).rejects.toThrow(/To use Time Travel with local files.*/);
         });
@@ -279,7 +278,7 @@ describe('getInitialState', () => {
             mockedBrowser.isAboutUrl.mockResolvedValue(false);
             mockedBrowser.isFileUrl.mockResolvedValue(false);
             mockedBrowser.isExtensionGalleryUrl.mockResolvedValue(true);
-            vi.mocked(getContentScriptState).mockRejectedValue(new Error('Content script error'));
+            vi.mocked(getTabState).mockRejectedValue(new Error('Content script error'));
 
             await expect(getInitialState()).rejects.toThrow(/Time Travel cannot be used in the Chrome Web Store/);
         });

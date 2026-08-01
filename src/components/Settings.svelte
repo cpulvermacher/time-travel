@@ -1,7 +1,7 @@
 <script lang="ts">
     import { untrack } from 'svelte';
     import { getTimezoneCity, getTzInfo } from '@/display/timezone-info';
-    import { disableFakeDate, setClockState, setFakeDate } from '@/util/content-script-state';
+    import { disableFakeDate, setClockState, setFakeDate } from '@/tab-state/state';
     import { formatLocalDate, formatUnambiguousDate } from '@/util/date/format';
     import { parseDate } from '@/util/date/parse';
     import { getUILanguage, reloadTab, withTabLoadingRetry } from '@/web-ext/browser';

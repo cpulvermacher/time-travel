@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { fakeNowDate, getFakeDate, getTickStartTimestamp, getTimezone } from '@/content-scripts/fake-date/storage';
-import { setFakeDate, setTickStartTimestamp } from '@/util/inject';
+import { setFakeDate, setTickStartTimestamp } from '@/tab-state/inject';
 
 //Note: sessionStorage starts empty, so this just sets up the event listener
 import '@/content-scripts/replace-date';

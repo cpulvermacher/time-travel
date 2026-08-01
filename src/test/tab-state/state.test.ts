@@ -1,17 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import * as inject from '@/tab-state/inject';
 import {
-    type ContentScriptState,
     disableFakeDate,
-    getContentScriptState,
+    getTabState,
     isContentScriptActive,
     setClockState,
     setFakeDate,
-} from '@/util/content-script-state';
-import * as inject from '@/util/inject';
+    type TabState,
+} from '@/tab-state/state';
 import * as browser from '@/web-ext/browser';
 
 vi.mock('@/web-ext/browser');
-vi.mock('@/util/inject');
 
 const mockedBrowser = vi.mocked(browser);
 
@@ -164,7 +163,7 @@ describe('isContentScriptActive', () => {
     });
 });
 
-describe('getContentScriptState', () => {
+describe('getTabState', () => {
     /** map injectFunction calls to results based on the injected function */
     function mockInjectResults(results: {
         active: unknown;
@@ -197,7 +196,7 @@ describe('getContentScriptState', () => {
             timezone: 'America/New_York',
         });
 
-        const expected: ContentScriptState = {
+        const expected: TabState = {
             contentScriptActive: true,
             fakeDate: '2023-01-01T12:00:00.000Z',
             tickStartTimestamp: '1672574400000',
@@ -205,7 +204,7 @@ describe('getContentScriptState', () => {
             isClockStopped: false,
             fakeDateActive: true,
         };
-        await expect(getContentScriptState(1)).resolves.toEqual(expected);
+        await expect(getTabState(1)).resolves.toEqual(expected);
     });
 
     it('reports a stopped clock when active with a fake date but no start timestamp', async () => {
@@ -216,7 +215,7 @@ describe('getContentScriptState', () => {
             timezone: null,
         });
 
-        const state = await getContentScriptState(1);
+        const state = await getTabState(1);
 
         expect(state.isClockStopped).toBe(true);
         expect(state.fakeDateActive).toBe(true);
@@ -230,7 +229,7 @@ describe('getContentScriptState', () => {
             timezone: null,
         });
 
-        const state = await getContentScriptState(1);
+        const state = await getTabState(1);
 
         expect(state.contentScriptActive).toBe(false);
         expect(state.isClockStopped).toBe(false);
@@ -245,7 +244,7 @@ describe('getContentScriptState', () => {
             timezone: null,
         });
 
-        const state = await getContentScriptState(1);
+        const state = await getTabState(1);
 
         expect(state.fakeDateActive).toBe(false);
         expect(state.isClockStopped).toBe(false);

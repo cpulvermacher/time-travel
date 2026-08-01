@@ -32,6 +32,9 @@ export async function isExtensionGalleryUrl(tabId: number): Promise<boolean> {
 
 /** does this tab have an about: URL? (these fail in interesting ways) */
 export async function isAboutUrl(tabId: number): Promise<boolean> {
+    if (import.meta.env.DEV) {
+        return false;
+    }
     const tabDetails = await chrome.tabs.get(tabId);
     return !!tabDetails.url?.startsWith('about:');
 }

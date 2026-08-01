@@ -1,7 +1,8 @@
-import * as inject from '../util/inject';
 import { getActiveTabId, injectFunction, registerContentScript } from '../web-ext/browser';
+import { readDevTabState, writeDevTabState } from './dev-mock';
+import * as inject from './inject';
 
-export type ContentScriptState = {
+export type TabState = {
     contentScriptActive: boolean;
     fakeDate: string | null;
     tickStartTimestamp: string | null;
@@ -10,36 +11,15 @@ export type ContentScriptState = {
     fakeDateActive: boolean;
 };
 
-// DEV-only: persist the would-be content-script/tab state in localStorage so the popup UI
-// (enable toggle, applied date, clock, timezone) is testable across reloads via the Vite dev server.
-type DevTabState = Pick<ContentScriptState, 'fakeDate' | 'tickStartTimestamp' | 'timezone' | 'contentScriptActive'>;
-const devTabStateKey = 'timeTravelDevTabState';
-
-function readDevTabState(): DevTabState {
-    const empty: DevTabState = {
-        fakeDate: null,
-        tickStartTimestamp: null,
-        timezone: null,
-        // Firefox declares the content script in its manifest, so it is active from the start.
-        // Chrome registers it on first use, which requires a reload (see setFakeDate()).
-        contentScriptActive: navigator.userAgent.includes('Firefox'),
-    };
-    try {
-        return { ...empty, ...JSON.parse(localStorage.getItem(devTabStateKey) ?? '{}') };
-    } catch {
-        return empty;
-    }
-}
-
-function writeDevTabState(state: DevTabState) {
-    localStorage.setItem(devTabStateKey, JSON.stringify(state));
-}
-
 /** sets & enables fake date, returns whether page needs reload for content script to be injected
  *
  * @param date a valid date to set
  */
 export async function setFakeDate(date: Date, timezone?: string): Promise<boolean> {
+    if (Number.isNaN(date.getTime())) {
+        throw new Error('setFakeDate(): Invalid date');
+    }
+
     if (import.meta.env.DEV) {
         const state = readDevTabState();
         // the mock has no page to reload, so the content script counts as active immediately, i.e. the
@@ -51,10 +31,6 @@ export async function setFakeDate(date: Date, timezone?: string): Promise<boolea
             contentScriptActive: true,
         });
         return !state.contentScriptActive;
-    }
-
-    if (Number.isNaN(date.getTime())) {
-        throw new Error('setFakeDate(): Invalid date');
     }
 
     const tabId = await getActiveTabId();
@@ -112,7 +88,7 @@ export async function isContentScriptActive(tabId: number) {
     return !!(await injectFunction(tabId, inject.isContentScriptActive, ['']));
 }
 
-export async function getContentScriptState(tabId: number): Promise<ContentScriptState> {
+export async function getTabState(tabId: number): Promise<TabState> {
     if (import.meta.env.DEV) {
         const { fakeDate, tickStartTimestamp, timezone, contentScriptActive } = readDevTabState();
         return {
@@ -125,7 +101,7 @@ export async function getContentScriptState(tabId: number): Promise<ContentScrip
         };
     }
 
-    // read from the MAIN-world in-memory state (see util/inject.ts), which survives
+    // read from the MAIN-world in-memory state (see inject.ts), which survives
     // the page clearing or blocking sessionStorage (issues #45/#54)
     const [contentScriptActive, fakeDate, tickStartTimestamp, timezone] = await Promise.all([
         isContentScriptActive(tabId),

@@ -2,7 +2,7 @@
 
 import { isValidTimezone } from '@/display/timezone-info';
 import { m } from '@/paraglide/messages';
-import { type ContentScriptState, getContentScriptState } from '@/util/content-script-state';
+import { getTabState, type TabState } from '@/tab-state/state';
 import { formatUnambiguousDate } from '@/util/date/format';
 import { parseDate, parseTimestamp } from '@/util/date/parse';
 import { getActiveTabId, isAboutUrl, isExtensionGalleryUrl, isFileUrl } from '@/web-ext/browser';
@@ -27,7 +27,7 @@ function sanitizeTimezone(timezone: string | null): string {
 }
 
 /** derive the popup's initial state from the (possibly active) content-script state and stored settings */
-function buildInitialState(state: ContentScriptState, settings: Settings): InitialState {
+function buildInitialState(state: TabState, settings: Settings): InitialState {
     let initialFakeDate: string | undefined;
     let pageClock: PageClock | undefined;
     const timezone = state.fakeDateActive ? sanitizeTimezone(state.timezone) : settings.timezone;
@@ -68,12 +68,6 @@ function buildInitialState(state: ContentScriptState, settings: Settings): Initi
 export async function getInitialState(): Promise<InitialState> {
     const settings = await loadSettings();
 
-    if (import.meta.env.DEV) {
-        // on the dev server there are no extension APIs; state is mocked in localStorage (see browser.ts /
-        // content-script-state.ts), so settings and the active fake date persist across popup reloads
-        return buildInitialState(await getContentScriptState(0), settings);
-    }
-
     const tabId = await getActiveTabId();
     if (await isAboutUrl(tabId)) {
         // can fail silently on about: URLs, abort early
@@ -81,7 +75,7 @@ export async function getInitialState(): Promise<InitialState> {
     }
 
     try {
-        return buildInitialState(await getContentScriptState(tabId), settings);
+        return buildInitialState(await getTabState(tabId), settings);
     } catch (error) {
         if (await isFileUrl(tabId)) {
             throw new Error(m.permission_error_file_url());
