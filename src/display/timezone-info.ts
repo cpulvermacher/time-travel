@@ -1,4 +1,4 @@
-import { getOffsetMinutes } from './offset';
+import { getOffsetMinutes } from '../util/date/offset';
 
 export type Timezone = {
     tz: string; // IANA time zone identifier, e.g., "America/New_York". Empty string for browser default.

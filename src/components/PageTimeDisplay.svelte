@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getTzInfo } from '@/util/date/timezone-info';
+    import { getTzInfo } from '@/display/timezone-info';
     import { getUILanguage } from '@/web-ext/browser';
     import { m } from '../paraglide/messages';
     import type { PageClock } from '../popup/initial-state';

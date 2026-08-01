@@ -1,10 +1,10 @@
 <script lang="ts">
     import { DatePicker } from '@svelte-plugins/datepicker';
     import { tick } from 'svelte';
+    import { getFirstDayOfWeek } from '@/display/i18n';
+    import { getTimezoneCity } from '@/display/timezone-info';
     import { formatLocalDate, formatUnambiguousDate, overwriteDatePart } from '@/util/date/format';
     import { parseDate } from '@/util/date/parse';
-    import { getTimezoneCity } from '@/util/date/timezone-info';
-    import { getFirstDayOfWeek } from '@/util/i18n';
     import { getUILanguage, isAndroid } from '@/web-ext/browser';
     import { m } from '../paraglide/messages';
     import DateFormatInfo from './DateFormatInfo.svelte';

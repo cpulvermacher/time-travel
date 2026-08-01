@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getTimezoneCity, getTzInfo, isValidTimezone, TZGROUP_RECENT } from '@/util/date/timezone-info';
+import { getTimezoneCity, getTzInfo, isValidTimezone, TZGROUP_RECENT } from '@/display/timezone-info';
 
 describe('getTimezoneCity', () => {
     it('returns the city part of an IANA identifier', () => {
@@ -151,7 +151,7 @@ describe('getTimezoneOptions', () => {
     });
 
     async function freshGetTimezoneOptions() {
-        return (await import('@/util/date/timezone-info')).getTimezoneOptions;
+        return (await import('@/display/timezone-info')).getTimezoneOptions;
     }
 
     it('returns a non-empty list that adds normal and recent timezones in the correct format', async () => {
@@ -212,7 +212,7 @@ describe('getTimezoneOffsets', () => {
     });
 
     async function freshModule() {
-        return await import('@/util/date/timezone-info');
+        return await import('@/display/timezone-info');
     }
 
     it('returns offsets for the given date, not for now', async () => {

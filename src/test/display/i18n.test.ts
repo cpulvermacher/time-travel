@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getFirstDayOfWeek, getTranslationLocale } from '@/util/i18n';
+import { getFirstDayOfWeek, getTranslationLocale } from '@/display/i18n';
 
 describe('getTranslationLocale', () => {
     it('returns available locale', () => {

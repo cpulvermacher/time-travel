@@ -1,9 +1,10 @@
 /// <reference types="vite/client" />
+
+import { isValidTimezone } from '@/display/timezone-info';
 import { m } from '@/paraglide/messages';
 import { type ContentScriptState, getContentScriptState } from '@/util/content-script-state';
 import { formatUnambiguousDate } from '@/util/date/format';
 import { parseDate, parseTimestamp } from '@/util/date/parse';
-import { isValidTimezone } from '@/util/date/timezone-info';
 import { getActiveTabId, isAboutUrl, isExtensionGalleryUrl, isFileUrl } from '@/web-ext/browser';
 import { loadSettings, type Settings } from '@/web-ext/settings';
 

@@ -1,8 +1,8 @@
+import { getTranslationLocale } from '../display/i18n';
+import { getTzInfo, isValidTimezone } from '../display/timezone-info';
 import { m } from '../paraglide/messages';
 import { overwriteGetLocale } from '../paraglide/runtime';
 import { type ContentScriptState, getContentScriptState } from '../util/content-script-state';
-import { getTzInfo, isValidTimezone } from '../util/date/timezone-info';
-import { getTranslationLocale } from '../util/i18n';
 import { getActiveTabId, getUILanguage, setBadgeText, setTitle } from './browser';
 
 const defaultTitleText = 'Time Travel';
