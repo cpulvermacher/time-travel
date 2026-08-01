@@ -8,7 +8,7 @@
         type Timezone,
         TZGROUP_COMMON,
         TZGROUP_RECENT,
-    } from '@/display/timezone-info';
+    } from '@/display/timezone-options';
     import { getUILanguage } from '@/web-ext/browser';
     import { m } from '../paraglide/messages';
     import Toggle from './Toggle.svelte';
