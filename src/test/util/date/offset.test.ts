@@ -56,6 +56,6 @@ describe('getOffsetMinutes', () => {
     it('returns 0 for invalid timezone', () => {
         expect(getOffsetMinutes('abcd')).toBe(0);
         expect(getOffsetMinutes('')).toBe(0);
-        expect(getOffsetMinutes(undefined)).toBe(0);
+        expect(getOffsetMinutes(undefined as unknown as string)).toBe(0);
     });
 });

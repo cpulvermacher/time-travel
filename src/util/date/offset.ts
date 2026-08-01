@@ -52,6 +52,6 @@ export function getOffsetSeconds(date: number, timezone: string): number {
  *
  * Example: "GMT+02:00" -> -120
  */
-export function getOffsetMinutes(longOffset?: string): number {
+export function getOffsetMinutes(longOffset: string): number {
     return Math.trunc(parseLongOffsetSeconds(longOffset) / 60) || 0; // avoid -0 for UTC
 }

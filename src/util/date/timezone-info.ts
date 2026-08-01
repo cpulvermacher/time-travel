@@ -105,7 +105,7 @@ function isSameOffsets(a: Record<string, string>, b: Record<string, string>): bo
 }
 
 /**  Get offset in localized format like "GMT-08:00" */
-function getOffset(locale: string, tz: string | undefined, date?: Date) {
+function getOffset(locale: string, tz: string | undefined, date: Date) {
     return getTimezoneName(locale, tz, date, 'longOffset');
 }
 
@@ -131,8 +131,8 @@ function getFormatter(locale: string, tz: string | undefined, format: TimezoneNa
 }
 
 /** Get time zone name */
-function getTimezoneName(locale: string, tz: string | undefined, date: Date | undefined, format: TimezoneNameFormat) {
-    return removeDateTimePart(getFormatter(locale, tz, format).format(date || new Date()));
+function getTimezoneName(locale: string, tz: string | undefined, date: Date, format: TimezoneNameFormat) {
+    return removeDateTimePart(getFormatter(locale, tz, format).format(date));
 }
 
 /** Remove date and time part from a string, leaving only the time zone part. */
