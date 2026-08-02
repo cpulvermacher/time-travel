@@ -247,4 +247,26 @@ describe('getInitialState', () => {
 
         await expect(getInitialState()).rejects.toThrow(/Time Travel cannot be used in the Chrome Web Store/);
     });
+
+    it('throws error for other errors ', async () => {
+        mockedBrowser.isAboutUrl.mockResolvedValue(false);
+        mockedBrowser.isFileUrl.mockResolvedValue(false);
+        mockedBrowser.isExtensionGalleryUrl.mockResolvedValue(false);
+        vi.mocked(getTabState).mockRejectedValue(new Error('Content script error'));
+
+        await expect(getInitialState()).rejects.toThrow(Error);
+        await expect(getInitialState()).rejects.toThrow(
+            /^Time Travel cannot be used in the current tab. Reason: Content script error$/
+        );
+    });
+
+    it('throws error for unknown exception type', async () => {
+        mockedBrowser.isAboutUrl.mockResolvedValue(false);
+        mockedBrowser.isFileUrl.mockResolvedValue(false);
+        mockedBrowser.isExtensionGalleryUrl.mockResolvedValue(false);
+        vi.mocked(getTabState).mockRejectedValue('string is not a proper exception, but here we go');
+
+        await expect(getInitialState()).rejects.toThrow(Error);
+        await expect(getInitialState()).rejects.toThrow(/^Time Travel cannot be used in the current tab. Reason: $/);
+    });
 });
