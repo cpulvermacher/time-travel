@@ -20,6 +20,7 @@ beforeEach(() => {
     localStorage.clear();
     import.meta.env.DEV = false;
     mockedBrowser.getActiveTabId.mockResolvedValue(123);
+    mockedBrowser.injectFunction.mockResolvedValue(true);
 });
 
 afterEach(() => {
@@ -27,23 +28,31 @@ afterEach(() => {
     import.meta.env.DEV = originalEnvDev;
 });
 
-describe('setFakeDate', () => {
-    it('persists to localStorage without injecting in development', async () => {
+describe('development build', () => {
+    // behaviour of the mock itself is covered in dev-mock.test.ts
+    beforeEach(() => {
         import.meta.env.DEV = true;
+    });
 
-        // like in Chrome, only the first activation asks for a reload
-        await expect(setFakeDate(new Date('2023-01-01T00:00:00Z'))).resolves.toBe(true);
-        await expect(setFakeDate(new Date('2023-01-01T00:00:00Z'))).resolves.toBe(false);
+    it('routes every operation through the localStorage mock instead of injecting', async () => {
+        await setFakeDate(new Date('2023-01-01T00:00:00Z'), 'America/New_York');
+        await setClockState(false);
+        await expect(getTabState(123)).resolves.toMatchObject({ fakeDate: '2023-01-01T00:00:00.000Z' });
+
+        await disableFakeDate();
+        await expect(getTabState(123)).resolves.toMatchObject({ fakeDate: null });
+
+        expect(mockedBrowser.injectFunction).not.toHaveBeenCalled();
+    });
+});
+
+describe('setFakeDate', () => {
+    it('throws on an invalid date, before reaching the implementation', async () => {
+        await expect(setFakeDate(new Date('not a date'))).rejects.toThrow('Invalid date');
         expect(mockedBrowser.injectFunction).not.toHaveBeenCalled();
     });
 
-    it('throws on an invalid date', async () => {
-        await expect(setFakeDate(new Date('not a date'))).rejects.toThrow('Invalid date');
-    });
-
     it('stores the date as UTC across all frames and reports no reload when already active', async () => {
-        mockedBrowser.injectFunction.mockResolvedValueOnce(true).mockResolvedValueOnce(true);
-
         const needsReload = await setFakeDate(new Date('2023-01-01T12:00:00Z'), 'America/New_York');
 
         expect(needsReload).toBe(false);
@@ -58,8 +67,6 @@ describe('setFakeDate', () => {
     });
 
     it('passes an empty timezone string when none is given', async () => {
-        mockedBrowser.injectFunction.mockResolvedValueOnce(true).mockResolvedValueOnce(true);
-
         await setFakeDate(new Date('2023-01-01T12:00:00Z'));
 
         expect(mockedBrowser.injectFunction).toHaveBeenLastCalledWith(
@@ -72,8 +79,8 @@ describe('setFakeDate', () => {
     });
 
     it('registers the content script and requires a reload when not yet active', async () => {
-        // first injectFunction call is isContentScriptActive (falsy), second is the store
-        mockedBrowser.injectFunction.mockResolvedValueOnce(null).mockResolvedValueOnce(true);
+        // the first injectFunction call is isContentScriptActive
+        mockedBrowser.injectFunction.mockResolvedValueOnce(null);
 
         const needsReload = await setFakeDate(new Date('2023-01-01T12:00:00Z'));
 
@@ -82,6 +89,7 @@ describe('setFakeDate', () => {
     });
 
     it('throws when storing the fake date fails', async () => {
+        // active content script, but the store itself fails
         mockedBrowser.injectFunction.mockResolvedValueOnce(true).mockResolvedValueOnce(null);
 
         await expect(setFakeDate(new Date('2023-01-01T12:00:00Z'))).rejects.toThrow('failed to store fake date');
@@ -89,16 +97,7 @@ describe('setFakeDate', () => {
 });
 
 describe('disableFakeDate', () => {
-    it('does nothing in development', async () => {
-        import.meta.env.DEV = true;
-
-        await disableFakeDate();
-        expect(mockedBrowser.injectFunction).not.toHaveBeenCalled();
-    });
-
     it('clears the fake date across all frames', async () => {
-        mockedBrowser.injectFunction.mockResolvedValue(true);
-
         await disableFakeDate();
 
         expect(mockedBrowser.injectFunction).toHaveBeenCalledWith(123, inject.setFakeDate, ['', ''], 'ISOLATED', true);
@@ -113,8 +112,6 @@ describe('disableFakeDate', () => {
 
 describe('setClockState', () => {
     it('clears the start timestamp when stopping the clock', async () => {
-        mockedBrowser.injectFunction.mockResolvedValue(true);
-
         await setClockState(true);
 
         expect(mockedBrowser.injectFunction).toHaveBeenCalledWith(
@@ -129,7 +126,6 @@ describe('setClockState', () => {
     it('stores the current timestamp when starting the clock', async () => {
         vi.useFakeTimers();
         vi.setSystemTime(new Date('2023-01-01T12:00:00Z'));
-        mockedBrowser.injectFunction.mockResolvedValue(true);
 
         await setClockState(false);
 
@@ -152,7 +148,6 @@ describe('setClockState', () => {
 
 describe('isContentScriptActive', () => {
     it('coerces a truthy injection result to true', async () => {
-        mockedBrowser.injectFunction.mockResolvedValue(true);
         await expect(isContentScriptActive(123)).resolves.toBe(true);
         expect(mockedBrowser.injectFunction).toHaveBeenCalledWith(123, inject.isContentScriptActive, ['']);
     });
