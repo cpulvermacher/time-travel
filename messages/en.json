@@ -26,7 +26,7 @@
     "dateformat_info_local": "Local time (in the browser or selected time zone)",
     "dateformat_info_utc": "Time in UTC and UNIX timestamps",
     "dateformat_info_offset": "Time with time zone offset (does not change page time zone)",
-    "date_input_hint": "You can also adjust time using arrow keys:\n±1 min using Up/Down,\n±10 min using Shift + Up/Down,\n±1 h using Cmd/Ctrl + Up/Down,\n±1 s using Alt + Up/Down",
+    "date_input_hint": "You can also adjust time using arrow keys:\n±1 min using Up/Down,\n±10 min using Shift + Up/Down,\n±1 h using Cmd/Ctrl + Up/Down,\n±1 s using Alt + Up/Down,\n±1 day using PageUp/PageDown",
     "reload_btn": "Reload",
     "dow_sunday": "Su",
     "dow_monday": "Mo",

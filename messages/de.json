@@ -27,7 +27,7 @@
     "dateformat_info_local": "Lokale Zeit (in Browser- oder ausgewählter Zeitzone)",
     "dateformat_info_utc": "Zeit in UTC und UNIX-Zeitstempel",
     "dateformat_info_offset": "Zeit mit Zeitzonen-Offset",
-    "date_input_hint": "Uhrzeit kann mit den Pfeiltasten angepasst werden:\n±1 min mit Hoch/Runter,\n±10 min mit Shift + Hoch/Runter,\n±1 h mit Cmd/Ctrl + Hoch/Runter,\n±1 s mit Alt + Hoch/Runter",
+    "date_input_hint": "Uhrzeit kann mit den Pfeiltasten angepasst werden:\n±1 min mit Hoch/Runter,\n±10 min mit Shift + Hoch/Runter,\n±1 h mit Cmd/Ctrl + Hoch/Runter,\n±1 s mit Alt + Hoch/Runter,\n±1 Tag mit Bild hoch/Bild runter",
     "dow_sunday": "So",
     "dow_monday": "Mo",
     "dow_tuesday": "Di",

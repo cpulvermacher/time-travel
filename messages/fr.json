@@ -26,7 +26,7 @@
     "dateformat_info_local": "Heure locale (dans le fuseau horaire du navigateur ou celui sélectionné)",
     "dateformat_info_utc": "Heure en UTC et horodatages UNIX",
     "dateformat_info_offset": "Heure avec décalage de fuseau horaire (ne change pas le fuseau horaire de la page)",
-    "date_input_hint": "Vous pouvez également ajuster l'heure à l'aide des touches fléchées :\n±1 min avec Haut/Bas,\n±10 min avec Maj + Haut/Bas,\n±1 h avec Cmd/Ctrl + Haut/Bas,\n±1 s avec Alt + Haut/Bas",
+    "date_input_hint": "Vous pouvez également ajuster l'heure à l'aide des touches fléchées :\n±1 min avec Haut/Bas,\n±10 min avec Maj + Haut/Bas,\n±1 h avec Cmd/Ctrl + Haut/Bas,\n±1 s avec Alt + Haut/Bas,\n±1 jour avec Page préc./Page suiv.",
     "reload_btn": "Recharger",
     "dow_sunday": "Di",
     "dow_monday": "Lu",

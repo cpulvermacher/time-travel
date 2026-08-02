@@ -71,6 +71,12 @@
             } else {
                 adjustSeconds(60);
             }
+        } else if (event.key === 'PageUp') {
+            event.preventDefault();
+            adjustDays(1);
+        } else if (event.key === 'PageDown') {
+            event.preventDefault();
+            adjustDays(-1);
         }
     }
     function focus(node: HTMLInputElement) {
@@ -103,6 +109,17 @@
         fakeDate = formatUnambiguousDate(new Date(parsedDate.date.getTime() + seconds * 1000), timezone, {
             fullPrecision: true,
         });
+    }
+    function adjustDays(days: number) {
+        if (!naiveDate.isValid) {
+            return;
+        }
+        // step the wall clock instead of the instant, so a day step keeps the time of day across a
+        // DST transition of the selected time zone. This is the same as picking the day in the
+        // calendar, so it works on the naive date as well (see the note on naiveDate above).
+        const newDate = new Date(naiveDate.date);
+        newDate.setDate(newDate.getDate() + days);
+        fakeDate = overwriteDatePart(fakeDate, newDate);
     }
 </script>
 
