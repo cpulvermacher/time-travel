@@ -191,6 +191,7 @@
         recentTimezones={settings.recentTimezones}
         date={parsedDate.isValid ? parsedDate.date : undefined}
     />
+    <Toggle bind:checked={settings.autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
     <div class="right-aligned">
         <button type="button" class="primary apply-button" disabled={!isApplyButtonEnabled()} onclick={onApply}>
             {getApplyButtonLabel()}
@@ -203,7 +204,6 @@
         onChange={onClockToggle}
         label={m.stop_time_toggle()}
     />
-    <Toggle bind:checked={settings.autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
 </main>
 
 {#if showReloadModal}
