@@ -1,5 +1,20 @@
 # Change Log
 
+## [3.0.0]
+- Improve extension popup UI:
+    - Show ON/OFF state and used date/time for the current tab on top.
+    - (breaking change) If `Change time zone` is active, interpret date and time input in the given time zone unless a specific offset is entered. (previously: browser timezone)
+    - (breaking change) Timezone is only changed when confirming the new value. (previously: applied immediately)
+    - In time zone list, show UTC offset for current draft date.
+    - Show date and/or timezone change to apply in main button, or "No Changes" if unchanged.
+    - Improve calendar style consistency.
+- Allow disabling fake date by emptying input and pressing Enter.
+- Add Page Up / Page Down shortcuts for adjusting current input by 1 day.
+- Fix: Pressing Arrow Up / Down keys (+Shift/Ctrl/Cmd/Alt modifiers) in the date input now modifies the _instant_, so DST transitions can now be stepped through as expected.
+- Fix: wrong sign for negative sub-hour UTC offsets (e.g. Africa/Monrovia before 1972).
+- Improve contrast for extension icon.
+- Drop comments from distributed files (25% size reduction, but intentionally not minified).
+
 ## [2.5.1]
 
 - Fix: restore background color change when changing the date.
