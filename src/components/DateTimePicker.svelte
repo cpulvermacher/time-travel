@@ -3,6 +3,7 @@
     import { tick } from 'svelte';
     import { getFirstDayOfWeek } from '@/display/i18n';
     import { getTimezoneCity } from '@/display/timezone-info';
+    import { addDays } from '@/util/date/addDays';
     import { formatLocalDate, formatUnambiguousDate, overwriteDatePart } from '@/util/date/format';
     import { parseDate } from '@/util/date/parse';
     import { getUILanguage, isAndroid } from '@/web-ext/browser';
@@ -111,15 +112,14 @@
         });
     }
     function adjustDays(days: number) {
-        if (!naiveDate.isValid) {
+        if (!parsedDate.isValid) {
             return;
         }
-        // step the wall clock instead of the instant, so a day step keeps the time of day across a
-        // DST transition of the selected time zone. This is the same as picking the day in the
-        // calendar, so it works on the naive date as well (see the note on naiveDate above).
-        const newDate = new Date(naiveDate.date);
-        newDate.setDate(newDate.getDate() + days);
-        fakeDate = overwriteDatePart(fakeDate, newDate);
+        // step the wall clock of the selected time zone instead of the instant, so a day step keeps
+        // the time of day across a DST transition of that zone (see addDays).
+        fakeDate = formatUnambiguousDate(addDays(parsedDate.date, days, timezone), timezone, {
+            fullPrecision: true,
+        });
     }
 </script>
 

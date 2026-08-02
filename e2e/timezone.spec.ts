@@ -290,4 +290,51 @@ test.describe('daylight saving time', () => {
         await expect(popup.pageTimeOffset).toHaveText('+01:00');
         await expect(popup.pageTimeOffset).toHaveClass(/badge--dst/);
     });
+
+    test('keeps the time of day when a day step crosses a DST transition', async ({ popup }) => {
+        await popup.stopClockToggle.set(true);
+        await popup.timezoneToggle.set(true);
+        await popup.timezoneSelect.selectOption('Europe/London');
+
+        // Europe/London skips 01:00-02:00 on Mar 30, 2025, so that day is only 23 hours long
+        await popup.applyWithButton('2025-03-29 12:00');
+        await expect(popup.pageTimeOffset).toHaveText('+00:00');
+
+        await popup.dateInput.press('PageUp');
+
+        // the wall clock time is kept, i.e. the step moves the instant forward by 23 hours
+        await expect(popup.dateInput).toHaveValue('2025-03-30 12:00');
+        await popup.applyButton.click();
+        await expect(popup.pageTime).toHaveText('Mar 30, 2025 12:00:00 PM');
+        await expect(popup.pageTimeOffset).toHaveText('+01:00');
+
+        // the browser time zone (Europe/Berlin) skips 02:00-03:00 that same night, which must not
+        // affect a step in the selected time zone
+        await popup.setDate('2025-03-29 02:30');
+        await popup.dateInput.press('PageUp');
+        await expect(popup.dateInput).toHaveValue('2025-03-30 02:30');
+    });
+
+    test('keeps the UTC offset when a day step starts in a repeated hour', async ({ popup }) => {
+        await popup.stopClockToggle.set(true);
+        await popup.timezoneToggle.set(true);
+        await popup.timezoneSelect.selectOption('Europe/London');
+
+        // Europe/London repeats 01:00-02:00 on Oct 26, 2025. An hour step reaches the second 01:30,
+        // which is written with an explicit offset (see formatUnambiguousDate)
+        await popup.setDate('2025-10-26 01:30');
+        await popup.dateInput.press('Control+ArrowUp');
+        await expect(popup.dateInput).toHaveValue('2025-10-26 01:30+00:00');
+
+        await popup.dateInput.press('PageUp');
+        await expect(popup.dateInput).toHaveValue('2025-10-27 01:30');
+
+        // stepping back returns to the second 01:30, not to the first one
+        await popup.dateInput.press('PageDown');
+        await expect(popup.dateInput).toHaveValue('2025-10-26 01:30+00:00');
+
+        await popup.applyButton.click();
+        await expect(popup.pageTime).toHaveText('Oct 26, 2025 1:30:00 AM');
+        await expect(popup.pageTimeOffset).toHaveText('+00:00');
+    });
 });
