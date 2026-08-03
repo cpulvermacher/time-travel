@@ -26,16 +26,16 @@ export async function setIconBadgeAndTitle(tabId: number, state: TabState) {
 
         let formattedFakeDate = '';
         if (tzInfo) {
-            formattedFakeDate = tzInfo.dateString + ' ' + tzInfo.timeString + ' ' + tzInfo.tzName;
-            if (timezone || tzInfo.isOffsetDifferentFromNow) {
+            formattedFakeDate = `${tzInfo.dateString} ${tzInfo.timeString} ${tzInfo.tzName}`;
+            if ((timezone || tzInfo.isOffsetDifferentFromNow) && tzInfo.offset) {
                 formattedFakeDate += ` (${tzInfo.offset})`;
             }
         }
 
         const titleArgs = { fakeDate: formattedFakeDate };
-        title += ' ' + (state.isClockStopped ? m.icon_title_stopped(titleArgs) : m.icon_title_running(titleArgs));
+        title += state.isClockStopped ? m.icon_title_stopped(titleArgs) : m.icon_title_running(titleArgs);
     } else if (state.contentScriptActive) {
-        title += ' ' + m.icon_title_off();
+        title += m.icon_title_off();
     }
     title += devVersion;
     await setTitle(tabId, title);

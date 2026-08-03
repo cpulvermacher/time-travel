@@ -24,7 +24,27 @@ describe('setIconBadgeAndTitle', () => {
         await setIconBadgeAndTitle(1, activeState);
 
         expect(browser.setBadgeText).toHaveBeenCalledWith(1, 'ON');
-        expect(browser.setTitle).toHaveBeenCalled();
+        expect(browser.setTitle).toHaveBeenCalledWith(
+            1,
+            'Time Travel\nJan 1, 2025 9:00 AM Japan Standard Time (+09:00)\nClock stopped'
+        );
+        expect(console.error).not.toHaveBeenCalled();
+    });
+
+    it('says the clock is running if it is not stopped', async () => {
+        await setIconBadgeAndTitle(1, { ...activeState, isClockStopped: false });
+
+        expect(browser.setTitle).toHaveBeenCalledWith(
+            1,
+            'Time Travel\nJan 1, 2025 9:00 AM Japan Standard Time (+09:00)\nClock running'
+        );
+    });
+
+    it('sets an off title if the content script is active but the date is not faked', async () => {
+        await setIconBadgeAndTitle(1, { ...activeState, fakeDateActive: false });
+
+        expect(browser.setBadgeText).toHaveBeenCalledWith(1, '');
+        expect(browser.setTitle).toHaveBeenCalledWith(1, 'Time Travel (Off)');
         expect(console.error).not.toHaveBeenCalled();
     });
 
@@ -32,6 +52,7 @@ describe('setIconBadgeAndTitle', () => {
         await setIconBadgeAndTitle(1, { ...activeState, timezone: 'Evil/Not_A_Zone' });
 
         expect(browser.setTitle).toHaveBeenCalled();
+        expect(vi.mocked(browser.setTitle).mock.lastCall?.[1]).not.toContain('Evil');
         expect(console.error).not.toHaveBeenCalled();
     });
 });
