@@ -34,10 +34,13 @@
         display: inline;
         background: none;
         border: none;
-        color: var(--text-color);
+        color: var(--primary-color);
         cursor: pointer;
         padding: 0;
+        text-decoration: none;
         font: inherit;
+    }
+    .linkbutton:hover {
         text-decoration: underline;
     }
 </style>

@@ -8,6 +8,7 @@
     - In time zone list, show UTC offset for current draft date.
     - Show date and/or timezone change to apply in main button, or "No Changes" if unchanged.
     - Improve calendar style consistency.
+    - Replace the `(?)` on the date input with a `Keys & formats` link, also explain keyboard shortcuts in the popup.
 - Allow disabling fake date by emptying input and pressing Enter.
 - Add Page Up / Page Down shortcuts for adjusting current input by 1 day.
 - Fix: Pressing Arrow Up / Down keys (+Shift/Ctrl/Cmd/Alt modifiers) in the date input now modifies the _instant_, so DST transitions can now be stepped through as expected.

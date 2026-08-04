@@ -125,10 +125,16 @@
 
 <div>
     <label>
-        {timezone
-            ? m.datetime_input_label_tz({ timezone: getTimezoneCity(timezone) })
-            : m.datetime_input_label()}
-        <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
+        <div class="label-row">
+            <span>
+                {timezone
+                    ? m.datetime_input_label_tz({
+                          timezone: getTimezoneCity(timezone),
+                      })
+                    : m.datetime_input_label()}
+            </span>
+            <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
+        </div>
         <div class="input-fields">
             <input
                 {onkeydown}
@@ -141,7 +147,6 @@
                 placeholder={formatLocalDate(new Date(), { timezone })}
                 spellcheck="false"
                 class={{ error: !parsedDate.isValid && !parsedDate.isReset }}
-                title={m.date_input_hint()}
             />
             <TimePicker bind:value={fakeDate} bind:this={timePickerRef} />
         </div>
@@ -194,6 +199,17 @@
         @media (min-width: 400px) {
             min-height: 230px;
         }
+    }
+    .label-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 10px;
+    }
+    /* keep the help link on one line, let the (possibly long) label text wrap instead */
+    .label-row :global(.linkbutton) {
+        flex-shrink: 0;
+        white-space: nowrap;
     }
     .input-fields {
         display: flex;
