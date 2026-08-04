@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { setFakeDate, setTickStartTimestamp } from '@/tab-state/inject';
+import { isContentScriptActive, setFakeDate, setTickStartTimestamp } from '@/tab-state/inject';
 
 describe('inject writers', () => {
     afterEach(() => {
@@ -66,5 +66,21 @@ describe('inject writers', () => {
                 setItem.mockRestore();
             }
         });
+    });
+});
+
+describe('isContentScriptActive', () => {
+    afterEach(() => {
+        window.__timeTravelActive = undefined;
+    });
+
+    it('is true once the content script has set the marker', () => {
+        window.__timeTravelActive = true;
+
+        expect(isContentScriptActive()).toBe(true);
+    });
+
+    it('is false when the marker is missing (content script not injected)', () => {
+        expect(isContentScriptActive()).toBe(false);
     });
 });

@@ -96,6 +96,31 @@ describe('replace-date with time zone', () => {
         expect(Date()).toBe('Sat Dec 31 2022 22:01:02 GMT-0500 (Eastern Standard Time)');
     });
 
+    it('toTimeString() returns Invalid Date for invalid dates', () => {
+        const fakeDate = '2023-01-01T03:01:02.345Z'; // value irrelevant, just needs to be set
+        setFakeDate(fakeDate, 'America/New_York');
+
+        for (const date of [new Date(NaN), new Date('not a date'), new Date(8.64e15 + 1)]) {
+            expect(date.toTimeString()).toBe('Invalid Date');
+            expect(date.toDateString()).toBe('Invalid Date');
+            expect(date.toString()).toBe('Invalid Date');
+        }
+    });
+
+    it('toTimeString() formats a zero offset as GMT+0000', () => {
+        const fakeDate = '2023-01-01T03:01:02.345Z'; // value irrelevant, just needs to be set
+        setFakeDate(fakeDate, 'Europe/London');
+
+        const winter = new Date('2025-01-15T12:00:00.000Z');
+        expect(winter.toTimeString()).toBe('12:00:00 GMT+0000 (Greenwich Mean Time)');
+        expect(winter.toString()).toBe('Wed Jan 15 2025 12:00:00 GMT+0000 (Greenwich Mean Time)');
+
+        // in summer the offset already contains a numeric part
+        const summer = new Date('2025-07-15T12:00:00.000Z');
+        expect(summer.toTimeString()).toBe('13:00:00 GMT+0100 (British Summer Time)');
+        expect(summer.toString()).toBe('Tue Jul 15 2025 13:00:00 GMT+0100 (British Summer Time)');
+    });
+
     it('verify timezone is not used if fakedate is disabled', () => {
         //pick a TZ different from the current one
         const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;

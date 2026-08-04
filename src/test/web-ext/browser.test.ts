@@ -317,6 +317,14 @@ describe('withTabLoadingRetry', () => {
         expect(fn).toHaveBeenCalledTimes(1);
     });
 
+    it('throws the original error when the loading check itself fails', async () => {
+        chromeMock.tabs.query.mockRejectedValue(new Error('no active tab'));
+        const fn = vi.fn().mockRejectedValue(new Error('boom'));
+
+        await expect(withTabLoadingRetry(fn, 3, 1)).rejects.toThrow('boom');
+        expect(fn).toHaveBeenCalledTimes(1);
+    });
+
     it('throws after exhausting retries', async () => {
         chromeMock.tabs.query.mockResolvedValue([{ id: 1 }]);
         chromeMock.tabs.get.mockResolvedValue({ status: 'loading' });
@@ -324,5 +332,85 @@ describe('withTabLoadingRetry', () => {
 
         await expect(withTabLoadingRetry(fn, 2, 1)).rejects.toThrow('still failing');
         expect(fn).toHaveBeenCalledTimes(2);
+    });
+});
+
+describe('DEV builds (Vite dev server, no extension APIs)', () => {
+    beforeEach(() => {
+        import.meta.env.DEV = true;
+    });
+
+    it('getActiveTabId returns a placeholder id', async () => {
+        await expect(getActiveTabId()).resolves.toBe(0);
+        expect(chromeMock.tabs.query).not.toHaveBeenCalled();
+    });
+
+    it('isAboutUrl returns false', async () => {
+        await expect(isAboutUrl(1)).resolves.toBe(false);
+        expect(chromeMock.tabs.get).not.toHaveBeenCalled();
+    });
+
+    it('setBadgeText and setTitle do nothing', async () => {
+        await setBadgeText(1, '1');
+        await setTitle(1, 'hello');
+
+        expect(chromeMock.action.setBadgeText).not.toHaveBeenCalled();
+        expect(chromeMock.action.setTitle).not.toHaveBeenCalled();
+    });
+
+    it('reloadTab only logs what would happen', async () => {
+        await reloadTab();
+
+        expect(chromeMock.tabs.reload).not.toHaveBeenCalled();
+        expect(console.log).toHaveBeenCalledWith('Time Travel: reloading tab (mocked)');
+    });
+});
+
+describe('getSettingsStorage in DEV builds', () => {
+    beforeEach(() => {
+        import.meta.env.DEV = true;
+        vi.stubGlobal('chrome', undefined);
+        localStorage.clear();
+    });
+
+    it('stores and reads back settings via localStorage', async () => {
+        const storage = getSettingsStorage();
+
+        await storage?.set({ a: 1, b: 'two' });
+
+        await expect(storage?.get(['a', 'b'])).resolves.toEqual({ a: 1, b: 'two' });
+    });
+
+    it('merges into previously stored settings', async () => {
+        const storage = getSettingsStorage();
+
+        await storage?.set({ a: 1 });
+        await storage?.set({ b: 2 });
+
+        await expect(storage?.get(['a', 'b'])).resolves.toEqual({ a: 1, b: 2 });
+    });
+
+    it('omits keys that were never set', async () => {
+        const storage = getSettingsStorage();
+
+        await storage?.set({ a: 1 });
+
+        await expect(storage?.get(['a', 'missing'])).resolves.toEqual({ a: 1 });
+    });
+
+    it('accepts a single key and returns everything without keys', async () => {
+        const storage = getSettingsStorage();
+
+        await storage?.set({ a: 1, b: 2 });
+
+        await expect(storage?.get('a')).resolves.toEqual({ a: 1 });
+        await expect(storage?.get()).resolves.toEqual({ a: 1, b: 2 });
+    });
+
+    it('treats corrupt stored data as empty', async () => {
+        localStorage.setItem('timeTravelDevSettings', 'not json');
+        const storage = getSettingsStorage();
+
+        await expect(storage?.get(['a'])).resolves.toEqual({});
     });
 });

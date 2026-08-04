@@ -34,8 +34,8 @@ export default defineConfig(() => ({
             thresholds: {
                 // NOTE: keep autoUpdate disabled. Coverage varies slightly between Node versions
                 autoUpdate: false,
-                statements: 90,
-                branches: 84,
+                statements: 95,
+                branches: 92,
             },
         },
     },
