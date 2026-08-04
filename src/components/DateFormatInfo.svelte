@@ -11,22 +11,37 @@
 <Modal {onClose} closeOnCancel={true}>
     <section>
         <h3>{m.dateformat_info_keys()}</h3>
-        <ul>
-            <li>{m.dateformat_info_keys_minute()}</li>
-            <li>{m.dateformat_info_keys_10minutes()}</li>
-            <li>{m.dateformat_info_keys_hour()}</li>
-            <li>{m.dateformat_info_keys_second()}</li>
-            <li>{m.dateformat_info_keys_day()}</li>
-        </ul>
+        <table class="shortcuts">
+            <tbody>
+                <tr>
+                    <th scope="row">{m.dateformat_info_keys_minute()}</th>
+                    <td>{m.dateformat_info_keys_minute_keys()}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{m.dateformat_info_keys_10minutes()}</th>
+                    <td>{m.dateformat_info_keys_10minutes_keys()}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{m.dateformat_info_keys_hour()}</th>
+                    <td>{m.dateformat_info_keys_hour_keys()}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{m.dateformat_info_keys_second()}</th>
+                    <td>{m.dateformat_info_keys_second_keys()}</td>
+                </tr>
+                <tr>
+                    <th scope="row">{m.dateformat_info_keys_day()}</th>
+                    <td>{m.dateformat_info_keys_day_keys()}</td>
+                </tr>
+            </tbody>
+        </table>
     </section>
     <section>
         <h3>{m.dateformat_info_heading()}</h3>
         <p>{@html m.dateformat_info()}</p>
         <dl>
-            <dt>
-                {m.dateformat_info_local()}
-                <span class="note">({m.dateformat_info_local_note()})</span>
-            </dt>
+            <dt>{m.dateformat_info_local()}</dt>
+            <dd class="note">{m.dateformat_info_local_note()}</dd>
             <dd>2025-02-27 12:40</dd>
             <dd>27 Feb 2025 12:40</dd>
             <dd>2025-03-30 00:59:55</dd>
@@ -36,10 +51,8 @@
             <dd>2025-04-27T12:40Z</dd>
             <dd>1731493140025</dd>
 
-            <dt>
-                {m.dateformat_info_offset()}
-                <span class="note">({m.dateformat_info_offset_note()})</span>
-            </dt>
+            <dt>{m.dateformat_info_offset()}</dt>
+            <dd class="note">{m.dateformat_info_offset_note()}</dd>
             <dd>2025-04-27T12:40+02:00</dd>
         </dl>
     </section>
@@ -51,24 +64,34 @@
     }
     h3 {
         margin: 0 0 5px;
-        font-size: 1em;
+        font-size: 1.1em;
     }
     p {
         margin-bottom: 8px;
     }
     dt {
-        margin-top: 8px;
+        margin-top: 10px;
+        font-weight: 600;
     }
     dt:first-child {
         margin-top: 0;
     }
     .note {
-        color: var(--secondary-text-color);
+        color: #6f6f6f;
+        font-size: 0.9em;
+        margin-bottom: 2px;
     }
-    dd,
-    li {
-        list-style: none;
+    dd {
         margin: 0;
-        margin-inline-start: 20px;
+    }
+    .shortcuts {
+        border-collapse: collapse;
+    }
+    .shortcuts th {
+        /* the amount is a row header, but should not stand out from the keys next to it */
+        font-weight: 400;
+        text-align: start;
+        padding: 0 15px 0 0;
+        white-space: nowrap;
     }
 </style>

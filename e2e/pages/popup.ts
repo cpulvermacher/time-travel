@@ -55,7 +55,7 @@ export class Popup {
         });
 
         this.dateInput = page.locator('.input-fields input[type="text"]');
-        this.dateInputLabel = page.locator('label:has(.input-fields)');
+        this.dateInputLabel = page.locator('.label-row label');
         this.applyButton = page.locator('button.apply-button');
         this.pageTime = page.locator('.page-time .datetime');
         this.pageTimeOffset = page.locator('.page-time .badge');

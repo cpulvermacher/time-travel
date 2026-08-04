@@ -70,7 +70,8 @@
         gap: 20px;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        /* not center: content taller than max-height would overflow at the top, out of scroll reach */
+        justify-content: flex-start;
         color: var(--text-color);
         background: white;
         border-top: 1px solid var(--border-color);

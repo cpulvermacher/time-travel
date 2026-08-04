@@ -30,6 +30,7 @@
     const initialNaiveDate = parseDate(fakeDate);
     let pickerDate: number = $state(initialNaiveDate.isValid ? initialNaiveDate.date.getTime() : Date.now());
     let showFormatHelp = $state(false);
+    const inputId = $props.id();
     let inputRef: HTMLInputElement;
     let timePickerRef: TimePicker;
 
@@ -124,33 +125,32 @@
 </script>
 
 <div>
-    <label>
-        <div class="label-row">
-            <span>
-                {timezone
-                    ? m.datetime_input_label_tz({
-                          timezone: getTimezoneCity(timezone),
-                      })
-                    : m.datetime_input_label()}
-            </span>
-            <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
-        </div>
-        <div class="input-fields">
-            <input
-                {onkeydown}
-                bind:value={fakeDate}
-                use:focus
-                bind:this={inputRef}
-                type="text"
-                size="28"
-                maxlength="32"
-                placeholder={formatLocalDate(new Date(), { timezone })}
-                spellcheck="false"
-                class={{ error: !parsedDate.isValid && !parsedDate.isReset }}
-            />
-            <TimePicker bind:value={fakeDate} bind:this={timePickerRef} />
-        </div>
-    </label>
+    <div class="label-row">
+        <label for={inputId}>
+            {timezone
+                ? m.datetime_input_label_tz({
+                      timezone: getTimezoneCity(timezone),
+                  })
+                : m.datetime_input_label()}
+        </label>
+        <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
+    </div>
+    <div class="input-fields">
+        <input
+            id={inputId}
+            {onkeydown}
+            bind:value={fakeDate}
+            use:focus
+            bind:this={inputRef}
+            type="text"
+            size="28"
+            maxlength="32"
+            placeholder={formatLocalDate(new Date(), { timezone })}
+            spellcheck="false"
+            class={{ error: !parsedDate.isValid && !parsedDate.isReset }}
+        />
+        <TimePicker bind:value={fakeDate} bind:this={timePickerRef} />
+    </div>
     <div class="datepicker-container">
         <DatePicker
             bind:startDate={pickerDate}
