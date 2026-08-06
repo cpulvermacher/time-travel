@@ -72,6 +72,11 @@ select {
     border-radius: 5px;
 }
 
+input::selection {
+    background-color: var(--primary-color);
+    color: white;
+}
+
 button {
     line-height: 1;
     padding: 7px 10px;
