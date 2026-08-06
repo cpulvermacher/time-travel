@@ -90,7 +90,7 @@
         display: flex;
         flex-direction: column;
         justify-items: center;
-        transition: all 0.3s ease-in-out;
+        transition: all var(--long-duration) ease-in-out;
     }
     .page-time.active {
         color: var(--primary-color);
@@ -108,7 +108,7 @@
         display: flex;
         gap: 5px;
         font-size: 1rem;
-        animation: date-change 0.2s ease-in-out;
+        animation: date-change var(--long-duration) var(--ease-out);
     }
     @keyframes date-change {
         from {

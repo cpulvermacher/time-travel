@@ -88,7 +88,7 @@
     <Toggle label={m.timezone_selector_label()} bind:checked={isEnabled} onChange={onToggle} />
 
     {#if isEnabled}
-        <div transition:slide={{ duration: 200, easing: cubicOut }}>
+        <div transition:slide={{ duration: 150, easing: cubicOut }}>
             <select {value} onchange={onChange} disabled={!isEnabled}>
                 {#each timezones.keys as group (group)}
                     <optgroup label={groupLabel(group)}>
@@ -110,7 +110,7 @@
     }
     select {
         width: 100%;
-        transition: filter 0.3s ease-in;
+        transition: filter var(--short-duration) var(--ease-out);
     }
     select:disabled {
         color: var(--secondary-text-color);

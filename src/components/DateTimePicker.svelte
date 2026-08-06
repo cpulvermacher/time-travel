@@ -176,7 +176,7 @@
     input.error {
         border-color: var(--error-color);
         outline: 1px solid var(--error-color);
-        animation: pulse 1s;
+        animation: pulse var(--long-duration);
     }
     @keyframes pulse {
         0% {

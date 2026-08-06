@@ -6,6 +6,9 @@
     --error-color: #8f4242;
     --main-padding: 15px;
     --font-family: -apple-system, BlinkMacSystemFont, Inter, Helvetica, Arial, "Liberation Sans", sans-serif;
+    --short-duration: 150ms;
+    --long-duration: 400ms;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html,
@@ -80,7 +83,7 @@ input::selection {
 button {
     line-height: 1;
     padding: 7px 10px;
-    transition: all 0.3s ease-in;
+    transition: all var(--short-duration) var(--ease-out);
 }
 
 button.primary {

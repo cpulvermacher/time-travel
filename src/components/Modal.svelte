@@ -76,7 +76,7 @@
         background: white;
         border-top: 1px solid var(--border-color);
         border-bottom: 1px solid var(--border-color);
-        animation: fade-in 0.3s ease-in;
+        animation: fade-in 0.5s var(--ease-out);
     }
     .modal.closable {
         padding: 30px var(--main-padding);
