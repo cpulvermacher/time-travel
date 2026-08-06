@@ -24,7 +24,6 @@
     "please_reload_message": "設定した日時を反映するには、ページを再読み込みしてください。",
     "reload_btn": "再読み込み",
     "dateformat_info_heading": "入力形式",
-    "dateformat_info": "日時は<code>Date.parse()</code>が対応している形式で入力できます。",
     "dateformat_info_local": "ローカル時間",
     "dateformat_info_local_note": "ブラウザまたは選択したタイムゾーン",
     "dateformat_info_utc": "UTCとUNIXタイムスタンプ",

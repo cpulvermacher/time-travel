@@ -23,7 +23,6 @@
     "error_reset_failed": "Échec de la réinitialisation : ",
     "please_reload_message": "Presque prêt ! Veuillez recharger la page pour appliquer les modifications.",
     "dateformat_info_heading": "Formats de saisie",
-    "dateformat_info": "Vous pouvez entrer la date et l'heure dans n'importe quel format pris en charge par <code>Date</code>.",
     "dateformat_info_local": "Heure locale",
     "dateformat_info_local_note": "Dans le fuseau horaire du navigateur ou celui sélectionné",
     "dateformat_info_utc": "UTC et horodatages UNIX",

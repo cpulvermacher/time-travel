@@ -38,7 +38,6 @@
     </section>
     <section>
         <h3>{m.dateformat_info_heading()}</h3>
-        <p>{@html m.dateformat_info()}</p>
         <dl>
             <dt>{m.dateformat_info_local()}</dt>
             <dd class="note">{m.dateformat_info_local_note()}</dd>
@@ -65,9 +64,6 @@
     h3 {
         margin: 0 0 5px;
         font-size: 1.1em;
-    }
-    p {
-        margin-bottom: 8px;
     }
     dt {
         margin-top: 10px;
