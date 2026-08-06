@@ -71,7 +71,10 @@
         height: 16px;
         background-color: #eee;
         border-radius: 32px;
-        transition: all var(--short-duration) var(--ease-out);
+        transition:
+            background-color var(--short-duration) var(--ease-out),
+            border-color var(--short-duration) var(--ease-out),
+            filter var(--short-duration) var(--ease-out);
         border: 1px solid var(--border-color);
     }
     input:not(:disabled):checked + .toggle-bg {
@@ -101,7 +104,9 @@
         background-color: white;
         border-radius: 50%;
         filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.3));
-        transition: all var(--short-duration) var(--ease-out);
+        transition:
+            transform var(--short-duration) var(--ease-out),
+            background-color var(--short-duration) var(--ease-out);
     }
     input:checked + .toggle-bg .slider {
         transform: translateX(16px);

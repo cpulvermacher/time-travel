@@ -90,7 +90,7 @@
         display: flex;
         flex-direction: column;
         justify-items: center;
-        transition: all var(--long-duration) ease-in-out;
+        transition: color var(--long-duration) ease-in-out;
     }
     .page-time.active {
         color: var(--primary-color);

@@ -83,7 +83,10 @@ input::selection {
 button {
     line-height: 1;
     padding: 7px 10px;
-    transition: all var(--short-duration) var(--ease-out);
+    transition:
+        background-color var(--short-duration) var(--ease-out),
+        color var(--short-duration) var(--ease-out),
+        filter var(--short-duration) var(--ease-out);
 }
 
 button.primary {
