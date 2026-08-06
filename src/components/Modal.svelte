@@ -74,8 +74,8 @@
         justify-content: flex-start;
         color: var(--text-color);
         background: white;
-        border-top: 1px solid var(--divider-color);
-        border-bottom: 1px solid var(--divider-color);
+        /* the sheet spans the full width, so only the top and bottom edges are ever visible */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
         animation: fade-in 0.5s var(--ease-out);
     }
     .modal.closable {
@@ -83,7 +83,7 @@
     }
 
     ::backdrop {
-        background: rgba(255, 255, 255, 0.3);
+        background: rgba(0, 0, 0, 0.2);
         backdrop-filter: blur(5px);
     }
 
