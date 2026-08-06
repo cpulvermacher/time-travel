@@ -73,7 +73,7 @@
         margin-top: 0;
     }
     .note {
-        color: #6f6f6f;
+        color: var(--secondary-text-color);
         font-size: 0.9em;
         margin-bottom: 2px;
     }

@@ -135,7 +135,7 @@
         font-size: 0.8rem;
     }
     .badge--dst {
-        background-color: orange;
-        color: #ffffff;
+        background-color: #ffb020;
+        color: #7a4a00;
     }
 </style>
