@@ -97,29 +97,22 @@ export function formatLocalTime(date: Date): string {
     return `${HH}:${mm}`;
 }
 
-/** Returns a date string in format "YYYY-MM-DD HH:mm..." using the date from `newDate`, and the time from `dateTimeString`.
+/** Returns a date string in format "YYYY-MM-DD HH:mm..." using the day from `newDay` ("YYYY-MM-DD")
+ * and the time from `dateTimeString`.
  *
- * Precision of time part is preserved, but includes at least hours and minutes.
- * `newDate` is interpreted as local time, and the returned string will be in local time.
+ * Precision of time part is preserved, but includes at least hours and minutes. A `dateTimeString`
+ * without a time part yields midnight.
+ * `dateTimeString` is interpreted as local time, and the returned string will be in local time.
  */
-export function overwriteDatePart(dateTimeString: string, newDate: Date): string {
+export function overwriteDatePart(dateTimeString: string, newDay: string): string {
     const parsedDateTime = parseDate(dateTimeString);
     const timeRegex = /\d{1,2}:\d{1,2}/;
     if (!parsedDateTime.isValid || !timeRegex.test(dateTimeString)) {
-        newDate.setHours(0);
-        newDate.setMinutes(0);
-        newDate.setSeconds(0);
-        newDate.setMilliseconds(0);
-        return formatLocalDate(newDate);
+        return `${newDay} 00:00`;
     }
 
-    const timePart = parsedDateTime.date;
-    newDate.setHours(timePart.getHours());
-    newDate.setMinutes(timePart.getMinutes());
-    newDate.setSeconds(timePart.getSeconds());
-    newDate.setMilliseconds(timePart.getMilliseconds());
-
-    return formatLocalDate(newDate, { fullPrecision: true });
+    const timePart = formatLocalDate(parsedDateTime.date, { fullPrecision: true }).split(' ')[1];
+    return `${newDay} ${timePart}`;
 }
 
 /** Returns a date string in format "YYYY-MM-DD HH:mm..." using the date from `dateTimeString` and the time from `hours` and `minutes`.

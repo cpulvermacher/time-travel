@@ -211,40 +211,41 @@ describe('formatLocalTime', () => {
 });
 
 describe('overwriteDatePart', () => {
-    const date = new Date('2033-01-22 00:00');
+    const day = '2033-01-22';
     it('updates date part while preserving time precision and format', () => {
-        expect(overwriteDatePart('2025-02-10 12:34', date)).toBe('2033-01-22 12:34');
-        expect(overwriteDatePart('2025-02-10 12:34:00', date)).toBe('2033-01-22 12:34');
-        expect(overwriteDatePart('2025-02-10 12:34:10', date)).toBe('2033-01-22 12:34:10');
-        expect(overwriteDatePart('2025-02-10 12:34:01', date)).toBe('2033-01-22 12:34:01');
-        expect(overwriteDatePart('2025-02-10 12:34Z', date).endsWith('Z')).toBe(false);
-        expect(overwriteDatePart('2023-03-25 12:40:00.120', date)).toBe('2033-01-22 12:40:00.120');
+        expect(overwriteDatePart('2025-02-10 12:34', day)).toBe('2033-01-22 12:34');
+        expect(overwriteDatePart('2025-02-10 12:34:00', day)).toBe('2033-01-22 12:34');
+        expect(overwriteDatePart('2025-02-10 12:34:10', day)).toBe('2033-01-22 12:34:10');
+        expect(overwriteDatePart('2025-02-10 12:34:01', day)).toBe('2033-01-22 12:34:01');
+        expect(overwriteDatePart('2025-02-10 12:34Z', day).endsWith('Z')).toBe(false);
+        expect(overwriteDatePart('2023-03-25 12:40:00.120', day)).toBe('2033-01-22 12:40:00.120');
     });
 
     it('includes at least hours and minutes', () => {
         //readds 00:00 local time
-        expect(overwriteDatePart('2025-02-10', date)).toBe('2033-01-22 00:00');
-        expect(overwriteDatePart('2025-02-10 ', date)).toBe('2033-01-22 00:00');
+        expect(overwriteDatePart('2025-02-10', day)).toBe('2033-01-22 00:00');
+        expect(overwriteDatePart('2025-02-10 ', day)).toBe('2033-01-22 00:00');
 
-        expect(overwriteDatePart('2025-02-10 01:00', date)).toBe('2033-01-22 01:00');
-        expect(overwriteDatePart('2025-02-10 1:0', date)).toBe('2033-01-22 01:00');
-        expect(overwriteDatePart('2025-02-10 1:1', date)).toBe('2033-01-22 01:01');
+        expect(overwriteDatePart('2025-02-10 01:00', day)).toBe('2033-01-22 01:00');
+        expect(overwriteDatePart('2025-02-10 1:0', day)).toBe('2033-01-22 01:00');
+        expect(overwriteDatePart('2025-02-10 1:1', day)).toBe('2033-01-22 01:01');
     });
 
     it('time part of unix timestamps is lost', () => {
         const timePartFrom = new Date('1970-01-22 10:19:00.025');
         const timestamp = timePartFrom.getTime().toString();
         const expectedString = '2033-01-22 00:00';
-        expect(overwriteDatePart(timestamp, date)).toBe(expectedString);
+        expect(overwriteDatePart(timestamp, day)).toBe(expectedString);
     });
 
     it('totally replaces invalid strings', () => {
-        expect(overwriteDatePart('abc', date)).toBe('2033-01-22 00:00');
+        expect(overwriteDatePart('abc', day)).toBe('2033-01-22 00:00');
     });
 
-    it('ignores time part of new date', () => {
-        const date = new Date('2033-01-22 21:42:56.789');
-        expect(overwriteDatePart('2025-02-10 12:34', date)).toBe('2033-01-22 12:34');
+    it('takes the new day verbatim, without reinterpreting it', () => {
+        // the day is not parsed, so it cannot be shifted by a time zone or normalized
+        expect(overwriteDatePart('2025-02-10 12:34', '-002025-01-22')).toBe('-002025-01-22 12:34');
+        expect(overwriteDatePart('2025-02-10 12:34', '275760-09-13')).toBe('275760-09-13 12:34');
     });
 });
 
