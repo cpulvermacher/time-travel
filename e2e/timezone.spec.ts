@@ -90,6 +90,38 @@ test.describe('changing the time zone', () => {
         await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00 PM');
     });
 
+    test('keeps the local time of the selected zone when picking a day', async ({ popup }) => {
+        await popup.stopClockToggle.set(true);
+        await popup.timezoneToggle.set(true);
+        await popup.timezoneSelect.selectOption('Europe/London');
+
+        // an input with an explicit offset denotes an instant: 12:40Z is 13:40 in London, but 14:40
+        // in the browser time zone (Europe/Berlin, see playwright.config.ts)
+        await popup.setDate('2025-04-27T12:40Z');
+        await expect(popup.applyButton).toHaveText('Change to Apr 27, 2025 1:40 PM (London)');
+
+        await popup.calendarDay(15).click();
+
+        // picking a day only replaces the date, the time of day stays the one in London
+        await expect(popup.dateInput).toHaveValue('2025-04-15 13:40');
+    });
+
+    test('shows the day of the selected zone in the calendar', async ({ popup }) => {
+        await popup.stopClockToggle.set(true);
+        await popup.timezoneToggle.set(true);
+        await popup.timezoneSelect.selectOption('Asia/Tokyo');
+
+        // 20:00Z is already the next day in Tokyo, but still Apr 27 in the browser time zone
+        await popup.setDate('2025-04-27T20:00Z');
+        await expect(popup.applyButton).toHaveText('Change to Apr 28, 2025 5:00 AM (Tokyo)');
+
+        await expect(popup.selectedCalendarDay()).toHaveText('28');
+
+        await popup.calendarDay(15).click();
+
+        await expect(popup.dateInput).toHaveValue('2025-04-15 05:00');
+    });
+
     test('remembers the selected time zone', async ({ popup }) => {
         await popup.stopClockToggle.set(true);
         await popup.setDate('2025-04-27 12:40');

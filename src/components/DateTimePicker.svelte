@@ -22,12 +22,19 @@
     }
     let { fakeDate = $bindable(), onEnterKey, timezone = '' }: Props = $props();
     let parsedDate = $derived(parseDate(fakeDate, timezone));
-    // The datepicker renders timestamps in the browser's time zone, so it is fed the input's wall
-    // clock time parsed as browser-local (`naiveDate`) rather than the actual instant. Same for
-    // overwriteDatePart() below, which reads and writes wall clock strings.
-    let naiveDate = $derived(parseDate(fakeDate));
+    // The input may denote an instant (a UNIX timestamp, or an explicit offset such as "Z"), so it
+    // is first normalized to the bare wall clock time of the selected time zone. That string carries
+    // no offset, which makes the two consumers below purely symbolic: the datepicker renders
+    // timestamps in the browser's time zone and so is fed the wall clock parsed as browser-local
+    // (`naiveDate`), and overwriteDatePart() swaps the date part of a wall clock string.
+    function toLocalDateString(dateString: string): string {
+        const parsed = parseDate(dateString, timezone);
+        return parsed.isValid ? formatLocalDate(parsed.date, { timezone, fullPrecision: true }) : dateString;
+    }
+    let localDateString = $derived(toLocalDateString(fakeDate));
+    let naiveDate = $derived(parseDate(localDateString));
     // Note: the datepicker internally works with timestamps in UTC. When choosing a date, pickerDate will be set to 00:00 local time.
-    const initialNaiveDate = parseDate(fakeDate);
+    const initialNaiveDate = parseDate(toLocalDateString(fakeDate));
     let pickerDate: number = $state(initialNaiveDate.isValid ? initialNaiveDate.date.getTime() : Date.now());
     let showFormatHelp = $state(false);
     const inputId = $props.id();
@@ -87,7 +94,7 @@
     }
     async function acceptPickerDate() {
         const newDate = new Date(pickerDate);
-        fakeDate = overwriteDatePart(fakeDate, newDate);
+        fakeDate = overwriteDatePart(localDateString, newDate);
 
         if (await isAndroid()) {
             // on Android, automatically open the time picker after selecting a date

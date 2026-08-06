@@ -105,6 +105,11 @@ export class Popup {
         return this.calendar.getByRole('button', { name: String(day), exact: true });
     }
 
+    /** the day the calendar currently highlights as selected */
+    selectedCalendarDay(): Locator {
+        return this.calendar.locator('.date.range.start.end');
+    }
+
     /** the part of the date input that is currently selected */
     selectedDateInputText(): Promise<string> {
         return this.dateInput.evaluate((input: HTMLInputElement) =>
