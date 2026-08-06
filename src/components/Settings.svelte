@@ -223,7 +223,7 @@
         width: 100%;
     }
 
-    @media (min-width: 400px) {
+    @media (min-width: 360px) {
         .apply-button {
             width: auto;
         }

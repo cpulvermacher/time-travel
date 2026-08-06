@@ -36,7 +36,7 @@ body {
     width: 300px;
 }
 
-@media (min-width: 400px) {
+@media (min-width: 360px) {
     html {
         font-size: 1em;
     }

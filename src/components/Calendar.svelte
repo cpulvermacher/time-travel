@@ -78,7 +78,7 @@
     .datepicker-container {
         min-height: 206px; /** height of DatePicker for 6 weeks to avoid jumps */
 
-        @media (min-width: 400px) {
+        @media (min-width: 360px) {
             min-height: 230px;
         }
     }
