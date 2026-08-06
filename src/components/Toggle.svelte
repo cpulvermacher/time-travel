@@ -88,7 +88,8 @@
         outline: 2px solid var(--primary-color);
     }
     input:disabled + .toggle-bg {
-        border-color: var(--border-color);
+        /* lighter than an enabled track, so a disabled toggle reads as inactive */
+        border-color: var(--divider-color);
     }
     .toggle-bg.light {
         background-color: rgba(255, 255, 255, 0.3);

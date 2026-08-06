@@ -2,7 +2,8 @@
     --primary-color: #6060f4;
     --text-color: #494949;
     --secondary-text-color: #6f6f6f;
-    --border-color: #dcdcdc;
+    --border-color: #aaaaaa;
+    --divider-color: #dcdcdc;
     --error-color: #8f4242;
     --main-padding: 15px;
     --font-family: -apple-system, BlinkMacSystemFont, Inter, Helvetica, Arial, "Liberation Sans", sans-serif;
@@ -99,6 +100,7 @@ button:disabled {
     background: white !important;
     /* biome-ignore lint/complexity/noImportantStyles: needed to override component-scoped styles */
     color: var(--secondary-text-color) !important;
+    border-color: var(--divider-color);
 }
 
 button:not(:disabled):hover {

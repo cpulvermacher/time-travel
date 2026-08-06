@@ -115,7 +115,8 @@
         /**
          * Common Variables
          */
-        --datepicker-border-color: var(--border-color);
+        /* only feeds --datepicker-calendar-split-border, a decorative rule */
+        --datepicker-border-color: var(--divider-color);
 
         --datepicker-state-active: var(--primary-color);
         --datepicker-state-hover: color-mix(in srgb, var(--primary-color) 12%, white);
@@ -305,7 +306,7 @@
          */
         --datepicker-calendar-day-other-border: 0;
         --datepicker-calendar-day-other-box-shadow: none;
-        --datepicker-calendar-day-other-color: #d1d3d6;
+        --datepicker-calendar-day-other-color: var(--secondary-text-color);
 
         /**
          * Calendar Today

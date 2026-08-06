@@ -231,7 +231,7 @@
 
     hr {
         border: none;
-        border-top: 1px solid var(--border-color);
+        border-top: 1px solid var(--divider-color);
         margin: 0 calc(-1 * var(--main-padding));
     }
 </style>

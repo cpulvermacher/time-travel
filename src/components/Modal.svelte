@@ -74,8 +74,8 @@
         justify-content: flex-start;
         color: var(--text-color);
         background: white;
-        border-top: 1px solid var(--border-color);
-        border-bottom: 1px solid var(--border-color);
+        border-top: 1px solid var(--divider-color);
+        border-bottom: 1px solid var(--divider-color);
         animation: fade-in 0.5s var(--ease-out);
     }
     .modal.closable {
