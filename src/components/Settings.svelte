@@ -221,6 +221,8 @@
 
     .apply-button {
         width: 100%;
+        /* the label embeds the date, which steps with the arrow keys */
+        font-variant-numeric: tabular-nums;
     }
 
     @media (min-width: 360px) {
