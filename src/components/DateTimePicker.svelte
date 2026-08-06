@@ -2,7 +2,7 @@
     import { tick } from 'svelte';
     import { getTimezoneCity } from '@/display/timezone-info';
     import { addDays } from '@/util/date/addDays';
-    import { formatLocalDate, formatUnambiguousDate, overwriteDatePart } from '@/util/date/format';
+    import { formatLocalDate, formatUnambiguousDate, overwriteDatePart, overwriteTimePart } from '@/util/date/format';
     import { parseDate } from '@/util/date/parse';
     import { isAndroid } from '@/web-ext/browser';
     import { m } from '../paraglide/messages';
@@ -24,6 +24,9 @@
     let localDateString = $derived(
         parsedDate.isValid ? formatLocalDate(parsedDate.date, { timezone, fullPrecision: true }) : fakeDate
     );
+    // the day and the time of day the two pickers edit, each in the selected time zone
+    let selectedDay = $derived(localDateString.split(' ')[0]);
+    let selectedTime = $derived(localDateString.split(' ')[1]?.slice(0, 5) ?? ''); // "HH:mm"
     let showFormatHelp = $state(false);
     const inputId = $props.id();
     let inputRef: HTMLInputElement;
@@ -89,6 +92,9 @@
             inputRef.setSelectionRange(dateAndTimeSeparator + 1, -1);
         }
     }
+    function acceptPickerTime(time: string) {
+        fakeDate = overwriteTimePart(localDateString, time);
+    }
     function adjustSeconds(seconds: number) {
         if (!parsedDate.isValid) {
             return;
@@ -137,9 +143,9 @@
             spellcheck="false"
             class={{ error: !parsedDate.isValid && !parsedDate.isReset }}
         />
-        <TimePicker bind:value={fakeDate} bind:this={timePickerRef} />
+        <TimePicker {selectedTime} onSelectTime={acceptPickerTime} bind:this={timePickerRef} />
     </div>
-    <Calendar selectedDay={localDateString.split(' ')[0]} onSelectDay={acceptPickerDay} />
+    <Calendar {selectedDay} onSelectDay={acceptPickerDay} />
 </div>
 
 {#if showFormatHelp}

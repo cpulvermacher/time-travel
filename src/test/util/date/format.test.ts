@@ -1,11 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-    formatLocalDate,
-    formatLocalTime,
-    formatUnambiguousDate,
-    overwriteDatePart,
-    overwriteTimePart,
-} from '@/util/date/format';
+import { formatLocalDate, formatUnambiguousDate, overwriteDatePart, overwriteTimePart } from '@/util/date/format';
 import { parseDate, type ValidDate } from '@/util/date/parse';
 
 describe('formatLocalDate', () => {
@@ -189,27 +183,6 @@ describe('formatUnambiguousDate', () => {
     });
 });
 
-describe('formatLocalTime', () => {
-    it('formats in correct format', () => {
-        expect(formatLocalTime(new Date('2025-02-10 12:34'))).toBe('12:34');
-        expect(formatLocalTime(new Date('2000-01-01 01:01'))).toBe('01:01');
-        expect(formatLocalTime(new Date('2024-12-31 23:59'))).toBe('23:59');
-        expect(formatLocalTime(new Date('2025-02-10 12:34:55'))).toBe('12:34');
-        expect(formatLocalTime(new Date('2025-02-10 12:34:55.123'))).toBe('12:34');
-        expect(formatLocalTime(new Date('2025-02-10 00:00'))).toBe('00:00');
-        expect(formatLocalTime(new Date('2025-01-01 00:00'))).toBe('00:00');
-        expect(formatLocalTime(new Date('2005-12-31 23:59'))).toBe('23:59');
-        expect(formatLocalTime(new Date('0999-02-10 12:34:55.123'))).toBe('12:34');
-        expect(formatLocalTime(new Date('-001000-02-10T13:04'))).toBe('13:04');
-    });
-
-    it('handles invalid dates', () => {
-        expect(formatLocalTime(new Date(''))).toBe('Invalid Date');
-        expect(formatLocalTime(new Date('abcdefgh'))).toBe('Invalid Date');
-        expect(formatLocalTime(new Date('2025-01-32'))).toBe('Invalid Date');
-    });
-});
-
 describe('overwriteDatePart', () => {
     const day = '2033-01-22';
     it('updates date part while preserving time precision and format', () => {
@@ -250,38 +223,38 @@ describe('overwriteDatePart', () => {
 });
 
 describe('overwriteTimePart', () => {
-    it('updates time part while preserving time precision and format', () => {
-        expect(overwriteTimePart('2025-02-10 12:34', 1, 23)).toBe('2025-02-10 01:23');
-        expect(overwriteTimePart('2025-02-10 12:34', 23, 45)).toBe('2025-02-10 23:45');
-        expect(overwriteTimePart('2025-02-10 12:34', 0, 0)).toBe('2025-02-10 00:00');
-        expect(overwriteTimePart('2025-02-10 12:34', 9, 9)).toBe('2025-02-10 09:09');
-        expect(overwriteTimePart('2025-02-10 2:4', 9, 9)).toBe('2025-02-10 09:09');
-        expect(overwriteTimePart('2025-02-10 0:0', 9, 9)).toBe('2025-02-10 09:09');
-        expect(overwriteTimePart('2025-02-10 00:00', 9, 9)).toBe('2025-02-10 09:09');
-        expect(overwriteTimePart('2025-02-10 ', 0, 0)).toBe('2025-02-10 00:00');
+    it('updates time part while preserving the day', () => {
+        expect(overwriteTimePart('2025-02-10 12:34', '01:23')).toBe('2025-02-10 01:23');
+        expect(overwriteTimePart('2025-02-10 12:34', '23:45')).toBe('2025-02-10 23:45');
+        expect(overwriteTimePart('2025-02-10 12:34', '00:00')).toBe('2025-02-10 00:00');
+        expect(overwriteTimePart('2025-02-10 2:4', '09:09')).toBe('2025-02-10 09:09');
+        expect(overwriteTimePart('2025-02-10 0:0', '09:09')).toBe('2025-02-10 09:09');
+        expect(overwriteTimePart('2025-02-10 ', '00:00')).toBe('2025-02-10 00:00');
 
-        expect(overwriteTimePart('2025-02-10 12:34Z', 0, 0).endsWith('Z')).toBe(false);
+        expect(overwriteTimePart('2025-02-10 12:34Z', '00:00').endsWith('Z')).toBe(false);
     });
 
     it('discards seconds and milliseconds', () => {
-        expect(overwriteTimePart('2025-02-10 12:34:01', 12, 34)).toBe('2025-02-10 12:34');
-        expect(overwriteTimePart('2025-02-10 12:40:00.120', 12, 40)).toBe('2025-02-10 12:40');
+        expect(overwriteTimePart('2025-02-10 12:34:01', '12:34')).toBe('2025-02-10 12:34');
+        expect(overwriteTimePart('2025-02-10 12:40:00.120', '12:40')).toBe('2025-02-10 12:40');
+    });
 
-        expect(overwriteTimePart('2025-02-10 01:00', 23.9, 0)).toBe('2025-02-10 23:00');
-        expect(overwriteTimePart('2025-02-10 01:00', 23, 0.9)).toBe('2025-02-10 23:00');
+    it('takes the new time verbatim, without reinterpreting it', () => {
+        // the time is not parsed, so it cannot be shifted by a time zone or normalized
+        expect(overwriteTimePart('2025-02-10 12:34', '09:09:09')).toBe('2025-02-10 09:09:09');
     });
 
     it('handles unix timestamps', () => {
         const timePartFrom = new Date('1970-01-22 10:19:00.025');
         const timestamp = timePartFrom.getTime().toString();
         const expectedString = '1970-01-22 23:59';
-        expect(overwriteTimePart(timestamp, 23, 59)).toBe(expectedString);
+        expect(overwriteTimePart(timestamp, '23:59')).toBe(expectedString);
     });
 
     it('totally replaces invalid strings with current date', () => {
         const datePart = formatLocalDate(new Date()).split(' ')[0];
 
-        expect(overwriteTimePart('abc', 0, 0)).toBe(`${datePart} 00:00`);
-        expect(overwriteTimePart('abc', 2, 2)).toBe(`${datePart} 02:02`);
+        expect(overwriteTimePart('abc', '00:00')).toBe(`${datePart} 00:00`);
+        expect(overwriteTimePart('abc', '02:02')).toBe(`${datePart} 02:02`);
     });
 });

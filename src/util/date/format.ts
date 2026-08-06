@@ -86,17 +86,6 @@ function formatDateParts(parts: SharedDateParts, options?: FormatOptions): strin
     return dateStr;
 }
 
-/** Returns time in format "HH:mm" in local time, or "Invalid Date" if invalid */
-export function formatLocalTime(date: Date): string {
-    if (Number.isNaN(date.getTime())) {
-        return 'Invalid Date';
-    }
-
-    const HH = String(date.getHours()).padStart(2, '0');
-    const mm = String(date.getMinutes()).padStart(2, '0');
-    return `${HH}:${mm}`;
-}
-
 /** Returns a date string in format "YYYY-MM-DD HH:mm..." using the day from `newDay` ("YYYY-MM-DD")
  * and the time from `dateTimeString`.
  *
@@ -115,15 +104,18 @@ export function overwriteDatePart(dateTimeString: string, newDay: string): strin
     return `${newDay} ${timePart}`;
 }
 
-/** Returns a date string in format "YYYY-MM-DD HH:mm..." using the date from `dateTimeString` and the time from `hours` and `minutes`.
+/** Returns a date string in format "YYYY-MM-DD HH:mm" using the day from `dateTimeString` and the
+ * time from `newTime` ("HH:mm").
+ *
+ * `newTime` is taken verbatim, so it must already be zero padded (as an `<input type="time">` value
+ * is). Any seconds and milliseconds of `dateTimeString` are dropped, since the time picker only has
+ * minute precision. An invalid `dateTimeString` falls back to the current day.
+ * `dateTimeString` is interpreted as local time, and the returned string will be in local time.
  */
-export function overwriteTimePart(dateTimeString: string, hours: number, minutes: number): string {
+export function overwriteTimePart(dateTimeString: string, newTime: string): string {
     const parsedDateTime = parseDate(dateTimeString);
-    const newDate = parsedDateTime.isValid ? parsedDateTime.date : new Date();
+    const date = parsedDateTime.isValid ? parsedDateTime.date : new Date();
 
-    newDate.setHours(hours);
-    newDate.setMinutes(minutes);
-    newDate.setSeconds(0);
-    newDate.setMilliseconds(0);
-    return formatLocalDate(newDate);
+    const dayPart = formatLocalDate(date).split(' ')[0];
+    return `${dayPart} ${newTime}`;
 }
