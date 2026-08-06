@@ -173,20 +173,17 @@
     input {
         width: 100%;
     }
+    /* the input is focused while typing an invalid date, use background color to avoid clashing with the focus indicator */
     input.error {
         border-color: var(--error-color);
-        outline: 1px solid var(--error-color);
-        animation: pulse var(--long-duration);
+        background-color: #fdf0f0;
+        color: var(--error-color);
+        animation: error-flash var(--long-duration) var(--ease-out);
     }
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 var(--error-color);
-        }
-        70% {
-            box-shadow: 0 0 0 5px transparent;
-        }
-        100% {
-            box-shadow: 0 0 0 0 transparent;
+    /* deeper tint at start*/
+    @keyframes error-flash {
+        from {
+            background-color: #f5cfcf;
         }
     }
 </style>
