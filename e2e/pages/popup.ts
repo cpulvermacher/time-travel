@@ -45,9 +45,14 @@ export class Popup {
     readonly stopClockToggle: Toggle;
     readonly autoReloadToggle: Toggle;
     readonly timezoneToggle: Toggle;
+    readonly timeInput: Locator;
     private reloadedTabs = 0;
 
-    constructor(readonly page: Page) {
+    /** `mobile` renders the Android UI, see the `mobile` fixture option */
+    constructor(
+        readonly page: Page,
+        private readonly mobile = false
+    ) {
         page.on('console', (message) => {
             if (message.text().includes(mockTabReloadLog)) {
                 this.reloadedTabs++;
@@ -55,6 +60,7 @@ export class Popup {
         });
 
         this.dateInput = page.locator('.input-fields input[type="text"]');
+        this.timeInput = page.locator('.input-fields input[type="time"]'); // mobile only
         this.dateInputLabel = page.locator('.label-row label');
         this.applyButton = page.locator('button.apply-button');
         this.pageTime = page.locator('.page-time .datetime');
@@ -73,7 +79,7 @@ export class Popup {
 
     /** open the popup */
     async open() {
-        await this.page.goto('/popup/main.html');
+        await this.page.goto(this.mobile ? '/popup/main.html?mobile' : '/popup/main.html');
         await expect(this.dateInput).toBeVisible();
     }
 
