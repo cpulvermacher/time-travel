@@ -64,7 +64,7 @@
         border: none;
         box-sizing: border-box;
         margin: 0;
-        padding: 25px 10px;
+        padding: var(--main-padding);
 
         display: flex;
         gap: 20px;
@@ -79,7 +79,7 @@
         animation: fade-in 0.3s ease-in;
     }
     .modal.closable {
-        padding: 30px 10px;
+        padding: 30px var(--main-padding);
     }
 
     ::backdrop {
