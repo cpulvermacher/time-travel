@@ -20,11 +20,12 @@
         color: var(--primary-color);
         cursor: pointer;
         padding: 0;
-        text-decoration: none;
+        text-decoration: underline;
+        text-decoration-color: var(--divider-color);
         font: inherit;
     }
     .linkbutton:hover {
-        text-decoration: underline;
+        text-decoration-color: currentColor;
         /* the global button hover shadow makes no sense for a link */
         filter: none;
     }
