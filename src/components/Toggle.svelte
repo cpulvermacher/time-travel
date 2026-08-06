@@ -32,6 +32,7 @@
         min-height: 1.2lh;
         flex-direction: column;
         user-select: none;
+        cursor: pointer;
     }
     .row {
         display: flex;
@@ -70,7 +71,6 @@
         height: 16px;
         background-color: #eee;
         border-radius: 32px;
-        cursor: pointer;
         transition: all 0.3s;
         border: 1px solid var(--border-color);
     }
