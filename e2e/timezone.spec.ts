@@ -177,7 +177,8 @@ test.describe('the current date and time in the selected time zone', () => {
 
 test.describe('daylight saving time', () => {
     // The offset badge shows the offset of the selected time zone at the faked date, not at the
-    // real current date, and is highlighted (.badge--dst) while DST is in effect there.
+    // real current date, and carries a season dot while that zone observes DST during the year:
+    // yellow (.season-dot--dst) while DST is in effect, blue (.season-dot--standard) otherwise.
     const cases = [
         {
             name: 'summer time in the northern hemisphere',
@@ -185,7 +186,7 @@ test.describe('daylight saving time', () => {
             date: '2025-07-15 12:40',
             pageTime: 'Jul 15, 2025 12:40:00 PM',
             offset: '+01:00',
-            isDst: true,
+            season: 'dst',
             title: 'Europe/London (British Summer Time)\nDaylight Saving Time (DST) is in effect for this date.',
         },
         {
@@ -194,7 +195,7 @@ test.describe('daylight saving time', () => {
             date: '2025-01-15 12:40',
             pageTime: 'Jan 15, 2025 12:40:00 PM',
             offset: '+00:00',
-            isDst: false,
+            season: 'standard',
             title:
                 'Europe/London (Greenwich Mean Time)\n' +
                 'This time zone observes Daylight Saving Time (DST) at other times of the year.',
@@ -206,7 +207,7 @@ test.describe('daylight saving time', () => {
             date: '2025-01-15 12:40',
             pageTime: 'Jan 15, 2025 12:40:00 PM',
             offset: '+11:00',
-            isDst: true,
+            season: 'dst',
             title:
                 'Australia/Sydney (Australian Eastern Daylight Time)\n' +
                 'Daylight Saving Time (DST) is in effect for this date.',
@@ -217,7 +218,7 @@ test.describe('daylight saving time', () => {
             date: '2025-07-15 12:40',
             pageTime: 'Jul 15, 2025 12:40:00 PM',
             offset: '+10:00',
-            isDst: false,
+            season: 'standard',
             title:
                 'Australia/Sydney (Australian Eastern Standard Time)\n' +
                 'This time zone observes Daylight Saving Time (DST) at other times of the year.',
@@ -228,12 +229,12 @@ test.describe('daylight saving time', () => {
             date: '2025-07-15 12:40',
             pageTime: 'Jul 15, 2025 12:40:00 PM',
             offset: '+09:00',
-            isDst: false,
+            season: 'none',
             title: 'Asia/Tokyo (Japan Standard Time)',
         },
     ];
 
-    for (const { name, timezone, date, pageTime, offset, isDst, title } of cases) {
+    for (const { name, timezone, date, pageTime, offset, season, title } of cases) {
         test(`shows ${name}`, async ({ popup }) => {
             await popup.stopClockToggle.set(true);
             await popup.timezoneToggle.set(true);
@@ -244,10 +245,10 @@ test.describe('daylight saving time', () => {
             await expect(popup.pageTime).toHaveText(pageTime);
             await expect(popup.pageTimeOffset).toHaveText(offset);
             await expect(popup.pageTimeOffset).toHaveAttribute('title', title);
-            if (isDst) {
-                await expect(popup.pageTimeOffset).toHaveClass(/badge--dst/);
+            if (season === 'none') {
+                await expect(popup.pageTimeSeasonDot).toHaveCount(0);
             } else {
-                await expect(popup.pageTimeOffset).not.toHaveClass(/badge--dst/);
+                await expect(popup.pageTimeSeasonDot).toHaveClass(new RegExp(`season-dot--${season}`));
             }
         });
     }
@@ -267,7 +268,7 @@ test.describe('daylight saving time', () => {
 
                 await expect(popup.pageTime).toHaveText('Jul 15, 2025 12:40:00 PM');
                 await expect(popup.pageTimeOffset).toHaveText('+02:00');
-                await expect(popup.pageTimeOffset).toHaveClass(/badge--dst/);
+                await expect(popup.pageTimeSeasonDot).toHaveClass(/season-dot--dst/);
                 await expect(popup.pageTimeOffset).toHaveAttribute(
                     'title',
                     'Central European Summer Time\nDaylight Saving Time (DST) is in effect for this date.'
@@ -285,7 +286,7 @@ test.describe('daylight saving time', () => {
 
                 await expect(popup.pageTime).toHaveText('Jan 15, 2025 12:40:00 PM');
                 await expect(popup.pageTimeOffset).toHaveText('+01:00');
-                await expect(popup.pageTimeOffset).not.toHaveClass(/badge--dst/);
+                await expect(popup.pageTimeSeasonDot).toHaveClass(/season-dot--standard/);
                 await expect(popup.pageTimeOffset).toHaveAttribute(
                     'title',
                     'Central European Standard Time\n' +
@@ -314,13 +315,13 @@ test.describe('daylight saving time', () => {
 
         await expect(popup.pageTime).toHaveText('Mar 30, 2025 12:30:00 AM');
         await expect(popup.pageTimeOffset).toHaveText('+00:00');
-        await expect(popup.pageTimeOffset).not.toHaveClass(/badge--dst/);
+        await expect(popup.pageTimeSeasonDot).toHaveClass(/season-dot--standard/);
 
         await popup.applyWithButton('2025-03-30 03:30');
 
         await expect(popup.pageTime).toHaveText('Mar 30, 2025 3:30:00 AM');
         await expect(popup.pageTimeOffset).toHaveText('+01:00');
-        await expect(popup.pageTimeOffset).toHaveClass(/badge--dst/);
+        await expect(popup.pageTimeSeasonDot).toHaveClass(/season-dot--dst/);
     });
 
     test('keeps the time of day when a day step crosses a DST transition', async ({ popup }) => {

@@ -75,7 +75,17 @@
                     {tzInfo.timeString}
                 </div>
                 {#if timezone || tzInfo.isOffsetDifferentFromNow}
-                    <span class={{ badge: true, "badge--dst": tzInfo.isDst }} title={offsetBadgeTitle}>
+                    <span class="badge" title={offsetBadgeTitle}>
+                        {#if tzInfo.isYearWithDst}
+                            <span
+                                class={[
+                                    "season-dot",
+                                    tzInfo.isDst
+                                        ? "season-dot--dst"
+                                        : "season-dot--standard",
+                                ]}
+                            ></span>
+                        {/if}
                         {tzInfo.offset}
                     </span>
                 {/if}
@@ -128,14 +138,24 @@
     }
     .badge {
         align-self: center;
-        background-color: var(--primary-color);
-        color: #ffffff;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--primary-color);
+        border: 1px solid color-mix(in srgb, var(--primary-color) 35%, white);
         padding: 0 5px;
         border-radius: 8px;
         font-size: 0.8rem;
     }
-    .badge--dst {
-        background-color: #ffb020;
-        color: #7a4a00;
+    .season-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+    .season-dot--dst {
+        background-color: #f59e0b;
+    }
+    .season-dot--standard {
+        background-color: #0ea5e9;
     }
 </style>
