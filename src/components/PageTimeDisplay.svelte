@@ -80,10 +80,13 @@
                             <span
                                 class={[
                                     "season-dot",
-                                    tzInfo.isDst
-                                        ? "season-dot--dst"
-                                        : "season-dot--standard",
+                                    {
+                                        "season-dot--dst": tzInfo.isDst,
+                                        "season-dot--standard": !tzInfo.isDst,
+                                    },
                                 ]}
+                                role="img"
+                                aria-label={offsetBadgeTitle}
                             ></span>
                         {/if}
                         {tzInfo.offset}
@@ -147,15 +150,20 @@
         border-radius: 8px;
         font-size: 0.8rem;
     }
+    /* One hue, two fills: filled while DST is in effect, hollow while the zone is on standard time,
+       absent when the zone never observes DST. Fill survives at 8px where a second hue would not. */
     .season-dot {
-        width: 6px;
-        height: 6px;
+        box-sizing: border-box;
+        width: 8px;
+        height: 8px;
+        flex-shrink: 0;
+        border: 1.5px solid var(--primary-color);
         border-radius: 50%;
     }
     .season-dot--dst {
-        background-color: #f59e0b;
+        background-color: var(--primary-color);
     }
     .season-dot--standard {
-        background-color: #0ea5e9;
+        background-color: transparent;
     }
 </style>

@@ -178,7 +178,7 @@ test.describe('the current date and time in the selected time zone', () => {
 test.describe('daylight saving time', () => {
     // The offset badge shows the offset of the selected time zone at the faked date, not at the
     // real current date, and carries a season dot while that zone observes DST during the year:
-    // yellow (.season-dot--dst) while DST is in effect, blue (.season-dot--standard) otherwise.
+    // filled (.season-dot--dst) while DST is in effect, hollow (.season-dot--standard) otherwise.
     const cases = [
         {
             name: 'summer time in the northern hemisphere',
