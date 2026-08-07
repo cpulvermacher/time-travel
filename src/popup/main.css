@@ -13,6 +13,9 @@
     --focus-outline: 2px solid var(--primary-color);
     --focus-outline-offset: 2px;
     --main-padding: 15px;
+    --checkbox-size: 20px;
+    --checkbox-gap: 0.5rem;
+    --checkbox-label-offset: calc(var(--checkbox-size) + var(--checkbox-gap));
     --font-family: -apple-system, BlinkMacSystemFont, Inter, Helvetica, Arial, "Liberation Sans", sans-serif;
     --short-duration: 150ms;
     --long-duration: 400ms;

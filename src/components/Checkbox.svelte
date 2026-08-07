@@ -37,7 +37,7 @@
     .row {
         display: flex;
         position: relative;
-        gap: 0.5rem;
+        gap: var(--checkbox-gap);
         align-items: center;
     }
     .label {
@@ -49,8 +49,7 @@
     .description {
         color: var(--secondary-text-color);
         font-size: 0.9rem;
-        /* line the description up with the label, past the box and its gap */
-        padding-left: calc(18px + 0.5rem);
+        padding-left: var(--checkbox-label-offset);
     }
 
     .checkbox input {
@@ -64,9 +63,11 @@
     .box {
         display: flex;
         position: relative;
-        width: 18px;
-        min-width: 18px;
-        height: 18px;
+        /* border-box, so the size token is the outer size the label offset is derived from */
+        box-sizing: border-box;
+        width: var(--checkbox-size);
+        min-width: var(--checkbox-size);
+        height: var(--checkbox-size);
         align-items: center;
         justify-content: center;
         background-color: white;
