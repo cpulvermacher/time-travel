@@ -20,7 +20,7 @@ test.describe('the time picker', () => {
 
     test('uses the selected time zone for an input denoting an instant', async ({ popup }) => {
         await popup.stopClockToggle.set(true);
-        await popup.timezoneToggle.set(true);
+        await popup.timezoneCheckbox.set(true);
         await popup.timezoneSelect.selectOption('Asia/Tokyo');
 
         // 20:00Z is 05:00 the next day in Tokyo, but 22:00 the same day in the browser zone

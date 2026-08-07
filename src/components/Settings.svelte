@@ -9,6 +9,7 @@
     import { saveMostRecentTimezone, saveSetting } from '@/web-ext/settings';
     import { m } from '../paraglide/messages';
     import type { InitialState } from '../popup/initial-state';
+    import Checkbox from './Checkbox.svelte';
     import DateTimePicker from './DateTimePicker.svelte';
     import ErrorModal from './ErrorModal.svelte';
     import PageTimeDisplay from './PageTimeDisplay.svelte';
@@ -191,7 +192,7 @@
         recentTimezones={settings.recentTimezones}
         date={parsedDate.isValid ? parsedDate.date : undefined}
     />
-    <Toggle bind:checked={settings.autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
+    <Checkbox bind:checked={settings.autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
     <div class="right-aligned">
         <button type="button" class="primary apply-button" disabled={!isApplyButtonEnabled()} onclick={onApply}>
             {getApplyButtonLabel()}

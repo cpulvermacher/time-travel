@@ -5,7 +5,7 @@ import { expect, test } from './fixtures';
 test.describe('browser time zone', () => {
     test('interprets input in the browser time zone', async ({ popup }) => {
         await popup.stopClockToggle.set(true);
-        await expect(popup.timezoneToggle.checkbox).not.toBeChecked();
+        await expect(popup.timezoneCheckbox.checkbox).not.toBeChecked();
         await expect(popup.dateInputLabel).toContainText('Set date and time');
 
         await popup.applyWithEnter('2025-04-27T12:40Z');
@@ -32,7 +32,7 @@ test.describe('changing the time zone', () => {
         await popup.stopClockToggle.set(true);
         await popup.setDate('2025-04-27 12:40');
 
-        await popup.timezoneToggle.set(true);
+        await popup.timezoneCheckbox.set(true);
         await popup.timezoneSelect.selectOption('Europe/London');
 
         // input is now interpreted as local time in the selected zone
@@ -53,7 +53,7 @@ test.describe('changing the time zone', () => {
     test('keeps the local time when switching to another time zone', async ({ popup }) => {
         await popup.stopClockToggle.set(true);
         await popup.setDate('2025-04-27 12:40');
-        await popup.timezoneToggle.set(true);
+        await popup.timezoneCheckbox.set(true);
         await popup.timezoneSelect.selectOption('Europe/London');
         await popup.applyButton.click();
         await expect(popup.pageTimeOffset).toHaveText('+01:00');
@@ -73,12 +73,12 @@ test.describe('changing the time zone', () => {
     test('returns to the browser time zone when switched off', async ({ popup }) => {
         await popup.stopClockToggle.set(true);
         await popup.setDate('2025-04-27 12:40');
-        await popup.timezoneToggle.set(true);
+        await popup.timezoneCheckbox.set(true);
         await popup.timezoneSelect.selectOption('Asia/Tokyo');
         await popup.applyButton.click();
         await expect(popup.pageTimeOffset).toHaveText('+09:00');
 
-        await popup.timezoneToggle.set(false);
+        await popup.timezoneCheckbox.set(false);
 
         await expect(popup.timezoneSelect).toHaveCount(0);
         await expect(popup.dateInputLabel).not.toContainText('(Tokyo)');
@@ -92,7 +92,7 @@ test.describe('changing the time zone', () => {
 
     test('keeps the local time of the selected zone when picking a day', async ({ popup }) => {
         await popup.stopClockToggle.set(true);
-        await popup.timezoneToggle.set(true);
+        await popup.timezoneCheckbox.set(true);
         await popup.timezoneSelect.selectOption('Europe/London');
 
         // an input with an explicit offset denotes an instant: 12:40Z is 13:40 in London, but 14:40
@@ -108,7 +108,7 @@ test.describe('changing the time zone', () => {
 
     test('shows the day of the selected zone in the calendar', async ({ popup }) => {
         await popup.stopClockToggle.set(true);
-        await popup.timezoneToggle.set(true);
+        await popup.timezoneCheckbox.set(true);
         await popup.timezoneSelect.selectOption('Asia/Tokyo');
 
         // 20:00Z is already the next day in Tokyo, but still Apr 27 in the browser time zone
@@ -125,14 +125,14 @@ test.describe('changing the time zone', () => {
     test('remembers the selected time zone', async ({ popup }) => {
         await popup.stopClockToggle.set(true);
         await popup.setDate('2025-04-27 12:40');
-        await popup.timezoneToggle.set(true);
+        await popup.timezoneCheckbox.set(true);
         await popup.timezoneSelect.selectOption('Europe/London');
         await popup.applyButton.click();
         await expect(popup.pageTimeOffset).toHaveText('+01:00');
 
         await popup.reopen();
 
-        await expect(popup.timezoneToggle.checkbox).toBeChecked();
+        await expect(popup.timezoneCheckbox.checkbox).toBeChecked();
         await expect(popup.timezoneSelect).toHaveValue('Europe/London');
         await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00 PM');
         await expect(popup.pageTimeOffset).toHaveText('+01:00');
@@ -145,7 +145,7 @@ test.describe('the current date and time in the selected time zone', () => {
     test.use({ systemTime: '2025-07-15T12:00:00Z' });
 
     test('prefills the input with the current time in the selected time zone', async ({ popup }) => {
-        await popup.timezoneToggle.set(true);
+        await popup.timezoneCheckbox.set(true);
         await popup.timezoneSelect.selectOption('Europe/London');
         await popup.applyButton.click();
         await expect(popup.dateInput).toHaveValue('2025-07-15 14:00'); // still the browser time zone
@@ -163,7 +163,7 @@ test.describe('the current date and time in the selected time zone', () => {
     });
 
     test('shows the current UTC offsets in the time zone dropdown', async ({ popup }) => {
-        await popup.timezoneToggle.set(true);
+        await popup.timezoneCheckbox.set(true);
 
         // without a date the offsets of the options are the current ones
         await popup.setDate('');
@@ -237,7 +237,7 @@ test.describe('daylight saving time', () => {
     for (const { name, timezone, date, pageTime, offset, season, title } of cases) {
         test(`shows ${name}`, async ({ popup }) => {
             await popup.stopClockToggle.set(true);
-            await popup.timezoneToggle.set(true);
+            await popup.timezoneCheckbox.set(true);
             await popup.timezoneSelect.selectOption(timezone);
 
             await popup.applyWithButton(date);
@@ -307,7 +307,7 @@ test.describe('daylight saving time', () => {
 
     test('updates the offset when the date crosses a DST transition', async ({ popup }) => {
         await popup.stopClockToggle.set(true);
-        await popup.timezoneToggle.set(true);
+        await popup.timezoneCheckbox.set(true);
         await popup.timezoneSelect.selectOption('Europe/London');
 
         // Europe/London switches to summer time at 01:00 on Mar 30, 2025
@@ -326,7 +326,7 @@ test.describe('daylight saving time', () => {
 
     test('keeps the time of day when a day step crosses a DST transition', async ({ popup }) => {
         await popup.stopClockToggle.set(true);
-        await popup.timezoneToggle.set(true);
+        await popup.timezoneCheckbox.set(true);
         await popup.timezoneSelect.selectOption('Europe/London');
 
         // Europe/London skips 01:00-02:00 on Mar 30, 2025, so that day is only 23 hours long
@@ -350,7 +350,7 @@ test.describe('daylight saving time', () => {
 
     test('keeps the UTC offset when a day step starts in a repeated hour', async ({ popup }) => {
         await popup.stopClockToggle.set(true);
-        await popup.timezoneToggle.set(true);
+        await popup.timezoneCheckbox.set(true);
         await popup.timezoneSelect.selectOption('Europe/London');
 
         // Europe/London repeats 01:00-02:00 on Oct 26, 2025. An hour step reaches the second 01:30,

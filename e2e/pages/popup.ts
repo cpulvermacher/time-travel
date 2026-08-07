@@ -5,13 +5,13 @@ const devTabStateKey = 'timeTravelDevTabState';
 // what the mocked reloadTab() logs instead of reloading (see src/util/browser.ts)
 const mockTabReloadLog = 'reloading tab (mocked)';
 
-/** A Toggle component. */
-class Toggle {
+/** A Toggle or Checkbox component; both wrap a checkbox input in a label of the same name. */
+class CheckControl {
     readonly checkbox: Locator;
     private readonly label: Locator;
 
-    constructor(page: Page, label: string) {
-        this.label = page.locator('label.toggle').filter({ hasText: label });
+    constructor(page: Page, component: 'toggle' | 'checkbox', label: string) {
+        this.label = page.locator(`label.${component}`).filter({ hasText: label });
         this.checkbox = this.label.getByRole('checkbox');
     }
 
@@ -42,10 +42,10 @@ export class Popup {
     readonly calendarWeekdays: Locator;
     readonly reloadModal: Locator;
     readonly reloadButton: Locator;
-    readonly fakeDateToggle: Toggle;
-    readonly stopClockToggle: Toggle;
-    readonly autoReloadToggle: Toggle;
-    readonly timezoneToggle: Toggle;
+    readonly fakeDateToggle: CheckControl;
+    readonly stopClockToggle: CheckControl;
+    readonly autoReloadCheckbox: CheckControl;
+    readonly timezoneCheckbox: CheckControl;
     readonly timeInput: Locator;
     private reloadedTabs = 0;
 
@@ -73,10 +73,10 @@ export class Popup {
         this.calendarWeekdays = this.calendar.locator('.dow');
         this.reloadModal = page.getByRole('dialog').filter({ hasText: 'reload the page' });
         this.reloadButton = this.reloadModal.getByRole('button', { name: 'Reload' });
-        this.fakeDateToggle = new Toggle(page, 'Fake JavaScript date');
-        this.stopClockToggle = new Toggle(page, 'Stop clock');
-        this.autoReloadToggle = new Toggle(page, 'Reload page on changes');
-        this.timezoneToggle = new Toggle(page, 'Change time zone');
+        this.fakeDateToggle = new CheckControl(page, 'toggle', 'Fake JavaScript date');
+        this.stopClockToggle = new CheckControl(page, 'toggle', 'Stop clock');
+        this.autoReloadCheckbox = new CheckControl(page, 'checkbox', 'Reload page on changes');
+        this.timezoneCheckbox = new CheckControl(page, 'checkbox', 'Change time zone');
     }
 
     /** open the popup */

@@ -11,7 +11,7 @@
     } from '@/display/timezone-options';
     import { getUILanguage } from '@/web-ext/browser';
     import { m } from '../paraglide/messages';
-    import Toggle from './Toggle.svelte';
+    import Checkbox from './Checkbox.svelte';
 
     interface Props {
         value: string; // IANA time zone ID or '' when disabled
@@ -85,10 +85,10 @@
 </script>
 
 <div class="container">
-    <Toggle label={m.timezone_selector_label()} bind:checked={isEnabled} onChange={onToggle} />
+    <Checkbox label={m.timezone_selector_label()} bind:checked={isEnabled} onChange={onToggle} />
 
     {#if isEnabled}
-        <div transition:slide={{ duration: 150, easing: cubicOut }}>
+        <div class="select-row" transition:slide={{ duration: 150, easing: cubicOut }}>
             <select {value} onchange={onChange} disabled={!isEnabled}>
                 {#each timezones.keys as group (group)}
                     <optgroup label={groupLabel(group)}>
@@ -107,6 +107,11 @@
         display: flex;
         flex-direction: column;
         gap: 5px;
+    }
+    .select-row {
+        /* indented to the checkbox label above it, so it reads as belonging to it */
+        padding-left: var(--checkbox-label-offset);
+        /* the chevron is positioned against this; its right edge is the select's right edge */
     }
     select {
         width: 100%;
