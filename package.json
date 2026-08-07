@@ -11,6 +11,7 @@
         "fix": "biome check --write *.mts *.ts src/ e2e/",
         "test": "vitest --run",
         "test:e2e": "playwright test",
+        "screenshots": "SCREENSHOTS=1 playwright test screenshots --project=chromium",
         "coverage": "vitest --run --coverage",
         "checkall": "pnpm test && pnpm lint && pnpm build",
         "machine-translate": "inlang machine translate --project project.inlang"
