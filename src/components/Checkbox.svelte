@@ -110,13 +110,4 @@
         stroke-linecap: round;
         stroke-linejoin: round;
     }
-    svg path {
-        /* length of the tick, so it can be drawn on when checked */
-        stroke-dasharray: 16;
-        stroke-dashoffset: 16;
-        transition: stroke-dashoffset var(--long-duration) var(--ease-out);
-    }
-    input:checked + .box svg path {
-        stroke-dashoffset: 0;
-    }
 </style>
