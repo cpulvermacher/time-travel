@@ -207,7 +207,7 @@
         --datepicker-calendar-header-font-size: var(--datepicker-font-size-large);
         --datepicker-calendar-header-justify-content: space-between;
         --datepicker-calendar-header-margin: 0;
-        --datepicker-calendar-header-padding: var(--datepicker-padding-large) var(--datepicker-padding-base);
+        --datepicker-calendar-header-padding: var(--datepicker-padding-large) 8px;
         --datepicker-calendar-header-user-select: none;
 
         /**
@@ -220,11 +220,11 @@
         --datepicker-calendar-header-month-nav-border-radius: 50%;
         --datepicker-calendar-header-month-nav-color: var(--datepicker-color);
         --datepicker-calendar-header-month-nav-font-size: var(--datepicker-font-size-large);
-        --datepicker-calendar-header-month-nav-height: 32px;
+        --datepicker-calendar-header-month-nav-height: 24px;
         --datepicker-calendar-header-month-nav-margin-left: -8px;
         --datepicker-calendar-header-month-nav-padding: var(--datepicker-padding-small);
         --datepicker-calendar-header-month-nav-text-align: center;
-        --datepicker-calendar-header-month-nav-width: 32px;
+        --datepicker-calendar-header-month-nav-width: 24px;
 
         --datepicker-calendar-header-month-nav-icon-next-background-size: 16px 16px;
         --datepicker-calendar-header-month-nav-icon-next-filter: invert(0);
