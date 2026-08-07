@@ -3,8 +3,15 @@
     --text-color: #494949;
     --secondary-text-color: #6f6f6f;
     --border-color: #aaaaaa;
+    --border-hover-color: var(--primary-color);
     --divider-color: #dcdcdc;
     --error-color: #8f4242;
+    /* Hover tints the border and adds a soft ring; focus draws a hard detached outline. Focus has
+       to stay on `outline`: it must never be transitioned, and a box-shadow is dropped entirely in
+       forced-colors mode. */
+    --ring: 0 0 0 3px color-mix(in srgb, var(--primary-color) 28%, transparent);
+    --focus-outline: 2px solid var(--primary-color);
+    --focus-outline-offset: 2px;
     --main-padding: 15px;
     --font-family: -apple-system, BlinkMacSystemFont, Inter, Helvetica, Arial, "Liberation Sans", sans-serif;
     --short-duration: 150ms;
@@ -74,6 +81,9 @@ select {
     background: white;
     border: 1px solid var(--border-color);
     border-radius: 5px;
+    transition:
+        box-shadow var(--short-duration) var(--ease-out),
+        border-color var(--short-duration) var(--ease-out);
 }
 
 input::selection {
@@ -87,7 +97,8 @@ button {
     transition:
         background-color var(--short-duration) var(--ease-out),
         color var(--short-duration) var(--ease-out),
-        filter var(--short-duration) var(--ease-out);
+        box-shadow var(--short-duration) var(--ease-out),
+        border-color var(--short-duration) var(--ease-out);
 }
 
 button.primary {
@@ -103,9 +114,17 @@ button:disabled {
     border-color: var(--divider-color);
 }
 
-button:not(:disabled):hover {
-    filter: drop-shadow(0 0 2px var(--primary-color));
+button:not(:disabled):hover,
+select:not(:disabled):hover {
     cursor: pointer;
+}
+
+/* the accent ring, on every control that carries a border */
+input:not(:disabled):hover,
+button:not(:disabled):hover,
+select:not(:disabled):hover {
+    box-shadow: var(--ring);
+    border-color: var(--border-hover-color);
 }
 
 a:focus-visible,
@@ -113,5 +132,6 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 summary:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: var(--focus-outline);
+    outline-offset: var(--focus-outline-offset);
 }

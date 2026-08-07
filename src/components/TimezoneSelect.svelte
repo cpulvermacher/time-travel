@@ -110,13 +110,8 @@
     }
     select {
         width: 100%;
-        transition: filter var(--short-duration) var(--ease-out);
     }
     select:disabled {
         color: var(--secondary-text-color);
-    }
-    select:not(:disabled):hover {
-        filter: drop-shadow(0 0 2px var(--primary-color));
-        cursor: pointer;
     }
 </style>

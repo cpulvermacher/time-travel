@@ -26,7 +26,7 @@
     }
     .linkbutton:hover {
         text-decoration-color: currentColor;
-        /* the global button hover shadow makes no sense for a link */
-        filter: none;
+        /* the global accent ring makes no sense for a link, the underline is the hover state */
+        box-shadow: none;
     }
 </style>

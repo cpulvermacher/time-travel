@@ -87,6 +87,7 @@
     :global(.datepicker[data-picker-theme="theme"] .date span) {
         margin-left: auto;
         margin-right: auto;
+        transition: box-shadow var(--short-duration) var(--ease-out);
     }
 
     /* override some hard coded radii on start/end of range  */
@@ -94,14 +95,43 @@
         border-radius: 50%;
     }
 
+    /* a day is a <button> wrapping the circle, and the circle is the control surface, so the
+       button's own ring and outline are suppressed: a hovered or focused day shows one shape,
+       not a rectangle around a circle. */
+    :global(.datepicker[data-picker-theme="theme"] .date:hover) {
+        box-shadow: none;
+    }
+
     :global(.datepicker[data-picker-theme="theme"] .date:focus-visible) {
+        box-shadow: none;
         /* biome-ignore lint/complexity/noImportantStyles: needed to override svelte-datepicker's chrome-specific style */
         outline: none !important;
     }
 
     :global(.datepicker[data-picker-theme="theme"] .date:focus-visible span) {
+        outline: var(--focus-outline);
+        /* the day grid leaves 1px between rows, so the usual 2px offset would collide */
+        outline-offset: 1px;
+    }
+
+    /* svelte-datepicker gives the month and year buttons `5px auto -webkit-focus-ring-color`, which
+       Chrome draws as a black double ring. Its own component styles carry Svelte's scoping classes,
+       so the rule sits out of reach of plain specificity. */
+    :global(.datepicker[data-picker-theme="theme"] header button:focus-visible) {
         /* biome-ignore lint/complexity/noImportantStyles: needed to override svelte-datepicker's chrome-specific style */
-        outline: 2px solid var(--primary-color) !important;
+        outline: var(--focus-outline) !important;
+        outline-offset: var(--focus-outline-offset);
+    }
+
+    /* The accent ring replaces the tinted circle a hovered day used to get. It hangs off the cell,
+       not the circle: the whole cell is clickable, but the circle is narrower than the grid column. */
+    :global(
+        .datepicker[data-picker-theme="theme"]
+            .date:not(.other):not(.disabled):not(.past):not(.future):not(.range):hover
+            span
+    ),
+    :global(.datepicker[data-picker-theme="theme"] .date.range.start.end:hover span) {
+        box-shadow: var(--ring);
     }
 
     /* for Japanese, add a suffix to the year*/
@@ -187,7 +217,7 @@
         --datepicker-calendar-header-month-nav-background-hover: transparent;
         --datepicker-calendar-header-month-nav-border: 0;
         --datepicker-calendar-header-month-nav-cursor: pointer;
-        --datepicker-calendar-header-month-nav-border-radius: 3px;
+        --datepicker-calendar-header-month-nav-border-radius: 50%;
         --datepicker-calendar-header-month-nav-color: var(--datepicker-color);
         --datepicker-calendar-header-month-nav-font-size: var(--datepicker-font-size-large);
         --datepicker-calendar-header-month-nav-height: 32px;
@@ -282,7 +312,7 @@
          * Calendar Day
          */
         --datepicker-calendar-day-align-items: center;
-        --datepicker-calendar-day-background-hover: var(--datepicker-state-hover);
+        --datepicker-calendar-day-background-hover: transparent;
         --datepicker-calendar-day-border: none;
         --datepicker-calendar-day-border-radius: 50%;
         --datepicker-calendar-day-color: var(--text-color);

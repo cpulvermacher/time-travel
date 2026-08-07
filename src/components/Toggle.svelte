@@ -74,18 +74,23 @@
         transition:
             background-color var(--short-duration) var(--ease-out),
             border-color var(--short-duration) var(--ease-out),
-            filter var(--short-duration) var(--ease-out);
+            box-shadow var(--short-duration) var(--ease-out);
         border: 1px solid var(--border-color);
     }
     input:not(:disabled):checked + .toggle-bg {
         background-color: var(--primary-color);
         border-color: var(--primary-color);
     }
-    input:not(:disabled):hover + .toggle-bg {
-        filter: drop-shadow(0 0 2px var(--primary-color));
+    .row:hover input:not(:disabled) + .toggle-bg {
+        box-shadow: var(--ring);
+        border-color: var(--border-hover-color);
+    }
+    .row:hover input:not(:disabled):checked + .toggle-bg {
+        border-color: var(--primary-color);
     }
     input:focus-visible + .toggle-bg {
-        outline: 2px solid var(--primary-color);
+        outline: var(--focus-outline);
+        outline-offset: var(--focus-outline-offset);
     }
     input:disabled + .toggle-bg {
         /* lighter than an enabled track, so a disabled toggle reads as inactive */

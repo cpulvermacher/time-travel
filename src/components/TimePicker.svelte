@@ -46,10 +46,19 @@
         background-size: 80%;
         border: 1px solid var(--border-color);
         border-radius: 30px;
+        transition:
+            box-shadow var(--short-duration) var(--ease-out),
+            border-color var(--short-duration) var(--ease-out);
     }
 
-    .icon:focus-within {
-        outline: 2px solid var(--primary-color);
+    .icon:hover {
+        box-shadow: var(--ring);
+        border-color: var(--border-hover-color);
+    }
+
+    .icon:has(:focus-visible) {
+        outline: var(--focus-outline);
+        outline-offset: var(--focus-outline-offset);
     }
 
     input {
