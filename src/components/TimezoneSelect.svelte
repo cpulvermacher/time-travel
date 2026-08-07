@@ -98,6 +98,9 @@
                     </optgroup>
                 {/each}
             </select>
+            <svg class="chevron" aria-hidden="true" viewBox="0 0 12 12">
+                <path d="M2.5 4.5 6 8l3.5-3.5" stroke="currentColor" stroke-width="1.5" fill="none" />
+            </svg>
         </div>
     {/if}
 </div>
@@ -109,14 +112,34 @@
         gap: 5px;
     }
     .select-row {
+        --chevron-inset: 6px;
+        --chevron-size: 12px;
+
         /* indented to the checkbox label above it, so it reads as belonging to it */
         padding-left: var(--checkbox-label-offset);
         /* the chevron is positioned against this; its right edge is the select's right edge */
+        position: relative;
+        display: flex;
     }
     select {
         width: 100%;
+        /* hide native chevron */
+        appearance: none;
+        padding-right: calc(var(--chevron-inset) + var(--chevron-size) + 6px);
+    }
+    .chevron {
+        position: absolute;
+        right: var(--chevron-inset);
+        top: 50%;
+        translate: 0 -50%;
+        width: var(--chevron-size);
+        height: var(--chevron-size);
+        pointer-events: none;
+    }
+    .select-row:has(select:disabled) {
+        color: var(--secondary-text-color);
     }
     select:disabled {
-        color: var(--secondary-text-color);
+        color: inherit;
     }
 </style>
