@@ -83,6 +83,11 @@
         }
     }
 
+    /* the 7 columns stretch across the available space, but days are centered in the column. adjust outside margin so days are aligned to left/right edge */
+    :global(.datepicker[data-picker-theme="theme"] .month) {
+        margin-inline: -8px;
+    }
+
     /* Center each day's circle within its (wider) grid cell */
     :global(.datepicker[data-picker-theme="theme"] .date span) {
         margin-left: auto;
