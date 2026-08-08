@@ -105,7 +105,6 @@
 
 <style>
     .page-time {
-        margin-top: 5px;
         display: flex;
         flex-direction: column;
         justify-items: center;
@@ -125,7 +124,7 @@
     }
     .time-block {
         display: flex;
-        gap: 5px;
+        gap: var(--gap-small);
         font-size: 1rem;
         animation: date-change var(--long-duration) var(--ease-out);
     }

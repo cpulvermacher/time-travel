@@ -72,7 +72,7 @@
         justify-content: center;
         background-color: white;
         border: 1px solid var(--border-color);
-        border-radius: 5px;
+        border-radius: var(--input-radius);
         transition:
             background-color var(--short-duration) var(--ease-out),
             border-color var(--short-duration) var(--ease-out),

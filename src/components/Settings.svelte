@@ -183,8 +183,8 @@
         onChange={onEnableToggle}
         label={m.enable_fake_date_toggle()}
     />
-    <hr />
     <PageTimeDisplay clock={pageClock} timezone={effectiveTimezone} />
+    <hr />
     <DateTimePicker bind:fakeDate onEnterKey={onApply} timezone={settings.timezone} />
     <TimezoneSelect
         value={settings.timezone}
@@ -235,6 +235,6 @@
     hr {
         border: none;
         border-top: 1px solid var(--divider-color);
-        margin: 0 calc(-1 * var(--main-padding));
+        margin: var(--gap-mid) calc(-1 * var(--gap-large));
     }
 </style>

@@ -251,7 +251,7 @@
         --datepicker-calendar-header-text-display: flex;
         --datepicker-calendar-header-text-font-size: inherit;
         --datepicker-calendar-header-text-font-weight: var(--datepicker-font-weight-medium);
-        --datepicker-calendar-header-text-gap: 8px;
+        --datepicker-calendar-header-text-gap: var(--gap-small);
 
         /**
          * Calendar Header Year Navigation Container

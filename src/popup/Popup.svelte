@@ -22,10 +22,10 @@
 {:then initialState}
     <Settings {initialState} />
 {:catch error}
-    <div class="error">
+    <main class="error">
         <p>{error instanceof Error ? error.message : ""}</p>
         <p>{m.permission_error_please_change_tab()}</p>
-    </div>
+    </main>
 {/await}
 
 <style>
@@ -40,7 +40,8 @@
     }
 
     .error {
-        padding: 15px;
+        min-height: 0;
+        gap: var(--gap-small);
     }
     .error > p {
         max-width: 350px;

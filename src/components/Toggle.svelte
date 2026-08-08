@@ -17,9 +17,9 @@
 
 <label class="toggle">
     <div class="row">
-        <div class={['label', { disabled, bold, light }]}>{label}</div>
+        <div class={["label", { disabled, bold, light }]}>{label}</div>
         <input type="checkbox" bind:checked {onchange} {disabled} />
-        <div class={['toggle-bg', { light }]}>
+        <div class={["toggle-bg", { light }]}>
             <span class="slider"></span>
         </div>
     </div>
@@ -29,14 +29,13 @@
 <style>
     .toggle {
         display: flex;
-        min-height: 1.2lh;
         flex-direction: column;
         user-select: none;
         cursor: pointer;
     }
     .row {
         display: flex;
-        gap: 0.5rem;
+        gap: var(--gap-small);
         justify-content: space-between;
         align-items: center;
     }

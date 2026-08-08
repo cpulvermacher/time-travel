@@ -64,10 +64,10 @@
         border: none;
         box-sizing: border-box;
         margin: 0;
-        padding: var(--main-padding);
+        padding: var(--gap-large);
 
         display: flex;
-        gap: 20px;
+        gap: var(--gap-xlarge);
         flex-direction: column;
         align-items: center;
         /* not center: content taller than max-height would overflow at the top, out of scroll reach */
@@ -79,7 +79,7 @@
         animation: fade-in 0.5s var(--ease-out);
     }
     .modal.closable {
-        padding: 30px var(--main-padding);
+        padding: 30px var(--gap-large);
     }
 
     ::backdrop {

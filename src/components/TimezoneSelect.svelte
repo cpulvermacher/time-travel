@@ -109,7 +109,7 @@
     .container {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: var(--gap-small);
     }
     .select-row {
         --chevron-inset: 6px;

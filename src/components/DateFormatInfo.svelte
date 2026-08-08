@@ -62,11 +62,11 @@
         width: 100%;
     }
     h3 {
-        margin: 0 0 5px;
+        margin: 0 0 var(--gap-small);
         font-size: 1.1em;
     }
     dt {
-        margin-top: 10px;
+        margin-top: var(--gap-mid);
         font-weight: 600;
     }
     dt:first-child {
@@ -75,7 +75,7 @@
     .note {
         color: var(--secondary-text-color);
         font-size: 0.9em;
-        margin-bottom: 2px;
+        margin-bottom: var(--gap-small);
     }
     dd {
         margin: 0;

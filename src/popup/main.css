@@ -14,11 +14,15 @@
     --ring: 0 0 0 3px color-mix(in srgb, var(--primary-color) 28%, transparent);
     --focus-outline: 2px solid var(--primary-color);
     --focus-outline-offset: 2px;
-    --main-padding: 15px;
-    --checkbox-size: 16px;
-    --checkbox-gap: 0.5rem;
-    --checkbox-label-offset: calc(var(--checkbox-size) + var(--checkbox-gap));
+    --gap-small: 4px;
+    --gap-mid: 8px;
+    --gap-large: 16px;
+    --gap-xlarge: 32px;
+    --input-radius: 5px;
     --font-family: -apple-system, BlinkMacSystemFont, Inter, Helvetica, Arial, "Liberation Sans", sans-serif;
+    --checkbox-size: 16px;
+    --checkbox-gap: var(--gap-small);
+    --checkbox-label-offset: calc(var(--checkbox-size) + var(--checkbox-gap));
     --short-duration: 150ms;
     --long-duration: 400ms;
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -67,8 +71,8 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 10px;
-    padding: var(--main-padding);
+    gap: var(--gap-mid);
+    padding: var(--gap-large);
 }
 
 label {
@@ -81,11 +85,11 @@ select {
     font-family: var(--font-family);
     font-size: 1rem;
     box-sizing: border-box;
-    padding: 5px 8px;
+    padding: var(--gap-small) var(--gap-mid);
     color: var(--text-color);
     background: white;
     border: 1px solid var(--border-color);
-    border-radius: 5px;
+    border-radius: var(--input-radius);
     transition:
         box-shadow var(--short-duration) var(--ease-out),
         border-color var(--short-duration) var(--ease-out);

@@ -118,7 +118,7 @@
     }
 </script>
 
-<div>
+<div class="datetime-picker">
     <div class="label-row">
         <label for={inputId}>
             {timezone
@@ -153,11 +153,16 @@
 {/if}
 
 <style>
+    .datetime-picker {
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap-small);
+    }
     .label-row {
         display: flex;
         justify-content: space-between;
         align-items: baseline;
-        gap: 10px;
+        gap: var(--gap-small);
     }
     /* keep the help link on one line, let the (possibly long) label text wrap instead */
     .label-row :global(.linkbutton) {
@@ -166,9 +171,8 @@
     }
     .input-fields {
         display: flex;
-        gap: 10px;
+        gap: var(--gap-small);
         align-items: center;
-        margin-top: 5px;
     }
     input {
         width: 100%;
