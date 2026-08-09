@@ -26,7 +26,7 @@ describe('setIconBadgeAndTitle', () => {
         expect(browser.setBadgeText).toHaveBeenCalledWith(1, 'ON');
         expect(browser.setTitle).toHaveBeenCalledWith(
             1,
-            'Time Travel\nJan 1, 2025 9:00 AM Japan Standard Time (+09:00)\nClock stopped'
+            'Time Travel\nJan 1, 2025 09:00 Japan Standard Time (+09:00)\nClock stopped'
         );
         expect(console.error).not.toHaveBeenCalled();
     });
@@ -36,7 +36,7 @@ describe('setIconBadgeAndTitle', () => {
 
         expect(browser.setTitle).toHaveBeenCalledWith(
             1,
-            'Time Travel\nJan 1, 2025 9:00 AM Japan Standard Time (+09:00)\nClock running'
+            'Time Travel\nJan 1, 2025 09:00 Japan Standard Time (+09:00)\nClock running'
         );
     });
 

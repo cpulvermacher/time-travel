@@ -103,7 +103,7 @@ describe('getTzInfo', () => {
     it('returns strings in given locale', () => {
         const infoJa = getTzInfo('ja', '2025-07-01T10:00Z', 'America/New_York')!;
         expect(infoJa.dateString).toBe('2025年7月1日');
-        expect(infoJa.timeString).toBe('6:00');
+        expect(infoJa.timeString).toBe('06:00');
 
         const infoDe = getTzInfo('de', '2025-07-01T10:00Z', 'America/New_York')!;
         expect(infoDe.dateString).toBe('1. Juli 2025');
@@ -121,10 +121,18 @@ describe('getTzInfo', () => {
         expect(infoDe.timeString).toBe('06:00:07');
 
         const infoJa = getTzInfo('ja', '2025-07-01T10:00:07Z', 'America/New_York', { seconds: true })!;
-        expect(infoJa.timeString).toBe('6:00:07');
+        expect(infoJa.timeString).toBe('06:00:07');
 
         // the date is unaffected by the time format
         expect(infoDe.dateString).toBe('1. Juli 2025');
+    });
+
+    it('uses a 24h clock even in locales that default to AM/PM', () => {
+        const afternoon = '2025-07-01T20:00Z'; // 4 PM in New York
+
+        expect(getTzInfo('en-US', afternoon, 'America/New_York')!.timeString).toBe('16:00');
+        expect(getTzInfo('en-US', '2025-07-01T04:00Z', 'America/New_York')!.timeString).toBe('00:00');
+        expect(getTzInfo('ko', afternoon, 'America/New_York')!.timeString).toBe('16:00');
     });
 });
 

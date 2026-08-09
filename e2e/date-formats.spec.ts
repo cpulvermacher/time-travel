@@ -5,12 +5,12 @@ import { expect, test } from './fixtures';
  * Expectations assume the browser time zone Europe/Berlin (see playwright.config.ts), i.e. UTC+1
  * in winter and UTC+2 in summer. */
 const examples = [
-    { name: 'local time', input: '2025-04-27 12:40', pageTime: 'Apr 27, 2025 12:40:00 PM' },
-    { name: 'local time with seconds', input: '2025-03-30 00:59:55', pageTime: 'Mar 30, 2025 12:59:55 AM' },
-    { name: 'instant in UTC', input: '2025-04-27T12:40Z', pageTime: 'Apr 27, 2025 2:40:00 PM' },
-    { name: 'instant with UTC offset', input: '2025-04-27T12:40+1130', pageTime: 'Apr 27, 2025 3:10:00 AM' },
-    { name: 'local time with milliseconds', input: '2025-03-25T12:40:00.120', pageTime: 'Mar 25, 2025 12:40:00 PM' },
-    { name: 'UNIX timestamp', input: '1731493140025', pageTime: 'Nov 13, 2024 11:19:00 AM' },
+    { name: 'local time', input: '2025-04-27 12:40', pageTime: 'Apr 27, 2025 12:40:00' },
+    { name: 'local time with seconds', input: '2025-03-30 00:59:55', pageTime: 'Mar 30, 2025 00:59:55' },
+    { name: 'instant in UTC', input: '2025-04-27T12:40Z', pageTime: 'Apr 27, 2025 14:40:00' },
+    { name: 'instant with UTC offset', input: '2025-04-27T12:40+1130', pageTime: 'Apr 27, 2025 03:10:00' },
+    { name: 'local time with milliseconds', input: '2025-03-25T12:40:00.120', pageTime: 'Mar 25, 2025 12:40:00' },
+    { name: 'UNIX timestamp', input: '1731493140025', pageTime: 'Nov 13, 2024 11:19:00' },
 ];
 
 for (const { name, input, pageTime } of examples) {

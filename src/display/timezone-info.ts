@@ -114,10 +114,13 @@ export function getTzInfo(
             isDst,
             isYearWithDst: yearWithDst,
             isOffsetDifferentFromNow: offsetDate !== offsetNow,
+            // in a dev tools, 24h everywhere is clearer
+            // 2-digit rather than numeric because some locales (e.g. ko) format an unpadded hour as "6시 0분".
             timeString: date.toLocaleTimeString(locale, {
                 timeZone: timezone,
-                hour: 'numeric',
-                minute: 'numeric',
+                hourCycle: 'h23',
+                hour: '2-digit',
+                minute: '2-digit',
                 ...(format.seconds ? { second: '2-digit' } : {}),
             }),
             dateString: date.toLocaleDateString(locale, {

@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures';
 
 /** the page time shown right after applying 2025-04-27 12:40, i.e. before the clock advances */
-const appliedPageTime = 'Apr 27, 2025 12:40:00 PM';
+const appliedPageTime = 'Apr 27, 2025 12:40:00';
 
 test.describe('setting a date', () => {
     test('applies the date via the apply button', async ({ popup }) => {
@@ -9,7 +9,7 @@ test.describe('setting a date', () => {
         await expect(popup.realTimeNote).toBeVisible();
 
         await popup.setDate('2025-04-27 12:40');
-        await expect(popup.applyButton).toHaveText('Change date to Apr 27, 2025 12:40 PM');
+        await expect(popup.applyButton).toHaveText('Change date to Apr 27, 2025 12:40');
         await popup.applyButton.click();
 
         await expect(popup.fakeDateToggle.checkbox).toBeChecked();
@@ -46,7 +46,7 @@ test.describe('setting a date', () => {
         await popup.dateInput.press('Enter');
 
         await expect(popup.fakeDateToggle.checkbox).toBeChecked();
-        await expect(popup.pageTime).toHaveText(/Apr 15, 2025\s+8:15:\d\d\s*AM/);
+        await expect(popup.pageTime).toHaveText(/Apr 15, 2025\s+08:15:\d\d/);
     });
 
     test('keeps the fake date when the popup is reopened', async ({ popup }) => {
@@ -68,7 +68,7 @@ test.describe('prefilling the current date and time', () => {
 
     test('prefills the input with the current date and time', async ({ popup }) => {
         await expect(popup.dateInput).toHaveValue('2025-07-15 14:00');
-        await expect(popup.applyButton).toHaveText('Change date to Jul 15, 2025 2:00 PM');
+        await expect(popup.applyButton).toHaveText('Change date to Jul 15, 2025 14:00');
         // nothing is applied yet, the page still sees the real date
         await expect(popup.fakeDateToggle.checkbox).not.toBeChecked();
         await expect(popup.realTimeNote).toBeVisible();
@@ -123,7 +123,7 @@ test.describe('stopping the clock', () => {
 
         // while the clock runs, the page time follows the system time
         await popup.advanceClock(5000);
-        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:05 PM');
+        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:05');
 
         await popup.stopClockToggle.set(true);
 
@@ -137,7 +137,7 @@ test.describe('stopping the clock', () => {
         // resuming restarts from that date
         await expect(popup.pageTime).toHaveText(appliedPageTime);
         await popup.advanceClock(3000);
-        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:03 PM');
+        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:03');
     });
 
     test('applies a date with the clock already stopped', async ({ popup }) => {

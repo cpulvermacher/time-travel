@@ -15,7 +15,7 @@ test.describe('the time picker', () => {
 
         await expect(popup.dateInput).toHaveValue('2025-04-27 09:30');
         await popup.applyButton.click();
-        await expect(popup.pageTime).toHaveText('Apr 27, 2025 9:30:00 AM');
+        await expect(popup.pageTime).toHaveText('Apr 27, 2025 09:30:00');
     });
 
     test('uses the selected time zone for an input denoting an instant', async ({ popup }) => {
@@ -32,7 +32,7 @@ test.describe('the time picker', () => {
         // the day is the Tokyo one, and the time is now local time there
         await expect(popup.dateInput).toHaveValue('2025-04-28 09:30');
         await popup.applyButton.click();
-        await expect(popup.pageTime).toHaveText('Apr 28, 2025 9:30:00 AM');
+        await expect(popup.pageTime).toHaveText('Apr 28, 2025 09:30:00');
         await expect(popup.pageTimeOffset).toHaveText('+09:00');
     });
 });

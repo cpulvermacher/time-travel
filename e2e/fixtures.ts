@@ -5,7 +5,7 @@ import { Popup } from './pages/popup';
  * `test.use({ systemTime: ... })`.
  *
  * Europe/Berlin (the browser time zone, see playwright.config.ts) is UTC+2 at that date, so the
- * popup shows 2:00 PM as the current time. */
+ * popup shows 14:00 as the current time. */
 export const defaultSystemTime = '2025-07-15T12:00:00Z';
 
 type Options = {

@@ -11,7 +11,7 @@ test.describe('browser time zone', () => {
         await popup.applyWithEnter('2025-04-27T12:40Z');
 
         // Europe/Berlin (see playwright.config.ts) is UTC+2 in April
-        await expect(popup.pageTime).toHaveText('Apr 27, 2025 2:40:00 PM');
+        await expect(popup.pageTime).toHaveText('Apr 27, 2025 14:40:00');
     });
 
     test.describe('in a different browser time zone', () => {
@@ -22,7 +22,7 @@ test.describe('browser time zone', () => {
 
             await popup.applyWithEnter('2025-04-27T12:40Z');
 
-            await expect(popup.pageTime).toHaveText('Apr 27, 2025 9:40:00 PM'); // UTC+9
+            await expect(popup.pageTime).toHaveText('Apr 27, 2025 21:40:00'); // UTC+9
         });
     });
 });
@@ -37,11 +37,11 @@ test.describe('changing the time zone', () => {
 
         // input is now interpreted as local time in the selected zone
         await expect(popup.dateInputLabel).toContainText('Set date and time (London)');
-        await expect(popup.applyButton).toHaveText('Change to Apr 27, 2025 12:40 PM (London)');
+        await expect(popup.applyButton).toHaveText('Change to Apr 27, 2025 12:40 (London)');
 
         await popup.applyButton.click();
 
-        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00 PM');
+        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00');
         await expect(popup.pageTimeOffset).toHaveText('+01:00');
         await expect(popup.pageTimeOffset).toHaveAttribute(
             'title',
@@ -61,11 +61,11 @@ test.describe('changing the time zone', () => {
         await popup.timezoneSelect.selectOption('Asia/Tokyo');
 
         await expect(popup.dateInput).toHaveValue('2025-04-27 12:40');
-        await expect(popup.applyButton).toHaveText('Change to Apr 27, 2025 12:40 PM (Tokyo)');
+        await expect(popup.applyButton).toHaveText('Change to Apr 27, 2025 12:40 (Tokyo)');
         await popup.applyButton.click();
 
         // same local time, different instant
-        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00 PM');
+        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00');
         await expect(popup.pageTimeOffset).toHaveText('+09:00');
         await expect(popup.pageTimeOffset).toHaveAttribute('title', 'Asia/Tokyo (Japan Standard Time)');
     });
@@ -82,12 +82,12 @@ test.describe('changing the time zone', () => {
 
         await expect(popup.timezoneSelect).toHaveCount(0);
         await expect(popup.dateInputLabel).not.toContainText('(Tokyo)');
-        await expect(popup.applyButton).toHaveText('Change to Apr 27, 2025 12:40 PM (browser time zone)');
+        await expect(popup.applyButton).toHaveText('Change to Apr 27, 2025 12:40 (browser time zone)');
         await popup.applyButton.click();
 
         // now local time in Europe/Berlin (note: an offset badge may still show if the fake date's
         // offset differs from the current one, e.g. when running this outside of summer time)
-        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00 PM');
+        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00');
     });
 
     test('keeps the local time of the selected zone when picking a day', async ({ popup }) => {
@@ -98,7 +98,7 @@ test.describe('changing the time zone', () => {
         // an input with an explicit offset denotes an instant: 12:40Z is 13:40 in London, but 14:40
         // in the browser time zone (Europe/Berlin, see playwright.config.ts)
         await popup.setDate('2025-04-27T12:40Z');
-        await expect(popup.applyButton).toHaveText('Change to Apr 27, 2025 1:40 PM (London)');
+        await expect(popup.applyButton).toHaveText('Change to Apr 27, 2025 13:40 (London)');
 
         await popup.calendarDay(15).click();
 
@@ -113,7 +113,7 @@ test.describe('changing the time zone', () => {
 
         // 20:00Z is already the next day in Tokyo, but still Apr 27 in the browser time zone
         await popup.setDate('2025-04-27T20:00Z');
-        await expect(popup.applyButton).toHaveText('Change to Apr 28, 2025 5:00 AM (Tokyo)');
+        await expect(popup.applyButton).toHaveText('Change to Apr 28, 2025 05:00 (Tokyo)');
 
         await expect(popup.selectedCalendarDay()).toHaveText('28');
 
@@ -134,7 +134,7 @@ test.describe('changing the time zone', () => {
 
         await expect(popup.timezoneCheckbox.checkbox).toBeChecked();
         await expect(popup.timezoneSelect).toHaveValue('Europe/London');
-        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00 PM');
+        await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00');
         await expect(popup.pageTimeOffset).toHaveText('+01:00');
     });
 });
@@ -184,7 +184,7 @@ test.describe('daylight saving time', () => {
             name: 'summer time in the northern hemisphere',
             timezone: 'Europe/London',
             date: '2025-07-15 12:40',
-            pageTime: 'Jul 15, 2025 12:40:00 PM',
+            pageTime: 'Jul 15, 2025 12:40:00',
             offset: '+01:00',
             season: 'dst',
             title: 'Europe/London (British Summer Time)\nDaylight Saving Time (DST) is in effect for this date.',
@@ -193,7 +193,7 @@ test.describe('daylight saving time', () => {
             name: 'standard time in the northern hemisphere',
             timezone: 'Europe/London',
             date: '2025-01-15 12:40',
-            pageTime: 'Jan 15, 2025 12:40:00 PM',
+            pageTime: 'Jan 15, 2025 12:40:00',
             offset: '+00:00',
             season: 'standard',
             title:
@@ -205,7 +205,7 @@ test.describe('daylight saving time', () => {
             name: 'summer time in the southern hemisphere',
             timezone: 'Australia/Sydney',
             date: '2025-01-15 12:40',
-            pageTime: 'Jan 15, 2025 12:40:00 PM',
+            pageTime: 'Jan 15, 2025 12:40:00',
             offset: '+11:00',
             season: 'dst',
             title:
@@ -216,7 +216,7 @@ test.describe('daylight saving time', () => {
             name: 'standard time in the southern hemisphere',
             timezone: 'Australia/Sydney',
             date: '2025-07-15 12:40',
-            pageTime: 'Jul 15, 2025 12:40:00 PM',
+            pageTime: 'Jul 15, 2025 12:40:00',
             offset: '+10:00',
             season: 'standard',
             title:
@@ -227,7 +227,7 @@ test.describe('daylight saving time', () => {
             name: 'a time zone that never observes DST',
             timezone: 'Asia/Tokyo',
             date: '2025-07-15 12:40',
-            pageTime: 'Jul 15, 2025 12:40:00 PM',
+            pageTime: 'Jul 15, 2025 12:40:00',
             offset: '+09:00',
             season: 'none',
             title: 'Asia/Tokyo (Japan Standard Time)',
@@ -266,7 +266,7 @@ test.describe('daylight saving time', () => {
 
                 await popup.applyWithButton('2025-07-15 12:40');
 
-                await expect(popup.pageTime).toHaveText('Jul 15, 2025 12:40:00 PM');
+                await expect(popup.pageTime).toHaveText('Jul 15, 2025 12:40:00');
                 await expect(popup.pageTimeOffset).toHaveText('+02:00');
                 await expect(popup.pageTimeSeasonDot).toHaveClass(/season-dot--dst/);
                 await expect(popup.pageTimeOffset).toHaveAttribute(
@@ -284,7 +284,7 @@ test.describe('daylight saving time', () => {
 
                 await popup.applyWithButton('2025-01-15 12:40');
 
-                await expect(popup.pageTime).toHaveText('Jan 15, 2025 12:40:00 PM');
+                await expect(popup.pageTime).toHaveText('Jan 15, 2025 12:40:00');
                 await expect(popup.pageTimeOffset).toHaveText('+01:00');
                 await expect(popup.pageTimeSeasonDot).toHaveClass(/season-dot--standard/);
                 await expect(popup.pageTimeOffset).toHaveAttribute(
@@ -299,7 +299,7 @@ test.describe('daylight saving time', () => {
 
                 await popup.applyWithButton('2025-04-27 12:40');
 
-                await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00 PM');
+                await expect(popup.pageTime).toHaveText('Apr 27, 2025 12:40:00');
                 await expect(popup.pageTimeOffset).toHaveCount(0);
             });
         });
@@ -313,13 +313,13 @@ test.describe('daylight saving time', () => {
         // Europe/London switches to summer time at 01:00 on Mar 30, 2025
         await popup.applyWithButton('2025-03-30 00:30');
 
-        await expect(popup.pageTime).toHaveText('Mar 30, 2025 12:30:00 AM');
+        await expect(popup.pageTime).toHaveText('Mar 30, 2025 00:30:00');
         await expect(popup.pageTimeOffset).toHaveText('+00:00');
         await expect(popup.pageTimeSeasonDot).toHaveClass(/season-dot--standard/);
 
         await popup.applyWithButton('2025-03-30 03:30');
 
-        await expect(popup.pageTime).toHaveText('Mar 30, 2025 3:30:00 AM');
+        await expect(popup.pageTime).toHaveText('Mar 30, 2025 03:30:00');
         await expect(popup.pageTimeOffset).toHaveText('+01:00');
         await expect(popup.pageTimeSeasonDot).toHaveClass(/season-dot--dst/);
     });
@@ -338,7 +338,7 @@ test.describe('daylight saving time', () => {
         // the wall clock time is kept, i.e. the step moves the instant forward by 23 hours
         await expect(popup.dateInput).toHaveValue('2025-03-30 12:00');
         await popup.applyButton.click();
-        await expect(popup.pageTime).toHaveText('Mar 30, 2025 12:00:00 PM');
+        await expect(popup.pageTime).toHaveText('Mar 30, 2025 12:00:00');
         await expect(popup.pageTimeOffset).toHaveText('+01:00');
 
         // the browser time zone (Europe/Berlin) skips 02:00-03:00 that same night, which must not
@@ -367,7 +367,7 @@ test.describe('daylight saving time', () => {
         await expect(popup.dateInput).toHaveValue('2025-10-26 01:30+00:00');
 
         await popup.applyButton.click();
-        await expect(popup.pageTime).toHaveText('Oct 26, 2025 1:30:00 AM');
+        await expect(popup.pageTime).toHaveText('Oct 26, 2025 01:30:00');
         await expect(popup.pageTimeOffset).toHaveText('+00:00');
     });
 });
