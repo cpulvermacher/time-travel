@@ -50,7 +50,7 @@ body {
     width: 300px;
 }
 
-@media (min-width: 360px) {
+@media (min-width: 301px) {
     html {
         font-size: 1em;
     }
