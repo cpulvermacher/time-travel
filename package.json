@@ -9,6 +9,7 @@
         "lint": "tsc && biome check *.mts *.ts src/ e2e/ && svelte-check --tsconfig ./tsconfig.json && pnpm lint:translations",
         "lint:translations": "bash ./util/check-translations.sh",
         "fix": "biome check --write *.mts *.ts src/ e2e/",
+        "format": "biome format --write *.mts *.ts src/ e2e/",
         "test": "vitest --run",
         "test:e2e": "playwright test",
         "screenshots": "SCREENSHOTS=1 playwright test screenshots --project=chromium",
