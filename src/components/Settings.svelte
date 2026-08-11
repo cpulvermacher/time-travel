@@ -1,9 +1,9 @@
 <script lang="ts">
     import { untrack } from 'svelte';
+    import { formatLocalDate, formatUnambiguousDate } from '@/date/format';
+    import { parseDate } from '@/date/parse';
     import { getTimezoneCity, getTzInfo } from '@/display/timezone-info';
     import { disableFakeDate, setClockState, setFakeDate } from '@/tab-state/state';
-    import { formatLocalDate, formatUnambiguousDate } from '@/util/date/format';
-    import { parseDate } from '@/util/date/parse';
     import { getUILanguage, reloadTab, withTabLoadingRetry } from '@/web-ext/browser';
     import { updateExtensionIcon } from '@/web-ext/icon';
     import { saveMostRecentTimezone, saveSetting } from '@/web-ext/settings';

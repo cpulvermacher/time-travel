@@ -1,9 +1,9 @@
 <script lang="ts">
     import { DatePicker } from '@svelte-plugins/datepicker';
     import { untrack } from 'svelte';
+    import { formatLocalDate } from '@/date/format';
+    import { parseDate } from '@/date/parse';
     import { getFirstDayOfWeek } from '@/display/i18n';
-    import { formatLocalDate } from '@/util/date/format';
-    import { parseDate } from '@/util/date/parse';
     import { getUILanguage } from '@/web-ext/browser';
     import { m } from '../paraglide/messages';
 

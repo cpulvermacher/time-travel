@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { addDays } from '@/util/date/addDays';
-import { formatLocalDate, formatUnambiguousDate } from '@/util/date/format';
-import { parseDate, type ValidDate } from '@/util/date/parse';
+import { addDays } from '@/date/addDays';
+import { formatLocalDate, formatUnambiguousDate } from '@/date/format';
+import { parseDate, type ValidDate } from '@/date/parse';
 
 /** parse `dateString` in `timezone`, step it and format it back, i.e. what a day step in the popup does */
 function step(dateString: string, days: number, timezone: string): string {

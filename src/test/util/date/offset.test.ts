@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getOffsetMinutes, parseLongOffsetSeconds } from '@/util/date/offset';
+import { getOffsetMinutes, parseLongOffsetSeconds } from '@/date/offset';
 
 describe('parseLongOffsetSeconds', () => {
     it('returns 0 for UTC', () => {

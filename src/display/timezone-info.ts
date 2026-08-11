@@ -1,4 +1,4 @@
-import { getOffsetMinutes } from '../util/date/offset';
+import { getOffsetMinutes } from '@/date/offset';
 
 /** Shortens an IANA time zone id to just its city part, e.g. 'America/Argentina/Buenos_Aires' -> 'Buenos Aires' */
 export function getTimezoneCity(tz: string): string {

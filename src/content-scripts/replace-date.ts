@@ -1,7 +1,7 @@
 // this content script is injected into the MAIN world, with no isolation
 // to avoid polluting the global scope, the bundled version is wrapped in an IIFE
 
-import { OriginalDate, OriginalIntlDateTimeFormat } from '../util/date/original-date';
+import { OriginalDate, OriginalIntlDateTimeFormat } from '../date/original-date';
 import { debugLog } from '../util/log';
 import { FakeDate } from './fake-date/FakeDate';
 import { FakeIntlDateTimeFormat } from './fake-date/FakeIntlDateTimeFormat';

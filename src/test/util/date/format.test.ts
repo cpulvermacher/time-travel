@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { formatLocalDate, formatUnambiguousDate, overwriteDatePart, overwriteTimePart } from '@/util/date/format';
-import { parseDate, type ValidDate } from '@/util/date/parse';
+import { formatLocalDate, formatUnambiguousDate, overwriteDatePart, overwriteTimePart } from '@/date/format';
+import { parseDate, type ValidDate } from '@/date/parse';
 
 describe('formatLocalDate', () => {
     const full = { fullPrecision: true };

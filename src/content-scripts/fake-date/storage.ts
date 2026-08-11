@@ -1,5 +1,5 @@
-import { OriginalDate } from '@/util/date/original-date';
-import { parseTimestamp } from '@/util/date/parse';
+import { OriginalDate } from '@/date/original-date';
+import { parseTimestamp } from '@/date/parse';
 
 const FAKE_DATE_STORAGE_KEY = 'timeTravelDate';
 const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp';

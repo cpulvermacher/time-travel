@@ -4,7 +4,7 @@
 // including type annotations — so this is a syntactic plugin instead.
 //
 // The point is code that can end up in the MAIN-world content script, where the
-// global `Date` is FakeDate: it must go through `util/date/original-date` to get
+// global `Date` is FakeDate: it must go through `date/original-date` to get
 // the native implementation. The `$filename` guard below therefore limits the
 // rule to src/content-scripts/ and src/util/ — the popup trees (components/,
 // display/, popup/, tab-state/), the tests and the build config run with a real

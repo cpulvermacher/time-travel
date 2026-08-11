@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseDate, parseTimestamp, type ValidDate } from '@/util/date/parse';
+import { parseDate, parseTimestamp, type ValidDate } from '@/date/parse';
 
 describe('parseDate', () => {
     it('parses various date formats and returns same string', () => {
