@@ -77,17 +77,23 @@
                 {#if timezone || tzInfo.isOffsetDifferentFromNow}
                     <span class="badge" title={offsetBadgeTitle}>
                         {#if tzInfo.isYearWithDst}
-                            <span
+                            <svg
                                 class={[
-                                    "season-dot",
+                                    "season-step",
                                     {
-                                        "season-dot--dst": tzInfo.isDst,
-                                        "season-dot--standard": !tzInfo.isDst,
+                                        "season-step--dst": tzInfo.isDst,
+                                        "season-step--standard": !tzInfo.isDst,
                                     },
                                 ]}
-                                role="img"
-                                aria-label={offsetBadgeTitle}
-                            ></span>
+                                viewBox="0 0 12 12"
+                                aria-hidden="true"
+                            >
+                                <polyline
+                                    points={tzInfo.isDst
+                                        ? "1,8.5 6,8.5 6,3.5 11,3.5"
+                                        : "1,3.5 6,3.5 6,8.5 11,8.5"}
+                                />
+                            </svg>
                         {/if}
                         {tzInfo.offset}
                     </span>
@@ -150,20 +156,22 @@
         border-radius: 8px;
         font-size: 0.8rem;
     }
-    /* One hue, two fills: filled while DST is in effect, hollow while the zone is on standard time,
-       absent when the zone never observes DST. Fill survives at 8px where a second hue would not. */
-    .season-dot {
-        box-sizing: border-box;
-        width: 8px;
-        height: 8px;
+    /* The clock step of the DST transition: up into daylight saving time, down back to standard
+       time; absent when the zone does not observe DST */
+    .season-step {
+        width: 12px;
+        height: 12px;
         flex-shrink: 0;
-        border: 1.5px solid var(--primary-color);
-        border-radius: 50%;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
     }
-    .season-dot--dst {
-        background-color: var(--primary-color);
+    .season-step--dst {
+        color: var(--dst-color);
     }
-    .season-dot--standard {
-        background-color: transparent;
+    .season-step--standard {
+        color: var(--standard-time-color);
     }
 </style>

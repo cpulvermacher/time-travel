@@ -6,6 +6,8 @@
     --border-hover-color: var(--primary-color);
     --divider-color: #dcdcdc;
     --error-color: #8f4242;
+    --dst-color: #f6a319;
+    --standard-time-color: #1baaea;
     /* Hover tints the border and adds a soft ring; focus draws a hard detached outline. Focus has
        to stay on `outline`: it must never be transitioned, and a box-shadow is dropped entirely in
        forced-colors mode. */

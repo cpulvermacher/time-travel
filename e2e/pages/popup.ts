@@ -35,7 +35,7 @@ export class Popup {
     readonly applyButton: Locator;
     readonly pageTime: Locator;
     readonly pageTimeOffset: Locator;
-    readonly pageTimeSeasonDot: Locator;
+    readonly pageTimeSeasonStep: Locator;
     readonly realTimeNote: Locator;
     readonly timezoneSelect: Locator;
     readonly calendar: Locator;
@@ -66,7 +66,7 @@ export class Popup {
         this.applyButton = page.locator('button.apply-button');
         this.pageTime = page.locator('.page-time .datetime');
         this.pageTimeOffset = page.locator('.page-time .badge');
-        this.pageTimeSeasonDot = page.locator('.page-time .badge .season-dot');
+        this.pageTimeSeasonStep = page.locator('.page-time .badge .season-step');
         this.realTimeNote = page.locator('.page-time .note');
         this.timezoneSelect = page.getByRole('combobox');
         this.calendar = page.locator('.datepicker');
