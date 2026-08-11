@@ -1,3 +1,5 @@
+import { OriginalDate } from './original-date';
+
 export type LocalDateParts = SharedDateParts & {
     localTimestamp: number; // not a UTC timestamp!
 };
@@ -56,12 +58,12 @@ export function getDatePartsForLocalDate(
     second: number,
     ms: number
 ): LocalDateParts {
-    return getDatePartsForLocalTimestamp(Date.UTC(year, month, day, hour, minute, second, ms));
+    return getDatePartsForLocalTimestamp(OriginalDate.UTC(year, month, day, hour, minute, second, ms));
 }
 
-/** returns LocalDateParts for given local (!) timestamp. */
+/** returns LocalDateParts for given browser-time (!) timestamp. */
 export function getDatePartsForLocalTimestamp(timestamp: number): LocalDateParts {
-    const utcDate = new Date(timestamp);
+    const utcDate = new OriginalDate(timestamp);
     return {
         year: utcDate.getUTCFullYear(),
         month: utcDate.getUTCMonth(),

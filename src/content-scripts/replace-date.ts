@@ -1,6 +1,7 @@
 // this content script is injected into the MAIN world, with no isolation
 // to avoid polluting the global scope, the bundled version is wrapped in an IIFE
 
+import { OriginalDate, OriginalIntlDateTimeFormat } from '../util/date/original-date';
 import { debugLog } from '../util/log';
 import { FakeDate } from './fake-date/FakeDate';
 import { FakeIntlDateTimeFormat } from './fake-date/FakeIntlDateTimeFormat';
@@ -16,9 +17,6 @@ import {
 
 const devVersion = import.meta.env.VITE_VERSION ? `Version: ${import.meta.env.VITE_VERSION}` : '';
 debugLog(`Time Travel: injected content-script (${devVersion}) for host ${window.location.host}`);
-
-const OriginalDate = Date;
-const OriginalIntlDateTimeFormat = Intl.DateTimeFormat;
 
 const updateStateAndReplaceDate = () => {
     updateState();

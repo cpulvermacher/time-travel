@@ -1,0 +1,35 @@
+// Flags uses of the `Date` *value* (constructor, statics, prototype) while
+// leaving the `Date` *type* alone. Biome's `noRestrictedGlobals` rule cannot
+// make that distinction — it matches every reference to the identifier,
+// including type annotations — so this is a syntactic plugin instead.
+//
+// The point is code that can end up in the MAIN-world content script, where the
+// global `Date` is FakeDate: it must go through `util/date/original-date` to get
+// the native implementation. The `$filename` guard below therefore limits the
+// rule to src/content-scripts/ and src/util/ — the popup trees (components/,
+// display/, popup/, tab-state/), the tests and the build config run with a real
+// `Date` and are not restricted. `overrides` in biome.json cannot switch plugins
+// off (its `plugins` field only adds to the top-level list), so the path filter
+// has to live here. Note that groups in the regex must be non-capturing — Grit
+// reads a plain `(...)` as a capture variable and errors out.
+//
+// Known gap: aliasing the global (`const D = Date; new D()`) is not detected —
+// which is what makes `export const OriginalDate = Date` in original-date.ts
+// pass. Suppress with `// biome-ignore lint/plugin: <reason>` (plain `plugin:`
+// does not work).
+
+language js
+
+or {
+  `new Date($args)`,
+  `Date.$prop`,
+  `$x instanceof Date`,
+  `class $c extends Date { $body }`
+} as $usage where {
+  $filename <: r".*/src/(?:content-scripts|util)/.*",
+  register_diagnostic(
+    span = $usage,
+    message = "Do not use the `Date` constructor or its statics, always use chose OriginalDate or FakeDate explictly.",
+    severity = "error"
+  )
+}

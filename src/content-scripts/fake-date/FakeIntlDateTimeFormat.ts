@@ -1,6 +1,5 @@
+import { OriginalIntlDateTimeFormat } from '@/util/date/original-date';
 import { fakeNowDate, getTimezone } from './storage';
-
-const OriginalIntlDateTimeFormat = Intl.DateTimeFormat;
 
 export interface FakeIntlDateTimeFormat extends Intl.DateTimeFormat {
     _originalObject: Intl.DateTimeFormat;

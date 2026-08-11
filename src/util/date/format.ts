@@ -1,5 +1,6 @@
 import { getDatePartsForLocalTimestamp, type SharedDateParts } from './date-parts';
 import { getOffsetSeconds, getUtcOffset, parsesToOffset } from './offset';
+import { OriginalDate } from './original-date';
 import { parseDate } from './parse';
 
 export type FormatOptions = {
@@ -114,7 +115,7 @@ export function overwriteDatePart(dateTimeString: string, newDay: string): strin
  */
 export function overwriteTimePart(dateTimeString: string, newTime: string): string {
     const parsedDateTime = parseDate(dateTimeString);
-    const date = parsedDateTime.isValid ? parsedDateTime.date : new Date();
+    const date = parsedDateTime.isValid ? parsedDateTime.date : new OriginalDate();
 
     const dayPart = formatLocalDate(date).split(' ')[0];
     return `${dayPart} ${newTime}`;

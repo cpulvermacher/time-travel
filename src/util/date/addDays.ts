@@ -1,6 +1,7 @@
 import { compareDateParts, getDateParts, getDatePartsForLocalDate } from './date-parts';
 import { disambiguateDate } from './disambiguateDate';
 import { getOffsetSeconds } from './offset';
+import { OriginalDate } from './original-date';
 
 const msPerSecond = 1000;
 
@@ -15,14 +16,14 @@ const msPerSecond = 1000;
  */
 export function addDays(date: Date, days: number, timezone: string): Date {
     if (!timezone) {
-        const newDate = new Date(date);
+        const newDate = new OriginalDate(date);
         newDate.setDate(newDate.getDate() + days);
         return newDate;
     }
 
     const parts = getDateParts(date, timezone);
     if (!parts) {
-        return new Date(NaN);
+        return new OriginalDate(NaN);
     }
 
     // an overflowing day is resolved by getDatePartsForLocalDate()
@@ -42,8 +43,8 @@ export function addDays(date: Date, days: number, timezone: string): Date {
     // and stepping back and forth returns to the same instant.
     const sameOffsetTimestamp = desiredDate.localTimestamp + getOffsetSeconds(date.getTime(), timezone) * msPerSecond;
     if (compareDateParts(getDateParts(sameOffsetTimestamp, timezone), desiredDate)) {
-        return new Date(sameOffsetTimestamp);
+        return new OriginalDate(sameOffsetTimestamp);
     }
 
-    return new Date(disambiguateDate(desiredDate, timezone));
+    return new OriginalDate(disambiguateDate(desiredDate, timezone));
 }

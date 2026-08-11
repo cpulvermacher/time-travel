@@ -1,7 +1,6 @@
 import { getDatePartsForLocalTimestamp } from './date-parts';
 import { disambiguateDate } from './disambiguateDate';
-
-const OriginalDate = Date;
+import { OriginalDate } from './original-date';
 
 /**
  * parses a date string into a timestamp.
