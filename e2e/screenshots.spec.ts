@@ -10,8 +10,8 @@ import type { Popup } from './pages/popup';
 
 const screenshotDir = 'screenshots';
 
-// below the 360px breakpoint, so the popup renders at the narrow width the extension shows
-test.use({ viewport: { width: 300, height: 640 } });
+// below the 301px breakpoint, so the popup renders at the narrow desktop width
+test.use({ viewport: { width: 300, height: 640 }, deviceScaleFactor: 2 });
 
 test.describe('popup screenshots', () => {
     test.skip(!process.env.SCREENSHOTS, 'run with `pnpm screenshots`');
