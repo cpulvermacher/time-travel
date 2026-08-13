@@ -93,6 +93,13 @@
         margin-left: auto;
         margin-right: auto;
         transition: box-shadow var(--short-duration) var(--ease-out);
+        /* the global `line-height: 1` for buttons lifts the number off the circle's center */
+        line-height: normal;
+    }
+
+    /* keep today bold when it is also the selected day */
+    :global(.datepicker[data-picker-theme="theme"] .calendars-container .calendar .date.today.range span) {
+        font-weight: var(--datepicker-font-weight-bold);
     }
 
     /* override some hard coded radii on start/end of range  */
