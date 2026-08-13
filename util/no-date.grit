@@ -21,15 +21,11 @@
 language js
 
 or {
-  `new Date($args)`,
-  `Date.$prop`,
-  `$x instanceof Date`,
-  `class $c extends Date { $body }`
+    `new Date($args)`,
+    `Date.$prop`,
+    `$x instanceof Date`,
+    `class $c extends Date { $body }`
 } as $usage where {
-  $filename <: r".*/src/(?:content-scripts|util)/.*",
-  register_diagnostic(
-    span = $usage,
-    message = "Do not use the `Date` constructor or its statics, always use chose OriginalDate or FakeDate explictly.",
-    severity = "error"
-  )
+    $filename <: r".*/src/(?:content-scripts|util)/.*",
+    register_diagnostic(span=$usage, message="Do not use the `Date` constructor or its statics, always use OriginalDate or FakeDate explicitly.", severity="error")
 }
