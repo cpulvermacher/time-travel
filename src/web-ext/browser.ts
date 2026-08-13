@@ -27,7 +27,15 @@ export async function isFileUrl(tabId: number): Promise<boolean> {
 /** does this tab have a Chrome Web Store URL? */
 export async function isExtensionGalleryUrl(tabId: number): Promise<boolean> {
     const tabDetails = await chrome.tabs.get(tabId);
-    return !!tabDetails.url?.startsWith('https://chromewebstore.google.com');
+    if (!tabDetails.url) {
+        return false;
+    }
+
+    try {
+        return new URL(tabDetails.url).host === 'chromewebstore.google.com';
+    } catch {
+        return false;
+    }
 }
 
 /** does this tab have an about: URL? (these fail in interesting ways) */
