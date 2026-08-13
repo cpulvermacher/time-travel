@@ -23,7 +23,9 @@
         </div>
         <div class={["label", { disabled }]}>{label}</div>
     </div>
-    <div class="description">{description}</div>
+    {#if description}
+        <div class="description">{description}</div>
+    {/if}
 </label>
 
 <style>
