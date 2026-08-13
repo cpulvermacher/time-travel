@@ -348,7 +348,7 @@
          */
         --datepicker-calendar-today-background: transparent;
         --datepicker-calendar-today-border: none;
-        --datepicker-calendar-today-cursor: default;
+        --datepicker-calendar-today-cursor: pointer;
         --datepicker-calendar-today-font-weight: var(--datepicker-font-weight-bold);
         /**
          * Calendar Range
@@ -359,7 +359,7 @@
         --datepicker-calendar-range-border-radius: 0;
         --datepicker-calendar-range-color: var(--datepicker-color);
         --datepicker-calendar-range-color-disabled: #ffc0b7;
-        --datepicker-calendar-range-cursor: default;
+        --datepicker-calendar-range-cursor: pointer;
         --datepicker-calendar-range-font-weight: var(--datepicker-font-weight-base);
 
         /**
