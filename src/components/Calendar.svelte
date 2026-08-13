@@ -299,7 +299,9 @@
          */
         --datepicker-calendar-container-display: grid;
         --datepicker-calendar-container-grid-template-columns: repeat(7, 1fr);
-        --datepicker-calendar-container-grid-gap: 0;
+        /* the gutter between week rows belongs to the grid, not to the day (see
+           --datepicker-calendar-day-margin-bottom) */
+        --datepicker-calendar-container-grid-gap: 1px 0;
         --datepicker-calendar-container-width: fit-content;
 
         /**
@@ -331,7 +333,10 @@
         --datepicker-calendar-day-justify-content: center;
         --datepicker-calendar-day-font-family: var(--datepicker-font-family);
         --datepicker-calendar-day-font-size: var(--datepicker-font-size-base);
-        --datepicker-calendar-day-margin-bottom: 1px;
+        /* the row gutter is the grid's row-gap instead: the selected day gets an explicit height
+           from svelte-datepicker, so a margin here would make it the one day that is a pixel
+           shorter than the rest, which moves every week row below it. */
+        --datepicker-calendar-day-margin-bottom: 0;
         --datepicker-calendar-day-padding: 0;
         --datepicker-calendar-day-text-align: center;
         --datepicker-calendar-day-zindex-focus: 12;
