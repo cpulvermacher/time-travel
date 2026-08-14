@@ -79,6 +79,22 @@ describe('loadSettings', () => {
         expect(settings.stopClock).toBe(false);
     });
 
+    it('falls back to the browser timezone for a stored zone this browser does not know', async () => {
+        mockStorage.data.timezone = 'Mars/Olympus_Mons';
+
+        const settings = await loadSettings();
+
+        expect(settings.timezone).toBe('');
+    });
+
+    it('drops unknown zones from the stored history', async () => {
+        mockStorage.data.recentTimezones = ['Asia/Tokyo', 'Mars/Olympus_Mons', 'Europe/London'];
+
+        const settings = await loadSettings();
+
+        expect(settings.recentTimezones).toEqual(['Asia/Tokyo', 'Europe/London']);
+    });
+
     it('returns defaults when no storage is available', async () => {
         vi.mocked(browser).getSettingsStorage.mockReturnValue(undefined);
 
@@ -140,10 +156,30 @@ describe('saveMostRecentTimezone', () => {
     });
 
     it('caps the history at 5 entries', async () => {
-        mockStorage.data.recentTimezones = ['a', 'b', 'c', 'd', 'e'];
+        mockStorage.data.recentTimezones = [
+            'Asia/Tokyo',
+            'America/New_York',
+            'Europe/Paris',
+            'Australia/Sydney',
+            'Africa/Cairo',
+        ];
 
         await saveMostRecentTimezone('Europe/London');
 
-        expect(mockStorage.data.recentTimezones).toEqual(['Europe/London', 'a', 'b', 'c', 'd']);
+        expect(mockStorage.data.recentTimezones).toEqual([
+            'Europe/London',
+            'Asia/Tokyo',
+            'America/New_York',
+            'Europe/Paris',
+            'Australia/Sydney',
+        ]);
+    });
+
+    it('drops stored timezones this browser does not know', async () => {
+        mockStorage.data.recentTimezones = ['Asia/Tokyo', 'Mars/Olympus_Mons'];
+
+        await saveMostRecentTimezone('Europe/London');
+
+        expect(mockStorage.data.recentTimezones).toEqual(['Europe/London', 'Asia/Tokyo']);
     });
 });

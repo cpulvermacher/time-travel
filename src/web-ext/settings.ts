@@ -1,4 +1,4 @@
-import { isValidTimezone } from '../display/timezone-info';
+import { isValidTimezone, sanitizeTimezone } from '@/display/timezone-info';
 import { getSettingsStorage } from './browser';
 
 type SettingName = keyof Settings;
@@ -36,11 +36,22 @@ export async function saveMostRecentTimezone(timezone: string) {
     let timezones = await loadSetting('recentTimezones', []);
 
     timezones.unshift(timezone);
-    //remove duplicates
-    timezones = timezones.filter((tz, index) => timezones.indexOf(tz) === index);
+    //remove duplicates and zones this browser no longer knows
+    timezones = timezones.filter((tz, index) => timezones.indexOf(tz) === index && isValidTimezone(tz));
     timezones = timezones.slice(0, maxTimezoneHistory);
 
     await saveSetting('recentTimezones', timezones);
+}
+
+/** Storage is synced across browsers and survives updates, so it can hand back a time zone this
+ * browser does not know (written by a newer IANA database, or by a different browser).
+ */
+function sanitizeSettings(settings: Settings): Settings {
+    return {
+        ...settings,
+        timezone: sanitizeTimezone(settings.timezone),
+        recentTimezones: settings.recentTimezones.filter(isValidTimezone),
+    };
 }
 
 /** load all settings */
@@ -53,7 +64,7 @@ export async function loadSettings(): Promise<Settings> {
 
     try {
         const settings = await storage.get<Settings>(['autoReload', 'stopClock', 'timezone', 'recentTimezones']);
-        return { ...defaultSettings, ...settings };
+        return sanitizeSettings({ ...defaultSettings, ...settings });
     } catch (error) {
         console.error('Error loading settings:', error);
     }

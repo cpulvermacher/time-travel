@@ -2,7 +2,7 @@
 
 import { formatUnambiguousDate } from '@/date/format';
 import { parseDate, parseTimestamp } from '@/date/parse';
-import { isValidTimezone } from '@/display/timezone-info';
+import { sanitizeTimezone } from '@/display/timezone-info';
 import { m } from '@/paraglide/messages';
 import { getTabState, type TabState } from '@/tab-state/state';
 import { getActiveTabId, isAboutUrl, isExtensionGalleryUrl, isFileUrl } from '@/web-ext/browser';
@@ -20,11 +20,6 @@ export type InitialState = {
     pageClock: PageClock | undefined; // undefined if no fake date is set in the page
     settings: Settings; // stored settings, but possibly overridden by tab state if active
 };
-
-/** map a page-controlled timezone to a valid IANA zone, or '' (browser default) if invalid */
-function sanitizeTimezone(timezone: string | null): string {
-    return isValidTimezone(timezone) ? timezone : '';
-}
 
 /** derive the popup's initial state from the (possibly active) content-script state and stored settings */
 function buildInitialState(state: TabState, settings: Settings): InitialState {

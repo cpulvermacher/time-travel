@@ -19,6 +19,16 @@ export function isValidTimezone(tz: string | null | undefined): tz is string {
     }
 }
 
+/** Maps a time zone from an untrusted source (page state, stored settings) to a valid IANA zone,
+ * or '' (browser default) if it is not one this browser knows.
+ *
+ * An unknown zone would otherwise silently be treated as UTC when parsing, and make every
+ * `getDateParts()` in the page return undefined once applied.
+ */
+export function sanitizeTimezone(tz: string | null | undefined): string {
+    return isValidTimezone(tz) ? tz : '';
+}
+
 type TimezoneNameFormat = 'short' | 'long' | 'shortOffset' | 'longOffset' | 'shortGeneric' | 'longGeneric';
 
 const formatterCache = new Map<string, Intl.DateTimeFormat>();
