@@ -56,7 +56,6 @@ function buildInitialState(state: TabState, settings: Settings): InitialState {
         pageClock: isEnabled ? pageClock : undefined,
         settings: {
             autoReload: settings.autoReload,
-            advancedSettingsOpen: settings.advancedSettingsOpen,
             stopClock: isEnabled ? state.isClockStopped : settings.stopClock,
             timezone: isEnabled ? timezone : settings.timezone,
             recentTimezones: settings.recentTimezones,

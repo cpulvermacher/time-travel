@@ -60,7 +60,6 @@ describe('loadSettings', () => {
         expect(settings).toEqual({
             autoReload: false,
             stopClock: false,
-            advancedSettingsOpen: false,
             timezone: '',
             recentTimezones: [],
         });
@@ -78,7 +77,6 @@ describe('loadSettings', () => {
         expect(settings.recentTimezones).toEqual(['Asia/Tokyo']);
         // unset values keep defaults
         expect(settings.stopClock).toBe(false);
-        expect(settings.advancedSettingsOpen).toBe(false);
     });
 
     it('returns defaults when no storage is available', async () => {
@@ -98,7 +96,6 @@ describe('loadSettings', () => {
         expect(settings).toEqual({
             autoReload: false,
             stopClock: false,
-            advancedSettingsOpen: false,
             timezone: '',
             recentTimezones: [],
         });

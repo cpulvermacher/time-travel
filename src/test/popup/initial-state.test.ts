@@ -11,7 +11,6 @@ vi.mock('@/web-ext/settings');
 const defaultSettings: settings.Settings = {
     autoReload: true,
     stopClock: false,
-    advancedSettingsOpen: false,
     timezone: 'America/New_York',
     recentTimezones: ['Europe/London', 'Asia/Tokyo'],
 };

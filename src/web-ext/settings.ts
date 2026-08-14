@@ -6,7 +6,6 @@ type SettingName = keyof Settings;
 export type Settings = {
     autoReload: boolean;
     stopClock: boolean; // tab state if time travel is active, stored setting if inactive
-    advancedSettingsOpen: boolean;
     timezone: string; // '' for browser default timezone
     recentTimezones: string[]; // last `maxTimezoneHistory` timezone IDs
 };
@@ -14,7 +13,6 @@ export type Settings = {
 const defaultSettings: Settings = {
     autoReload: false,
     stopClock: false,
-    advancedSettingsOpen: false,
     timezone: '',
     recentTimezones: [],
 };
@@ -54,13 +52,7 @@ export async function loadSettings(): Promise<Settings> {
     }
 
     try {
-        const settings = await storage.get<Settings>([
-            'autoReload',
-            'stopClock',
-            'advancedSettingsOpen',
-            'timezone',
-            'recentTimezones',
-        ]);
+        const settings = await storage.get<Settings>(['autoReload', 'stopClock', 'timezone', 'recentTimezones']);
         return { ...defaultSettings, ...settings };
     } catch (error) {
         console.error('Error loading settings:', error);
