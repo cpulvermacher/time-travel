@@ -106,6 +106,31 @@ test.describe('changing the time zone', () => {
         await expect(popup.dateInput).toHaveValue('2025-04-15 13:40');
     });
 
+    // the gap under test is one of the *browser* zone, so that zone is pinned here rather than
+    // taken from the global default (see playwright.config.ts) which the test would not control
+    test.describe('in a browser time zone with a DST gap', () => {
+        test.use({ timezoneId: 'Europe/Berlin' });
+
+        test('keeps the local time of the selected zone when picking a day in the gap', async ({ popup }) => {
+            await popup.stopClockToggle.set(true);
+
+            // precondition: Europe/Berlin skips 02:00-03:00 on Mar 30, 2025, so 02:30 does not
+            // exist there and resolves to 03:30
+            await popup.applyWithButton('2025-03-30 02:30');
+            await expect(popup.pageTime).toHaveText('Mar 30, 2025 03:30:00');
+
+            // the same wall clock is an ordinary time in the selected zone, so picking a day must
+            // keep it rather than resolve it through the browser zone
+            await popup.timezoneCheckbox.set(true);
+            await popup.timezoneSelect.selectOption('UTC');
+            await popup.setDate('2025-03-30 02:30');
+
+            await popup.calendarDay(15).click();
+
+            await expect(popup.dateInput).toHaveValue('2025-03-15 02:30');
+        });
+    });
+
     test('shows the day of the selected zone in the calendar', async ({ popup }) => {
         await popup.stopClockToggle.set(true);
         await popup.timezoneCheckbox.set(true);

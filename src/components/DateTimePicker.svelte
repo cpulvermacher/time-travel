@@ -78,7 +78,7 @@
         node.setSelectionRange(-1, -1);
     }
     async function acceptPickerDay(day: string) {
-        fakeDate = overwriteDatePart(localDateString, day);
+        fakeDate = overwriteDatePart(localDateString, day, timezone);
 
         if (await isAndroid()) {
             // on Android, automatically open the time picker after selecting a date
@@ -93,7 +93,7 @@
         }
     }
     function acceptPickerTime(time: string) {
-        fakeDate = overwriteTimePart(localDateString, time);
+        fakeDate = overwriteTimePart(localDateString, time, timezone);
     }
     function adjustSeconds(seconds: number) {
         if (!parsedDate.isValid) {

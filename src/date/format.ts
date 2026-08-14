@@ -92,16 +92,19 @@ function formatDateParts(parts: SharedDateParts, options?: FormatOptions): strin
  *
  * Precision of time part is preserved, but includes at least hours and minutes. A `dateTimeString`
  * without a time part yields midnight.
- * `dateTimeString` is interpreted as local time, and the returned string will be in local time.
+ * `dateTimeString` is interpreted as local time in `timezone` (the browser time zone if unset), and
+ * the returned string is in that same zone. Reading and writing the time in one zone is what keeps
+ * the operation symbolic: routing it through the browser zone instead would shift a time that
+ * happens to fall into a DST gap there.
  */
-export function overwriteDatePart(dateTimeString: string, newDay: string): string {
-    const parsedDateTime = parseDate(dateTimeString);
+export function overwriteDatePart(dateTimeString: string, newDay: string, timezone?: string): string {
+    const parsedDateTime = parseDate(dateTimeString, timezone);
     const timeRegex = /\d{1,2}:\d{1,2}/;
     if (!parsedDateTime.isValid || !timeRegex.test(dateTimeString)) {
         return `${newDay} 00:00`;
     }
 
-    const timePart = formatLocalDate(parsedDateTime.date, { fullPrecision: true }).split(' ')[1];
+    const timePart = formatLocalDate(parsedDateTime.date, { fullPrecision: true, timezone }).split(' ')[1];
     return `${newDay} ${timePart}`;
 }
 
@@ -111,12 +114,13 @@ export function overwriteDatePart(dateTimeString: string, newDay: string): strin
  * `newTime` is taken verbatim, so it must already be zero padded (as an `<input type="time">` value
  * is). Any seconds and milliseconds of `dateTimeString` are dropped, since the time picker only has
  * minute precision. An invalid `dateTimeString` falls back to the current day.
- * `dateTimeString` is interpreted as local time, and the returned string will be in local time.
+ * `dateTimeString` is interpreted as local time in `timezone` (the browser time zone if unset), and
+ * the returned string is in that same zone, for the same reason as in overwriteDatePart().
  */
-export function overwriteTimePart(dateTimeString: string, newTime: string): string {
-    const parsedDateTime = parseDate(dateTimeString);
+export function overwriteTimePart(dateTimeString: string, newTime: string, timezone?: string): string {
+    const parsedDateTime = parseDate(dateTimeString, timezone);
     const date = parsedDateTime.isValid ? parsedDateTime.date : new OriginalDate();
 
-    const dayPart = formatLocalDate(date).split(' ')[0];
+    const dayPart = formatLocalDate(date, { timezone }).split(' ')[0];
     return `${dayPart} ${newTime}`;
 }

@@ -220,6 +220,14 @@ describe('overwriteDatePart', () => {
         expect(overwriteDatePart('2025-02-10 12:34', '-002025-01-22')).toBe('-002025-01-22 12:34');
         expect(overwriteDatePart('2025-02-10 12:34', '275760-09-13')).toBe('275760-09-13 12:34');
     });
+
+    it('keeps the time of the given time zone across a DST gap of the browser time zone', () => {
+        // the input is the wall clock of the selected zone, so a gap of the *browser* zone must not
+        // shift it. 02:30 on 2025-03-30 does not exist in Europe/Berlin, but it does in UTC.
+        expect(overwriteDatePart('2025-03-30 02:30', '2025-05-05', 'UTC')).toBe('2025-05-05 02:30');
+        // same for the southern hemisphere: 00:30 on 2025-09-07 does not exist in America/Santiago
+        expect(overwriteDatePart('2025-09-07 00:30', '2025-05-05', 'UTC')).toBe('2025-05-05 00:30');
+    });
 });
 
 describe('overwriteTimePart', () => {
@@ -242,6 +250,11 @@ describe('overwriteTimePart', () => {
     it('takes the new time verbatim, without reinterpreting it', () => {
         // the time is not parsed, so it cannot be shifted by a time zone or normalized
         expect(overwriteTimePart('2025-02-10 12:34', '09:09:09')).toBe('2025-02-10 09:09:09');
+    });
+
+    it('keeps the day of the given time zone across a DST gap of the browser time zone', () => {
+        expect(overwriteTimePart('2025-03-30 02:30', '12:00', 'UTC')).toBe('2025-03-30 12:00');
+        expect(overwriteTimePart('2025-09-07 00:30', '12:00', 'UTC')).toBe('2025-09-07 12:00');
     });
 
     it('handles unix timestamps', () => {
