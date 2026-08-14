@@ -1,8 +1,8 @@
 <script lang="ts">
     import { getTzInfo } from '@/display/timezone-info';
+    import { m } from '@/paraglide/messages';
+    import type { PageClock } from '@/popup/initial-state';
     import { getUILanguage } from '@/web-ext/browser';
-    import { m } from '../paraglide/messages';
-    import type { PageClock } from '../popup/initial-state';
 
     interface Props {
         clock: PageClock | undefined; // fake clock set in the page, undefined if the page uses the real date

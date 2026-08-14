@@ -4,8 +4,8 @@
     import { formatLocalDate, formatUnambiguousDate, overwriteDatePart, overwriteTimePart } from '@/date/format';
     import { parseDate } from '@/date/parse';
     import { getTimezoneCity } from '@/display/timezone-info';
+    import { m } from '@/paraglide/messages';
     import { isAndroid } from '@/web-ext/browser';
-    import { m } from '../paraglide/messages';
     import Calendar from './Calendar.svelte';
     import DateFormatInfo from './DateFormatInfo.svelte';
     import LinkButton from './LinkButton.svelte';

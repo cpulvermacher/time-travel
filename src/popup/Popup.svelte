@@ -1,9 +1,9 @@
 <script lang="ts">
+    import Settings from '@/components/Settings.svelte';
     import { getTranslationLocale } from '@/display/i18n';
+    import { m } from '@/paraglide/messages';
+    import { overwriteGetLocale } from '@/paraglide/runtime';
     import { getUILanguage } from '@/web-ext/browser';
-    import Settings from '../components/Settings.svelte';
-    import { m } from '../paraglide/messages';
-    import { overwriteGetLocale } from '../paraglide/runtime';
     import { getInitialState } from './initial-state';
 
     const locale = getTranslationLocale(getUILanguage());

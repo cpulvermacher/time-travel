@@ -4,8 +4,8 @@
     import { formatLocalDate } from '@/date/format';
     import { parseDate } from '@/date/parse';
     import { getFirstDayOfWeek } from '@/display/i18n';
+    import { m } from '@/paraglide/messages';
     import { getUILanguage } from '@/web-ext/browser';
-    import { m } from '../paraglide/messages';
 
     interface Props {
         selectedDay: string; // "YYYY-MM-DD"; anything else keeps the previously selected day

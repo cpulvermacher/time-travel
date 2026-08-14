@@ -9,8 +9,8 @@
         TZGROUP_COMMON,
         TZGROUP_RECENT,
     } from '@/display/timezone-options';
+    import { m } from '@/paraglide/messages';
     import { getUILanguage } from '@/web-ext/browser';
-    import { m } from '../paraglide/messages';
     import Checkbox from './Checkbox.svelte';
 
     interface Props {

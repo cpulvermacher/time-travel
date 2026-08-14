@@ -3,12 +3,12 @@
     import { formatLocalDate, formatUnambiguousDate } from '@/date/format';
     import { parseDate } from '@/date/parse';
     import { getTimezoneCity, getTzInfo } from '@/display/timezone-info';
+    import { m } from '@/paraglide/messages';
+    import type { InitialState } from '@/popup/initial-state';
     import { disableFakeDate, setClockState, setFakeDate } from '@/tab-state/state';
     import { getUILanguage, reloadTab, withTabLoadingRetry } from '@/web-ext/browser';
     import { updateExtensionIcon } from '@/web-ext/icon';
     import { saveMostRecentTimezone, saveSetting } from '@/web-ext/settings';
-    import { m } from '../paraglide/messages';
-    import type { InitialState } from '../popup/initial-state';
     import Checkbox from './Checkbox.svelte';
     import DateTimePicker from './DateTimePicker.svelte';
     import ErrorModal from './ErrorModal.svelte';

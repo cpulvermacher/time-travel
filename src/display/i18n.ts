@@ -1,4 +1,4 @@
-import { type Locale, locales } from '../paraglide/runtime';
+import { type Locale, locales } from '@/paraglide/runtime';
 
 /**
  * for a language string like 'en' or 'de-AT', return available locale.

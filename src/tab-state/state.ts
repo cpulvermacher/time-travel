@@ -1,4 +1,4 @@
-import { getActiveTabId, injectFunction, registerContentScript } from '../web-ext/browser';
+import { getActiveTabId, injectFunction, registerContentScript } from '@/web-ext/browser';
 import { devTabState } from './dev-mock';
 import * as inject from './inject';
 
