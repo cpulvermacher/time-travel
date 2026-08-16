@@ -5,6 +5,7 @@
     --border-color: #aaaaaa;
     --border-hover-color: var(--primary-color);
     --divider-color: #dcdcdc;
+    --disabled-background-color: #f3f4f6;
     --error-color: #8f4242;
     --dst-color: #f6a319;
     --standard-time-color: #1baaea;
@@ -117,7 +118,7 @@ button.primary {
 
 button:disabled {
     /* biome-ignore lint/complexity/noImportantStyles: needed to override component-scoped styles */
-    background: white !important;
+    background: var(--disabled-background-color) !important;
     /* biome-ignore lint/complexity/noImportantStyles: needed to override component-scoped styles */
     color: var(--secondary-text-color) !important;
     border-color: var(--divider-color);
