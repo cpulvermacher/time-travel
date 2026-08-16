@@ -9,7 +9,6 @@
     import { getUILanguage, reloadTab, withTabLoadingRetry } from '@/web-ext/browser';
     import { updateExtensionIcon } from '@/web-ext/icon';
     import { saveMostRecentTimezone, saveSetting } from '@/web-ext/settings';
-    import Checkbox from './Checkbox.svelte';
     import DateTimePicker from './DateTimePicker.svelte';
     import ErrorModal from './ErrorModal.svelte';
     import PageTimeDisplay from './PageTimeDisplay.svelte';
@@ -192,7 +191,6 @@
         recentTimezones={settings.recentTimezones}
         date={parsedDate.isValid ? parsedDate.date : undefined}
     />
-    <Checkbox bind:checked={settings.autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
     <div class="right-aligned">
         <button type="button" class="primary apply-button" disabled={!isApplyButtonEnabled()} onclick={onApply}>
             {getApplyButtonLabel()}
@@ -205,6 +203,7 @@
         onChange={onClockToggle}
         label={m.stop_time_toggle()}
     />
+    <Toggle bind:checked={settings.autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
 </main>
 
 {#if showReloadModal}

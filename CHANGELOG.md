@@ -9,7 +9,7 @@
     - Show date and/or timezone change to apply in main button, or "No Changes" if unchanged.
     - Improve calendar style consistency.
     - Replace the `(?)` on the date input with a `Keys & formats` link, also explain keyboard shortcuts in the popup.
-    - Use checkboxes for `Change time zone` and `Reload page on changes`, since they take effect only on apply.
+    - Use checkbox for `Change time zone` since it takes effect only on apply.
     - Faster animations, no more animations triggered by keyboard focus.
 - Allow disabling fake date by emptying input and pressing Enter.
 - Add Page Up / Page Down shortcuts for adjusting current input by 1 day.

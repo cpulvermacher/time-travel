@@ -44,7 +44,7 @@ export class Popup {
     readonly reloadButton: Locator;
     readonly fakeDateToggle: CheckControl;
     readonly stopClockToggle: CheckControl;
-    readonly autoReloadCheckbox: CheckControl;
+    readonly autoReloadToggle: CheckControl;
     readonly timezoneCheckbox: CheckControl;
     readonly timeInput: Locator;
     private reloadedTabs = 0;
@@ -75,7 +75,7 @@ export class Popup {
         this.reloadButton = this.reloadModal.getByRole('button', { name: 'Reload' });
         this.fakeDateToggle = new CheckControl(page, 'toggle', 'Fake JavaScript date');
         this.stopClockToggle = new CheckControl(page, 'toggle', 'Stop clock');
-        this.autoReloadCheckbox = new CheckControl(page, 'checkbox', 'Reload page on changes');
+        this.autoReloadToggle = new CheckControl(page, 'toggle', 'Reload page on changes');
         this.timezoneCheckbox = new CheckControl(page, 'checkbox', 'Change time zone');
     }
 

@@ -152,7 +152,7 @@ test.describe('stopping the clock', () => {
 
 test.describe('auto-reload', () => {
     test('reloads the tab after applying a date', async ({ popup }) => {
-        await popup.autoReloadCheckbox.set(true);
+        await popup.autoReloadToggle.set(true);
 
         await popup.applyWithButton('2025-04-27 12:40');
 
@@ -161,7 +161,7 @@ test.describe('auto-reload', () => {
     });
 
     test('does not reload the tab when switched off', async ({ popup }) => {
-        await expect(popup.autoReloadCheckbox.checkbox).not.toBeChecked();
+        await expect(popup.autoReloadToggle.checkbox).not.toBeChecked();
 
         await popup.applyWithButton('2025-04-27 12:40');
         await expect(popup.pageTime).toHaveText(appliedPageTime);
@@ -170,11 +170,11 @@ test.describe('auto-reload', () => {
     });
 
     test('remembers the setting', async ({ popup }) => {
-        await popup.autoReloadCheckbox.set(true);
+        await popup.autoReloadToggle.set(true);
 
         await popup.reopen();
 
-        await expect(popup.autoReloadCheckbox.checkbox).toBeChecked();
+        await expect(popup.autoReloadToggle.checkbox).toBeChecked();
     });
 });
 
@@ -221,7 +221,7 @@ test.describe('first use in a tab', () => {
     });
 
     test('reloads instead of asking when auto-reload is on', async ({ popup }) => {
-        await popup.autoReloadCheckbox.set(true);
+        await popup.autoReloadToggle.set(true);
 
         await popup.applyWithButton('2025-04-27 12:40');
 
