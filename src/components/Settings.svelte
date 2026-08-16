@@ -72,13 +72,16 @@
                     await reloadTab();
                 }
             });
+
+            effectiveDate = date;
+            effectiveTimezone = settings.timezone;
+            pageClock = {
+                date,
+                tickStart: settings.stopClock ? null : Date.now(),
+            };
         } catch (e) {
             setError(m.error_setting_date_failed(), e);
         }
-
-        effectiveDate = date;
-        effectiveTimezone = settings.timezone;
-        pageClock = { date, tickStart: settings.stopClock ? null : Date.now() };
     }
     async function reset() {
         try {
