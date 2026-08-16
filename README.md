@@ -10,6 +10,21 @@ A browser extension to fake the current date, time and time zone in JavaScript `
 
 https://github.com/user-attachments/assets/74f0ee57-f941-4b94-9176-5445d58fd8a1
 
+## Features
+
+- Fakes date and time for all methods of `Date` and `Intl.DateTimeFormat` objects.
+- Time zone can be changed, with full support for DST transitions.
+- Time can be stopped and resumed.
+- Option to automatically reload page after changing date.
+- Only affects current tab after clicking the extension icon.
+- Minimal permissions (in Chrome)
+
+## Limitations
+
+- Only JavaScript is affected by the extension.
+- Some functionality or animations may behave strangely if the clock is stopped.
+- The extension does not work in iframes with the `sandbox` attribute.
+
 ## Usage
 
 - Open the tab you want to change the time in.
@@ -42,21 +57,6 @@ Dates without offset information are interpreted as local time in the selected t
 - `2025-04-27T12:40Z` - Set local equivalent for a given instant in UTC
 - `1731493140025` - UNIX timestamp
 - `2025-04-27T12:40+02:00` - Set local equivalent for time with +02:00 time zone offset. Note that actual time zone is not changed
-
-## Features
-
-- Fakes date and time for all methods of `Date` and `Intl.DateTimeFormat` objects.
-- Time zone can be changed, with full support for DST transitions.
-- Time can be stopped and resumed.
-- Option to automatically reload page after changing date.
-- Only affects current tab after clicking the extension icon.
-- Minimal permissions (in Chrome)
-
-## Limitations
-
-- Only JavaScript is affected by the extension.
-- Some functionality or animations may behave strangely if the clock is stopped.
-- The extension does not work in iframes with the `sandbox` attribute.
 
 ## Installation
 
