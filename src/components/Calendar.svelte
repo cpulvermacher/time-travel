@@ -157,18 +157,14 @@
         /**
          * Common Variables
          */
-        /* only feeds --datepicker-calendar-split-border, a decorative rule */
         --datepicker-border-color: var(--divider-color);
-
         --datepicker-state-active: var(--primary-color);
         --datepicker-state-hover: color-mix(in srgb, var(--primary-color) 12%, white);
-
         --datepicker-color: var(--primary-color);
         --datepicker-font-family: var(--font-family);
         --datepicker-font-size-base: 1rem;
 
         --datepicker-spacing: 4px;
-
         --datepicker-margin-xsmall: calc(var(--datepicker-spacing) / 4);
         --datepicker-margin-small: calc(var(--datepicker-spacing) / 2);
         --datepicker-margin-base: var(--datepicker-spacing);
