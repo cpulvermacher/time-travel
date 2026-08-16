@@ -29,7 +29,7 @@ Date and time input is then interpreted as local time in the selected time zone 
 Switching to a different time zone keeps the entered *local* date and time, which may change the instant (unless the input field contains a UTC instant).
 
 A badge next to the effective page time shows the UTC offset in use, with an icon marking whether the date falls into daylight saving time or standard time.
-Hovering over it will show further details.
+Hovering over the badge will show further details.
 
 ### Example Dates and Formats
 
@@ -95,4 +95,4 @@ Start a new Firefox instance with the extension loaded using `(cd dist/firefox; 
 
 ## Contributing
 
-Contributions are welcome! If you have ideas, bug reports, or want to help improve Time Travel, please open an issue or submit a pull request on [GitHub](https://github.com/cpulvermacher/time-travel).
+If you have ideas, bug reports, or want to help improve Time Travel, please open an issue on [GitHub](https://github.com/cpulvermacher/time-travel).

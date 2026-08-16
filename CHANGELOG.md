@@ -3,13 +3,12 @@
 ## [3.0.0]
 - Improve extension popup UI:
     - Show ON/OFF state and used date/time for the current tab on top.
-    - (breaking change) If `Change time zone` is active, interpret date and time input in the given time zone unless a specific offset is entered. (previously: browser timezone)
+    - (breaking change) If `Change time zone` is active, interpret date and time input in the given time zone unless a specific offset is entered. (previously: browser timezone) Toggle changed to a checkbox for clarity.
     - (breaking change) Timezone is only changed when confirming the new value. (previously: applied immediately)
     - In time zone list, show UTC offset for current draft date.
     - Show date and/or timezone change to apply in main button, or "No Changes" if unchanged.
     - Improve calendar style consistency.
     - Replace the `(?)` on the date input with a `Keys & formats` link, also explain keyboard shortcuts in the popup.
-    - Use checkbox for `Change time zone` since it takes effect only on apply.
     - Faster animations, no more animations triggered by keyboard focus.
 - Allow disabling fake date by emptying input and pressing Enter.
 - Add Page Up / Page Down shortcuts for adjusting current input by 1 day.
