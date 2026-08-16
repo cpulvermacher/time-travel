@@ -1,8 +1,8 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
-// localStorage key of the mocked tab state (see src/util/content-script-state.ts)
+// localStorage key of the mocked tab state (see src/tab-state/dev-mock.ts)
 const devTabStateKey = 'timeTravelDevTabState';
-// what the mocked reloadTab() logs instead of reloading (see src/util/browser.ts)
+// what the mocked reloadTab() logs instead of reloading (see src/web-ext/browser.ts)
 const mockTabReloadLog = 'reloading tab (mocked)';
 
 /** A Toggle or Checkbox component; both wrap a checkbox input in a label of the same name. */
