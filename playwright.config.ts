@@ -22,7 +22,7 @@ export default defineConfig({
         { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     ],
     webServer: {
-        // the popup is served by the dev server, with the extension APIs mocked (see util/browser.ts)
+        // the popup is served by the dev server, with the extension APIs mocked (see web-ext/browser.ts)
         command: 'pnpm exec vite',
         url: `${baseURL}/popup/main.html`,
         reuseExistingServer: !process.env.CI,
