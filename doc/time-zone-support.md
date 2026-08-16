@@ -40,7 +40,7 @@ Daylight saving time (DST) and other changes in the time zone offset are reflect
 
 The time zone selector shows the offset each zone has at the currently entered date, and the date the page sees plus its concrete offset is shown above the fake date input.
 
-A DST offset of the effective page date is shown in a different colour. In case time zone offsets change for other reasons, this might be falsely shown as DST. Hovering the offset gives the zone name and states whether DST is in effect for that date, or is observed at other times of the year. The extension icon's tooltip shows the same information for the date the page currently sees.
+The offset of the effective page date carries a coloured indicator showing whether DST is in effect. In case time zone offsets change for other reasons, this might be falsely shown as DST. Hovering the offset gives the zone name and states whether DST is in effect for that date, or is observed at other times of the year. The extension icon's tooltip shows the same information for the date the page currently sees.
 
 Changing offsets can make some times ambiguous. For example, there might be two 2:00 a.m. values during a transition from DST to non-DST. To match browser implementations and the spec, any ambiguity is resolved by using the time zone offset before the transition. This affects the behaviour of local dates passed to Date.parse(), non-UTC setters, and the constructor, as well as the date entered in the UI (which uses the same parser).
 

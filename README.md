@@ -28,19 +28,20 @@ When enabled, both `Date` objects and `Intl.DateTimeFormat` will use this time z
 Date and time input is then interpreted as local time in the selected time zone as well (input label shows e.g. "Set date and time (London)").
 Switching to a different time zone keeps the entered *local* date and time, which may change the instant (unless the input field contains a UTC instant).
 
-When the timezone is changed, the UTC offset and DST status is shown as a badge next to the effective page time.
+A badge next to the effective page time shows the UTC offset in use, with an icon marking whether the date falls into daylight saving time or standard time.
 Hovering over it will show further details.
 
 ### Example Dates and Formats
 
 Dates without offset information are interpreted as local time in the selected time zone, or in the system time zone if "Change time zone" is off.
 
-- `2025-04-27 12:40` - Local time
+- `2025-02-27 12:40` - Local time
+- `27 Feb 2025 12:40` - Local time with month name
 - `2025-03-30 00:59:55` - Assuming the selected time zone is Europe/London (GMT), 5 seconds before a one-hour jump to 2 a.m. (summer time)
+- `2025-02-25T12:40:00.120` - Local time with milliseconds
 - `2025-04-27T12:40Z` - Set local equivalent for a given instant in UTC
-- `2025-04-27T12:40+1130` - Set local equivalent for time with +11:30 time zone offset. Note that actual time zone is not changed
-- `2025-03-25T12:40:00.120` - Local time with milliseconds
 - `1731493140025` - UNIX timestamp
+- `2025-04-27T12:40+02:00` - Set local equivalent for time with +02:00 time zone offset. Note that actual time zone is not changed
 
 ## Features
 
