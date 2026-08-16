@@ -78,6 +78,7 @@ main {
 
 label {
     width: 100%;
+    text-wrap: balance;
 }
 
 input,
@@ -103,6 +104,7 @@ input::selection {
 
 button {
     line-height: 1;
+    text-wrap: balance;
     padding: 7px 10px;
     transition:
         background-color var(--short-duration) var(--ease-out),
