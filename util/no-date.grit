@@ -6,9 +6,12 @@
 // The point is code that can end up in the MAIN-world content script, where the
 // global `Date` is FakeDate: it must go through `date/original-date` to get
 // the native implementation. The `$filename` guard below therefore limits the
-// rule to src/content-scripts/, src/date/ and src/util/ — the popup trees (components/,
-// display/, popup/, tab-state/), the tests and the build config run with a real
-// `Date` and are not restricted. `overrides` in biome.json cannot switch plugins
+// rule to src/content-scripts/, src/date/, src/util/ and src/tab-state/inject.ts —
+// the popup trees (components/, display/, popup/, the rest of tab-state/), the tests
+// and the build config run with a real `Date` and are not restricted. inject.ts is
+// included because its readers are injected into the page's MAIN world; note that its
+// functions are serialized, so they cannot import OriginalDate and would have to
+// suppress the diagnostic explicitly. `overrides` in biome.json cannot switch plugins
 // off (its `plugins` field only adds to the top-level list), so the path filter
 // has to live here. Note that groups in the regex must be non-capturing — Grit
 // reads a plain `(...)` as a capture variable and errors out.
@@ -26,6 +29,6 @@ or {
     `$x instanceof Date`,
     `class $c extends Date { $body }`
 } as $usage where {
-    $filename <: r".*/src/(?:content-scripts|date|util)/.*",
+    $filename <: r".*/src/(?:content-scripts/.*|date/.*|util/.*|tab-state/inject\.ts)",
     register_diagnostic(span=$usage, message="Do not use the `Date` constructor or its statics, always use OriginalDate or FakeDate explicitly.", severity="error")
 }
