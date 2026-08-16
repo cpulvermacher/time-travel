@@ -1,10 +1,32 @@
 :root {
     --primary-color: #6060f4;
     --text-color: #494949;
-    --secondary-text-color: #9f9f9f;
-    --border-color: #dcdcdc;
+    --secondary-text-color: #6f6f6f;
+    --border-color: #aaaaaa;
+    --border-hover-color: var(--primary-color);
+    --divider-color: #dcdcdc;
+    --disabled-background-color: #f3f4f6;
     --error-color: #8f4242;
+    --dst-color: #f6a319;
+    --standard-time-color: #1baaea;
+    /* Hover tints the border and adds a soft ring; focus draws a hard detached outline. Focus has
+       to stay on `outline`: it must never be transitioned, and a box-shadow is dropped entirely in
+       forced-colors mode. */
+    --ring: 0 0 0 3px color-mix(in srgb, var(--primary-color) 28%, transparent);
+    --focus-outline: 2px solid var(--primary-color);
+    --focus-outline-offset: 2px;
+    --gap-small: 4px;
+    --gap-mid: 8px;
+    --gap-large: 16px;
+    --gap-xlarge: 32px;
+    --input-radius: 5px;
     --font-family: -apple-system, BlinkMacSystemFont, Inter, Helvetica, Arial, "Liberation Sans", sans-serif;
+    --checkbox-size: 16px;
+    --checkbox-gap: var(--gap-small);
+    --checkbox-label-offset: calc(var(--checkbox-size) + var(--checkbox-gap));
+    --short-duration: 150ms;
+    --long-duration: 400ms;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html,
@@ -35,7 +57,7 @@ body {
     width: 300px;
 }
 
-@media (min-width: 400px) {
+@media (min-width: 301px) {
     html {
         font-size: 1em;
     }
@@ -45,46 +67,83 @@ body {
     }
 }
 
+main {
+    min-height: 510px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--gap-mid);
+    padding: var(--gap-large);
+}
+
 label {
     width: 100%;
+    text-wrap: balance;
 }
 
 input,
-button {
+button,
+select {
     font-family: var(--font-family);
     font-size: 1rem;
+    box-sizing: border-box;
+    padding: var(--gap-small) var(--gap-mid);
+    color: var(--text-color);
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--input-radius);
+    transition:
+        box-shadow var(--short-duration) var(--ease-out),
+        border-color var(--short-duration) var(--ease-out);
+}
+
+input::selection {
+    background-color: var(--primary-color);
+    color: white;
 }
 
 button {
     line-height: 1;
-    border: 1px solid var(--border-color);
-    border-radius: 3px;
+    text-wrap: balance;
     padding: 7px 10px;
-    background: white;
-    color: var(--text-color);
-    transition: all 0.3s ease-in;
+    transition:
+        background-color var(--short-duration) var(--ease-out),
+        color var(--short-duration) var(--ease-out),
+        box-shadow var(--short-duration) var(--ease-out),
+        border-color var(--short-duration) var(--ease-out);
+}
+
+button.primary {
+    background: var(--primary-color);
+    color: white;
 }
 
 button:disabled {
     /* biome-ignore lint/complexity/noImportantStyles: needed to override component-scoped styles */
-    background: white !important;
+    background: var(--disabled-background-color) !important;
     /* biome-ignore lint/complexity/noImportantStyles: needed to override component-scoped styles */
     color: var(--secondary-text-color) !important;
+    border-color: var(--divider-color);
 }
 
-button:not(:disabled):hover {
-    filter: drop-shadow(0 0 2px var(--primary-color));
+button:not(:disabled):hover,
+select:not(:disabled):hover {
     cursor: pointer;
 }
 
+/* the accent ring, on every control that carries a border */
+input:not(:disabled):hover,
+button:not(:disabled):hover,
+select:not(:disabled):hover {
+    box-shadow: var(--ring);
+    border-color: var(--border-hover-color);
+}
+
 a:focus-visible,
+button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 summary:focus-visible {
-    outline: 2px solid var(--primary-color);
-}
-
-button:focus-visible {
-    /* biome-ignore lint/complexity/noImportantStyles: needed to override svelte-datepicker's chrome-specific style */
-    outline: 2px solid var(--primary-color) !important;
+    outline: var(--focus-outline);
+    outline-offset: var(--focus-outline-offset);
 }

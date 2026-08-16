@@ -1,6 +1,6 @@
 import type { ActivationMessage } from './types/ActivationMessage';
-import { setIconBadgeAndTitle, updateExtensionIcon } from './util/icon';
 import { debugLog } from './util/log';
+import { setIconBadgeAndTitle, updateExtensionIcon } from './web-ext/icon';
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
     void updateBadgeAndTitle(activeInfo.tabId);

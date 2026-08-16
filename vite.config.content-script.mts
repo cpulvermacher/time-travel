@@ -1,6 +1,12 @@
+import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+    resolve: {
+        alias: {
+            '@': resolve(import.meta.dirname, './src'),
+        },
+    },
     plugins: [],
     root: 'src',
     build: {
@@ -19,6 +25,7 @@ export default defineConfig({
             output: {
                 entryFileNames: 'content-scripts/replace-date.js',
                 minifyInternalExports: false, // since minification is off, this makes it worse
+                comments: false,
             },
         },
     },

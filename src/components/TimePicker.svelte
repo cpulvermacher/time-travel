@@ -1,34 +1,24 @@
 <script lang="ts">
-    import { isAndroid } from '../util/browser';
-    import { formatLocalTime, overwriteTimePart, parseDate } from '../util/date-utils';
+    import { isAndroid } from '@/web-ext/browser';
 
     interface Props {
-        value: string;
-        onChange?: () => void;
+        selectedTime: string; // "HH:mm", or empty if there is no valid time
+        onSelectTime: (time: string) => void; // called with the picked time as "HH:mm"
     }
-    let { value = $bindable(), onChange: onChangeProp }: Props = $props();
+    let { selectedTime, onSelectTime }: Props = $props();
 
     /** trigger opening the browser/system time picker */
     export function showPicker() {
         inputRef?.showPicker?.();
     }
 
-    let parsedDate = $derived(parseDate(value));
-    let localTime = $derived(parsedDate.isValid ? formatLocalTime(parsedDate.date) : '');
     let inputRef: HTMLInputElement | undefined = $state(); // need $state since bind:this is used inside if block
 
     function onChange(event: Event & { currentTarget: EventTarget & HTMLInputElement }) {
         const input = event.target as HTMLInputElement;
-        if (!input.value) {
-            return;
+        if (input.value) {
+            onSelectTime(input.value);
         }
-
-        const [hours, minutes] = input.value.split(':');
-        const hoursNum = parseInt(hours, 10);
-        const minutesNum = parseInt(minutes, 10);
-
-        value = overwriteTimePart(value, hoursNum, minutesNum);
-        onChangeProp?.();
     }
 </script>
 
@@ -40,7 +30,7 @@
                 id="time-picker"
                 class="time-input-icon"
                 onchange={onChange}
-                value={localTime}
+                value={selectedTime}
                 bind:this={inputRef}
             />
         </div>
@@ -56,10 +46,19 @@
         background-size: 80%;
         border: 1px solid var(--border-color);
         border-radius: 30px;
+        transition:
+            box-shadow var(--short-duration) var(--ease-out),
+            border-color var(--short-duration) var(--ease-out);
     }
 
-    .icon:focus-within {
-        outline: 2px solid var(--primary-color);
+    .icon:hover {
+        box-shadow: var(--ring);
+        border-color: var(--border-hover-color);
+    }
+
+    .icon:has(:focus-visible) {
+        outline: var(--focus-outline);
+        outline-offset: var(--focus-outline-offset);
     }
 
     input {

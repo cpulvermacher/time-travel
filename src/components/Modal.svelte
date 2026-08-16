@@ -8,7 +8,6 @@
     }
     const { children, onClose, closeOnCancel }: Props = $props();
 
-    // biome-ignore lint/correctness/noUnusedVariables: used in template with use:show
     function show(node: HTMLDialogElement) {
         node.showModal();
     }
@@ -44,6 +43,7 @@
     }
 </script>
 
+<!-- biome-ignore lint/a11y/useKeyWithClickEvents: onclick only dismisses on backdrop clicks, the keyboard is the close button -->
 <dialog use:show {oncancel} onclose={onClose} onclick={onDialogClick} class="modal {onClose ? 'closable' : ''}">
     {#if onClose}
         <button type="button" class="close" onclick={onClose}>✕</button>
@@ -64,25 +64,26 @@
         border: none;
         box-sizing: border-box;
         margin: 0;
-        padding: 25px 10px;
+        padding: var(--gap-large);
 
         display: flex;
-        gap: 20px;
+        gap: var(--gap-xlarge);
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        /* not center: content taller than max-height would overflow at the top, out of scroll reach */
+        justify-content: flex-start;
         color: var(--text-color);
-        background: rgba(255, 255, 255, 0.8);
-        border-top: 1px solid var(--border-color);
-        border-bottom: 1px solid var(--border-color);
-        animation: fade-in 0.3s ease-in;
+        background: white;
+        /* the sheet spans the full width, so only the top and bottom edges are ever visible */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        animation: fade-in 0.5s var(--ease-out);
     }
     .modal.closable {
-        padding: 30px 10px;
+        padding: 30px var(--gap-large);
     }
 
     ::backdrop {
-        background: rgba(255, 255, 255, 0.3);
+        background: rgba(0, 0, 0, 0.2);
         backdrop-filter: blur(5px);
     }
 

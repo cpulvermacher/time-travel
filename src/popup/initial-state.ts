@@ -1,34 +1,66 @@
 /// <reference types="vite/client" />
-import { m } from '../paraglide/messages';
-import { getActiveTabId, isAboutUrl, isExtensionGalleryUrl, isFileUrl } from '../util/browser';
-import { getContentScriptState } from '../util/content-script-state';
-import { formatLocalDate, parseDate, parseTimestamp } from '../util/date-utils';
-import { loadSettings, type Settings } from '../util/settings';
-import { isValidTimezone } from '../util/timezone-info';
+
+import { formatUnambiguousDate } from '@/date/format';
+import { parseDate, parseTimestamp } from '@/date/parse';
+import { sanitizeTimezone } from '@/display/timezone-info';
+import { m } from '@/paraglide/messages';
+import { getTabState, type TabState } from '@/tab-state/state';
+import { getActiveTabId, isAboutUrl, isExtensionGalleryUrl, isFileUrl } from '@/web-ext/browser';
+import { loadSettings, type Settings } from '@/web-ext/settings';
+
+/** the fake clock as it is set in the page (see fakeNowDate()), i.e. what the page currently reads */
+export type PageClock = {
+    date: Date; // fake date stored in the page, i.e. the date the page reads at `tickStart`
+    tickStart: number | null; // timestamp the clock started ticking from, null if the clock is stopped
+};
 
 export type InitialState = {
     isEnabled: boolean;
-    fakeDate: string; // current fake date, or current time as fallback
+    fakeDate: string; // date to show in the picker: current fake date, or current time as fallback
+    pageClock: PageClock | undefined; // undefined if no fake date is set in the page
     settings: Settings; // stored settings, but possibly overridden by tab state if active
 };
 
-/** map a page-controlled timezone to a valid IANA zone, or '' (browser default) if invalid */
-function sanitizeTimezone(timezone: string | null): string {
-    return isValidTimezone(timezone) ? timezone : '';
+/** derive the popup's initial state from the (possibly active) content-script state and stored settings */
+function buildInitialState(state: TabState, settings: Settings): InitialState {
+    let initialFakeDate: string | undefined;
+    let pageClock: PageClock | undefined;
+    const timezone = state.fakeDateActive ? sanitizeTimezone(state.timezone) : settings.timezone;
+    if (state.fakeDateActive && state.fakeDate) {
+        // note: the stored fake date is an ISO string in UTC, so it is not affected by the time zone
+        const fakeDate = parseDate(state.fakeDate);
+        const tickStartTimestamp = parseTimestamp(state.tickStartTimestamp);
+        if (!fakeDate.isValid) {
+            initialFakeDate = undefined;
+        } else if (!state.isClockStopped && tickStartTimestamp !== null) {
+            const elapsed = Date.now() - tickStartTimestamp;
+            const fakeDateNow = new Date(fakeDate.date.getTime() + elapsed);
+            initialFakeDate = formatUnambiguousDate(fakeDateNow, timezone);
+            pageClock = { date: fakeDate.date, tickStart: tickStartTimestamp };
+        } else {
+            initialFakeDate = formatUnambiguousDate(fakeDate.date, timezone, { fullPrecision: true });
+            pageClock = { date: fakeDate.date, tickStart: null };
+        }
+    }
+    const isEnabled = !!initialFakeDate;
+
+    return {
+        isEnabled,
+        // fallback: current time, shown in the drafted zone (`timezone` only applies if enabled)
+        fakeDate: initialFakeDate ?? formatUnambiguousDate(new Date(), settings.timezone),
+        pageClock: isEnabled ? pageClock : undefined,
+        settings: {
+            autoReload: settings.autoReload,
+            stopClock: isEnabled ? state.isClockStopped : settings.stopClock,
+            timezone: isEnabled ? timezone : settings.timezone,
+            recentTimezones: settings.recentTimezones,
+        },
+    };
 }
 
 /** get current state of extension. Throws on permission errors */
 export async function getInitialState(): Promise<InitialState> {
     const settings = await loadSettings();
-
-    if (import.meta.env.DEV) {
-        //return dummy state based on settings for testing
-        return {
-            isEnabled: true,
-            fakeDate: '2005-06-07 08:09',
-            settings: settings,
-        };
-    }
 
     const tabId = await getActiveTabId();
     if (await isAboutUrl(tabId)) {
@@ -37,34 +69,7 @@ export async function getInitialState(): Promise<InitialState> {
     }
 
     try {
-        let initialFakeDate: string | undefined;
-        const state = await getContentScriptState(tabId);
-        if (state.fakeDateActive && state.fakeDate) {
-            const fakeDate = parseDate(state.fakeDate);
-            const tickStartTimestamp = parseTimestamp(state.tickStartTimestamp);
-            if (!fakeDate.isValid) {
-                initialFakeDate = undefined;
-            } else if (!state.isClockStopped && tickStartTimestamp !== null) {
-                const elapsed = Date.now() - tickStartTimestamp;
-                const fakeDateNow = new Date(fakeDate.date.getTime() + elapsed);
-                initialFakeDate = formatLocalDate(fakeDateNow);
-            } else {
-                initialFakeDate = formatLocalDate(fakeDate.date, { fullPrecision: true });
-            }
-        }
-        const isEnabled = !!initialFakeDate;
-
-        return {
-            isEnabled,
-            fakeDate: initialFakeDate ?? formatLocalDate(new Date()),
-            settings: {
-                autoReload: settings.autoReload,
-                advancedSettingsOpen: settings.advancedSettingsOpen,
-                stopClock: isEnabled ? state.isClockStopped : settings.stopClock,
-                timezone: isEnabled ? sanitizeTimezone(state.timezone) : settings.timezone,
-                recentTimezones: settings.recentTimezones,
-            },
-        };
+        return buildInitialState(await getTabState(tabId), settings);
     } catch (error) {
         if (await isFileUrl(tabId)) {
             throw new Error(m.permission_error_file_url());

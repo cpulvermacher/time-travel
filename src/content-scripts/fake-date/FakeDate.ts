@@ -1,12 +1,11 @@
-import { getOffsetMinutes } from '../../util/timezone-info';
-import { getDateParts, getDatePartsForLocalDate } from './date-parts';
-import { disambiguateDate } from './disambiguateDate';
+import { getDateParts, getDatePartsForLocalDate } from '@/date/date-parts';
+import { disambiguateDate } from '@/date/disambiguateDate';
+import { getOffsetMinutes } from '@/date/offset';
+import { OriginalDate } from '@/date/original-date';
+import { parseWithTimezone } from '@/date/parseWithTimezone';
 import { optionsWithDefaultTz } from './FakeIntlDateTimeFormat';
 import { getTimezoneName } from './getTimezoneName';
-import { parseWithTimezone } from './parseWithTimezone';
 import { fakeNowDate, getTimezone } from './storage';
-
-const OriginalDate = Date;
 
 // Date constructor, needs to be a function to allow both constructing (`new Date()`) and calling without new: `Date()`
 export function FakeDate(
@@ -22,7 +21,7 @@ export function FakeDate(
 ) {
     if (!new.target) {
         // `Date()` invoked without 'new', return current time string
-        return new Date().toString();
+        return new (FakeDate as DateConstructor)().toString();
     }
 
     if (args.length === 0) {
@@ -391,8 +390,8 @@ const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 
 // static properties
 Object.setPrototypeOf(FakeDate, OriginalDate);
-FakeDate.now = () => new Date().getTime();
-FakeDate.parse = (datestr: string) => new Date(datestr).getTime();
+FakeDate.now = () => new (FakeDate as DateConstructor)().getTime();
+FakeDate.parse = (datestr: string) => new (FakeDate as DateConstructor)(datestr).getTime();
 
 // for instance properties, _copy_ them from the original Date prototype
 // this is necessary for e.g. @date-fns/tz, which iterates over Object.getOwnPropertyNames(Date.prototype)

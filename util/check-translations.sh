@@ -12,7 +12,7 @@ BASE_FILE="./messages/${BASE_LOCALE}.json"
 EXIT_CODE=0
 
 # Check if jq is installed
-if ! command -v jq &> /dev/null; then
+if ! command -v jq &>/dev/null; then
     echo -e "${RED}Error: jq is not installed. Please install it first.${NC}"
     exit 1
 fi
@@ -31,8 +31,6 @@ for LOCALE_FILE in ./messages/*.json; do
     if [ "$locale" = "$BASE_LOCALE" ]; then
         continue
     fi
-
-    echo -e "\n${YELLOW}Checking $locale against $BASE_LOCALE...${NC}"
 
     # Get base keys that are missing in the locale file
     MISSING_KEYS=$(jq -r --slurpfile localeFile "$LOCALE_FILE" 'keys - ($localeFile[0] | keys) | .[]' "$BASE_FILE")
@@ -57,9 +55,5 @@ for LOCALE_FILE in ./messages/*.json; do
         echo "$EXTRA_KEYS" | sed 's/^/  - /'
     fi
 done
-
-if [ $EXIT_CODE -eq 0 ]; then
-    echo -e "\n${GREEN}All translations are complete!${NC}"
-fi
 
 exit $EXIT_CODE

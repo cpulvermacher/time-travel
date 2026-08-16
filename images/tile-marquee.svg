@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<svg width="1400" height="560" viewBox="0 0 1400 560" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9d9dfc"></stop>
+      <stop offset="1" stop-color="#6c6af0"></stop>
+    </linearGradient>
+    <clipPath id="clip"><rect width="1400" height="560"></rect></clipPath>
+  </defs>
+  <g clip-path="url(#clip)">
+    <rect width="1400" height="560" fill="#232447"></rect>
+    <g transform="translate(720,-20) scale(37.5)" opacity="0.32">
+      <path fill="url(#g)" d="M12,6a1,1,0,0,0-1,1v5a1,1,0,0,0,.293.707l3,3a1,1,0,0,0,1.414-1.414L13,11.586V7A1,1,0,0,0,12,6Z M23.812,10.132A12,12,0,0,0,3.578,3.415V1a1,1,0,0,0-2,0V5a2,2,0,0,0,2,2h4a1,1,0,0,0,0-2H4.827a9.99,9.99,0,1,1-2.835,7.878A.982.982,0,0,0,1,12a1.007,1.007,0,0,0-1,1.1,12,12,0,1,0,23.808-2.969Z"></path>
+    </g>
+    <g transform="translate(110,151) scale(4.5833)">
+      <path fill="url(#g)" d="M12,6a1,1,0,0,0-1,1v5a1,1,0,0,0,.293.707l3,3a1,1,0,0,0,1.414-1.414L13,11.586V7A1,1,0,0,0,12,6Z M23.812,10.132A12,12,0,0,0,3.578,3.415V1a1,1,0,0,0-2,0V5a2,2,0,0,0,2,2h4a1,1,0,0,0,0-2H4.827a9.99,9.99,0,1,1-2.835,7.878A.982.982,0,0,0,1,12a1.007,1.007,0,0,0-1,1.1,12,12,0,1,0,23.808-2.969Z"></path>
+    </g>
+    <text x="110" y="382" font-family="Helvetica, Arial, sans-serif" font-size="120" font-weight="700" letter-spacing="-3" fill="#ffffff">Time Travel</text>
+  </g>
+</svg>

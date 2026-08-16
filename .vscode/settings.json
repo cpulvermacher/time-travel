@@ -12,7 +12,7 @@
         "editor.formatOnSave": false
     },
     "editor.codeActionsOnSave": {
-        "source.organizeImports": "always"
+        "source.organizeImports.biome": "explicit"
     },
     "files.insertFinalNewline": true
 }

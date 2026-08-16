@@ -1,0 +1,39 @@
+name: E2E Tests
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox]
+    steps:
+    - uses: actions/checkout@v6
+    - uses: pnpm/action-setup@08c4be7e2e672a47d11bd04269e27e5f3e8529cb # v6.0.0
+    - name: Use Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: '24.x'
+        cache: 'pnpm'
+    - run: pnpm i
+    - name: Install browser
+      run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
+    - name: Run tests
+      run: pnpm test:e2e --project=${{ matrix.browser }}
+    - name: Upload report
+      if: failure()
+      uses: actions/upload-artifact@v5
+      with:
+        name: playwright-report-${{ matrix.browser }}
+        path: playwright-report/
+        retention-days: 7

@@ -1,18 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getInitialState } from '../../popup/initial-state';
-import * as browser from '../../util/browser';
-import * as contentScriptState from '../../util/content-script-state';
-import { getContentScriptState } from '../../util/content-script-state';
-import * as settings from '../../util/settings';
+import { getInitialState } from '@/popup/initial-state';
+import { getTabState, type TabState } from '@/tab-state/state';
+import * as browser from '@/web-ext/browser';
+import * as settings from '@/web-ext/settings';
 
-vi.mock('../../util/browser');
-vi.mock('../../util/content-script-state');
-vi.mock('../../util/settings');
+vi.mock('@/tab-state/state');
+vi.mock('@/web-ext/browser');
+vi.mock('@/web-ext/settings');
 
 const defaultSettings: settings.Settings = {
     autoReload: true,
     stopClock: false,
-    advancedSettingsOpen: false,
     timezone: 'America/New_York',
     recentTimezones: ['Europe/London', 'Asia/Tokyo'],
 };
@@ -21,196 +19,253 @@ describe('getInitialState', () => {
     const mockedBrowser = vi.mocked(browser);
     const mockedSettings = vi.mocked(settings);
 
-    const originalEnvDev = import.meta.env.DEV;
     beforeEach(() => {
-        vi.resetAllMocks();
+        mockedBrowser.getActiveTabId.mockResolvedValue(123);
+        mockedBrowser.isAboutUrl.mockResolvedValue(false);
         mockedSettings.loadSettings.mockResolvedValue(defaultSettings);
     });
     afterEach(() => {
         vi.useRealTimers();
-        import.meta.env.DEV = originalEnvDev;
     });
 
-    describe('in development environment', () => {
-        it('returns  dummy state', async () => {
-            import.meta.env.DEV = true;
+    // dates are formatted as local time in the active/drafted time zone, so all fixtures use an
+    // explicit UTC instant to stay independent of the machine's time zone.
+    // In January, Europe/London is GMT+00:00 and America/New_York is GMT-05:00.
+    const fakeDate = new Date('2023-01-01T12:34:56.789Z');
 
-            const result = await getInitialState();
+    it('handles enabled state with running clock correctly', async () => {
+        const mockState: TabState = {
+            contentScriptActive: true,
+            fakeDate: fakeDate.toISOString(),
+            tickStartTimestamp: fakeDate.getTime().toString(),
+            timezone: 'Europe/London',
+            isClockStopped: false,
+            fakeDateActive: true,
+        };
 
-            expect(result).toEqual({
-                isEnabled: true,
-                fakeDate: '2005-06-07 08:09',
-                settings: defaultSettings,
-            });
+        vi.mocked(getTabState).mockResolvedValue(mockState);
 
-            expect(mockedSettings.loadSettings).toHaveBeenCalled();
-        });
+        // Use fake timers to control Date.now()
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date(fakeDate.getTime() + 60 * 1000)); // 1 minute after tick start
+
+        const result = await getInitialState();
+
+        expect(result.isEnabled).toBe(true);
+        expect(result.fakeDate).toBe('2023-01-01 12:35');
+        expect(result.settings.timezone).toBe('Europe/London');
+        expect(result.settings.stopClock).toBe(false);
+        expect(result.pageClock).toEqual({ date: fakeDate, tickStart: fakeDate.getTime() });
     });
 
-    describe('in production environment', () => {
-        const fakeDate = new Date('2023-01-01 12:34:56.789');
-        beforeEach(() => {
-            import.meta.env.DEV = false;
+    it('handles disabled state correctly', async () => {
+        const mockState: TabState = {
+            contentScriptActive: true,
+            fakeDate: null,
+            tickStartTimestamp: null,
+            timezone: null,
+            isClockStopped: false,
+            fakeDateActive: false,
+        };
 
-            mockedBrowser.getActiveTabId.mockResolvedValue(123);
-            mockedBrowser.isAboutUrl.mockResolvedValue(false);
-        });
+        vi.mocked(getTabState).mockResolvedValue(mockState);
 
-        it('handles enabled state with running clock correctly', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
-                contentScriptActive: true,
-                fakeDate: fakeDate.toISOString(),
-                tickStartTimestamp: fakeDate.getTime().toString(),
-                timezone: 'Europe/London',
-                isClockStopped: false,
-                fakeDateActive: true,
-            };
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2026-01-01T12:34:00Z'));
 
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
+        const result = await getInitialState();
 
-            // Use fake timers to control Date.now()
-            vi.useFakeTimers();
-            vi.setSystemTime(new Date(fakeDate.getTime() + 60 * 1000)); // 1 minute after tick start
-
-            const result = await getInitialState();
-
-            expect(result.isEnabled).toBe(true);
-            expect(result.fakeDate).toBe('2023-01-01 12:35');
-            expect(result.settings.timezone).toBe('Europe/London');
-            expect(result.settings.stopClock).toBe(false);
-        });
-
-        it('handles disabled state correctly', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
-                contentScriptActive: true,
-                fakeDate: null,
-                tickStartTimestamp: null,
-                timezone: null,
-                isClockStopped: false,
-                fakeDateActive: false,
-            };
-
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
-
-            vi.useFakeTimers();
-            vi.setSystemTime(new Date('2026-01-01 12:34'));
-
-            const result = await getInitialState();
-
-            expect(result.isEnabled).toBe(false);
-            expect(result.fakeDate).toBe('2026-01-01 12:34');
-            expect(result.settings.timezone).toBe(defaultSettings.timezone);
-            expect(result.settings.stopClock).toBe(defaultSettings.stopClock);
-        });
-
-        it('handles stopped clock correctly', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
-                contentScriptActive: true,
-                fakeDate: fakeDate.toISOString(),
-                tickStartTimestamp: '1640995200000',
-                timezone: 'Europe/London',
-                isClockStopped: true,
-                fakeDateActive: true,
-            };
-
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
-
-            const result = await getInitialState();
-
-            expect(result.isEnabled).toBe(true);
-            expect(result.fakeDate).toBe('2023-01-01 12:34:56.789');
-            expect(result.settings.stopClock).toBe(true);
-            expect(result.settings.timezone).toBe('Europe/London');
-        });
-
-        it('handles invalid fake date correctly', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
-                contentScriptActive: true,
-                fakeDate: 'invalid-date',
-                tickStartTimestamp: '1640995200000',
-                timezone: 'Europe/London',
-                isClockStopped: false,
-                fakeDateActive: true,
-            };
-
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
-
-            vi.useFakeTimers();
-            vi.setSystemTime(new Date('2026-01-01 12:34'));
-
-            const result = await getInitialState();
-
-            expect(result.isEnabled).toBe(false);
-            expect(result.fakeDate).toBe('2026-01-01 12:34');
-        });
-
-        it('handles timezone settings correctly', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
-                contentScriptActive: true,
-                fakeDate: '2023-01-01T12:00:00.000Z',
-                tickStartTimestamp: '1640995200000',
-                timezone: null, // No timezone in state
-                isClockStopped: false,
-                fakeDateActive: true,
-            };
-
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
-
-            const result = await getInitialState();
-
-            expect(result.isEnabled).toBe(true);
-            expect(result.settings.timezone).toBe(''); // Empty string when state.timezone is null
-        });
-
-        it('ignores an invalid (page-controlled) timezone from state', async () => {
-            const mockState: contentScriptState.ContentScriptState = {
-                contentScriptActive: true,
-                fakeDate: '2023-01-01T12:00:00.000Z',
-                tickStartTimestamp: '1640995200000',
-                timezone: 'Evil/Not_A_Zone',
-                isClockStopped: false,
-                fakeDateActive: true,
-            };
-
-            vi.mocked(getContentScriptState).mockResolvedValue(mockState);
-
-            const result = await getInitialState();
-
-            expect(result.isEnabled).toBe(true);
-            expect(result.settings.timezone).toBe(''); // falls back to browser default
-        });
+        expect(result.isEnabled).toBe(false);
+        // current time in the drafted zone (America/New_York), as no fake date is active
+        expect(result.fakeDate).toBe('2026-01-01 07:34');
+        expect(result.settings.timezone).toBe(defaultSettings.timezone);
+        expect(result.settings.stopClock).toBe(defaultSettings.stopClock);
+        expect(result.pageClock).toBeUndefined();
     });
 
-    describe('error handling', () => {
-        beforeEach(() => {
-            import.meta.env.DEV = false;
-            mockedBrowser.getActiveTabId.mockResolvedValue(123);
-        });
+    it('handles stopped clock correctly', async () => {
+        const mockState: TabState = {
+            contentScriptActive: true,
+            fakeDate: fakeDate.toISOString(),
+            tickStartTimestamp: '1640995200000',
+            timezone: 'Europe/London',
+            isClockStopped: true,
+            fakeDateActive: true,
+        };
 
-        it('throws error for about: URLs', async () => {
-            mockedBrowser.isAboutUrl.mockResolvedValue(true);
+        vi.mocked(getTabState).mockResolvedValue(mockState);
 
-            await expect(getInitialState()).rejects.toThrow('Time Travel cannot be used in the current tab.');
+        const result = await getInitialState();
 
-            expect(getContentScriptState).not.toHaveBeenCalled();
-        });
+        expect(result.isEnabled).toBe(true);
+        expect(result.fakeDate).toBe('2023-01-01 12:34:56.789');
+        expect(result.settings.stopClock).toBe(true);
+        expect(result.settings.timezone).toBe('Europe/London');
+        expect(result.pageClock).toEqual({ date: fakeDate, tickStart: null });
+    });
 
-        it('throws error for file URLs', async () => {
-            mockedBrowser.isAboutUrl.mockResolvedValue(false);
-            mockedBrowser.isFileUrl.mockResolvedValue(true);
-            mockedBrowser.isExtensionGalleryUrl.mockResolvedValue(false);
-            vi.mocked(getContentScriptState).mockRejectedValue(new Error('Content script error'));
+    it('handles invalid fake date correctly', async () => {
+        const mockState: TabState = {
+            contentScriptActive: true,
+            fakeDate: 'invalid-date',
+            tickStartTimestamp: '1640995200000',
+            timezone: 'Europe/London',
+            isClockStopped: false,
+            fakeDateActive: true,
+        };
 
-            await expect(getInitialState()).rejects.toThrow(/To use Time Travel with local files.*/);
-        });
+        vi.mocked(getTabState).mockResolvedValue(mockState);
 
-        it('throws error for extension gallery URLs', async () => {
-            mockedBrowser.isAboutUrl.mockResolvedValue(false);
-            mockedBrowser.isFileUrl.mockResolvedValue(false);
-            mockedBrowser.isExtensionGalleryUrl.mockResolvedValue(true);
-            vi.mocked(getContentScriptState).mockRejectedValue(new Error('Content script error'));
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2026-01-01T12:34:00Z'));
 
-            await expect(getInitialState()).rejects.toThrow(/Time Travel cannot be used in the Chrome Web Store/);
-        });
+        const result = await getInitialState();
+
+        expect(result.isEnabled).toBe(false);
+        expect(result.fakeDate).toBe('2026-01-01 07:34');
+    });
+
+    it('shows the fake date as local time in the page time zone', async () => {
+        const mockState: TabState = {
+            contentScriptActive: true,
+            fakeDate: fakeDate.toISOString(),
+            tickStartTimestamp: '1640995200000',
+            timezone: 'Asia/Tokyo', // GMT+09:00
+            isClockStopped: true,
+            fakeDateActive: true,
+        };
+
+        vi.mocked(getTabState).mockResolvedValue(mockState);
+
+        const result = await getInitialState();
+
+        expect(result.fakeDate).toBe('2023-01-01 21:34:56.789');
+        expect(result.settings.timezone).toBe('Asia/Tokyo');
+        // the page clock keeps the actual instant, only the input string is zone-specific
+        expect(result.pageClock).toEqual({ date: fakeDate, tickStart: null });
+    });
+
+    it('keeps the fake date unambiguous during a repeated hour', async () => {
+        // 02:30 happens twice in Europe/Berlin on 2025-10-26, this is the second one (CET)
+        const mockState: TabState = {
+            contentScriptActive: true,
+            fakeDate: '2025-10-26T01:30:00.000Z',
+            tickStartTimestamp: '1640995200000',
+            timezone: 'Europe/Berlin',
+            isClockStopped: true,
+            fakeDateActive: true,
+        };
+
+        vi.mocked(getTabState).mockResolvedValue(mockState);
+
+        const result = await getInitialState();
+
+        // without the offset, reapplying would silently move the date to the first 02:30
+        expect(result.fakeDate).toBe('2025-10-26 02:30+01:00');
+    });
+
+    it('keeps a running clock unambiguous during a repeated hour', async () => {
+        const mockState: TabState = {
+            contentScriptActive: true,
+            fakeDate: '2025-10-26T01:30:00.000Z',
+            tickStartTimestamp: '1640995200000',
+            timezone: 'Europe/Berlin',
+            isClockStopped: false,
+            fakeDateActive: true,
+        };
+
+        vi.mocked(getTabState).mockResolvedValue(mockState);
+
+        vi.useFakeTimers();
+        vi.setSystemTime(1640995200000 + 17_500); // 17.5s of tick elapsed
+
+        const result = await getInitialState();
+
+        // the elapsed seconds are not shown, but the offset still has to be
+        expect(result.fakeDate).toBe('2025-10-26 02:30+01:00');
+    });
+
+    it('handles timezone settings correctly', async () => {
+        const mockState: TabState = {
+            contentScriptActive: true,
+            fakeDate: '2023-01-01T12:00:00.000Z',
+            tickStartTimestamp: '1640995200000',
+            timezone: null, // No timezone in state
+            isClockStopped: false,
+            fakeDateActive: true,
+        };
+
+        vi.mocked(getTabState).mockResolvedValue(mockState);
+
+        const result = await getInitialState();
+
+        expect(result.isEnabled).toBe(true);
+        expect(result.settings.timezone).toBe(''); // Empty string when state.timezone is null
+    });
+
+    it('ignores an invalid (page-controlled) timezone from state', async () => {
+        const mockState: TabState = {
+            contentScriptActive: true,
+            fakeDate: '2023-01-01T12:00:00.000Z',
+            tickStartTimestamp: '1640995200000',
+            timezone: 'Evil/Not_A_Zone',
+            isClockStopped: false,
+            fakeDateActive: true,
+        };
+
+        vi.mocked(getTabState).mockResolvedValue(mockState);
+
+        const result = await getInitialState();
+
+        expect(result.isEnabled).toBe(true);
+        expect(result.settings.timezone).toBe(''); // falls back to browser default
+    });
+
+    it('throws error for about: URLs', async () => {
+        mockedBrowser.isAboutUrl.mockResolvedValue(true);
+
+        await expect(getInitialState()).rejects.toThrow('Time Travel cannot be used in the current tab.');
+
+        expect(getTabState).not.toHaveBeenCalled();
+    });
+
+    it('throws error for file URLs', async () => {
+        mockedBrowser.isAboutUrl.mockResolvedValue(false);
+        mockedBrowser.isFileUrl.mockResolvedValue(true);
+        mockedBrowser.isExtensionGalleryUrl.mockResolvedValue(false);
+        vi.mocked(getTabState).mockRejectedValue(new Error('Content script error'));
+
+        await expect(getInitialState()).rejects.toThrow(/To use Time Travel with local files.*/);
+    });
+
+    it('throws error for extension gallery URLs', async () => {
+        mockedBrowser.isAboutUrl.mockResolvedValue(false);
+        mockedBrowser.isFileUrl.mockResolvedValue(false);
+        mockedBrowser.isExtensionGalleryUrl.mockResolvedValue(true);
+        vi.mocked(getTabState).mockRejectedValue(new Error('Content script error'));
+
+        await expect(getInitialState()).rejects.toThrow(/Time Travel cannot be used in the Chrome Web Store/);
+    });
+
+    it('throws error for other errors ', async () => {
+        mockedBrowser.isAboutUrl.mockResolvedValue(false);
+        mockedBrowser.isFileUrl.mockResolvedValue(false);
+        mockedBrowser.isExtensionGalleryUrl.mockResolvedValue(false);
+        vi.mocked(getTabState).mockRejectedValue(new Error('Content script error'));
+
+        await expect(getInitialState()).rejects.toThrow(Error);
+        await expect(getInitialState()).rejects.toThrow(
+            /^Time Travel cannot be used in the current tab. Reason: Content script error$/
+        );
+    });
+
+    it('throws error for unknown exception type', async () => {
+        mockedBrowser.isAboutUrl.mockResolvedValue(false);
+        mockedBrowser.isFileUrl.mockResolvedValue(false);
+        mockedBrowser.isExtensionGalleryUrl.mockResolvedValue(false);
+        vi.mocked(getTabState).mockRejectedValue('string is not a proper exception, but here we go');
+
+        await expect(getInitialState()).rejects.toThrow(Error);
+        await expect(getInitialState()).rejects.toThrow(/^Time Travel cannot be used in the current tab. Reason: $/);
     });
 });

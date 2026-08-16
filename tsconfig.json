@@ -14,7 +14,10 @@
         "resolveJsonModule": true,
         "isolatedModules": false,
         "noEmit": true,
+        "paths": {
+            "@/*": ["./src/*"]
+        },
         "types": ["chrome"]
     },
-    "include": ["src/", "*.mts"]
+    "include": ["src/", "e2e/", "*.mts", "*.ts"]
 }

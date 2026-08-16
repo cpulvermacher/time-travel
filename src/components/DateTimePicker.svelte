@@ -1,33 +1,44 @@
 <script lang="ts">
-    import { DatePicker } from '@svelte-plugins/datepicker';
     import { tick } from 'svelte';
-    import { m } from '../paraglide/messages';
-    import { getUILanguage, isAndroid } from '../util/browser';
-    import { formatLocalDate, overwriteDatePart, parseDate } from '../util/date-utils';
-    import { getFirstDayOfWeek } from '../util/i18n';
+    import { addDays } from '@/date/addDays';
+    import { formatLocalDate, formatUnambiguousDate, overwriteDatePart, overwriteTimePart } from '@/date/format';
+    import { parseDate } from '@/date/parse';
+    import { getTimezoneCity } from '@/display/timezone-info';
+    import { m } from '@/paraglide/messages';
+    import { isAndroid } from '@/web-ext/browser';
+    import Calendar from './Calendar.svelte';
     import DateFormatInfo from './DateFormatInfo.svelte';
     import LinkButton from './LinkButton.svelte';
-    import PreviewInTimezone from './PreviewInTimezone.svelte';
     import TimePicker from './TimePicker.svelte';
-
-    // DatePicker uses 0 (Sunday) .. 6 (Saturday), but getFirstDayOfWeek uses 1 (Monday) .. 7 (Sunday)
-    const startOfWeek = getFirstDayOfWeek(getUILanguage()) % 7;
 
     interface Props {
         fakeDate: string;
         onEnterKey?: () => void;
-        timezone: string; // IANA time zone identifier or '' for browser default
+        timezone?: string; // if set, the input is interpreted as local time in this zone
     }
-    let { fakeDate = $bindable(), onEnterKey, timezone }: Props = $props();
-    let parsedDate = $derived(parseDate(fakeDate));
-    // Note: the datepicker internally works with timestamps in UTC. When choosing a date, pickerDate will be set to 00:00 local time.
-    const initialParsedDate = parseDate(fakeDate);
-    let pickerDate: number = $state(initialParsedDate.isValid ? initialParsedDate.date.getTime() : Date.now());
+    let { fakeDate = $bindable(), onEnterKey, timezone = '' }: Props = $props();
+    let parsedDate = $derived(parseDate(fakeDate, timezone));
+    // The input may denote an instant (a UNIX timestamp, or an explicit offset such as "Z"), so it is
+    // normalized to the bare wall clock time of the selected time zone before the date part is read
+    // or written. That string carries no offset, so both operations are purely symbolic.
+    let localDateString = $derived(
+        parsedDate.isValid ? formatLocalDate(parsedDate.date, { timezone, fullPrecision: true }) : fakeDate
+    );
+    // the day and the time of day the two pickers edit, each in the selected time zone
+    let selectedDay = $derived(localDateString.split(' ')[0]);
+    let selectedTime = $derived(localDateString.split(' ')[1]?.slice(0, 5) ?? ''); // "HH:mm"
     let showFormatHelp = $state(false);
+    const inputId = $props.id();
     let inputRef: HTMLInputElement;
     let timePickerRef: TimePicker;
 
     function onkeydown(event: KeyboardEvent) {
+        if (event.key === 'Enter' && onEnterKey) {
+            event.preventDefault();
+            onEnterKey();
+            return;
+        }
+
         if (!parsedDate.isValid) {
             return;
         }
@@ -54,19 +65,20 @@
             } else {
                 adjustSeconds(60);
             }
-        } else if (event.key === 'Enter' && onEnterKey) {
+        } else if (event.key === 'PageUp') {
             event.preventDefault();
-            onEnterKey();
+            adjustDays(1);
+        } else if (event.key === 'PageDown') {
+            event.preventDefault();
+            adjustDays(-1);
         }
     }
-    // biome-ignore lint/correctness/noUnusedVariables: used in template with use:focus
     function focus(node: HTMLInputElement) {
         node.focus();
         node.setSelectionRange(-1, -1);
     }
-    async function acceptPickerDate() {
-        const newDate = new Date(pickerDate);
-        fakeDate = overwriteDatePart(fakeDate, newDate);
+    async function acceptPickerDay(day: string) {
+        fakeDate = overwriteDatePart(localDateString, day, timezone);
 
         if (await isAndroid()) {
             // on Android, automatically open the time picker after selecting a date
@@ -80,85 +92,60 @@
             inputRef.setSelectionRange(dateAndTimeSeparator + 1, -1);
         }
     }
-    function onInput() {
-        if (!parsedDate.isValid) {
-            return;
-        }
-        pickerDate = parsedDate.date.getTime();
+    function acceptPickerTime(time: string) {
+        fakeDate = overwriteTimePart(localDateString, time, timezone);
     }
     function adjustSeconds(seconds: number) {
         if (!parsedDate.isValid) {
             return;
         }
-        // adjust UTC timestamp
-        pickerDate = parsedDate.date.getTime() + seconds * 1000;
-        fakeDate = formatLocalDate(new Date(pickerDate), { fullPrecision: true });
+        // adjust the actual instant, so stepping over a DST transition of the selected time zone
+        // moves the wall clock the way that time zone does. Within an hour repeated by a transition
+        // an explicit offset is added, so every instant stays reachable (see formatUnambiguousDate).
+        fakeDate = formatUnambiguousDate(new Date(parsedDate.date.getTime() + seconds * 1000), timezone, {
+            fullPrecision: true,
+        });
+    }
+    function adjustDays(days: number) {
+        if (!parsedDate.isValid) {
+            return;
+        }
+        // step the wall clock of the selected time zone instead of the instant, so a day step keeps
+        // the time of day across a DST transition of that zone (see addDays).
+        fakeDate = formatUnambiguousDate(addDays(parsedDate.date, days, timezone), timezone, {
+            fullPrecision: true,
+        });
     }
 </script>
 
-<div>
-    <label>
-        {m.datetime_input_label()}
+<div class="datetime-picker">
+    <div class="label-row">
+        <label for={inputId}>
+            {timezone
+                ? m.datetime_input_label_tz({
+                      timezone: getTimezoneCity(timezone),
+                  })
+                : m.datetime_input_label()}
+        </label>
         <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
-        {#if import.meta.env.DEV}
-            <span class="mock-active">[mock]</span>
-        {/if}
-        <div class="input-fields">
-            <input
-                {onkeydown}
-                bind:value={fakeDate}
-                use:focus
-                bind:this={inputRef}
-                oninput={onInput}
-                type="text"
-                size="28"
-                maxlength="28"
-                placeholder={formatLocalDate(new Date())}
-                spellcheck="false"
-                class={{ error: !parsedDate.isValid && !parsedDate.isReset }}
-                title={m.date_input_hint()}
-            />
-            <TimePicker bind:value={fakeDate} onChange={onInput} bind:this={timePickerRef} />
-        </div>
-    </label>
-    {#if timezone}
-        <PreviewInTimezone {parsedDate} {timezone} />
-    {/if}
-    <div class="datepicker-container">
-        <DatePicker
-            bind:startDate={pickerDate}
-            onDateChange={acceptPickerDate}
-            enableFutureDates
-            dowLabels={[
-                m.dow_sunday(),
-                m.dow_monday(),
-                m.dow_tuesday(),
-                m.dow_wednesday(),
-                m.dow_thursday(),
-                m.dow_friday(),
-                m.dow_saturday(),
-            ]}
-            monthLabels={[
-                m.january(),
-                m.february(),
-                m.march(),
-                m.april(),
-                m.may(),
-                m.june(),
-                m.july(),
-                m.august(),
-                m.september(),
-                m.october(),
-                m.november(),
-                m.december(),
-            ]}
-            {startOfWeek}
-            isOpen={true}
-            alwaysShow={true}
-            includeFont={false}
-            theme="theme"
-        />
     </div>
+    <div class="input-fields">
+        <input
+            id={inputId}
+            {onkeydown}
+            bind:value={fakeDate}
+            use:focus
+            bind:this={inputRef}
+            type="text"
+            size="28"
+            maxlength="32"
+            placeholder={formatLocalDate(new Date(), { timezone })}
+            spellcheck="false"
+            class={{ error: !parsedDate.isValid && !parsedDate.isReset }}
+        />
+        <TimePicker {selectedTime} onSelectTime={acceptPickerTime} bind:this={timePickerRef} />
+    </div>
+    <Calendar {selectedDay} onSelectDay={acceptPickerDay} />
 </div>
 
 {#if showFormatHelp}
@@ -166,298 +153,41 @@
 {/if}
 
 <style>
-    .datepicker-container {
-        min-height: 206px; /** height of DatePicker for 6 weeks to avoid jumps */
-
-        @media (min-width: 400px) {
-            min-height: 230px;
-        }
+    .datetime-picker {
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap-small);
     }
-    .mock-active {
-        color: red;
-        font-weight: bold;
+    .label-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: var(--gap-small);
+    }
+    /* keep the help link on one line, let the (possibly long) label text wrap instead */
+    .label-row :global(.linkbutton) {
+        flex-shrink: 0;
+        white-space: nowrap;
     }
     .input-fields {
         display: flex;
-        gap: 10px;
+        gap: var(--gap-small);
         align-items: center;
-        margin-top: 5px;
     }
     input {
         width: 100%;
-        box-sizing: border-box;
-        padding: 5px 8px;
-        color: var(--text-color);
-        background: white;
-        border: 1px solid var(--border-color);
-        border-radius: 3px;
     }
+    /* the input is focused while typing an invalid date, use background color to avoid clashing with the focus indicator */
     input.error {
         border-color: var(--error-color);
-        outline: 1px solid var(--error-color);
-        animation: pulse 1s;
+        background-color: #fdf0f0;
+        color: var(--error-color);
+        animation: error-flash var(--long-duration) var(--ease-out);
     }
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 var(--error-color);
+    /* deeper tint at start*/
+    @keyframes error-flash {
+        from {
+            background-color: #f5cfcf;
         }
-        70% {
-            box-shadow: 0 0 0 5px rgba(255, 0, 0, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
-        }
-    }
-
-    /* for Japanese, add a suffix to the year*/
-    :lang(ja) :global {
-        .datepicker header span div:not(.years)::after {
-            content: "年";
-        }
-    }
-
-    :global(.datepicker[data-picker-theme="theme"]) {
-        /**
-         * Common Variables
-         */
-        --datepicker-border-color: #e8e9ea;
-
-        --datepicker-state-active: var(--primary-color);
-        --datepicker-state-hover: #e7f7fc;
-
-        --datepicker-color: var(--primary-color);
-        --datepicker-font-family: var(--font-family);
-        --datepicker-font-size-base: 1rem;
-
-        --datepicker-spacing: 4px;
-
-        --datepicker-margin-xsmall: calc(var(--datepicker-spacing) / 4);
-        --datepicker-margin-small: calc(var(--datepicker-spacing) / 2);
-        --datepicker-margin-base: var(--datepicker-spacing);
-        --datepicker-margin-large: calc(var(--datepicker-spacing) * 2);
-        --datepicker-margin-xlarge: calc(var(--datepicker-spacing) * 3);
-        --datepicker-margin-xxlarge: calc(var(--datepicker-spacing) * 4);
-        --datepicker-margin-xxxlarge: calc(var(--datepicker-spacing) * 5);
-        --datepicker-margin-jumbo: calc(var(--datepicker-spacing) * 6);
-
-        --datepicker-padding-xsmall: calc(var(--datepicker-spacing) / 4);
-        --datepicker-padding-small: calc(var(--datepicker-spacing) / 2);
-        --datepicker-padding-base: var(--datepicker-spacing);
-        --datepicker-padding-large: calc(var(--datepicker-spacing) * 2);
-        --datepicker-padding-xlarge: calc(var(--datepicker-spacing) * 3);
-        --datepicker-padding-xxlarge: calc(var(--datepicker-spacing) * 4);
-        --datepicker-padding-xxxlarge: calc(var(--datepicker-spacing) * 5);
-        --datepicker-padding-jumbo: calc(var(--datepicker-spacing) * 6);
-
-        /**
-         * Container
-         */
-        --datepicker-container-background: none;
-        --datepicker-container-border: none;
-        --datepicker-container-box-shadow: none;
-        --datepicker-container-font-family: var(--datepicker-font-family);
-        --datepicker-container-position: relative;
-        --datepicker-container-left: auto;
-        --datepicker-container-top: auto;
-        --datepicker-container-width: auto;
-        --datepicker-container-zindex: auto;
-
-        /**
-         * Calendar
-         */
-        --datepicker-calendar-border: 0;
-        --datepicker-calendar-padding: 0;
-        --datepicker-calendar-position: relative;
-        --datepicker-calendar-width: auto;
-
-        --datepicker-calendar-split-border: 1px solid var(--datepicker-border-color);
-
-        /**
-         * Calendar Header
-         */
-        --datepicker-calendar-header-align-items: center;
-        --datepicker-calendar-header-color: var(--datepicker-color);
-        --datepicker-calendar-header-display: flex;
-        --datepicker-calendar-header-font-size: var(--datepicker-font-size-large);
-        --datepicker-calendar-header-justify-content: space-between;
-        --datepicker-calendar-header-margin: 0;
-        --datepicker-calendar-header-padding: var(--datepicker-padding-large) var(--datepicker-padding-base);
-        --datepicker-calendar-header-user-select: none;
-
-        /**
-         * Calendar Header Month Navigation
-         */
-        --datepicker-calendar-header-month-nav-background: transparent;
-        --datepicker-calendar-header-month-nav-background-hover: transparent;
-        --datepicker-calendar-header-month-nav-border: 0;
-        --datepicker-calendar-header-month-nav-cursor: pointer;
-        --datepicker-calendar-header-month-nav-border-radius: 3px;
-        --datepicker-calendar-header-month-nav-color: var(--datepicker-color);
-        --datepicker-calendar-header-month-nav-font-size: var(--datepicker-font-size-large);
-        --datepicker-calendar-header-month-nav-height: 32px;
-        --datepicker-calendar-header-month-nav-margin-left: -8px;
-        --datepicker-calendar-header-month-nav-padding: var(--datepicker-padding-small);
-        --datepicker-calendar-header-month-nav-text-align: center;
-        --datepicker-calendar-header-month-nav-width: 32px;
-
-        --datepicker-calendar-header-month-nav-icon-next-background-size: 16px 16px;
-        --datepicker-calendar-header-month-nav-icon-next-filter: invert(0);
-        --datepicker-calendar-header-month-nav-icon-next-height: 16px;
-        --datepicker-calendar-header-month-nav-icon-next-margin: auto;
-        --datepicker-calendar-header-month-nav-icon-next-width: 16px;
-
-        --datepicker-calendar-header-month-nav-icon-prev-background-size: 16px 16px;
-        --datepicker-calendar-header-month-nav-icon-prev-filter: invert(0);
-        --datepicker-calendar-header-month-nav-icon-prev-height: 16px;
-        --datepicker-calendar-header-month-nav-icon-prev-margin: auto;
-        --datepicker-calendar-header-month-nav-icon-prev-width: 16px;
-
-        /**
-         * Calendar Header Text
-         */
-        --datepicker-calendar-header-text-align-items: center;
-        --datepicker-calendar-header-text-color: var(--text-color);
-        --datepicker-calendar-header-text-display: flex;
-        --datepicker-calendar-header-text-font-size: inherit;
-        --datepicker-calendar-header-text-font-weight: var(--datepicker-font-weight-medium);
-        --datepicker-calendar-header-text-gap: 8px;
-
-        /**
-         * Calendar Header Year Navigation Container
-         */
-        --datepicker-calendar-header-year-align-items: center;
-        --datepicker-calendar-header-year-display: flex;
-        --datepicker-calendar-header-year-flex-direction: column;
-        --datepicker-calendar-header-year-margin: 0;
-
-        /**
-         * Calendar Header Year Navigation Controls
-         */
-        --datepicker-calendar-header-year-nav-display: block;
-        --datepicker-calendar-header-year-nav-color: var(--datepicker-color);
-        --datepicker-calendar-header-year-nav-height: 12px;
-        --datepicker-calendar-header-year-nav-line-height: 12px;
-        --datepicker-calendar-header-year-nav-margin: -2px 0 0 0;
-        --datepicker-calendar-header-year-nav-padding: 0;
-        --datepicker-calendar-header-year-nav-width: 12px;
-        --datepicker-calendar-header-year-nav-icon-font-size: 13px;
-
-        --datepicker-calendar-header-year-nav-icon-next-background-size: 12px 12px;
-        --datepicker-calendar-header-year-nav-icon-next-display: block;
-        --datepicker-calendar-header-year-nav-icon-next-filter: invert(0);
-        --datepicker-calendar-header-year-nav-icon-next-height: 12px;
-        --datepicker-calendar-header-year-nav-icon-next-width: 12px;
-
-        --datepicker-calendar-header-year-nav-icon-prev-background-size: 12px 12px;
-        --datepicker-calendar-header-year-nav-icon-prev-display: block;
-        --datepicker-calendar-header-year-nav-icon-prev-filter: invert(0);
-        --datepicker-calendar-header-year-nav-icon-prev-height: 12px;
-        --datepicker-calendar-header-year-nav-icon-prev-width: 12px;
-
-        /**
-         * Calendar DOW (Days of Week)
-         */
-        --datepicker-calendar-dow-color: var(--secondary-text-color);
-        --datepicker-calendar-dow-font-size: var(--datepicker-font-size-base);
-        --datepicker-calendar-dow-font-weight: var(--datepicker-font-weight-medium);
-        --datepicker-calendar-dow-margin-bottom: var(--datepicker-margin-large);
-        --datepicker-calendar-dow-text-align: center;
-
-        /**
-         * Calendar Month
-         */
-        --datepicker-calendar-container-display: grid;
-        --datepicker-calendar-container-grid-template-columns: repeat(7, 1fr);
-        --datepicker-calendar-container-grid-gap: 0;
-        --datepicker-calendar-container-width: fit-content;
-
-        /**
-         * Calendar Day Container
-         */
-        --datepicker-calendar-day-container-appearance: none;
-        --datepicker-calendar-day-container-background: inherit;
-        --datepicker-calendar-day-container-border: 0;
-        --datepicker-calendar-day-container-margin: 0;
-        --datepicker-calendar-day-container-padding: 0;
-        --datepicker-calendar-day-container-position: relative;
-        --datepicker-calendar-day-container-text-align: center;
-
-        /**
-         * Calendar Day
-         */
-        --datepicker-calendar-day-align-items: center;
-        --datepicker-calendar-day-background-hover: transparent;
-        --datepicker-calendar-day-border: none;
-        --datepicker-calendar-day-border-radius: 20px;
-        --datepicker-calendar-day-color: var(--text-color);
-        --datepicker-calendar-day-color-disabled: #b9bdc1;
-        --datepicker-calendar-day-color-hover: var(--text-color);
-        --datepicker-calendar-day-cursor: pointer;
-        --datepicker-calendar-day-cursor-disabled: default;
-        --datepicker-calendar-day-display: flex;
-        --datepicker-calendar-day-height: auto;
-        --datepicker-calendar-day-width: auto;
-        --datepicker-calendar-day-justify-content: center;
-        --datepicker-calendar-day-font-family: var(--datepicker-font-family);
-        --datepicker-calendar-day-font-size: var(--datepicker-font-size-base);
-        --datepicker-calendar-day-margin-bottom: 1px;
-        --datepicker-calendar-day-padding: var(--datepicker-padding-base);
-        --datepicker-calendar-day-text-align: center;
-        --datepicker-calendar-day-zindex-focus: 12;
-
-        /**
-         * Calendar Days Outside of Month
-         */
-        --datepicker-calendar-day-other-border: 0;
-        --datepicker-calendar-day-other-box-shadow: none;
-        --datepicker-calendar-day-other-color: #d1d3d6;
-
-        /**
-         * Calendar Today
-         */
-        --datepicker-calendar-today-background: transparent;
-        --datepicker-calendar-today-border: none;
-        --datepicker-calendar-today-cursor: default;
-        --datepicker-calendar-today-font-weight: var(--datepicker-font-weight-bold);
-        /**
-         * Calendar Range
-         */
-        --datepicker-calendar-range-background: var(--datepicker-state-hover);
-        --datepicker-calendar-range-background-disabled: var(--datepicker-state-hover);
-        --datepicker-calendar-range-border: 0;
-        --datepicker-calendar-range-border-radius: 0;
-        --datepicker-calendar-range-color: var(--datepicker-color);
-        --datepicker-calendar-range-color-disabled: #ffc0b7;
-        --datepicker-calendar-range-cursor: default;
-        --datepicker-calendar-range-font-weight: var(--datepicker-font-weight-base);
-
-        /**
-         * Calendar Range Start & End
-         */
-        --datepicker-calendar-range-start-box-shadow: none;
-        --datepicker-calendar-range-end-box-shadow: none;
-        --datepicker-calendar-range-start-box-shadow-selected: none;
-        --datepicker-calendar-range-end-box-shadow-selected: none;
-
-        --datepicker-calendar-range-start-end-background: #f5f5f5;
-        --datepicker-calendar-range-start-end-color: #232a32;
-
-        /**
-         * Calendar Range Selected
-         */
-        --datepicker-calendar-range-selected-background: var(--datepicker-state-active);
-        --datepicker-calendar-range-selected-border-radius: 20px;
-        --datepicker-calendar-range-selected-color: #fff;
-        --datepicker-calendar-range-selected-font-weight: var(--datepicker-font-weight-medium);
-        --datepicker-calendar-range-selected-start-border-radius: 20px;
-
-        /**
-         * Calendar Range Hover
-         */
-        --datepicker-calendar-range-included-background: #eceff1;
-        --datepicker-calendar-range-included-box-shadow: none;
-        --datepicker-calendar-range-included-color: #232a32;
-        --datepicker-calendar-range-included-font-weight: var(--datepicker-font-weight-base);
-        --datepicker-calendar-range-included-height: var(--datepicker-calendar-day-height);
     }
 </style>

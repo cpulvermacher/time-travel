@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vitest/config';
@@ -5,7 +6,13 @@ import { defineConfig } from 'vitest/config';
 const entryPoints = ['/content-scripts/send-active.ts', '/worker.ts'];
 // get basename without extension
 const scriptNames = entryPoints.map((path) => path.split('/').pop()?.split('.').shift() || '');
+
 export default defineConfig(() => ({
+    resolve: {
+        alias: {
+            '@': resolve(import.meta.dirname, './src'),
+        },
+    },
     plugins: [
         svelte({
             configFile: '../svelte.config.mjs',
@@ -13,21 +20,22 @@ export default defineConfig(() => ({
         paraglideVitePlugin({
             project: './project.inlang',
             outdir: './src/paraglide',
-            strategy: ['baseLocale'], // locale configured via overrideGetLocale()
+            strategy: ['baseLocale'], // locale configured via overwriteGetLocale()
         }),
     ],
     root: 'src',
     test: {
         environment: 'happy-dom',
         setupFiles: ['test/setup.ts'],
+        clearMocks: true,
         coverage: {
             exclude: ['paraglide/**'],
-            reporter: ['text'],
+            reporter: ['text', 'html'],
             thresholds: {
                 // NOTE: keep autoUpdate disabled. Coverage varies slightly between Node versions
                 autoUpdate: false,
-                statements: 90,
-                branches: 87,
+                statements: 95,
+                branches: 92,
             },
         },
     },
@@ -52,6 +60,7 @@ export default defineConfig(() => ({
                     }
                 },
                 minifyInternalExports: false, // since minification is off, this makes it worse
+                comments: false,
             },
         },
     },

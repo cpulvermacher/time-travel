@@ -6,34 +6,38 @@
     "scripts": {
         "build": "sh ./util/build.sh production",
         "dev": "sh ./util/build.sh dev",
-        "lint": "tsc && biome check *.mts src/ && svelte-check --tsconfig ./tsconfig.json && pnpm lint:translations",
+        "lint": "tsc && biome check *.mts *.ts src/ e2e/ && svelte-check --tsconfig ./tsconfig.json && pnpm lint:translations",
         "lint:translations": "bash ./util/check-translations.sh",
-        "fix": "biome check --write src/",
+        "fix": "biome check --write *.mts *.ts src/ e2e/",
+        "format": "biome format --write *.mts *.ts src/ e2e/",
         "test": "vitest --run",
+        "test:e2e": "playwright test",
+        "screenshots": "SCREENSHOTS=1 playwright test screenshots --project=chromium",
         "coverage": "vitest --run --coverage",
         "checkall": "pnpm test && pnpm lint && pnpm build",
         "machine-translate": "inlang machine translate --project project.inlang"
     },
     "devDependencies": {
-        "@biomejs/biome": "2.4.16",
-        "@inlang/cli": "^3.1.14",
-        "@inlang/paraglide-js": "^2.20.2",
-        "@sveltejs/vite-plugin-svelte": "^7.1.2",
+        "@biomejs/biome": "2.5.6",
+        "@inlang/cli": "^3.3.0",
+        "@inlang/paraglide-js": "^2.23.2",
+        "@playwright/test": "^1.62.1",
+        "@sveltejs/vite-plugin-svelte": "^7.3.0",
         "@tsconfig/svelte": "^5.0.8",
-        "@types/chrome": "^0.2.2",
-        "@vitest/coverage-v8": "^4.1.9",
+        "@types/chrome": "^0.2.5",
+        "@vitest/coverage-v8": "^4.1.10",
         "chrome-webstore-upload-cli": "^3.5.0",
-        "globals": "^17.7.0",
-        "happy-dom": "^20.10.6",
-        "svelte-check": "^4.7.1",
+        "globals": "^17.9.0",
+        "happy-dom": "^20.11.2",
+        "svelte-check": "^4.7.5",
         "typescript": "^6.0.3",
-        "vite": "^8.1.3",
-        "vitest": "^4.1.9",
-        "web-ext": "^10.4.0"
+        "vite": "^8.2.1",
+        "vitest": "^4.1.10",
+        "web-ext": "^10.6.0"
     },
     "dependencies": {
         "@svelte-plugins/datepicker": "^1.0.11",
-        "svelte": "^5.56.4"
+        "svelte": "^5.56.8"
     },
-    "packageManager": "pnpm@11.9.0+sha512.bd682d5d03fe525ef7c9fd6780c6884d1e756ac4c9c9fe00c538782824310dcf90e3ddc4f53835f06dfaebd5085e41855e0bcbb3b60de2ac5bbab89e5036f03b"
+    "packageManager": "pnpm@11.20.0+sha512.9a6f330a95b66446ea088faf1521405a8a01f07fde7124cc9958dfed52d4bb436737e65b08f85f37b46fcba375092558ac51262b816844b22f63406ed166bfee"
 }

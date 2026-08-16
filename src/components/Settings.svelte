@@ -1,16 +1,17 @@
 <script lang="ts">
     import { untrack } from 'svelte';
-    import { m } from '../paraglide/messages';
-    import type { InitialState } from '../popup/initial-state';
-    import { reloadTab, withTabLoadingRetry } from '../util/browser';
-    import { disableFakeDate, setClockState, setFakeDate } from '../util/content-script-state';
-    import { parseDate } from '../util/date-utils';
-    import { updateExtensionIcon } from '../util/icon';
-    import { saveMostRecentTimezone, saveSetting } from '../util/settings';
-    import Accordion from './Accordion.svelte';
-    import Background from './Background.svelte';
+    import { formatLocalDate, formatUnambiguousDate } from '@/date/format';
+    import { parseDate } from '@/date/parse';
+    import { getTimezoneCity, getTzInfo } from '@/display/timezone-info';
+    import { m } from '@/paraglide/messages';
+    import type { InitialState } from '@/popup/initial-state';
+    import { disableFakeDate, setClockState, setFakeDate } from '@/tab-state/state';
+    import { getUILanguage, reloadTab, withTabLoadingRetry } from '@/web-ext/browser';
+    import { updateExtensionIcon } from '@/web-ext/icon';
+    import { saveMostRecentTimezone, saveSetting } from '@/web-ext/settings';
     import DateTimePicker from './DateTimePicker.svelte';
     import ErrorModal from './ErrorModal.svelte';
+    import PageTimeDisplay from './PageTimeDisplay.svelte';
     import ReloadModal from './ReloadModal.svelte';
     import TimezoneSelect from './TimezoneSelect.svelte';
     import Toggle from './Toggle.svelte';
@@ -26,8 +27,16 @@
     let settings = $state(initialState.settings);
     let isEnabled = $state(initialState.isEnabled);
     let fakeDate = $state(initialState.fakeDate);
-    let parsedDate = $derived(parseDate(fakeDate));
-    let effectiveDate = $state(initialState.isEnabled ? new Date(initialState.fakeDate) : undefined);
+    // the input is local time in the drafted time zone (see settings.timezone), so changing the zone
+    // keeps the entered text but moves the instant it denotes
+    let parsedDate = $derived(parseDate(fakeDate, settings.timezone));
+    const initialParsedDate = parseDate(initialState.fakeDate, initialState.settings.timezone);
+    let effectiveDate = $state(
+        initialState.isEnabled && initialParsedDate.isValid ? initialParsedDate.date : undefined
+    );
+    //TODO this should use the tab state, not settings
+    let effectiveTimezone = $state(initialState.isEnabled ? settings.timezone : '');
+    let pageClock = $state(initialState.pageClock);
 
     async function updateClockState() {
         try {
@@ -39,8 +48,18 @@
         } catch (e) {
             setError(m.error_toggle_clock_failed(), e);
         }
+        if (pageClock) {
+            // stopping makes the page fall back to its stored date, resuming ticks from now on
+            pageClock = {
+                ...pageClock,
+                tickStart: settings.stopClock ? null : Date.now(),
+            };
+        }
     }
     async function applyAndEnable(date: Date) {
+        void saveSetting('timezone', settings.timezone);
+        void saveMostRecentTimezone(settings.timezone);
+
         try {
             await withTabLoadingRetry(async () => {
                 await setClockState(settings.stopClock);
@@ -53,6 +72,13 @@
                     await reloadTab();
                 }
             });
+
+            effectiveDate = date;
+            effectiveTimezone = settings.timezone;
+            pageClock = {
+                date,
+                tickStart: settings.stopClock ? null : Date.now(),
+            };
         } catch (e) {
             setError(m.error_setting_date_failed(), e);
         }
@@ -70,6 +96,9 @@
         } catch (e) {
             setError(m.error_reset_failed(), e);
         }
+        effectiveDate = undefined;
+        effectiveTimezone = '';
+        pageClock = undefined;
     }
     function setError(msg: string, err: unknown) {
         errorMsg = msg + (err instanceof Error ? err.message : '');
@@ -78,16 +107,12 @@
     function onApply() {
         if (parsedDate.isReset) {
             isEnabled = false;
-            effectiveDate = undefined;
             void reset();
+            fakeDate = formatUnambiguousDate(new Date(), settings.timezone);
         } else if (parsedDate.isValid) {
             isEnabled = true;
-            effectiveDate = parsedDate.date;
-            void applyAndEnable(effectiveDate);
+            void applyAndEnable(parsedDate.date);
         }
-    }
-    function onAdvancedSettingsToggle(open: boolean) {
-        void saveSetting('advancedSettingsOpen', open);
     }
     function onClockToggle() {
         if (isEnabled) {
@@ -100,19 +125,11 @@
     }
     function onTimezoneChange(timezone: string) {
         settings.timezone = timezone;
-        void saveSetting('timezone', timezone);
-        void saveMostRecentTimezone(timezone);
-
-        if (isEnabled && effectiveDate) {
-            void applyAndEnable(effectiveDate);
-        }
     }
     function onEnableToggle(enabled: boolean) {
         if (enabled && parsedDate.isValid) {
-            effectiveDate = parsedDate.date;
-            void applyAndEnable(effectiveDate);
+            void applyAndEnable(parsedDate.date);
         } else {
-            effectiveDate = undefined;
             void reset();
         }
     }
@@ -123,37 +140,73 @@
         if (parsedDate.isReset) {
             return isEnabled;
         }
-        return parsedDate.date.getTime() !== effectiveDate?.getTime();
+        return parsedDate.date.getTime() !== effectiveDate?.getTime() || settings.timezone !== effectiveTimezone;
+    }
+    function getApplyButtonLabel(): string {
+        if (parsedDate.isReset) {
+            if (isEnabled) {
+                return m.change_date_btn_reset();
+            } else {
+                return m.change_date_btn_no_changes();
+            }
+        }
+        if (!parsedDate.isValid) {
+            return m.change_date_btn_invalid();
+        }
+        const dateChanged = parsedDate.date.getTime() !== effectiveDate?.getTime();
+        const tzChanged = settings.timezone !== effectiveTimezone;
+        const tzInfo = getTzInfo(getUILanguage(), parsedDate.date, settings.timezone);
+        const fakeDateLabel = tzInfo ? `${tzInfo.dateString} ${tzInfo.timeString}` : formatLocalDate(parsedDate.date);
+        const timezoneLabel = settings.timezone && getTimezoneCity(settings.timezone);
+        if (dateChanged && tzChanged) {
+            return timezoneLabel
+                ? m.change_date_btn_date_and_tz({
+                      fakeDate: fakeDateLabel,
+                      timezone: timezoneLabel,
+                  })
+                : m.change_date_btn_date_and_tz_default({
+                      fakeDate: fakeDateLabel,
+                  });
+        }
+        if (tzChanged) {
+            return timezoneLabel ? m.change_date_btn_tz({ timezone: timezoneLabel }) : m.change_date_btn_tz_default();
+        }
+        if (dateChanged) {
+            return m.change_date_btn({ fakeDate: fakeDateLabel });
+        }
+        return m.change_date_btn_no_changes();
     }
 </script>
 
-<Background {effectiveDate} />
 <main>
-    <DateTimePicker bind:fakeDate onEnterKey={onApply} timezone={settings.timezone} />
-    <div class="right-aligned">
-        <button type="button" disabled={!isApplyButtonEnabled()} onclick={onApply}>{m.change_date_btn()}</button>
-    </div>
-    <hr />
     <Toggle
         bind:checked={isEnabled}
         disabled={!parsedDate.isValid && !isEnabled}
         onChange={onEnableToggle}
         label={m.enable_fake_date_toggle()}
     />
-    <Accordion title={m.advanced_settings()} open={settings.advancedSettingsOpen} onToggle={onAdvancedSettingsToggle}>
-        <Toggle
-            bind:checked={settings.stopClock}
-            disabled={!parsedDate.isValid}
-            onChange={onClockToggle}
-            label={m.stop_time_toggle()}
-        />
-        <Toggle bind:checked={settings.autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
-        <TimezoneSelect
-            value={settings.timezone}
-            onSelect={onTimezoneChange}
-            recentTimezones={settings.recentTimezones}
-        />
-    </Accordion>
+    <PageTimeDisplay clock={pageClock} timezone={effectiveTimezone} />
+    <hr />
+    <DateTimePicker bind:fakeDate onEnterKey={onApply} timezone={settings.timezone} />
+    <TimezoneSelect
+        value={settings.timezone}
+        onSelect={onTimezoneChange}
+        recentTimezones={settings.recentTimezones}
+        date={parsedDate.isValid ? parsedDate.date : undefined}
+    />
+    <div class="right-aligned">
+        <button type="button" class="primary apply-button" disabled={!isApplyButtonEnabled()} onclick={onApply}>
+            {getApplyButtonLabel()}
+        </button>
+    </div>
+    <hr />
+    <Toggle
+        bind:checked={settings.stopClock}
+        disabled={!parsedDate.isValid}
+        onChange={onClockToggle}
+        label={m.stop_time_toggle()}
+    />
+    <Toggle bind:checked={settings.autoReload} onChange={onAutoReloadToggle} label={m.enable_auto_reload()} />
 </main>
 
 {#if showReloadModal}
@@ -164,23 +217,26 @@
 {/if}
 
 <style>
-    main {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        gap: 10px;
-        padding: 8px 15px;
-    }
-
     .right-aligned {
         display: flex;
         justify-content: flex-end;
     }
 
+    .apply-button {
+        width: 100%;
+        /* the label embeds the date, which steps with the arrow keys */
+        font-variant-numeric: tabular-nums;
+    }
+
+    @media (min-width: 360px) {
+        .apply-button {
+            width: auto;
+        }
+    }
+
     hr {
-        width: 90%;
         border: none;
-        border-top: 1px solid var(--border-color);
-        margin: 0 auto;
+        border-top: 1px solid var(--divider-color);
+        margin: var(--gap-mid) calc(-1 * var(--gap-large));
     }
 </style>

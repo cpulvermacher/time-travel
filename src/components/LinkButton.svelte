@@ -6,37 +6,27 @@
         onClick: () => void;
     }
     const { onClick, children }: Props = $props();
-
-    // Not using <button> to allow using it as a secondary action in a <label>
-    // (without being triggered when the label is clicked)
-    function onkeydown(event: KeyboardEvent) {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            event.stopPropagation();
-            onClick();
-        }
-    }
-    function onclick(event: MouseEvent) {
-        event.preventDefault();
-        event.stopPropagation();
-        onClick();
-    }
 </script>
 
-<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-<!-- svelte-ignore a11y_missing_attribute -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<a tabindex="0" class="linkbutton" {onclick} {onkeydown}> {@render children?.()} </a>
+<button type="button" class="linkbutton" onclick={onClick}>{@render children?.()}</button>
 
 <style>
+    /* a button that looks like a link */
     .linkbutton {
         display: inline;
         background: none;
         border: none;
-        color: var(--text-color);
+        border-radius: 0;
+        color: var(--primary-color);
         cursor: pointer;
         padding: 0;
-        font: inherit;
         text-decoration: underline;
+        text-decoration-color: var(--divider-color);
+        font: inherit;
+    }
+    .linkbutton:hover {
+        text-decoration-color: currentColor;
+        /* the global accent ring makes no sense for a link, the underline is the hover state */
+        box-shadow: none;
     }
 </style>

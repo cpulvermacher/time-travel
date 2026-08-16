@@ -1,9 +1,9 @@
 <script lang="ts">
-    import Settings from '../components/Settings.svelte';
-    import { m } from '../paraglide/messages';
-    import { overwriteGetLocale } from '../paraglide/runtime';
-    import { getUILanguage } from '../util/browser';
-    import { getTranslationLocale } from '../util/i18n';
+    import Settings from '@/components/Settings.svelte';
+    import { getTranslationLocale } from '@/display/i18n';
+    import { m } from '@/paraglide/messages';
+    import { overwriteGetLocale } from '@/paraglide/runtime';
+    import { getUILanguage } from '@/web-ext/browser';
     import { getInitialState } from './initial-state';
 
     const locale = getTranslationLocale(getUILanguage());
@@ -13,59 +13,37 @@
     const promise = getInitialState();
 </script>
 
+{#if import.meta.env.DEV}
+    <span class="mock-badge">[mock]</span>
+{/if}
+
 {#await promise}
-    <div class="loading-container">
-        <div class="loading-spinner"></div>
-    </div>
+    <main></main>
 {:then initialState}
     <Settings {initialState} />
 {:catch error}
-    <div class="error">
-        <p>{error instanceof Error ? error.message : ''}</p>
+    <main class="error">
+        <p>{error instanceof Error ? error.message : ""}</p>
         <p>{m.permission_error_please_change_tab()}</p>
-    </div>
+    </main>
 {/await}
 
 <style>
+    .mock-badge {
+        position: fixed;
+        right: 4px;
+        bottom: 2px;
+        pointer-events: none;
+        color: #c026d3;
+        font-weight: bold;
+        font-size: 0.75rem;
+    }
+
     .error {
-        padding: 15px;
+        min-height: 0;
+        gap: var(--gap-small);
     }
     .error > p {
         max-width: 350px;
-    }
-
-    .loading-container {
-        width: 100%;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .loading-spinner {
-        width: 24px;
-        height: 24px;
-        border: 3px solid rgba(0, 0, 0, 0.1);
-        border-radius: 50%;
-        border-top-color: var(--primary-color);
-        animation:
-            spin 1s linear infinite,
-            fadeIn 1s ease;
-        animation-fill-mode: forwards;
-    }
-
-    @keyframes spin {
-        to {
-            transform: rotate(360deg);
-        }
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
     }
 </style>

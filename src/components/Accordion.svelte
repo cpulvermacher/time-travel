@@ -47,8 +47,8 @@
     .content {
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        padding-top: 10px;
-        padding-left: 5px;
+        gap: var(--gap-mid);
+        padding-top: var(--gap-mid);
+        padding-left: var(--gap-small);
     }
 </style>

@@ -1,4 +1,5 @@
-import { parseTimestamp } from '../../util/date-utils';
+import { OriginalDate } from '@/date/original-date';
+import { parseTimestamp } from '@/date/parse';
 
 const FAKE_DATE_STORAGE_KEY = 'timeTravelDate';
 const TICK_START_STORAGE_KEY = 'timeTravelTickStartTimestamp';
@@ -9,8 +10,6 @@ const TIMEZONE_STORAGE_KEY = 'timeTravelTimezone';
 export const UPDATE_STATE_EVENT = 'timeTravelStateUpdate';
 /** dispatched on `document` to update only the clock tick state */
 export const UPDATE_TICK_EVENT = 'timeTravelTickUpdate';
-
-const OriginalDate = Date;
 
 // References to the original storage methods, captured at document_start before any page script
 // can replace or block sessionStorage (issue #54). Used for all later reads and writes.
@@ -30,7 +29,7 @@ const originalSessionStorage = (() => {
 
 export function updateState() {
     const fakeDate = getFromStorage(FAKE_DATE_STORAGE_KEY);
-    if (fakeDate === null || Number.isNaN(Date.parse(fakeDate))) {
+    if (fakeDate === null || Number.isNaN(OriginalDate.parse(fakeDate))) {
         window.__timeTravelState = undefined;
         return;
     }
