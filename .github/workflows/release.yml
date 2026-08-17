@@ -35,6 +35,7 @@ jobs:
         CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
         CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
         REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+        PUBLISHER_ID: ${{ secrets.PUBLISHER_ID }}
         EXTENSION_ID: jfdbpgcmmenmelcghpbbkldkcfiejcjg
       run: cd dist/chrome && npx chrome-webstore-upload upload
     - name: Upload to AMO
