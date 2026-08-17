@@ -13,6 +13,14 @@ declare global {
         };
         Date: DateConstructor;
         Intl: typeof Intl;
+        /** Firefox-only: Y coordinate of the viewport's top edge on the screen, in CSS pixels */
+        readonly mozInnerScreenY?: number;
+    }
+
+    interface Screen {
+        /** top edge of the available screen area, in screen coordinates. Non-standard, but
+         * supported by Chrome and Firefox; undefined elsewhere */
+        readonly availTop?: number;
     }
 
     interface Date {

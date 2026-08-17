@@ -18,7 +18,7 @@
 {/if}
 
 {#await promise}
-    <main></main>
+    <main class="loading"></main>
 {:then initialState}
     <Settings {initialState} />
 {:catch error}
@@ -39,8 +39,12 @@
         font-size: 0.75rem;
     }
 
+    /* open popup at likely final size */
+    .loading {
+        min-height: min(510px, var(--popup-max-height));
+    }
+
     .error {
-        min-height: 0;
         gap: var(--gap-small);
     }
     .error > p {

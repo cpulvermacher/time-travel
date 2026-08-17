@@ -24,6 +24,8 @@
     --checkbox-size: 16px;
     --checkbox-gap: var(--gap-small);
     --checkbox-label-offset: calc(var(--checkbox-size) + var(--checkbox-gap));
+    /* on desktop, extension popups have a max of 600px, according to https://developer.chrome.com/docs/extensions/reference/api/action#popup ) */
+    --popup-max-height: 600px;
     --short-duration: 150ms;
     --long-duration: 400ms;
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -57,6 +59,12 @@ body {
     width: 300px;
 }
 
+/* serves as scroll container on desktop */
+#popup {
+    max-height: var(--popup-max-height);
+    overflow-y: auto;
+}
+
 @media (min-width: 301px) {
     html {
         font-size: 1em;
@@ -65,13 +73,15 @@ body {
     body {
         width: auto;
     }
+
+    #popup {
+        max-height: none;
+    }
 }
 
 main {
-    min-height: 510px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     gap: var(--gap-mid);
     padding: var(--gap-large);
 }

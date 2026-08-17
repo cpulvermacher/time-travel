@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.0.1]
+- Fix: Allow scrolling extension popup on small screens. On desktop Firefox, it might have been cut off.
+
 ## [3.0.0]
 - Improve extension popup UI:
     - Show ON/OFF state and used date/time for the current tab on top.
