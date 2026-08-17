@@ -42,9 +42,6 @@ importers:
       chrome-webstore-upload-cli:
         specifier: ^3.5.0
         version: 3.5.0
-      globals:
-        specifier: ^17.9.0
-        version: 17.9.0
       happy-dom:
         specifier: ^20.11.2
         version: 20.11.2
@@ -1219,10 +1216,6 @@ packages:
 
   globals@14.0.0:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
-    engines: {node: '>=18'}
-
-  globals@17.9.0:
-    resolution: {integrity: sha512-m/MvAW61QVU5VDNF1Vj8axt016h8w7L5TU1e9zlab7XIttAT2YAlCwl75K1fOqvMM9apmD7lbCIRhpfkhmxhCg==}
     engines: {node: '>=18'}
 
   graceful-fs@4.2.10:
@@ -3277,8 +3270,6 @@ snapshots:
       ini: 4.1.1
 
   globals@14.0.0: {}
-
-  globals@17.9.0: {}
 
   graceful-fs@4.2.10: {}
 
