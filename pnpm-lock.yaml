@@ -12,8 +12,8 @@ importers:
         specifier: ^1.0.11
         version: 1.0.11
       svelte:
-        specifier: ^5.56.8
-        version: 5.56.8
+        specifier: ^5.56.9
+        version: 5.56.9
     devDependencies:
       '@biomejs/biome':
         specifier: 2.5.6
@@ -29,13 +29,13 @@ importers:
         version: 1.62.1
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.0
-        version: 7.3.0(svelte@5.56.8)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.27.2))
+        version: 7.3.0(svelte@5.56.9)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.27.2))
       '@tsconfig/svelte':
         specifier: ^5.0.8
         version: 5.0.8
       '@types/chrome':
-        specifier: ^0.2.5
-        version: 0.2.5
+        specifier: ^0.2.6
+        version: 0.2.6
       '@vitest/coverage-v8':
         specifier: ^4.1.10
         version: 4.1.10(vitest@4.1.10)
@@ -49,8 +49,8 @@ importers:
         specifier: ^20.11.2
         version: 20.11.2
       svelte-check:
-        specifier: ^4.7.5
-        version: 4.7.5(picomatch@4.0.5)(svelte@5.56.8)(typescript@6.0.3)
+        specifier: ^4.7.6
+        version: 4.7.6(picomatch@4.0.5)(svelte@5.56.9)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -570,8 +570,8 @@ packages:
     peerDependencies:
       acorn: ^8.9.0
 
-  '@sveltejs/load-config@0.2.2':
-    resolution: {integrity: sha512-K7dsJDQxBOF+f+epuhMactcjK2VP4MRkLKtwSykNtEI+cKVEyzrmmhQ1pmoxI800m4JKcyJ05L2M4yPwAGiBNw==}
+  '@sveltejs/load-config@0.2.3':
+    resolution: {integrity: sha512-VT3qmUb8pRV2QrZjd8iAmtg8lf4W0TIjZbvXtz5MKei/q96teWZgGJyyidJzOjzZzvdq616eSRVeMYIQChUTAQ==}
     engines: {node: '>= 18.0.0'}
 
   '@sveltejs/vite-plugin-svelte@7.3.0':
@@ -587,8 +587,8 @@ packages:
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
 
-  '@types/chrome@0.2.5':
-    resolution: {integrity: sha512-DwLFgwj3D0zjxRBhQ3610RBso2g+yI1cakq/JdIGopZ9Bc5UhQluyfcLGZwivFE4t2h4b2QZYZhPV7KylExSbA==}
+  '@types/chrome@0.2.6':
+    resolution: {integrity: sha512-8OgXtL+OcR2IpY2ul5itg0R3xmdceAM4ldcHxh4BFL20p5z7fjhpyP5KuXAp1LIxA7oQgyViKTS9d+W8Sn8jdQ==}
 
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
@@ -1928,16 +1928,16 @@ packages:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
     engines: {node: '>=8'}
 
-  svelte-check@4.7.5:
-    resolution: {integrity: sha512-NnkHGCTPH6k4ka1E9IpTuNv40uLArHnX52kLEuaHSGqRlPYTnkbFs529jSWG+y+wDy+v+jA2PQ0soN1umVK+OA==}
+  svelte-check@4.7.6:
+    resolution: {integrity: sha512-t2scM//ZuVbSY/T2w6FSBw1v9s2NEmh/g+sy1lqtosW5ylBV5AF4wFb1Ts9Kf3MbfPDUDJDZ9L436YT0SPTdvw==}
     engines: {node: '>= 18.0.0'}
     hasBin: true
     peerDependencies:
       svelte: ^4.0.0 || ^5.0.0-next.0
       typescript: ^5.0.0 || ^6.0.0
 
-  svelte@5.56.8:
-    resolution: {integrity: sha512-PY8LOw7xP6c8IOiVqdo0sbbZVYhXRSfklOQLAUyGBKqjTX0wx/z4l/9J+PmBpmlLnxzEb1NqltxQ5/wZme/Cmg==}
+  svelte@5.56.9:
+    resolution: {integrity: sha512-VT8kSnlEg8069w7AiCcAk3Yf5xvMnrGTagVOmU/OpOLHaHnNqXhWZCH/4EVga/bT/HtWhvE6/fHrXLErx7OnJA==}
     engines: {node: '>=18'}
 
   thread-stream@4.2.0:
@@ -2600,14 +2600,14 @@ snapshots:
     dependencies:
       acorn: 8.18.0
 
-  '@sveltejs/load-config@0.2.2': {}
+  '@sveltejs/load-config@0.2.3': {}
 
-  '@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.8)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.27.2))':
+  '@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.9)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.27.2))':
     dependencies:
       deepmerge: 4.3.1
       magic-string: 1.1.0
       obug: 2.1.4
-      svelte: 5.56.8
+      svelte: 5.56.9
       vite: 8.2.1(@types/node@26.2.0)(esbuild@0.27.2)
       vitefu: 1.1.3(vite@8.2.1(@types/node@26.2.0)(esbuild@0.27.2))
 
@@ -2618,7 +2618,7 @@ snapshots:
       '@types/deep-eql': 4.0.2
       assertion-error: 2.0.1
 
-  '@types/chrome@0.2.5':
+  '@types/chrome@0.2.6':
     dependencies:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
@@ -3923,20 +3923,20 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
 
-  svelte-check@4.7.5(picomatch@4.0.5)(svelte@5.56.8)(typescript@6.0.3):
+  svelte-check@4.7.6(picomatch@4.0.5)(svelte@5.56.9)(typescript@6.0.3):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
-      '@sveltejs/load-config': 0.2.2
+      '@sveltejs/load-config': 0.2.3
       chokidar: 4.0.3
       fdir: 6.5.0(picomatch@4.0.5)
       picocolors: 1.1.1
       sade: 1.8.1
-      svelte: 5.56.8
+      svelte: 5.56.9
       typescript: 6.0.3
     transitivePeerDependencies:
       - picomatch
 
-  svelte@5.56.8:
+  svelte@5.56.9:
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@jridgewell/sourcemap-codec': 1.5.5

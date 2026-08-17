@@ -24,12 +24,12 @@
         "@playwright/test": "^1.62.1",
         "@sveltejs/vite-plugin-svelte": "^7.3.0",
         "@tsconfig/svelte": "^5.0.8",
-        "@types/chrome": "^0.2.5",
+        "@types/chrome": "^0.2.6",
         "@vitest/coverage-v8": "^4.1.10",
         "chrome-webstore-upload-cli": "^3.5.0",
         "globals": "^17.9.0",
         "happy-dom": "^20.11.2",
-        "svelte-check": "^4.7.5",
+        "svelte-check": "^4.7.6",
         "typescript": "^6.0.3",
         "vite": "^8.2.1",
         "vitest": "^4.1.10",
@@ -37,7 +37,7 @@
     },
     "dependencies": {
         "@svelte-plugins/datepicker": "^1.0.11",
-        "svelte": "^5.56.8"
+        "svelte": "^5.56.9"
     },
     "packageManager": "pnpm@11.20.0+sha512.9a6f330a95b66446ea088faf1521405a8a01f07fde7124cc9958dfed52d4bb436737e65b08f85f37b46fcba375092558ac51262b816844b22f63406ed166bfee"
 }
