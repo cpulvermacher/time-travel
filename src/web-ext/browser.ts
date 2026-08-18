@@ -164,6 +164,17 @@ export async function reloadTab() {
     await chrome.tabs.reload(tabId);
 }
 
+/** top and bottom edge of the browser window containing this page, in screen coordinates (CSS
+ * pixels); undefined without a windows API (dev server, Firefox for Android) */
+export async function getBrowserWindowBounds(): Promise<{ top: number; bottom: number } | undefined> {
+    if (typeof chrome === 'undefined' || chrome.windows === undefined) {
+        return undefined;
+    }
+
+    const { top, height } = await chrome.windows.getCurrent();
+    return top === undefined || height === undefined ? undefined : { top, bottom: top + height };
+}
+
 /** get the browser UI language (e.g. "en-GB") */
 export function getUILanguage(): string {
     if (typeof chrome !== 'undefined' && chrome?.i18n !== undefined) {

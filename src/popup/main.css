@@ -68,14 +68,13 @@ body {
 @media (min-width: 301px) {
     html {
         font-size: 1em;
+        /* opened as a full page (mobile), which is never height-limited */
+        /* biome-ignore lint/complexity/noImportantStyles: must beat limit-popup-height.ts's inline style */
+        --popup-max-height: none !important;
     }
 
     body {
         width: auto;
-    }
-
-    #popup {
-        max-height: none;
     }
 }
 
