@@ -67,7 +67,7 @@ export function formatUnambiguousDate(date: Date, timezone: string, options?: Om
 
 function formatDateParts(parts: SharedDateParts, options?: FormatOptions): string {
     // negative years (=before 1BCE) need to be padded with extra digits for Date() to parse them
-    const YYYY = parts.year >= 0 ? String(parts.year).padStart(4, '0') : '-' + String(-parts.year).padStart(6, '0');
+    const YYYY = parts.year >= 0 ? String(parts.year).padStart(4, '0') : `-${String(-parts.year).padStart(6, '0')}`;
     const MM = String(parts.month + 1).padStart(2, '0');
     const DD = String(parts.day).padStart(2, '0');
     const HH = String(parts.hour).padStart(2, '0');

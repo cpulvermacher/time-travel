@@ -54,11 +54,11 @@ function isUTCDate(dateString: string): boolean {
 function toUTCDateString(dateString: string): string {
     if (!dateString.includes(':')) {
         // date only string, add time part
-        return dateString + ' 00:00Z';
+        return `${dateString} 00:00Z`;
     } else if (!/\d$/.test(dateString)) {
         // does not end in a digit (maybe "AM" or "PM")
-        return dateString + ' Z';
+        return `${dateString} Z`;
     } else {
-        return dateString + 'Z';
+        return `${dateString}Z`;
     }
 }
