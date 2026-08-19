@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
     getActiveTabId,
+    getBrowserWindowBounds,
     getSettingsStorage,
     getUILanguage,
     injectFunction,
@@ -43,6 +44,9 @@ function createChromeMock() {
         },
         runtime: {
             getPlatformInfo: vi.fn(),
+        },
+        windows: {
+            getCurrent: vi.fn(),
         },
     };
 }
@@ -288,6 +292,35 @@ describe('isAndroid', () => {
         chromeMock.runtime.getPlatformInfo.mockResolvedValue({ os: 'linux' });
         vi.stubGlobal('location', { search: '?mobile' });
         await expect(isAndroid()).resolves.toBe(false);
+    });
+});
+
+describe('getBrowserWindowBounds', () => {
+    it('returns the vertical edges of the current browser window', async () => {
+        chromeMock.windows.getCurrent.mockResolvedValue({ top: 22, left: 100, height: 800, width: 1200 });
+
+        await expect(getBrowserWindowBounds()).resolves.toEqual({ top: 22, bottom: 822 });
+    });
+
+    it('returns undefined without the windows API', async () => {
+        // Firefox for Android has no chrome.windows, and opens the popup as a full page anyway
+        chromeMock.windows = undefined as never;
+
+        await expect(getBrowserWindowBounds()).resolves.toBeUndefined();
+    });
+
+    it('returns undefined when chrome is unavailable', async () => {
+        vi.stubGlobal('chrome', undefined);
+
+        await expect(getBrowserWindowBounds()).resolves.toBeUndefined();
+    });
+
+    it('returns undefined when the window does not report its bounds', async () => {
+        chromeMock.windows.getCurrent.mockResolvedValue({ top: 22, height: undefined });
+        await expect(getBrowserWindowBounds()).resolves.toBeUndefined();
+
+        chromeMock.windows.getCurrent.mockResolvedValue({ top: undefined, height: 800 });
+        await expect(getBrowserWindowBounds()).resolves.toBeUndefined();
     });
 });
 
