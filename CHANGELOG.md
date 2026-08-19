@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.0.2]
+- Fix: Allow scrolling extension popup when it is cut off by a short browser window. Affected Chrome as well.
+
 ## [3.0.1]
 - Fix: Allow scrolling extension popup on small screens. On desktop Firefox, it might have been cut off.
 
