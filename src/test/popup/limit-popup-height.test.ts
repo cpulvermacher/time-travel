@@ -67,12 +67,12 @@ describe('limitPopupHeight', () => {
     });
 
     it('leaves a fully visible popup at the height guessed from the browser window', async () => {
-        vi.mocked(browser).getBrowserWindowBounds.mockResolvedValue({ top: 0, bottom: 700 });
+        vi.mocked(browser).getBrowserWindowBounds.mockResolvedValue({ top: 0, bottom: 660 });
         placePopup({ top: 100, height: 400 });
 
         await settle();
 
-        expect(maxHeight()).toBe('580px'); // nothing is hidden, so the 700px - 120px guess stands
+        expect(maxHeight()).toBe('580px'); // nothing is hidden, so the 660px - 80px guess stands
     });
 
     it('limits the popup to the visible part of its browser window', async () => {
@@ -159,17 +159,17 @@ describe('limitPopupHeight', () => {
     });
 
     it('measures again later when the final position arrives without a resize event', async () => {
-        vi.mocked(browser).getBrowserWindowBounds.mockResolvedValue({ top: 0, bottom: 700 });
+        vi.mocked(browser).getBrowserWindowBounds.mockResolvedValue({ top: 0, bottom: 660 });
         placePopup({ top: 100, height: 400 });
         await limitPopupHeight();
 
         await vi.advanceTimersByTimeAsync(100);
         expect(maxHeight()).toBe('580px'); // still where it was opened, and fully visible there
 
-        placePopup({ top: 500, height: 400 });
+        placePopup({ top: 460, height: 400 });
         await vi.advanceTimersByTimeAsync(900);
 
-        expect(maxHeight()).toBe('200px'); // 700 - 500, without any event announcing the move
+        expect(maxHeight()).toBe('200px'); // 660 - 460, without any event announcing the move
     });
 
     describe('before the popup is positioned', () => {
@@ -178,7 +178,7 @@ describe('limitPopupHeight', () => {
 
             await limitPopupHeight(); // no timers run yet, so nothing has been measured
 
-            expect(maxHeight()).toBe('380px'); // 500px window, minus its own toolbars
+            expect(maxHeight()).toBe('420px'); // 500px window, minus its own toolbars
         });
 
         it('never guesses more than the browsers allow anyway', async () => {
@@ -190,9 +190,11 @@ describe('limitPopupHeight', () => {
         });
 
         it('never guesses less than the minimum height', async () => {
+            vi.mocked(browser).getBrowserWindowBounds.mockResolvedValue({ top: 22, bottom: 272 });
+
             await limitPopupHeight();
 
-            expect(maxHeight()).toBe('200px'); // 290px window - 120px of toolbars = 170px
+            expect(maxHeight()).toBe('200px'); // 250px window - 80px of toolbars = 170px
         });
     });
 });

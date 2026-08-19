@@ -1,7 +1,7 @@
 import { getBrowserWindowBounds } from '@/web-ext/browser';
 
 /** title bar + tab strip + toolbar; only for the initial guess, before the popup is positioned */
-const FALLBACK_CHROME_HEIGHT = 120;
+const FALLBACK_CHROME_HEIGHT = 80;
 /** below this the popup is useless, so accept it being cut off instead */
 const MIN_HEIGHT = 200;
 /** on desktop, extension popups are capped at 600px anyway */
