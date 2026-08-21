@@ -69,7 +69,7 @@ function removeDateTimePart(str: string): string {
     return str;
 }
 
-type TzInfo = {
+export type TzInfo = {
     tzName: string; // e.g. "CEST"
     offset: string; // e.g. "-05:00"
     isDst: boolean;
