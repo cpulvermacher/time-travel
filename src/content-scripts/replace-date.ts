@@ -1,7 +1,7 @@
 // this content script is injected into the MAIN world, with no isolation
 // to avoid polluting the global scope, the bundled version is wrapped in an IIFE
 
-import { OriginalDate, OriginalIntlDateTimeFormat } from '@/date/original-date';
+import { OriginalDate, OriginalIntlDateTimeFormat, OriginalTemporal } from '@/date/original-date';
 import { debugLog } from '@/util/log';
 import { FakeDate } from './fake-date/FakeDate';
 import { FakeIntlDateTimeFormat } from './fake-date/FakeIntlDateTimeFormat';
@@ -27,11 +27,17 @@ const updateStateAndReplaceDate = () => {
         // biome-ignore lint/suspicious/noGlobalAssign: this is what we came here to do
         Date = FakeDate as DateConstructor;
         Intl.DateTimeFormat = FakeIntlDateTimeFormat as typeof Intl.DateTimeFormat;
+        if (OriginalTemporal) {
+            //TODO
+        }
     } else {
         debugLog('Time Travel: Disabling');
         // biome-ignore lint/suspicious/noGlobalAssign: this is what we came here to do
         Date = OriginalDate;
         Intl.DateTimeFormat = OriginalIntlDateTimeFormat;
+        if (OriginalTemporal) {
+            globalThis.Temporal = OriginalTemporal;
+        }
     }
 };
 
