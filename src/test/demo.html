@@ -35,6 +35,8 @@
             <div id="temporal" hidden>
                 <h4>Temporal.Now.instant()</h4>
                 <p id="temporalInstant"></p>
+                <h4>Temporal.Now.instant().toLocaleString()</h4>
+                <p id="temporalInstantToLocaleString"></p>
                 <h4>Temporal.Now.zonedDateTimeISO()</h4>
                 <p id="temporalZonedDateTime"></p>
                 <h4>Temporal.Now.zonedDateTimeISO('America/New_York')</h4>
@@ -68,6 +70,7 @@
 
                     setInterval(() => {
                         show('temporalInstant', () => Temporal.Now.instant());
+                        show('temporalInstantToLocaleString', () => Temporal.Now.instant().toLocaleString());
                         show('temporalZonedDateTime', () => Temporal.Now.zonedDateTimeISO());
                         show('temporalZonedDateTimeNewYork', () => Temporal.Now.zonedDateTimeISO('America/New_York'));
                         show('temporalPlainDateTime', () => Temporal.Now.plainDateTimeISO());

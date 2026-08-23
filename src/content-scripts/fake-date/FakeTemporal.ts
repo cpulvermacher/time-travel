@@ -1,5 +1,6 @@
 import { getDateParts } from '@/date/date-parts';
 import { OriginalTemporal } from '@/date/original-date';
+import { optionsWithDefaultTz } from './FakeIntlDateTimeFormat';
 import { fakeNowDate, getTimezone } from './storage';
 
 //non-null if implementation supports Temporal API
@@ -107,5 +108,12 @@ if (OriginalTemporal) {
         PlainTime: OriginalTemporal.PlainTime,
         PlainYearMonth: OriginalTemporal.PlainYearMonth,
         ZonedDateTime: OriginalTemporal.ZonedDateTime,
+    };
+
+    // Instant.toLocaleString() is the only Temporal instance method that falls back to the system
+    // time zone. We patch this one in-place to reach all Instant instances (no-op if timezone is not faked)
+    const originalToLocaleString = SafeTemporal.Instant.prototype.toLocaleString;
+    SafeTemporal.Instant.prototype.toLocaleString = function (locales, options) {
+        return originalToLocaleString.call(this, locales, optionsWithDefaultTz(options));
     };
 }
