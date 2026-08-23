@@ -37,7 +37,21 @@ if (OriginalTemporal) {
         return timeZone.timeZoneId;
     };
 
-    const FakeTemporalNow: typeof Temporal.Now = {
+    /** copies members into a namespace object shaped like the original ones: the members are
+     * non-enumerable and there is a `Symbol.toStringTag`, so `Object.keys()`, spreading and
+     * `Object.prototype.toString()` can't tell it apart (see issue #41). */
+    const asNamespace = <T extends object>(tag: string, members: T): T => {
+        const namespace = {} as T;
+        for (const [name, value] of Object.entries(members)) {
+            // the defaults for the other attributes match the original (writable, configurable)
+            Object.defineProperty(namespace, name, { value, writable: true, configurable: true });
+        }
+        // the tag is read-only in the original
+        Object.defineProperty(namespace, Symbol.toStringTag, { value: tag, configurable: true });
+        return namespace;
+    };
+
+    const FakeTemporalNow: typeof Temporal.Now = asNamespace('Temporal.Now', {
         instant: () => {
             const now = fakeNowDate();
             return new SafeTemporal.Instant(BigInt(now.getTime()) * 1000000n);
@@ -110,9 +124,9 @@ if (OriginalTemporal) {
             const tz = getZone(timeZone) ?? SafeTemporal.Now.timeZoneId();
             return FakeTemporalNow.plainDateTimeISO(tz).toZonedDateTime(tz);
         },
-    };
+    });
 
-    FakeTemporal = {
+    FakeTemporal = asNamespace('Temporal', {
         Duration: OriginalTemporal.Duration,
         Instant: OriginalTemporal.Instant,
         Now: FakeTemporalNow,
@@ -122,7 +136,7 @@ if (OriginalTemporal) {
         PlainTime: OriginalTemporal.PlainTime,
         PlainYearMonth: OriginalTemporal.PlainYearMonth,
         ZonedDateTime: OriginalTemporal.ZonedDateTime,
-    };
+    });
 
     // Instant.toLocaleString() is the only Temporal instance method that falls back to the system
     // time zone. We patch this one in-place to reach all Instant instances (no-op if timezone is not faked)

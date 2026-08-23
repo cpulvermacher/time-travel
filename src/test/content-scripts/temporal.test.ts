@@ -575,6 +575,34 @@ describe.skipIf(noTemporal)('Temporal', () => {
         expect(Object.getOwnPropertyNames(Temporal.Now)).toHaveLength(origProperties.length);
     });
 
+    /** the attributes of every own property, which `getOwnPropertyNames` above does not see */
+    const propertyFlags = (namespace: object) =>
+        Object.fromEntries(
+            Object.getOwnPropertyNames(namespace).map((name) => {
+                const { writable, enumerable, configurable } = Object.getOwnPropertyDescriptor(namespace, name) ?? {};
+                return [name, { writable, enumerable, configurable }];
+            })
+        );
+
+    // natively the namespaces expose non-enumerable properties and a toStringTag, so a page that
+    // iterates or tag-sniffs them must not see anything different, see issue #41
+    it.each([
+        { name: 'Temporal', get: () => Temporal },
+        { name: 'Temporal.Now', get: () => Temporal.Now },
+    ])('$name keeps its shape when time travel is enabled', ({ get }) => {
+        setFakeDate('');
+        const origKeys = Object.keys(get());
+        const origFlags = propertyFlags(get());
+        const origTag = Object.prototype.toString.call(get());
+
+        setFakeDate(fakeDate);
+
+        expect(Object.keys(get())).toEqual(origKeys); // natively [], the properties are non-enumerable
+        expect({ ...get() }).toEqual({});
+        expect(propertyFlags(get())).toEqual(origFlags);
+        expect(Object.prototype.toString.call(get())).toBe(origTag);
+    });
+
     it('Temporal classes are not replaced when time travel is enabled', () => {
         setFakeDate('');
         const { Instant, ZonedDateTime, PlainDate, PlainDateTime, PlainTime } = Temporal;
