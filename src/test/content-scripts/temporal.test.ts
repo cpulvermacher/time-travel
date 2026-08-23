@@ -203,6 +203,38 @@ describe('Temporal', () => {
         });
     });
 
+    // a page must not be able to tell the extension is there by the error it gets back
+    describe('time zone argument the original rejects', () => {
+        const methods: { name: string; call: (timeZone: unknown) => unknown }[] = [
+            { name: 'plainDateISO', call: (tz) => Temporal.Now.plainDateISO(tz as string) },
+            { name: 'plainDateTimeISO', call: (tz) => Temporal.Now.plainDateTimeISO(tz as string) },
+            { name: 'plainTimeISO', call: (tz) => Temporal.Now.plainTimeISO(tz as string) },
+            { name: 'zonedDateTimeISO', call: (tz) => Temporal.Now.zonedDateTimeISO(tz as string) },
+        ];
+
+        // only a string or a ZonedDateTime is a valid time zone, anything else is a TypeError
+        const zones: { name: string; zone: unknown; error: ErrorConstructor }[] = [
+            { name: 'an unknown IANA id', zone: 'Not/AZone', error: RangeError },
+            { name: 'a string that is not an id', zone: 'UTC+1', error: RangeError },
+            { name: 'an empty string', zone: '', error: RangeError },
+            { name: 'an object with an unknown timeZoneId', zone: { timeZoneId: 'Not/AZone' }, error: TypeError },
+            { name: 'null', zone: null, error: TypeError },
+            { name: 'a number', zone: 5, error: TypeError },
+        ];
+
+        methods.forEach(({ name, call }) => {
+            zones.forEach(({ name: zoneName, zone, error }) => {
+                it(`${name}() rejects ${zoneName} like the original`, () => {
+                    setFakeDate(''); // off, so this is the original Temporal
+                    expect(() => call(zone)).toThrow(error);
+
+                    setFakeDate(fakeDateNy, newYork);
+                    expect(() => call(zone)).toThrow(error);
+                });
+            });
+        });
+    });
+
     describe('ticking', () => {
         const sleepMs = 2; //at least 1ms
         const sleep = async () => await new Promise((res) => setTimeout(res, sleepMs));

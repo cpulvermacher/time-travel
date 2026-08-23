@@ -591,6 +591,17 @@ describe('replace-date with time zone', () => {
         expect(gmtFormatter.format(date)).toBe(directGmtFormatter.format(date));
     });
 
+    // an empty timeZone is a value the page passed, not an absent one
+    it('Intl.DateTimeFormat rejects an empty timezone like the original', () => {
+        const create = () => new Intl.DateTimeFormat('en-US', { timeZone: '' });
+
+        setFakeDate(''); // off, so this is the original Intl.DateTimeFormat
+        expect(create).toThrow(RangeError);
+
+        setFakeDate('2023-01-01T12:00:00.000Z', 'UTC');
+        expect(create).toThrow(RangeError);
+    });
+
     it('default timezone behavior without timezone set', () => {
         const fakeDate = '2023-01-01T12:00:00.000Z';
         setFakeDate(fakeDate);
