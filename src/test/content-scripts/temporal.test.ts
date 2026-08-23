@@ -526,7 +526,8 @@ describe('Temporal', () => {
         const origProperties = Object.getOwnPropertyNames(Temporal.Now);
 
         setFakeDate(fakeDate);
-        expect(Object.getOwnPropertyNames(Temporal.Now)).toStrictEqual(origProperties);
+        expect(Object.getOwnPropertyNames(Temporal.Now)).toEqual(expect.arrayContaining(origProperties));
+        expect(Object.getOwnPropertyNames(Temporal.Now)).toHaveLength(origProperties.length);
     });
 
     it('Temporal classes are not replaced when time travel is enabled', () => {
