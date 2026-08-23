@@ -92,7 +92,7 @@ if (OriginalTemporal) {
             return getTimezone() ?? SafeTemporal.Now.timeZoneId();
         },
         zonedDateTimeISO: (timeZone) => {
-            const tz = timeZone ?? SafeTemporal.Now.timeZoneId();
+            const tz = timeZone ?? getTimezone() ?? SafeTemporal.Now.timeZoneId();
             return Temporal.Now.plainDateTimeISO(tz).toZonedDateTime(tz);
         },
     };
