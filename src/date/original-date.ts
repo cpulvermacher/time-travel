@@ -10,10 +10,4 @@
  */
 export const OriginalDate = Date;
 export const OriginalIntlDateTimeFormat = Intl.DateTimeFormat;
-
-export let OriginalTemporal: typeof Temporal | null = null;
-try {
-    OriginalTemporal = Temporal;
-} catch {
-    // possibly a ReferenceError if no support
-}
+export const OriginalTemporal = typeof Temporal === 'undefined' ? null : Temporal;
