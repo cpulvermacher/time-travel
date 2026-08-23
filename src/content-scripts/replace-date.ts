@@ -5,6 +5,7 @@ import { OriginalDate, OriginalIntlDateTimeFormat, OriginalTemporal } from '@/da
 import { debugLog } from '@/util/log';
 import { FakeDate } from './fake-date/FakeDate';
 import { FakeIntlDateTimeFormat } from './fake-date/FakeIntlDateTimeFormat';
+import { FakeTemporal } from './fake-date/FakeTemporal';
 import {
     getFakeDate,
     getTimezone,
@@ -27,8 +28,8 @@ const updateStateAndReplaceDate = () => {
         // biome-ignore lint/suspicious/noGlobalAssign: this is what we came here to do
         Date = FakeDate as DateConstructor;
         Intl.DateTimeFormat = FakeIntlDateTimeFormat as typeof Intl.DateTimeFormat;
-        if (OriginalTemporal) {
-            //TODO
+        if (FakeTemporal) {
+            globalThis.Temporal = FakeTemporal;
         }
     } else {
         debugLog('Time Travel: Disabling');
