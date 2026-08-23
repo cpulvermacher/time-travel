@@ -216,6 +216,47 @@ describe.skipIf(noTemporal)('Temporal', () => {
         });
     });
 
+    // a local time inside a DST fall-back happens twice, so the wall clock alone cannot identify
+    // the instant -- Now must stay anchored to the epoch time
+    describe('Now during a DST transition', () => {
+        // 01:30 in New York happens twice on 2023-11-05: first as EDT, then as EST
+        const firstPass = '2023-11-05T05:30:00.000Z';
+        const secondPass = '2023-11-05T06:30:00.000Z';
+
+        it('zonedDateTimeISO() returns the first pass through the repeated hour', () => {
+            setFakeDate(firstPass, newYork);
+            const zoned = Temporal.Now.zonedDateTimeISO();
+
+            expect(zoned.toString()).toBe('2023-11-05T01:30:00-04:00[America/New_York]');
+            expect(zoned.offset).toBe('-04:00');
+            expect(zoned.epochMilliseconds).toBe(Date.parse(firstPass));
+            expect(zoned.epochMilliseconds).toBe(Temporal.Now.instant().epochMilliseconds);
+            expect(zoned.epochMilliseconds).toBe(Date.now());
+        });
+
+        it('zonedDateTimeISO() returns the second pass through the repeated hour', () => {
+            setFakeDate(secondPass, newYork);
+            const zoned = Temporal.Now.zonedDateTimeISO();
+
+            expect(zoned.toString()).toBe('2023-11-05T01:30:00-05:00[America/New_York]');
+            expect(zoned.offset).toBe('-05:00');
+            expect(zoned.epochMilliseconds).toBe(Date.parse(secondPass));
+            expect(zoned.epochMilliseconds).toBe(Temporal.Now.instant().epochMilliseconds);
+            expect(zoned.epochMilliseconds).toBe(Date.now());
+        });
+
+        it('zonedDateTimeISO() skips the hour lost to the spring-forward gap', () => {
+            // 02:30 in New York does not exist on 2023-03-12
+            const springForward = '2023-03-12T07:30:00.000Z';
+            setFakeDate(springForward, newYork);
+            const zoned = Temporal.Now.zonedDateTimeISO();
+
+            expect(zoned.toString()).toBe('2023-03-12T03:30:00-04:00[America/New_York]');
+            expect(zoned.epochMilliseconds).toBe(Date.parse(springForward));
+            expect(zoned.epochMilliseconds).toBe(Temporal.Now.instant().epochMilliseconds);
+        });
+    });
+
     // a page must not be able to tell the extension is there by the error it gets back
     describe('time zone argument the original rejects', () => {
         const methods: { name: string; call: (timeZone: unknown) => unknown }[] = [

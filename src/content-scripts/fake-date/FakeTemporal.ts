@@ -109,7 +109,7 @@ if (OriginalTemporal) {
         },
         zonedDateTimeISO: (timeZone) => {
             const tz = getZone(timeZone) ?? SafeTemporal.Now.timeZoneId();
-            return FakeTemporalNow.plainDateTimeISO(tz).toZonedDateTime(tz);
+            return FakeTemporalNow.instant().toZonedDateTimeISO(tz);
         },
     });
 
