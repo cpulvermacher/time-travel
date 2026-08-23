@@ -18,7 +18,10 @@ const newYork = 'America/New_York';
 /** time zone the page currently sees (the faked one if set, the browser default otherwise) */
 const pageTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-describe('Temporal', () => {
+/** nothing here applies on an implementation without the Temporal API */
+const noTemporal = typeof Temporal === 'undefined';
+
+describe.skipIf(noTemporal)('Temporal', () => {
     afterEach(() => {
         setFakeDate('');
         setTickStartTimestamp('');
