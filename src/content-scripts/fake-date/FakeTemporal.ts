@@ -1,6 +1,7 @@
 import { getDateParts } from '@/date/date-parts';
 import { OriginalTemporal } from '@/date/original-date';
 import { optionsWithDefaultTz } from './FakeIntlDateTimeFormat';
+import { asNamespace } from './own-properties';
 import { fakeNowDate, getTimezone } from './storage';
 
 //non-null if implementation supports Temporal API
@@ -35,20 +36,6 @@ if (OriginalTemporal) {
             throwInvalidZone(timeZone);
         }
         return timeZone.timeZoneId;
-    };
-
-    /** copies members into a namespace object shaped like the original ones: the members are
-     * non-enumerable and there is a `Symbol.toStringTag`, so `Object.keys()`, spreading and
-     * `Object.prototype.toString()` can't tell it apart (see issue #41). */
-    const asNamespace = <T extends object>(tag: string, members: T): T => {
-        const namespace = {} as T;
-        for (const [name, value] of Object.entries(members)) {
-            // the defaults for the other attributes match the original (writable, configurable)
-            Object.defineProperty(namespace, name, { value, writable: true, configurable: true });
-        }
-        // the tag is read-only in the original
-        Object.defineProperty(namespace, Symbol.toStringTag, { value: tag, configurable: true });
-        return namespace;
     };
 
     const FakeTemporalNow: typeof Temporal.Now = asNamespace('Temporal.Now', {

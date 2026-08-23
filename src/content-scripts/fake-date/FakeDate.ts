@@ -5,6 +5,7 @@ import { OriginalDate } from '@/date/original-date';
 import { parseWithTimezone } from '@/date/parseWithTimezone';
 import { optionsWithDefaultTz } from './FakeIntlDateTimeFormat';
 import { getTimezoneName } from './getTimezoneName';
+import { copyOwnProperties } from './own-properties';
 import { fakeNowDate, getTimezone } from './storage';
 
 // Date constructor, needs to be a function to allow both constructing (`new Date()`) and calling without new: `Date()`
@@ -371,18 +372,6 @@ function overridePartOfDate(
 
     const desiredLocalDate = getDatePartsForLocalDate(year, month, day, hours, minutes, seconds, ms);
     return date.setTime(disambiguateDate(desiredLocalDate, timezone));
-}
-
-/** copy all own properties from source to target, except 'constructor'
- *
- * This includes both own properties and symbols, enumerable or not.
- */
-function copyOwnProperties<T extends object>(source: T, target: T): void {
-    Reflect.ownKeys(source)
-        .filter((key) => key !== 'constructor')
-        .forEach((key) => {
-            target[key as keyof T] = source[key as keyof T];
-        });
 }
 
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
