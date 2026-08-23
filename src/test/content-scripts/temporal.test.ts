@@ -190,6 +190,16 @@ describe('Temporal', () => {
             expect(Temporal.Now.plainTimeISO('UTC').toString()).toBe('03:01:02.345');
         });
 
+        it('a ZonedDateTime argument supplies the time zone', () => {
+            // the only non-string time zone the original accepts
+            const utc = Temporal.ZonedDateTime.from('2021-09-15T12:34:56.789+00:00[UTC]');
+
+            expect(Temporal.Now.zonedDateTimeISO(utc).toString()).toBe('2023-01-01T03:01:02.345+00:00[UTC]');
+            expect(Temporal.Now.plainDateTimeISO(utc).toString()).toBe('2023-01-01T03:01:02.345');
+            expect(Temporal.Now.plainDateISO(utc).toString()).toBe('2023-01-01');
+            expect(Temporal.Now.plainTimeISO(utc).toString()).toBe('03:01:02.345');
+        });
+
         it('time zone is ignored if the fake date is disabled', () => {
             setFakeDate('');
             const browserTimeZone = pageTimeZone();
