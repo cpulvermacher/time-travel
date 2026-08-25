@@ -19,6 +19,15 @@ import {
 const devVersion = import.meta.env.VITE_VERSION ? `Version: ${import.meta.env.VITE_VERSION}` : '';
 debugLog(`Time Travel: injected content-script (${devVersion}) for host ${window.location.host}`);
 
+const setTemporal = (temporal: typeof Temporal) => {
+    try {
+        globalThis.Temporal = temporal;
+    } catch (e) {
+        //  A polyfill might have defined it as a non-writable or non-configurable property
+        console.warn('Time Travel: could not replace Temporal', e);
+    }
+};
+
 const updateStateAndReplaceDate = () => {
     updateState();
     const fakeDate = getFakeDate();
@@ -29,7 +38,7 @@ const updateStateAndReplaceDate = () => {
         Date = FakeDate as DateConstructor;
         Intl.DateTimeFormat = FakeIntlDateTimeFormat as typeof Intl.DateTimeFormat;
         if (FakeTemporal) {
-            globalThis.Temporal = FakeTemporal;
+            setTemporal(FakeTemporal);
         }
     } else {
         debugLog('Time Travel: Disabling');
@@ -37,7 +46,7 @@ const updateStateAndReplaceDate = () => {
         Date = OriginalDate;
         Intl.DateTimeFormat = OriginalIntlDateTimeFormat;
         if (OriginalTemporal) {
-            globalThis.Temporal = OriginalTemporal;
+            setTemporal(OriginalTemporal);
         }
     }
 };
