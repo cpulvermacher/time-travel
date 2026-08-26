@@ -289,6 +289,50 @@ describe.skipIf(noTemporal)('Temporal', () => {
         });
     });
 
+    // besides an IANA name, ToTemporalTimeZoneIdentifier accepts an offset identifier and any
+    // ISO 8601 / RFC 9557 string that carries a zone -- all of which we have to pass on unchanged
+    describe('time zone argument the original accepts', () => {
+        // `id` is the identifier the original normalizes `zone` to, `dateTime` the faked date in it
+        const zones: { name: string; zone: string; id: string; dateTime: string }[] = [
+            { name: 'an offset', zone: '+05:30', id: '+05:30', dateTime: '2023-01-01T08:31:02.345' },
+            { name: 'an offset without minutes', zone: '-08', id: '-08:00', dateTime: '2022-12-31T19:01:02.345' },
+            {
+                name: 'a date-time with a time zone annotation',
+                zone: '2020-06-15T00:00[Europe/Paris]',
+                id: 'Europe/Paris',
+                dateTime: '2023-01-01T04:01:02.345', // Paris is UTC+1 in winter
+            },
+            {
+                name: 'a date-time with an offset',
+                zone: '2020-06-15T00:00+05:30',
+                id: '+05:30',
+                dateTime: '2023-01-01T08:31:02.345',
+            },
+            {
+                name: 'a date-time with a Z designator',
+                zone: '2020-06-15T00:00Z',
+                id: 'UTC',
+                dateTime: '2023-01-01T03:01:02.345',
+            },
+        ];
+
+        zones.forEach(({ name, zone, id, dateTime }) => {
+            it(`accepts ${name} like the original`, () => {
+                setFakeDate(''); // off, so this is the original Temporal
+                expect(Temporal.Now.zonedDateTimeISO(zone).timeZoneId).toBe(id);
+                expect(() => Temporal.Now.plainDateTimeISO(zone)).not.toThrow();
+
+                setFakeDate(fakeDateNy, newYork);
+                const [date, time] = dateTime.split('T');
+                expect(Temporal.Now.zonedDateTimeISO(zone).timeZoneId).toBe(id);
+                expect(Temporal.Now.zonedDateTimeISO(zone).toPlainDateTime().toString()).toBe(dateTime);
+                expect(Temporal.Now.plainDateTimeISO(zone).toString()).toBe(dateTime);
+                expect(Temporal.Now.plainDateISO(zone).toString()).toBe(date);
+                expect(Temporal.Now.plainTimeISO(zone).toString()).toBe(time);
+            });
+        });
+    });
+
     describe('ticking', () => {
         const sleepMs = 2; //at least 1ms
         const sleep = async () => await new Promise((res) => setTimeout(res, sleepMs));
@@ -394,6 +438,34 @@ describe.skipIf(noTemporal)('Temporal', () => {
 
             setFakeDate(fakeDateNy, newYork);
             check();
+        });
+
+        // the original reads every option with a plain Get(), which walks the prototype chain
+        it('Instant.toLocaleString() honours a timeZone inherited from the options prototype', () => {
+            const check = () => {
+                const options = Object.create({ timeZone: 'UTC' }) as Intl.DateTimeFormatOptions;
+                expect(Temporal.Instant.from(fakeDateNy).toLocaleString('en-US', options)).toMatch(
+                    /1\/1\/2023, 3:01:02\WAM/
+                );
+            };
+
+            check();
+
+            setFakeDate(fakeDateNy, newYork);
+            check();
+        });
+
+        // injecting the selected time zone must not drop the options we inherit rather than own
+        it('Instant.toLocaleString() keeps inherited options when the time zone is injected', () => {
+            setFakeDate(fakeDateNy, newYork);
+
+            const timeParts = { hour: 'numeric', minute: 'numeric', hour12: false } as const;
+            const inherited = Object.create(timeParts) as Intl.DateTimeFormatOptions;
+            const instant = Temporal.Instant.from(fakeDateNy);
+
+            // same as with the options as own properties: 03:01 UTC is 22:01 the day before in NY
+            expect(instant.toLocaleString('en-US', { ...timeParts })).toBe('22:01');
+            expect(instant.toLocaleString('en-US', inherited)).toBe('22:01');
         });
 
         it('ZonedDateTime.toLocaleString() is unaffected (it carries its own time zone)', () => {

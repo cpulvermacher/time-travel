@@ -20,22 +20,22 @@ if (OriginalTemporal) {
         throw new RangeError(`Time Travel: cannot represent the faked date in time zone "${timeZone}"`);
     };
 
+    /** a fixed instant, only used to run a time zone argument through the original's normalization */
+    const epochInstant = SafeTemporal.Instant.fromEpochMilliseconds(0);
+
     /** the time zone to use, or null for the browser default.
      *
-     * Only `undefined` is "not specified"; '', null and 0 are values the original rejects. */
+     * Only `undefined` is "not specified"; '', null and 0 are values the original rejects.
+     * Anything else is normalized the way the original does, since it accepts more than a plain
+     * IANA name: an offset like '+05:30', any ISO 8601 / RFC 9557 string carrying a zone (via an
+     * annotation, an offset, or a 'Z' designator), and a ZonedDateTime. `getDateParts()` below
+     * understands none of those, so they have to reach it as an identifier. */
     const getZone = (timeZone: Temporal.TimeZoneLike | undefined): string | null => {
         if (timeZone === undefined) {
             return getTimezone();
         }
-        if (typeof timeZone === 'string') {
-            // an invalid string fails in getDateParts() below
-            return timeZone;
-        }
-        if (!(timeZone instanceof SafeTemporal.ZonedDateTime)) {
-            // the only object the original accepts
-            throwInvalidZone(timeZone);
-        }
-        return timeZone.timeZoneId;
+        // normalization throws the original's error for anything it doesn't accept
+        return epochInstant.toZonedDateTimeISO(timeZone).timeZoneId;
     };
 
     const FakeTemporalNow: typeof Temporal.Now = asNamespace('Temporal.Now', {
