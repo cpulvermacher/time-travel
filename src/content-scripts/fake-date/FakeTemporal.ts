@@ -4,13 +4,11 @@ import { optionsWithDefaultTz } from './FakeIntlDateTimeFormat';
 import { asNamespace } from './own-properties';
 import { fakeNowDate, getTimezone } from './storage';
 
-//non-null if implementation supports Temporal API
-export let FakeTemporal: typeof Temporal | null = null;
-
-if (OriginalTemporal) {
-    // a non-null reference to the original Temporal (to avoid ! assertions)
-    const SafeTemporal = OriginalTemporal;
-
+/** builds the faked `Temporal` namespace.
+ *
+ * `SafeTemporal` is a non-null reference to the original Temporal
+ */
+const createFakeTemporal = (SafeTemporal: typeof Temporal): typeof Temporal => {
     /** rejects a bad time zone with the original API's error, so a page can't tell us apart.
      *
      * (the explicit type is what lets TypeScript narrow after a call) */
@@ -113,22 +111,62 @@ if (OriginalTemporal) {
         },
     });
 
-    FakeTemporal = asNamespace('Temporal', {
-        Duration: OriginalTemporal.Duration,
-        Instant: OriginalTemporal.Instant,
+    return asNamespace('Temporal', {
+        Duration: SafeTemporal.Duration,
+        Instant: SafeTemporal.Instant,
         Now: FakeTemporalNow,
-        PlainDate: OriginalTemporal.PlainDate,
-        PlainDateTime: OriginalTemporal.PlainDateTime,
-        PlainMonthDay: OriginalTemporal.PlainMonthDay,
-        PlainTime: OriginalTemporal.PlainTime,
-        PlainYearMonth: OriginalTemporal.PlainYearMonth,
-        ZonedDateTime: OriginalTemporal.ZonedDateTime,
+        PlainDate: SafeTemporal.PlainDate,
+        PlainDateTime: SafeTemporal.PlainDateTime,
+        PlainMonthDay: SafeTemporal.PlainMonthDay,
+        PlainTime: SafeTemporal.PlainTime,
+        PlainYearMonth: SafeTemporal.PlainYearMonth,
+        ZonedDateTime: SafeTemporal.ZonedDateTime,
     });
+};
+
+//non-null if implementation supports Temporal API
+const FakeTemporal = OriginalTemporal ? createFakeTemporal(OriginalTemporal) : null;
+
+const setTemporal = (temporal: typeof Temporal) => {
+    try {
+        globalThis.Temporal = temporal;
+    } catch (e) {
+        //  A polyfill might have defined it as a non-writable or non-configurable property
+        console.warn('Time Travel: could not replace Temporal', e);
+    }
+};
+
+/** the original `Instant.prototype.toLocaleString`, non-null exactly while our patch is installed */
+let originalToLocaleString: Temporal.Instant['toLocaleString'] | null = null;
+
+/** replace the global `Temporal` with the faked one. Does nothing without Temporal support. */
+export const patchTemporal = () => {
+    if (!OriginalTemporal || !FakeTemporal) {
+        return;
+    }
+    setTemporal(FakeTemporal);
 
     // Instant.toLocaleString() is the only Temporal instance method that falls back to the system
-    // time zone. We patch this one in-place to reach all Instant instances (no-op if timezone is not faked)
-    const originalToLocaleString = SafeTemporal.Instant.prototype.toLocaleString;
-    SafeTemporal.Instant.prototype.toLocaleString = function (locales, options) {
-        return originalToLocaleString.call(this, locales, optionsWithDefaultTz(options));
-    };
-}
+    // time zone. We patch this one in-place to reach all Instant instances (no-op if timezone is
+    // not faked).
+    if (!originalToLocaleString) {
+        const original = OriginalTemporal.Instant.prototype.toLocaleString;
+        originalToLocaleString = original;
+        OriginalTemporal.Instant.prototype.toLocaleString = function (locales, options) {
+            return original.call(this, locales, optionsWithDefaultTz(options));
+        };
+    }
+};
+
+/** restore the original `Temporal`. Does nothing without Temporal support. */
+export const unpatchTemporal = () => {
+    if (!OriginalTemporal) {
+        return;
+    }
+    setTemporal(OriginalTemporal);
+
+    if (originalToLocaleString) {
+        OriginalTemporal.Instant.prototype.toLocaleString = originalToLocaleString;
+        originalToLocaleString = null;
+    }
+};

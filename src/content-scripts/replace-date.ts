@@ -1,11 +1,11 @@
 // this content script is injected into the MAIN world, with no isolation
 // to avoid polluting the global scope, the bundled version is wrapped in an IIFE
 
-import { OriginalDate, OriginalIntlDateTimeFormat, OriginalTemporal } from '@/date/original-date';
+import { OriginalDate, OriginalIntlDateTimeFormat } from '@/date/original-date';
 import { debugLog } from '@/util/log';
 import { FakeDate } from './fake-date/FakeDate';
 import { FakeIntlDateTimeFormat } from './fake-date/FakeIntlDateTimeFormat';
-import { FakeTemporal } from './fake-date/FakeTemporal';
+import { patchTemporal, unpatchTemporal } from './fake-date/FakeTemporal';
 import {
     getFakeDate,
     getTimezone,
@@ -19,15 +19,6 @@ import {
 const devVersion = import.meta.env.VITE_VERSION ? `Version: ${import.meta.env.VITE_VERSION}` : '';
 debugLog(`Time Travel: injected content-script (${devVersion}) for host ${window.location.host}`);
 
-const setTemporal = (temporal: typeof Temporal) => {
-    try {
-        globalThis.Temporal = temporal;
-    } catch (e) {
-        //  A polyfill might have defined it as a non-writable or non-configurable property
-        console.warn('Time Travel: could not replace Temporal', e);
-    }
-};
-
 const updateStateAndReplaceDate = () => {
     updateState();
     const fakeDate = getFakeDate();
@@ -37,17 +28,13 @@ const updateStateAndReplaceDate = () => {
         // biome-ignore lint/suspicious/noGlobalAssign: this is what we came here to do
         Date = FakeDate as DateConstructor;
         Intl.DateTimeFormat = FakeIntlDateTimeFormat as typeof Intl.DateTimeFormat;
-        if (FakeTemporal) {
-            setTemporal(FakeTemporal);
-        }
+        patchTemporal();
     } else {
         debugLog('Time Travel: Disabling');
         // biome-ignore lint/suspicious/noGlobalAssign: this is what we came here to do
         Date = OriginalDate;
         Intl.DateTimeFormat = OriginalIntlDateTimeFormat;
-        if (OriginalTemporal) {
-            setTemporal(OriginalTemporal);
-        }
+        unpatchTemporal();
     }
 };
 

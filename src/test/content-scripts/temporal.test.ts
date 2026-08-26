@@ -468,6 +468,45 @@ describe.skipIf(noTemporal)('Temporal', () => {
             expect(instant.toLocaleString('en-US', inherited)).toBe('22:01');
         });
 
+        // patching a prototype changes what every page sees, so it only happens while faking
+        it('Instant.prototype.toLocaleString is only replaced while the fake date is on', () => {
+            const original = Temporal.Instant.prototype.toLocaleString;
+            expect(original.toString()).toContain('[native code]');
+
+            setFakeDate(fakeDateNy, newYork);
+            expect(Temporal.Instant.prototype.toLocaleString).not.toBe(original);
+
+            setFakeDate('');
+            expect(Temporal.Instant.prototype.toLocaleString).toBe(original);
+            // a page can tell a JS function from a built-in by its source
+            expect(Temporal.Instant.prototype.toLocaleString.toString()).toContain('[native code]');
+        });
+
+        // every state update re-runs the replacement, so the patch must not stack wrappers --
+        // restoring would then only peel off the outermost one
+        it('Instant.prototype.toLocaleString is restored after repeated state updates', () => {
+            const original = Temporal.Instant.prototype.toLocaleString;
+
+            setFakeDate(fakeDateNy, newYork);
+            setFakeDate(fakeDate);
+            setFakeDate('');
+            setFakeDate('');
+
+            expect(Temporal.Instant.prototype.toLocaleString).toBe(original);
+        });
+
+        it('Instant.toLocaleString() ignores the previous time zone after turning the fake date off', () => {
+            setFakeDate(fakeDateNy, newYork);
+            expect(Temporal.Instant.from(fakeDateNy).toLocaleString('en-US')).toMatch(/12\/31\/2022, 10:01:02\WPM/);
+
+            setFakeDate('');
+            const instant = Temporal.Instant.from(fakeDateNy);
+
+            // the browser default again, i.e. the same as passing it explicitly
+            // (the tests run in every time zone, so the New York rendering isn't a stable counter-example)
+            expect(instant.toLocaleString('en-US')).toBe(instant.toLocaleString('en-US', { timeZone: pageTimeZone() }));
+        });
+
         it('ZonedDateTime.toLocaleString() is unaffected (it carries its own time zone)', () => {
             const check = () => {
                 const zoned = Temporal.ZonedDateTime.from('2021-09-15T12:34:56.789-04:00[America/New_York]');
