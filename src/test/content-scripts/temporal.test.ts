@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { UPDATE_STATE_EVENT } from '@/content-scripts/fake-date/storage';
 import { setFakeDate, setTickStartTimestamp } from '@/tab-state/inject';
 
@@ -330,6 +330,65 @@ describe.skipIf(noTemporal)('Temporal', () => {
                 expect(Temporal.Now.plainDateISO(zone).toString()).toBe(date);
                 expect(Temporal.Now.plainTimeISO(zone).toString()).toBe(time);
             });
+        });
+    });
+
+    // a running clock can push the faked date past the last instant a Date can represent. The time
+    // zone is then fine and the date is not, so this is our bug and gets an error that says so --
+    // rather than the original's zone error, which would blame the page for a valid argument.
+    describe('faked date out of the representable range', () => {
+        const methods: { name: string; call: (timeZone?: string) => unknown }[] = [
+            { name: 'plainDateISO', call: (tz) => Temporal.Now.plainDateISO(tz) },
+            { name: 'plainDateTimeISO', call: (tz) => Temporal.Now.plainDateTimeISO(tz) },
+            { name: 'plainTimeISO', call: (tz) => Temporal.Now.plainTimeISO(tz) },
+        ];
+
+        beforeEach(() => {
+            setTickStartTimestamp('0'); // ticking since the epoch adds ~56 years to the faked date
+            setFakeDate('+275760-09-13T00:00:00.000Z', newYork); // the last representable instant
+        });
+
+        methods.forEach(({ name, call }) => {
+            it(`${name}() reports the faked date, not a bad time zone`, () => {
+                expect(() => call('UTC')).toThrow(RangeError);
+                expect(() => call('UTC')).toThrow('Time Travel: cannot represent the faked date in time zone "UTC"');
+            });
+
+            it(`${name}() reports the same for the selected time zone`, () => {
+                expect(() => call()).toThrow(RangeError);
+                expect(() => call()).toThrow('Time Travel: cannot represent the faked date');
+            });
+
+            it(`${name}() still rejects a bad time zone like the original`, () => {
+                // the zone is checked first, so an out-of-range date must not mask it
+                expect(() => call('Not/AZone')).toThrow(RangeError);
+                expect(() => call('Not/AZone')).not.toThrow('Time Travel');
+            });
+        });
+    });
+
+    // a Temporal polyfill may have installed the global as a non-writable property
+    describe('a global Temporal that cannot be replaced', () => {
+        let descriptor: PropertyDescriptor;
+
+        beforeEach(() => {
+            descriptor = Object.getOwnPropertyDescriptor(globalThis, 'Temporal') as PropertyDescriptor;
+            Object.defineProperty(globalThis, 'Temporal', { ...descriptor, writable: false });
+        });
+
+        afterEach(() => {
+            Object.defineProperty(globalThis, 'Temporal', descriptor);
+            vi.restoreAllMocks();
+        });
+
+        it('is left alone, with a warning instead of an exception', () => {
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const original = Temporal;
+
+            expect(() => setFakeDate(fakeDate)).not.toThrow();
+
+            expect(Temporal).toBe(original);
+            expect(warn).toHaveBeenCalledWith('Time Travel: could not replace Temporal', expect.any(TypeError));
         });
     });
 
