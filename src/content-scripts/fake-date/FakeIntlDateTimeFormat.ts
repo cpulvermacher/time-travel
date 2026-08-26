@@ -28,7 +28,6 @@ export function FakeIntlDateTimeFormat(
 
 /** Apply custom time zone if set and no explicit time zone in options */
 export function optionsWithDefaultTz(options?: Intl.DateTimeFormatOptions): Intl.DateTimeFormatOptions | undefined {
-    // only undefined is unspecified; '' is a value the original rejects
     if (options?.timeZone !== undefined) {
         return options;
     }
@@ -38,7 +37,18 @@ export function optionsWithDefaultTz(options?: Intl.DateTimeFormatOptions): Intl
         return options;
     }
 
-    return { ...(options || {}), timeZone: timezone };
+    // inherit from the caller's options instead of copying them: the original reads every option
+    // with a plain Get(), so an option further up the prototype chain has to stay reachable
+    const isObject = options !== null && (typeof options === 'object' || typeof options === 'function');
+    const withTimezone = Object.create(isObject ? options : null) as Intl.DateTimeFormatOptions;
+    // defined rather than assigned, so a `timeZone` accessor on the options cannot intercept it
+    Object.defineProperty(withTimezone, 'timeZone', {
+        value: timezone,
+        writable: true,
+        enumerable: true,
+        configurable: true,
+    });
+    return withTimezone;
 }
 
 function format(this: FakeIntlDateTimeFormat, date?: Date) {

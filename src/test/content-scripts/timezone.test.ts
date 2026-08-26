@@ -661,6 +661,32 @@ describe('replace-date with time zone', () => {
         expect(formatted).toBe('12:00');
     });
 
+    // the original reads every option with a plain Get(), which walks the prototype chain
+    const timeParts = { hour: 'numeric', minute: 'numeric', hour12: false } as const;
+
+    it('an inherited timeZone option overrides timezone setting', () => {
+        const fakeDate = '1970-03-01T12:00:00.000Z'; // Noon UTC
+        setFakeDate(fakeDate, 'America/New_York'); // must not be used
+
+        const options = Object.create({ timeZone: 'GMT' }) as Intl.DateTimeFormatOptions;
+        Object.assign(options, timeParts);
+
+        // GMT should be the same as UTC at noon
+        expect(new Intl.DateTimeFormat('en-US', options).format()).toBe('12:00');
+        expect(new Date().toLocaleTimeString('en-US', options)).toBe('12:00');
+    });
+
+    // injecting the selected time zone must not drop the options we inherit rather than own
+    it('inherited options survive the injected timezone', () => {
+        const fakeDate = '1970-03-01T12:00:00.000Z'; // Noon UTC
+        setFakeDate(fakeDate, 'UTC');
+
+        const inherited = Object.create(timeParts) as Intl.DateTimeFormatOptions;
+
+        expect(new Intl.DateTimeFormat('en-US', inherited).format()).toBe('12:00');
+        expect(new Date().toLocaleTimeString('en-US', inherited)).toBe('12:00');
+    });
+
     it('Can format Date with timezone using Intl.DateTimeFormat', () => {
         const fakeDate = '2023-06-15T14:30:00.000Z'; // 2:30 PM UTC
         setFakeDate(fakeDate, 'Europe/Berlin'); // UTC+2 in summer
