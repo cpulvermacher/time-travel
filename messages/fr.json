@@ -69,5 +69,7 @@
     "page_sees_label": "La page voit :",
     "real_time_note": "heure réelle",
     "dst_info": "L'heure d'été (DST) est en vigueur pour cette date.",
-    "dst_other_time_info": "Ce fuseau horaire applique l'heure d'été (DST) à d'autres périodes de l'année."
+    "dst_other_time_info": "Ce fuseau horaire applique l'heure d'été (DST) à d'autres périodes de l'année.",
+    "offset_since": "Ce décalage est en vigueur depuis le {dateTime}.",
+    "offset_until": "Il passe à {offset} le {dateTime}."
 }

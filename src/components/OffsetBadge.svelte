@@ -20,6 +20,15 @@
         } else if (tzInfo.isYearWithDst) {
             title += `\n${m.dst_other_time_info()}`;
         }
+
+        if (tzInfo.previousTransition) {
+            // this change led to the offset in the badge, so no need to mention the offset here
+            title += `\n${m.offset_since({ dateTime: tzInfo.previousTransition.dateTimeString })}`;
+        }
+        if (tzInfo.nextTransition) {
+            const { dateTimeString, offset } = tzInfo.nextTransition;
+            title += `\n${m.offset_until({ dateTime: dateTimeString, offset })}`;
+        }
         return title;
     });
 </script>

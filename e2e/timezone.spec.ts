@@ -45,7 +45,10 @@ test.describe('changing the time zone', () => {
         await expect(popup.pageTimeOffset).toHaveText('+01:00');
         await expect(popup.pageTimeOffset).toHaveAttribute(
             'title',
-            'Europe/London (British Summer Time)\nDaylight Saving Time (DST) is in effect for this date.'
+            'Europe/London (British Summer Time)\n' +
+                'Daylight Saving Time (DST) is in effect for this date.\n' +
+                'This offset has been in effect since Mar 30, 2025, 02:00.\n' +
+                'It changes to +00:00 on Oct 26, 2025, 01:00.'
         );
         await expect(popup.applyButton).toHaveText('No changes');
     });
@@ -204,6 +207,7 @@ test.describe('daylight saving time', () => {
     // The offset badge shows the offset of the selected time zone at the faked date, not at the
     // real current date, and carries a season step while that zone observes DST during the year:
     // stepping up (.season-step--dst) while DST is in effect, down (.season-step--standard) otherwise.
+    // Its tooltip names the offset changes around the faked date, unless they are over a year away.
     const cases = [
         {
             name: 'summer time in the northern hemisphere',
@@ -212,7 +216,11 @@ test.describe('daylight saving time', () => {
             pageTime: 'Jul 15, 2025 12:40:00',
             offset: '+01:00',
             season: 'dst',
-            title: 'Europe/London (British Summer Time)\nDaylight Saving Time (DST) is in effect for this date.',
+            title:
+                'Europe/London (British Summer Time)\n' +
+                'Daylight Saving Time (DST) is in effect for this date.\n' +
+                'This offset has been in effect since Mar 30, 2025, 02:00.\n' +
+                'It changes to +00:00 on Oct 26, 2025, 01:00.',
         },
         {
             name: 'standard time in the northern hemisphere',
@@ -223,7 +231,9 @@ test.describe('daylight saving time', () => {
             season: 'standard',
             title:
                 'Europe/London (Greenwich Mean Time)\n' +
-                'This time zone observes Daylight Saving Time (DST) at other times of the year.',
+                'This time zone observes Daylight Saving Time (DST) at other times of the year.\n' +
+                'This offset has been in effect since Oct 27, 2024, 01:00.\n' +
+                'It changes to +01:00 on Mar 30, 2025, 02:00.',
         },
         {
             // in the southern hemisphere DST is in effect around the turn of the year
@@ -235,7 +245,9 @@ test.describe('daylight saving time', () => {
             season: 'dst',
             title:
                 'Australia/Sydney (Australian Eastern Daylight Time)\n' +
-                'Daylight Saving Time (DST) is in effect for this date.',
+                'Daylight Saving Time (DST) is in effect for this date.\n' +
+                'This offset has been in effect since Oct 6, 2024, 03:00.\n' +
+                'It changes to +10:00 on Apr 6, 2025, 02:00.',
         },
         {
             name: 'standard time in the southern hemisphere',
@@ -246,7 +258,9 @@ test.describe('daylight saving time', () => {
             season: 'standard',
             title:
                 'Australia/Sydney (Australian Eastern Standard Time)\n' +
-                'This time zone observes Daylight Saving Time (DST) at other times of the year.',
+                'This time zone observes Daylight Saving Time (DST) at other times of the year.\n' +
+                'This offset has been in effect since Apr 6, 2025, 02:00.\n' +
+                'It changes to +11:00 on Oct 5, 2025, 03:00.',
         },
         {
             name: 'a time zone that never observes DST',
@@ -296,7 +310,10 @@ test.describe('daylight saving time', () => {
                 await expect(popup.pageTimeSeasonStep).toHaveClass(/season-step--dst/);
                 await expect(popup.pageTimeOffset).toHaveAttribute(
                     'title',
-                    'Central European Summer Time\nDaylight Saving Time (DST) is in effect for this date.'
+                    'Central European Summer Time\n' +
+                        'Daylight Saving Time (DST) is in effect for this date.\n' +
+                        'This offset has been in effect since Mar 30, 2025, 03:00.\n' +
+                        'It changes to +01:00 on Oct 26, 2025, 02:00.'
                 );
             });
         });
@@ -315,7 +332,9 @@ test.describe('daylight saving time', () => {
                 await expect(popup.pageTimeOffset).toHaveAttribute(
                     'title',
                     'Central European Standard Time\n' +
-                        'This time zone observes Daylight Saving Time (DST) at other times of the year.'
+                        'This time zone observes Daylight Saving Time (DST) at other times of the year.\n' +
+                        'This offset has been in effect since Oct 27, 2024, 02:00.\n' +
+                        'It changes to +02:00 on Mar 30, 2025, 03:00.'
                 );
             });
 

@@ -136,6 +136,47 @@ describe('getTzInfo', () => {
     });
 });
 
+/** not every browser we support has getTimeZoneTransition() */
+const noTransitions = typeof Temporal === 'undefined' || !Temporal.ZonedDateTime.prototype.getTimeZoneTransition;
+
+describe.skipIf(noTransitions)('getTzInfo transitions', () => {
+    it('returns the DST changes surrounding the date', () => {
+        const info = getTzInfo('en', '2025-07-01', 'Europe/Berlin')!;
+
+        expect(info.previousTransition).toEqual({ dateTimeString: 'Mar 30, 2025, 03:00', offset: '+02:00' });
+        expect(info.nextTransition).toEqual({ dateTimeString: 'Oct 26, 2025, 02:00', offset: '+01:00' });
+    });
+
+    it('formats the transitions in the given locale', () => {
+        const info = getTzInfo('de', '2025-07-01', 'Europe/Berlin')!;
+
+        expect(info.previousTransition?.dateTimeString).toBe('30. März 2025, 03:00');
+    });
+
+    it('leaves out transitions of a zone that no longer changes its offset', () => {
+        // Tokyo's last transition was the end of DST in 1951
+        const info = getTzInfo('en', '2025-07-01', 'Asia/Tokyo')!;
+
+        expect(info.previousTransition).toBe(null);
+        expect(info.nextTransition).toBe(null);
+    });
+
+    it('shows a one-off zone change near the date', () => {
+        // Kazakhstan moved from +06:00 to +05:00 on 2024-03-01, so the clock fell back into Feb 29
+        const info = getTzInfo('en', '2024-04-01', 'Asia/Almaty')!;
+
+        expect(info.previousTransition).toEqual({ dateTimeString: 'Feb 29, 2024, 23:00', offset: '+05:00' });
+        expect(info.nextTransition).toBe(null);
+    });
+
+    it('handles the browser default time zone', () => {
+        const info = getTzInfo('en', '2025-07-01', '')!;
+
+        // the zone is unknown here, so only check that the lookup ran without error
+        expect(info.previousTransition === null || typeof info.previousTransition.offset === 'string').toBe(true);
+    });
+});
+
 describe('isValidTimezone', () => {
     it('accepts valid IANA zones', () => {
         expect(isValidTimezone('America/New_York')).toBe(true);

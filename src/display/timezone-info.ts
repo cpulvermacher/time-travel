@@ -69,6 +69,11 @@ function removeDateTimePart(str: string): string {
     return str;
 }
 
+export type TzTransition = {
+    dateTimeString: string; // local date and time right after the change, e.g. "Oct 26, 2025, 02:00"
+    offset: string; // offset in effect after the change, e.g. "+01:00"
+};
+
 export type TzInfo = {
     tzName: string; // e.g. "CEST"
     offset: string; // e.g. "-05:00"
@@ -77,11 +82,69 @@ export type TzInfo = {
     isOffsetDifferentFromNow: boolean;
     timeString: string; // localized time string, e.g. "13:34" or "01:34 PM"
     dateString: string; // date string, e.g. "Aug 6, 2025" or "2025年8月6日"
+    previousTransition: TzTransition | null; // last offset change before the date, null if there is none nearby
+    nextTransition: TzTransition | null; // next offset change after the date, null if there is none nearby
 };
 
 export type TzInfoFormat = {
     seconds?: boolean; // include seconds in the time, e.g. "13:34:07"
 };
+
+const noTransitions = { previousTransition: null, nextTransition: null };
+
+/** How far from the shown date a transition may be to still be worth mentioning. Wide enough to always
+ * cover both ends of a DST cycle (at most ~7 months apart), narrow enough to leave out the historical
+ * one-off changes that zones without DST would otherwise report, e.g. Tokyo's last DST end in 1951. */
+const MAX_TRANSITION_DISTANCE_MS = 365 * 24 * 60 * 60 * 1000;
+
+/** The offset changes (DST or a permanent change of the zone's standard offset) surrounding `date`.
+ *
+ * Needs `Temporal.ZonedDateTime.getTimeZoneTransition()`, which older browsers within our supported
+ * range do not have; there we return nulls and callers simply leave the information out.
+ */
+function getTransitions(locale: string, date: Date, timezone: string | undefined) {
+    try {
+        if (typeof Temporal === 'undefined' || !Temporal.ZonedDateTime.prototype.getTimeZoneTransition) {
+            return noTransitions;
+        }
+
+        const zoned = Temporal.Instant.fromEpochMilliseconds(date.getTime()).toZonedDateTimeISO(
+            timezone ?? Temporal.Now.timeZoneId()
+        );
+        return {
+            previousTransition: toTzTransition(locale, timezone, date, zoned.getTimeZoneTransition('previous')),
+            nextTransition: toTzTransition(locale, timezone, date, zoned.getTimeZoneTransition('next')),
+        };
+    } catch (e) {
+        console.error('Error getting time zone transitions for', date, timezone, e);
+        return noTransitions;
+    }
+}
+
+function toTzTransition(
+    locale: string,
+    timezone: string | undefined,
+    date: Date,
+    transition: Temporal.ZonedDateTime | null
+): TzTransition | null {
+    if (!transition || Math.abs(transition.epochMilliseconds - date.getTime()) > MAX_TRANSITION_DISTANCE_MS) {
+        return null;
+    }
+
+    return {
+        // the transition instant is the first one on the new offset, so this is the clock time it jumps to
+        dateTimeString: new Date(transition.epochMilliseconds).toLocaleString(locale, {
+            timeZone: timezone,
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hourCycle: 'h23',
+            hour: '2-digit',
+            minute: '2-digit',
+        }),
+        offset: transition.offset,
+    };
+}
 
 export function getTzInfo(
     locale: string,
@@ -139,6 +202,7 @@ export function getTzInfo(
                 month: 'short',
                 day: 'numeric',
             }),
+            ...getTransitions(locale, date, timezone),
         };
     } catch (e) {
         console.error('Error getting timezone info for', date, timezone, e);

@@ -69,5 +69,7 @@
     "page_sees_label": "Page sees:",
     "real_time_note": "real time",
     "dst_info": "Daylight Saving Time (DST) is in effect for this date.",
-    "dst_other_time_info": "This time zone observes Daylight Saving Time (DST) at other times of the year."
+    "dst_other_time_info": "This time zone observes Daylight Saving Time (DST) at other times of the year.",
+    "offset_since": "This offset has been in effect since {dateTime}.",
+    "offset_until": "It changes to {offset} on {dateTime}."
 }
