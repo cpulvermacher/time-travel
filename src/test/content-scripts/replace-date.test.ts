@@ -692,6 +692,18 @@ describe('replace-date', () => {
         expect(Object.getOwnPropertyNames(Date.prototype)).toStrictEqual(origProperties);
     });
 
+    /** the attributes of those properties, which `getOwnPropertyNames` above does not see */
+    it('Date.prototype members stay non-enumerable when time travel is enabled', () => {
+        setFakeDate('');
+        const origKeys = Object.keys(Date.prototype);
+
+        setFakeDate('1970-01-01T00:00:00.123Z');
+
+        // natively [], the methods are non-enumerable
+        expect(Object.keys(Date.prototype)).toStrictEqual(origKeys);
+        expect({ ...Date.prototype }).toStrictEqual({});
+    });
+
     it('getTimezoneOffset should return same value as original Date', () => {
         setFakeDate('');
         const dateString = '2010-07-01T00:00:00.000Z';

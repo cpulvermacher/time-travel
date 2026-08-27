@@ -1,5 +1,9 @@
 # Change Log
 
+## [3.1.0]
+- Add support for the `Temporal` API (in browsers that provide it): `Temporal.Now` returns the fake date, time and time zone, and `Temporal.Instant.prototype.toLocaleString()` uses the faked time zone. Sub-millisecond precision is not available for the faked time.
+- Fix: For `Intl.DateTimeFormat`, options inherited from an object's prototype chain are now read as by the original API.
+
 ## [3.0.2]
 - Fix: Allow scrolling extension popup when it is cut off by a short browser window. Affected Chrome as well.
 

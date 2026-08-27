@@ -3,7 +3,7 @@
     "compilerOptions": {
         "target": "ES2023",
         "useDefineForClassFields": true,
-        "lib": ["DOM", "DOM.Iterable", "ES2023"],
+        "lib": ["DOM", "DOM.Iterable", "ES2023", "ESNext.Temporal", "ESNext.Date"],
         "allowJs": true,
         "skipLibCheck": true,
         "incremental": true,

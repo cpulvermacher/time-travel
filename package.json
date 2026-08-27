@@ -10,10 +10,10 @@
         "lint:translations": "bash ./util/check-translations.sh",
         "fix": "biome check --write *.mts *.ts src/ e2e/",
         "format": "biome format --write *.mts *.ts src/ e2e/",
-        "test": "vitest --run",
+        "test": "NODE_OPTIONS=--no-experimental-webstorage vitest --run",
         "test:e2e": "playwright test",
         "screenshots": "SCREENSHOTS=1 playwright test screenshots --project=chromium",
-        "coverage": "vitest --run --coverage",
+        "coverage": "NODE_OPTIONS=--no-experimental-webstorage vitest --run --coverage",
         "checkall": "pnpm test && pnpm lint && pnpm build",
         "machine-translate": "inlang machine translate --project project.inlang"
     },

@@ -10,3 +10,4 @@
  */
 export const OriginalDate = Date;
 export const OriginalIntlDateTimeFormat = Intl.DateTimeFormat;
+export const OriginalTemporal = typeof Temporal === 'undefined' ? null : Temporal;

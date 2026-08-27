@@ -591,6 +591,17 @@ describe('replace-date with time zone', () => {
         expect(gmtFormatter.format(date)).toBe(directGmtFormatter.format(date));
     });
 
+    // an empty timeZone is a value the page passed, not an absent one
+    it('Intl.DateTimeFormat rejects an empty timezone like the original', () => {
+        const create = () => new Intl.DateTimeFormat('en-US', { timeZone: '' });
+
+        setFakeDate(''); // off, so this is the original Intl.DateTimeFormat
+        expect(create).toThrow(RangeError);
+
+        setFakeDate('2023-01-01T12:00:00.000Z', 'UTC');
+        expect(create).toThrow(RangeError);
+    });
+
     it('default timezone behavior without timezone set', () => {
         const fakeDate = '2023-01-01T12:00:00.000Z';
         setFakeDate(fakeDate);
@@ -648,6 +659,32 @@ describe('replace-date with time zone', () => {
 
         // GMT should be the same as UTC at noon
         expect(formatted).toBe('12:00');
+    });
+
+    // the original reads every option with a plain Get(), which walks the prototype chain
+    const timeParts = { hour: 'numeric', minute: 'numeric', hour12: false } as const;
+
+    it('an inherited timeZone option overrides timezone setting', () => {
+        const fakeDate = '1970-03-01T12:00:00.000Z'; // Noon UTC
+        setFakeDate(fakeDate, 'America/New_York'); // must not be used
+
+        const options = Object.create({ timeZone: 'GMT' }) as Intl.DateTimeFormatOptions;
+        Object.assign(options, timeParts);
+
+        // GMT should be the same as UTC at noon
+        expect(new Intl.DateTimeFormat('en-US', options).format()).toBe('12:00');
+        expect(new Date().toLocaleTimeString('en-US', options)).toBe('12:00');
+    });
+
+    // injecting the selected time zone must not drop the options we inherit rather than own
+    it('inherited options survive the injected timezone', () => {
+        const fakeDate = '1970-03-01T12:00:00.000Z'; // Noon UTC
+        setFakeDate(fakeDate, 'UTC');
+
+        const inherited = Object.create(timeParts) as Intl.DateTimeFormatOptions;
+
+        expect(new Intl.DateTimeFormat('en-US', inherited).format()).toBe('12:00');
+        expect(new Date().toLocaleTimeString('en-US', inherited)).toBe('12:00');
     });
 
     it('Can format Date with timezone using Intl.DateTimeFormat', () => {

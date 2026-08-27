@@ -6,13 +6,13 @@
 [![Installs](https://flat.badgen.net/chrome-web-store/users/jfdbpgcmmenmelcghpbbkldkcfiejcjg)](https://chrome.google.com/webstore/detail/time-travel/jfdbpgcmmenmelcghpbbkldkcfiejcjg)
 [![License](https://flat.badgen.net/github/license/cpulvermacher/time-travel)](./LICENSE)
 
-A browser extension to fake the current date, time and time zone in JavaScript `Date` or `Intl.DateTimeFormat` objects, to help you debug time-dependent frontend applications without having to change the system time.
+A browser extension to fake the current date, time and time zone in JavaScript `Date`, `Intl.DateTimeFormat` or `Temporal` objects, to help you debug time-dependent frontend applications without having to change the system time.
 
 https://github.com/user-attachments/assets/74f0ee57-f941-4b94-9176-5445d58fd8a1
 
 ## Features
 
-- Fakes date and time for all methods of `Date` and `Intl.DateTimeFormat` objects.
+- Fakes date and time for all methods of `Date` and `Intl.DateTimeFormat` objects, and for `Temporal.Now` where the browser supports it.
 - Time zone can be changed, with full support for DST transitions.
 - Time can be stopped and resumed.
 - Option to automatically reload page after changing date.
@@ -22,6 +22,7 @@ https://github.com/user-attachments/assets/74f0ee57-f941-4b94-9176-5445d58fd8a1
 ## Limitations
 
 - Only JavaScript is affected by the extension.
+- The faked time has millisecond precision, so `Temporal` values never contain micro- or nanoseconds.
 - Some functionality or animations may behave strangely if the clock is stopped.
 - The extension does not work in iframes with the `sandbox` attribute.
 
@@ -31,7 +32,7 @@ https://github.com/user-attachments/assets/74f0ee57-f941-4b94-9176-5445d58fd8a1
 - Click the Extensions icon in the toolbar, then click Time Travel.
 - Choose a date from the calendar and edit the time if necessary, or enter a date and time directly (see examples below).
 - Confirm with `Enter` or by clicking the apply button, which shows a preview of the change to apply (e.g. "Change date to Apr 27, 2025 12:40"). In Chrome, when first activating the extension on a tab, the page needs to be reloaded once to apply the changes.
-- Any JavaScript `Date` or `Intl.DateTimeFormat` in the current tab now returns the fake date/time you set. Other tabs and origins are not affected.
+- Any JavaScript `Date`, `Intl.DateTimeFormat` or `Temporal.Now` in the current tab now returns the fake date/time you set. Other tabs and origins are not affected.
 
 To restore the system time, click the extension icon and switch off the "Fake JavaScript date" toggle, or clear the input field and press `Enter`.
 
@@ -39,7 +40,7 @@ When the fake date is enabled, the clock runs forward from the configured time. 
 You can stop the clock by switching on the "Stop clock" toggle. The fake date will be reset to the last value you set.
 
 To change the time zone, enable "Change time zone" and select a time zone from the dropdown.
-When enabled, both `Date` objects and `Intl.DateTimeFormat` will use this time zone instead of the system time zone.
+When enabled, `Date` objects, `Intl.DateTimeFormat` and `Temporal.Now` will use this time zone instead of the system time zone.
 Date and time input is then interpreted as local time in the selected time zone as well (input label shows e.g. "Set date and time (London)").
 Switching to a different time zone keeps the entered *local* date and time, which may change the instant (unless the input field contains a UTC instant).
 
