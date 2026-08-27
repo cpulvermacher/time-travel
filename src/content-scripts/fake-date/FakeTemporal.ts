@@ -127,13 +127,9 @@ const createFakeTemporal = (SafeTemporal: typeof Temporal): typeof Temporal => {
 //non-null if implementation supports Temporal API
 const FakeTemporal = OriginalTemporal ? createFakeTemporal(OriginalTemporal) : null;
 
-const setTemporal = (temporal: typeof Temporal) => {
-    try {
-        globalThis.Temporal = temporal;
-    } catch (e) {
-        //  A polyfill might have defined it as a non-writable or non-configurable property
-        console.warn('Time Travel: could not replace Temporal', e);
-    }
+/** a polyfill might have defined the global or the prototype method as non-writable or non-configurable */
+const warnUnreplaceable = (e: unknown) => {
+    console.warn('Time Travel: could not replace Temporal', e);
 };
 
 /** the original `Instant.prototype.toLocaleString`, non-null exactly while our patch is installed */
@@ -144,17 +140,21 @@ export const patchTemporal = () => {
     if (!OriginalTemporal || !FakeTemporal) {
         return;
     }
-    setTemporal(FakeTemporal);
+    try {
+        globalThis.Temporal = FakeTemporal;
 
-    // Instant.toLocaleString() is the only Temporal instance method that falls back to the system
-    // time zone. We patch this one in-place to reach all Instant instances (no-op if timezone is
-    // not faked).
-    if (!originalToLocaleString) {
-        const original = OriginalTemporal.Instant.prototype.toLocaleString;
-        originalToLocaleString = original;
-        OriginalTemporal.Instant.prototype.toLocaleString = function (locales, options) {
-            return original.call(this, locales, optionsWithDefaultTz(options));
-        };
+        // Instant.toLocaleString() is the only Temporal instance method that falls back to the
+        // system time zone. We patch this one in-place to reach all Instant instances (no-op if
+        // timezone is not faked).
+        if (!originalToLocaleString) {
+            const original = OriginalTemporal.Instant.prototype.toLocaleString;
+            OriginalTemporal.Instant.prototype.toLocaleString = function (locales, options) {
+                return original.call(this, locales, optionsWithDefaultTz(options));
+            };
+            originalToLocaleString = original;
+        }
+    } catch (e) {
+        warnUnreplaceable(e);
     }
 };
 
@@ -163,10 +163,14 @@ export const unpatchTemporal = () => {
     if (!OriginalTemporal) {
         return;
     }
-    setTemporal(OriginalTemporal);
+    try {
+        globalThis.Temporal = OriginalTemporal;
 
-    if (originalToLocaleString) {
-        OriginalTemporal.Instant.prototype.toLocaleString = originalToLocaleString;
-        originalToLocaleString = null;
+        if (originalToLocaleString) {
+            OriginalTemporal.Instant.prototype.toLocaleString = originalToLocaleString;
+            originalToLocaleString = null;
+        }
+    } catch (e) {
+        warnUnreplaceable(e);
     }
 };
