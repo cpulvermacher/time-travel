@@ -7,7 +7,7 @@
     import { m } from '@/paraglide/messages';
     import { isAndroid } from '@/web-ext/browser';
     import Calendar from './Calendar.svelte';
-    import DateFormatInfo from './DateFormatInfo.svelte';
+    import DateInputHelpModal from './DateInputHelpModal.svelte';
     import LinkButton from './LinkButton.svelte';
     import TimePicker from './TimePicker.svelte';
 
@@ -27,7 +27,7 @@
     // the day and the time of day the two pickers edit, each in the selected time zone
     let selectedDay = $derived(localDateString.split(' ')[0]);
     let selectedTime = $derived(localDateString.split(' ')[1]?.slice(0, 5) ?? ''); // "HH:mm"
-    let showFormatHelp = $state(false);
+    let showInputHelp = $state(false);
     const inputId = $props.id();
     let inputRef: HTMLInputElement;
     let timePickerRef: TimePicker;
@@ -127,7 +127,7 @@
                   })
                 : m.datetime_input_label()}
         </label>
-        <LinkButton onClick={() => (showFormatHelp = true)}>{m.format_help_link()}</LinkButton>
+        <LinkButton onClick={() => (showInputHelp = true)}>{m.format_help_link()}</LinkButton>
     </div>
     <div class="input-fields">
         <input
@@ -148,8 +148,8 @@
     <Calendar {selectedDay} onSelectDay={acceptPickerDay} />
 </div>
 
-{#if showFormatHelp}
-    <DateFormatInfo onClose={() => (showFormatHelp = false)} />
+{#if showInputHelp}
+    <DateInputHelpModal onClose={() => (showInputHelp = false)} />
 {/if}
 
 <style>
