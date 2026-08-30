@@ -48,7 +48,6 @@ export function getInitialTimezoneOptions(recentTz: string[], selected: string):
  */
 export function getTimezoneOptions(recentTz: string[]): Timezone[] {
     if (timezoneOptions) {
-        console.log(`getTimezoneOptions() memoized, ${timezoneOptions.length} time zones`);
         return timezoneOptions;
     }
 
