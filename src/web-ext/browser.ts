@@ -18,6 +18,21 @@ export async function getActiveTabId(): Promise<number> {
     return tab.id;
 }
 
+/** run `callback` when another tab becomes active in this page's window (other windows have their
+ * own active tab, which is none of the popup's business) */
+export async function onActiveTabChanged(callback: () => void): Promise<void> {
+    if (typeof chrome === 'undefined' || chrome.tabs === undefined) {
+        return;
+    }
+
+    const ownWindowId = chrome.windows === undefined ? undefined : (await chrome.windows.getCurrent()).id;
+    chrome.tabs.onActivated.addListener(({ windowId }) => {
+        if (ownWindowId === undefined || windowId === ownWindowId) {
+            callback();
+        }
+    });
+}
+
 /** does this tab have a file:// URL? (extension access disabled by default) */
 export async function isFileUrl(tabId: number): Promise<boolean> {
     const tabDetails = await chrome.tabs.get(tabId);

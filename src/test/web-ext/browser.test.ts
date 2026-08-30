@@ -9,6 +9,7 @@ import {
     isAndroid,
     isExtensionGalleryUrl,
     isFileUrl,
+    onActiveTabChanged,
     registerContentScript,
     reloadTab,
     setBadgeText,
@@ -23,6 +24,7 @@ function createChromeMock() {
             query: vi.fn(),
             get: vi.fn(),
             reload: vi.fn().mockResolvedValue(undefined),
+            onActivated: { addListener: vi.fn() },
         },
         scripting: {
             executeScript: vi.fn(),
@@ -78,6 +80,56 @@ describe('getActiveTabId', () => {
         chromeMock.tabs.query.mockResolvedValue([{ id: undefined }]);
 
         await expect(getActiveTabId()).rejects.toThrow("Couldn't get active tab");
+    });
+});
+
+describe('onActiveTabChanged', () => {
+    beforeEach(() => {
+        chromeMock = createChromeMock();
+        vi.stubGlobal('chrome', chromeMock);
+    });
+
+    /** register the listener and return the handler it passed to chrome.tabs.onActivated */
+    async function listen(callback: () => void): Promise<(info: { windowId: number }) => void> {
+        await onActiveTabChanged(callback);
+        expect(chromeMock.tabs.onActivated.addListener).toHaveBeenCalledTimes(1);
+        return chromeMock.tabs.onActivated.addListener.mock.calls[0][0];
+    }
+
+    it('calls back when a tab of this window becomes active', async () => {
+        chromeMock.windows.getCurrent.mockResolvedValue({ id: 3 });
+        const callback = vi.fn();
+
+        (await listen(callback))({ windowId: 3 });
+
+        expect(callback).toHaveBeenCalledTimes(1);
+    });
+
+    it('ignores tab changes in other windows', async () => {
+        chromeMock.windows.getCurrent.mockResolvedValue({ id: 3 });
+        const callback = vi.fn();
+
+        (await listen(callback))({ windowId: 4 });
+
+        expect(callback).not.toHaveBeenCalled();
+    });
+
+    it('calls back for any window without the windows API', async () => {
+        vi.stubGlobal('chrome', { ...chromeMock, windows: undefined as never }); // Firefox for Android, which has one window anyway
+        const callback = vi.fn();
+
+        (await listen(callback))({ windowId: 4 });
+
+        expect(callback).toHaveBeenCalledTimes(1);
+    });
+
+    it('does nothing without the tabs API', async () => {
+        vi.stubGlobal('chrome', undefined);
+        const callback = vi.fn();
+
+        await onActiveTabChanged(callback);
+
+        expect(chromeMock.tabs.onActivated.addListener).not.toHaveBeenCalled();
     });
 });
 
