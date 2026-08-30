@@ -11,11 +11,6 @@ export const TZGROUP_COMMON = '_common';
 let timezoneOptions: Timezone[] | null = null;
 let cachedOffsets: Record<string, string> | null = null;
 
-// TODO temporary startup instrumentation, remove before committing
-function logDuration(label: string, start: number, count: number) {
-    console.log(`${label} ${(performance.now() - start).toFixed(1)}ms for ${count} time zones`);
-}
-
 function buildOption(tz: string): Timezone {
     const tzParts = tz.split('/');
     const group = tzParts.length > 1 ? tzParts[0] : 'Etc'; // Firefox has a number of funky time zones like 'CST6CDT', put them in 'Etc'
@@ -39,14 +34,11 @@ function getCommonOptions(recentTz: string[]): Timezone[] {
  * full list (see TimezoneSelect).
  */
 export function getInitialTimezoneOptions(recentTz: string[], selected: string): Timezone[] {
-    const start = performance.now();
-
     const options = getCommonOptions(recentTz);
     if (options.every((option) => option.tz !== selected) && isValidTimezone(selected)) {
         options.push(buildOption(selected));
     }
 
-    logDuration('getInitialTimezoneOptions()', start, options.length);
     return options;
 }
 
@@ -59,7 +51,6 @@ export function getTimezoneOptions(recentTz: string[]): Timezone[] {
         console.log(`getTimezoneOptions() memoized, ${timezoneOptions.length} time zones`);
         return timezoneOptions;
     }
-    const start = performance.now();
 
     timezoneOptions = getCommonOptions(recentTz);
 
@@ -77,7 +68,6 @@ export function getTimezoneOptions(recentTz: string[]): Timezone[] {
         console.error('Error loading timezones:', error);
     }
 
-    logDuration('getTimezoneOptions()', start, timezoneOptions.length);
     return timezoneOptions;
 }
 
@@ -89,7 +79,6 @@ export function getTimezoneOptions(recentTz: string[]): Timezone[] {
  * (offsets only change when `date` crosses a DST transition).
  */
 export function getTimezoneOffsets(locale: string, date: Date, timezones: Timezone[]): Record<string, string> {
-    const start = performance.now();
     try {
         const offsets: Record<string, string> = { UTC: '' };
         for (const { tz } of timezones) {
@@ -97,8 +86,6 @@ export function getTimezoneOffsets(locale: string, date: Date, timezones: Timezo
                 offsets[tz] = getOffset(locale, tz, date).replace('GMT', 'UTC');
             }
         }
-
-        logDuration('getTimezoneOffsets()', start, timezones.length);
 
         if (cachedOffsets && isSameOffsets(cachedOffsets, offsets)) {
             return cachedOffsets;
