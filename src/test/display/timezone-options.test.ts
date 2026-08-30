@@ -1,5 +1,34 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { TZGROUP_RECENT } from '@/display/timezone-options';
+import { getInitialTimezoneOptions, TZGROUP_RECENT } from '@/display/timezone-options';
+
+describe('getInitialTimezoneOptions', () => {
+    it('returns UTC and the recent timezones', () => {
+        const options = getInitialTimezoneOptions(['Europe/London'], '');
+
+        expect(options).toEqual([
+            { tz: 'UTC', name: 'UTC', group: expect.any(String) },
+            { tz: 'Europe/London', name: 'London', group: TZGROUP_RECENT },
+        ]);
+    });
+
+    it('adds the selected timezone if it is not among them', () => {
+        const options = getInitialTimezoneOptions(['Europe/London'], 'America/New_York');
+
+        expect(options).toContainEqual({ tz: 'America/New_York', name: 'New York', group: 'America' });
+    });
+
+    it('does not add the selected timezone twice', () => {
+        const options = getInitialTimezoneOptions(['Europe/London'], 'Europe/London');
+
+        expect(options.filter((o) => o.tz === 'Europe/London')).toHaveLength(1);
+    });
+
+    it('drops an invalid selected or recent timezone instead of throwing', () => {
+        const options = getInitialTimezoneOptions(['Evil/Not_A_Zone'], 'Evil/Also_Not_A_Zone');
+
+        expect(options.map((o) => o.tz)).toEqual(['UTC']);
+    });
+});
 
 describe('getTimezoneOptions', () => {
     // result is memoized, so re-import a fresh module per test

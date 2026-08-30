@@ -1,8 +1,9 @@
 <script lang="ts">
-    import { untrack } from 'svelte';
+    import { onMount, untrack } from 'svelte';
     import { cubicOut } from 'svelte/easing';
     import { slide } from 'svelte/transition';
     import {
+        getInitialTimezoneOptions,
         getTimezoneOffsets,
         getTimezoneOptions,
         type Timezone,
@@ -52,9 +53,26 @@
         return { keys: groupKeys, groups: groupedOptions };
     }
 
-    // building these for hundreds of time zones takes some time. $derived is lazy, so nothing is computed
-    // while the selector is collapsed, and the offsets are only recalculated when the shown date changes.
-    const timezoneOptions = $derived(getTimezoneOptions(recentTimezones));
+    // Building the full list costs ~50ms, mostly in one Intl formatter per zone for the offsets, so the select is
+    // filled in two passes: the current value is enough to render it, the rest arrives once the popup is on screen.
+    let showAllTimezones = $state(false);
+    onMount(() => {
+        // onMount and $effect both still run before the browser paints, so wait for a frame, then for a task
+        let timeout: ReturnType<typeof setTimeout>;
+        const frame = requestAnimationFrame(() => {
+            timeout = setTimeout(() => {
+                showAllTimezones = true;
+            });
+        });
+        return () => {
+            cancelAnimationFrame(frame);
+            clearTimeout(timeout);
+        };
+    });
+
+    const timezoneOptions = $derived(
+        showAllTimezones ? getTimezoneOptions(recentTimezones) : getInitialTimezoneOptions(recentTimezones, value)
+    );
     const timezones = $derived(groupTimezones(timezoneOptions));
     const offsets = $derived(getTimezoneOffsets(getUILanguage(), date ?? new Date(), timezoneOptions));
 

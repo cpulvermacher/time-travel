@@ -11,32 +11,57 @@ export const TZGROUP_COMMON = '_common';
 let timezoneOptions: Timezone[] | null = null;
 let cachedOffsets: Record<string, string> | null = null;
 
+// TODO temporary startup instrumentation, remove before committing
+function logDuration(label: string, start: number, count: number) {
+    console.log(`${label} ${(performance.now() - start).toFixed(1)}ms for ${count} time zones`);
+}
+
+function buildOption(tz: string): Timezone {
+    const tzParts = tz.split('/');
+    const group = tzParts.length > 1 ? tzParts[0] : 'Etc'; // Firefox has a number of funky time zones like 'CST6CDT', put them in 'Etc'
+    const name = (tzParts.length > 1 ? tzParts.slice(1).join('/') : tz).replace(/_/g, ' ');
+
+    return { tz, name, group };
+}
+
+/** the entries shown above the full list */
+function getCommonOptions(recentTz: string[]): Timezone[] {
+    return [
+        { tz: 'UTC', name: 'UTC', group: TZGROUP_COMMON },
+        ...recentTz.filter(isValidTimezone).map((tz) => ({
+            ...buildOption(tz),
+            group: TZGROUP_RECENT,
+        })),
+    ];
+}
+
+/* returns just the options needed to display `selected`, for callers that render before they can afford the
+ * full list (see TimezoneSelect).
+ */
+export function getInitialTimezoneOptions(recentTz: string[], selected: string): Timezone[] {
+    const start = performance.now();
+
+    const options = getCommonOptions(recentTz);
+    if (options.every((option) => option.tz !== selected) && isValidTimezone(selected)) {
+        options.push(buildOption(selected));
+    }
+
+    logDuration('getInitialTimezoneOptions()', start, options.length);
+    return options;
+}
+
 /* returns the full list of supported browser time zones.
  *
  * The UTC offsets are not part of this list, as they depend on the date. Use `getTimezoneOffsets()` for those.
  */
 export function getTimezoneOptions(recentTz: string[]): Timezone[] {
     if (timezoneOptions) {
+        console.log(`getTimezoneOptions() memoized, ${timezoneOptions.length} time zones`);
         return timezoneOptions;
     }
+    const start = performance.now();
 
-    const buildOption = (tz: string) => {
-        const tzParts = tz.split('/');
-        const group = tzParts.length > 1 ? tzParts[0] : 'Etc'; // Firefox has a number of funky time zones like 'CST6CDT', put them in 'Etc'
-        const name = (tzParts.length > 1 ? tzParts.slice(1).join('/') : tz).replace(/_/g, ' ');
-
-        return { tz, name, group };
-    };
-    timezoneOptions = [
-        { tz: 'UTC', name: 'UTC', group: TZGROUP_COMMON },
-        ...recentTz
-            .filter(isValidTimezone)
-            .map(buildOption)
-            .map((option) => ({
-                ...option,
-                group: TZGROUP_RECENT,
-            })),
-    ];
+    timezoneOptions = getCommonOptions(recentTz);
 
     try {
         const timeZones = Intl.supportedValuesOf('timeZone');
@@ -51,6 +76,8 @@ export function getTimezoneOptions(recentTz: string[]): Timezone[] {
     } catch (error) {
         console.error('Error loading timezones:', error);
     }
+
+    logDuration('getTimezoneOptions()', start, timezoneOptions.length);
     return timezoneOptions;
 }
 
@@ -62,6 +89,7 @@ export function getTimezoneOptions(recentTz: string[]): Timezone[] {
  * (offsets only change when `date` crosses a DST transition).
  */
 export function getTimezoneOffsets(locale: string, date: Date, timezones: Timezone[]): Record<string, string> {
+    const start = performance.now();
     try {
         const offsets: Record<string, string> = { UTC: '' };
         for (const { tz } of timezones) {
@@ -69,6 +97,8 @@ export function getTimezoneOffsets(locale: string, date: Date, timezones: Timezo
                 offsets[tz] = getOffset(locale, tz, date).replace('GMT', 'UTC');
             }
         }
+
+        logDuration('getTimezoneOffsets()', start, timezones.length);
 
         if (cachedOffsets && isSameOffsets(cachedOffsets, offsets)) {
             return cachedOffsets;
