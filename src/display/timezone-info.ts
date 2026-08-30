@@ -101,19 +101,24 @@ const MAX_TRANSITION_DISTANCE_MS = 365 * 24 * 60 * 60 * 1000;
  *
  * Needs `Temporal.ZonedDateTime.getTimeZoneTransition()`, which older browsers within our supported
  * range do not have; there we return nulls and callers simply leave the information out.
+ *
+ * `timezone` may be '' or undefined for the browser's default zone.
  */
-function getTransitions(locale: string, date: Date, timezone: string | undefined) {
+export function getTransitions(locale: string, date: Date, timezone: string | undefined) {
     try {
         if (typeof Temporal === 'undefined' || !Temporal.ZonedDateTime.prototype.getTimeZoneTransition) {
             return noTransitions;
         }
 
+        // '' means the browser default, but neither Temporal nor toLocaleString() accept it as a zone id
+        const tz = timezone || undefined;
+
         const zoned = Temporal.Instant.fromEpochMilliseconds(date.getTime()).toZonedDateTimeISO(
-            timezone ?? Temporal.Now.timeZoneId()
+            tz ?? Temporal.Now.timeZoneId()
         );
         return {
-            previousTransition: toTzTransition(locale, timezone, date, zoned.getTimeZoneTransition('previous')),
-            nextTransition: toTzTransition(locale, timezone, date, zoned.getTimeZoneTransition('next')),
+            previousTransition: toTzTransition(locale, tz, date, zoned.getTimeZoneTransition('previous')),
+            nextTransition: toTzTransition(locale, tz, date, zoned.getTimeZoneTransition('next')),
         };
     } catch (e) {
         console.error('Error getting time zone transitions for', date, timezone, e);

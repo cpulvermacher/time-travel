@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { getTimezoneCity, getTzInfo, isValidTimezone } from '@/display/timezone-info';
+import { describe, expect, it, vi } from 'vitest';
+import { getTimezoneCity, getTransitions, getTzInfo, isValidTimezone } from '@/display/timezone-info';
 
 describe('getTimezoneCity', () => {
     it('returns the city part of an IANA identifier', () => {
@@ -174,6 +174,35 @@ describe.skipIf(noTransitions)('getTzInfo transitions', () => {
 
         // the zone is unknown here, so only check that the lookup ran without error
         expect(info.previousTransition === null || typeof info.previousTransition.offset === 'string').toBe(true);
+    });
+});
+
+describe.skipIf(noTransitions)('getTransitions', () => {
+    const date = new Date('2025-07-01');
+
+    it('treats an empty time zone as the browser default', () => {
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+        // neither Temporal nor toLocaleString() accept '' as a zone id, so it must be mapped to the default
+        expect(getTransitions('en', date, '')).toEqual(getTransitions('en', date, Temporal.Now.timeZoneId()));
+        expect(consoleError).not.toHaveBeenCalled();
+    });
+
+    it('returns the transitions of an explicit zone', () => {
+        expect(getTransitions('en', date, 'Europe/Berlin')).toEqual({
+            previousTransition: { dateTimeString: 'Mar 30, 2025, 03:00', offset: '+02:00' },
+            nextTransition: { dateTimeString: 'Oct 26, 2025, 02:00', offset: '+01:00' },
+        });
+    });
+
+    it('returns no transitions for an invalid zone', () => {
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+        expect(getTransitions('en', date, 'Not/AZone')).toEqual({
+            previousTransition: null,
+            nextTransition: null,
+        });
+        expect(consoleError).toHaveBeenCalled();
     });
 });
 
