@@ -3,7 +3,9 @@
 ## [3.1.0]
 - Add support for the `Temporal` API (in browsers that provide it): `Temporal.Now` returns the fake date, time and time zone, and `Temporal.Instant.prototype.toLocaleString()` uses the faked time zone. Sub-millisecond precision is not available for the faked time.
 - In the offset badge shown for timezones with DST, show nearest offset transitions (requires Temporal support available in Firefox 139+, Chrome 144+).
+- Improve popup loading times.
 - Fix: For `Intl.DateTimeFormat`, options inherited from an object's prototype chain are now read as by the original API.
+- Fix: In Firefox, it was possible to change the tab while the popup was open, leading to inconsistent info being shown. Now the popup closes when switching to a different tab.
 
 ## [3.0.2]
 - Fix: Allow scrolling extension popup when it is cut off by a short browser window. Affected Chrome as well.
