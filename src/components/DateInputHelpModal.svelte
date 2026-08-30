@@ -6,6 +6,15 @@
         onClose: () => void;
     }
     const { onClose }: Props = $props();
+
+    // the arrow glyphs are the same on every keyboard, so only the named keys are translated
+    const shortcuts = [
+        { amount: m.date_input_help_shortcut_minute(), keys: ['↑', '↓'] },
+        { amount: m.date_input_help_shortcut_10minutes(), modifier: m.key_shift(), keys: ['↑', '↓'] },
+        { amount: m.date_input_help_shortcut_hour(), modifier: m.key_ctrl_cmd(), keys: ['↑', '↓'] },
+        { amount: m.date_input_help_shortcut_second(), modifier: m.key_alt(), keys: ['↑', '↓'] },
+        { amount: m.date_input_help_shortcut_day(), keys: [m.key_page_up(), m.key_page_down()] },
+    ];
 </script>
 
 <Modal {onClose} closeOnCancel={true}>
@@ -13,26 +22,25 @@
         <h3>{m.date_input_help_shortcuts()}</h3>
         <table class="shortcuts">
             <tbody>
-                <tr>
-                    <th scope="row">{m.date_input_help_shortcut_minute()}</th>
-                    <td>{m.date_input_help_shortcut_minute_keys()}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{m.date_input_help_shortcut_10minutes()}</th>
-                    <td>{m.date_input_help_shortcut_10minutes_keys()}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{m.date_input_help_shortcut_hour()}</th>
-                    <td>{m.date_input_help_shortcut_hour_keys()}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{m.date_input_help_shortcut_second()}</th>
-                    <td>{m.date_input_help_shortcut_second_keys()}</td>
-                </tr>
-                <tr>
-                    <th scope="row">{m.date_input_help_shortcut_day()}</th>
-                    <td>{m.date_input_help_shortcut_day_keys()}</td>
-                </tr>
+                {#each shortcuts as shortcut (shortcut.amount)}
+                    <tr>
+                        <th scope="row">{shortcut.amount}</th>
+                        <td>
+                            <span class="keys">
+                                {#if shortcut.modifier}
+                                    <kbd>{shortcut.modifier}</kbd>
+                                    <span class="separator">+</span>
+                                {/if}
+                                {#each shortcut.keys as key, index (key)}
+                                    {#if index > 0}
+                                        <span class="separator">/</span>
+                                    {/if}
+                                    <kbd>{key}</kbd>
+                                {/each}
+                            </span>
+                        </td>
+                    </tr>
+                {/each}
             </tbody>
         </table>
     </section>
@@ -89,5 +97,32 @@
         text-align: start;
         padding: 0 15px 0 0;
         white-space: nowrap;
+    }
+    .shortcuts td {
+        /* the caps carry their own height, so keep the rows from touching */
+        padding: 2px 0;
+    }
+    .keys {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--gap-small);
+    }
+    kbd {
+        min-width: 1em;
+        padding: 1px var(--gap-small);
+        background: var(--disabled-background-color);
+        border: 1px solid var(--divider-color);
+        /* the thicker bottom edge reads as the side of a physical key */
+        border-bottom-width: 2px;
+        border-radius: var(--input-radius);
+        font-family: inherit;
+        font-size: 0.95em;
+        line-height: 1.4;
+        text-align: center;
+        white-space: nowrap;
+    }
+    /* "+" joins keys that are pressed together, "/" separates alternatives */
+    .separator {
+        color: var(--secondary-text-color);
     }
 </style>
