@@ -22,7 +22,6 @@ https://github.com/user-attachments/assets/74f0ee57-f941-4b94-9176-5445d58fd8a1
 ## Limitations
 
 - Only JavaScript is affected by the extension.
-- The faked time has millisecond precision, so `Temporal` values never contain micro- or nanoseconds.
 - Some functionality or animations may behave strangely if the clock is stopped.
 - The extension does not work in iframes with the `sandbox` attribute.
 
