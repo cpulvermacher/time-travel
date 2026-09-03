@@ -1,5 +1,5 @@
 Features:
-- Fälscht Datum und Uhrzeit für alle Methoden von Date- und Intl.DateTimeFormat-Objekten.
+- Fälscht Datum und Uhrzeit für alle Methoden von Date- und Intl.DateTimeFormat-Objekten sowie für Temporal.Now, sofern vom Browser unterstützt.
 - Die Zeitzone kann geändert werden, mit voller Unterstützung für Sommerzeit-Umstellungen.
 - Die Zeit kann angehalten und fortgesetzt werden.
 - Option, die Seite nach dem Ändern des Datums automatisch neu zu laden.
@@ -15,7 +15,7 @@ Verwendung:
 - In der Symbolleiste auf das Erweiterungen-Symbol und dann auf Time Travel klicken.
 - Ein Datum im Kalender auswählen und die Uhrzeit bei Bedarf anpassen, oder Datum und Uhrzeit direkt eingeben (siehe Beispiele unten).
 - Mit Enter oder per Klick auf die Schaltfläche zum Übernehmen bestätigen, die eine Vorschau der anzuwendenden Änderung anzeigt (z. B. "Ändern zu 27. Apr. 2025, 12:40").
-- Jedes JavaScript-Date- oder Intl.DateTimeFormat-Objekt im aktuellen Tab liefert nun das gesetzte falsche Datum bzw. die falsche Uhrzeit. Andere Tabs und Origins sind nicht betroffen.
+- Jedes JavaScript-Date-, Intl.DateTimeFormat- oder Temporal.Now-Objekt im aktuellen Tab liefert nun das gesetzte falsche Datum bzw. die falsche Uhrzeit. Andere Tabs und Origins sind nicht betroffen.
 
 Um die Systemzeit wiederherzustellen, auf das Symbol der Erweiterung klicken und den Schalter "JavaScript-Datum fälschen" ausschalten, oder das Eingabefeld leeren und Enter drücken.
 
@@ -23,7 +23,7 @@ Wenn das falsche Datum aktiviert ist, läuft die Uhr ab der eingestellten Zeit w
 Über den Schalter "Uhr anhalten" lässt sich die Uhr stoppen. Das falsche Datum wird dabei auf den zuletzt gesetzten Wert zurückgesetzt.
 
 Um die Zeitzone zu ändern, "Zeitzone ändern" aktivieren und eine Zeitzone aus der Auswahlliste wählen.
-Wenn aktiviert, verwenden sowohl Date-Objekte als auch Intl.DateTimeFormat diese Zeitzone anstelle der System-Zeitzone.
+Wenn aktiviert, verwenden Date-Objekte, Intl.DateTimeFormat und Temporal.Now diese Zeitzone anstelle der System-Zeitzone.
 Datums- und Uhrzeiteingaben werden dann ebenfalls als lokale Zeit in der ausgewählten Zeitzone interpretiert (die Beschriftung des Eingabefelds zeigt z. B. "Datum und Uhrzeit festlegen (London)").
 Beim Wechsel in eine andere Zeitzone bleiben das eingegebene lokale Datum und die Uhrzeit erhalten, wodurch sich der Zeitpunkt ändern kann (sofern das Eingabefeld keinen UTC-Zeitpunkt enthält).
 

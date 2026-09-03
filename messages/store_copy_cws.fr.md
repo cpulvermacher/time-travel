@@ -1,5 +1,5 @@
 Fonctionnalités :
-- Simule la date et l'heure pour toutes les méthodes des objets Date et Intl.DateTimeFormat.
+- Simule la date et l'heure pour toutes les méthodes des objets Date et Intl.DateTimeFormat, ainsi que pour Temporal.Now lorsque le navigateur le prend en charge.
 - Le fuseau horaire peut être modifié, avec une prise en charge complète des passages à l'heure d'été.
 - L'horloge peut être arrêtée et relancée.
 - Option pour recharger automatiquement la page après un changement de date.
@@ -15,7 +15,7 @@ Utilisation :
 - Cliquez sur l'icône Extensions dans la barre d'outils, puis sur Time Travel.
 - Choisissez une date dans le calendrier et modifiez l'heure si nécessaire, ou saisissez directement une date et une heure (voir les exemples ci-dessous).
 - Validez avec Entrée ou en cliquant sur le bouton d'application, qui affiche un aperçu de la modification à appliquer (par ex. "Changer la date à 27 avr. 2025 12:40").
-- Tout objet JavaScript Date ou Intl.DateTimeFormat de l'onglet actuel renvoie désormais la date et l'heure factices que vous avez définies. Les autres onglets et origines ne sont pas affectés.
+- Tout objet JavaScript Date, Intl.DateTimeFormat ou Temporal.Now de l'onglet actuel renvoie désormais la date et l'heure factices que vous avez définies. Les autres onglets et origines ne sont pas affectés.
 
 Pour rétablir l'heure du système, cliquez sur l'icône de l'extension et désactivez l'interrupteur "Date JavaScript factice", ou videz le champ de saisie et appuyez sur Entrée.
 
@@ -23,7 +23,7 @@ Lorsque la date factice est activée, l'horloge avance à partir de l'heure conf
 Vous pouvez arrêter l'horloge en activant l'interrupteur "Arrêter l'horloge". La date factice est alors réinitialisée à la dernière valeur que vous avez définie.
 
 Pour changer de fuseau horaire, activez "Changer de fuseau horaire" et sélectionnez un fuseau horaire dans la liste déroulante.
-Une fois activé, les objets Date comme Intl.DateTimeFormat utilisent ce fuseau horaire à la place de celui du système.
+Une fois activé, les objets Date, Intl.DateTimeFormat et Temporal.Now utilisent ce fuseau horaire à la place de celui du système.
 La date et l'heure saisies sont alors elles aussi interprétées comme l'heure locale dans le fuseau horaire sélectionné (l'étiquette du champ affiche par ex. "Définir la date et l'heure (London)").
 Passer à un autre fuseau horaire conserve la date et l'heure locales saisies, ce qui peut changer l'instant représenté (sauf si le champ de saisie contient un instant UTC).
 
