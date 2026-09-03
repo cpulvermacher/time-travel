@@ -1,6 +1,6 @@
 {
     "extensionDescription": {
-        "message": "Falsifie la date, l'heure et le fuseau horaire actuel dans les objets JavaScript Date ou Intl.DateTimeFormat.",
+        "message": "Falsifie la date, l'heure et le fuseau horaire actuel dans les objets JavaScript Date, Intl.DateTimeFormat ou Temporal.",
         "description": "description affichée dans l'interface utilisateur du navigateur"
     }
 }
