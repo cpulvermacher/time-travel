@@ -27,6 +27,7 @@ export default defineConfig(() => ({
     test: {
         environment: 'happy-dom',
         setupFiles: ['test/setup.ts'],
+        pool: 'vmThreads',
         clearMocks: true,
         coverage: {
             exclude: ['paraglide/**'],

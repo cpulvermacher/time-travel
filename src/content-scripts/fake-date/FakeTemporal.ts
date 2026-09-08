@@ -132,6 +132,15 @@ const warnUnreplaceable = (e: unknown) => {
     console.warn('Time Travel: could not replace Temporal', e);
 };
 
+/** assign the global `Temporal`. Outside strict mode a write to a non-writable global is silently
+ * ignored, so check it and throw ourselves. */
+const setGlobalTemporal = (value: typeof Temporal) => {
+    globalThis.Temporal = value;
+    if (globalThis.Temporal !== value) {
+        throw new TypeError('Cannot assign to read only property Temporal');
+    }
+};
+
 /** the original `Instant.prototype.toLocaleString`, non-null exactly while our patch is installed */
 let originalToLocaleString: Temporal.Instant['toLocaleString'] | null = null;
 
@@ -141,7 +150,7 @@ export const patchTemporal = () => {
         return;
     }
     try {
-        globalThis.Temporal = FakeTemporal;
+        setGlobalTemporal(FakeTemporal);
 
         // Instant.toLocaleString() is the only Temporal instance method that falls back to the
         // system time zone. We patch this one in-place to reach all Instant instances (no-op if
@@ -164,7 +173,7 @@ export const unpatchTemporal = () => {
         return;
     }
     try {
-        globalThis.Temporal = OriginalTemporal;
+        setGlobalTemporal(OriginalTemporal);
 
         if (originalToLocaleString) {
             OriginalTemporal.Instant.prototype.toLocaleString = originalToLocaleString;
