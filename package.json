@@ -27,7 +27,7 @@
         "@types/chrome": "^0.2.7",
         "@vitest/coverage-v8": "^5.0.0",
         "chrome-webstore-upload-cli": "^4.0.1",
-        "happy-dom": "^20.11.6",
+        "happy-dom": "^20.14.0",
         "svelte-check": "^4.7.6",
         "typescript": "^6.0.3",
         "vite": "^8.2.2",
