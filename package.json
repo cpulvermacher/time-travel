@@ -24,7 +24,7 @@
         "@playwright/test": "^1.62.1",
         "@sveltejs/vite-plugin-svelte": "^7.3.0",
         "@tsconfig/svelte": "^5.0.8",
-        "@types/chrome": "^0.2.8",
+        "@types/chrome": "^0.2.9",
         "@vitest/coverage-v8": "^5.0.0",
         "chrome-webstore-upload-cli": "^4.0.1",
         "happy-dom": "^20.14.0",
