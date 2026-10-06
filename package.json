@@ -22,7 +22,7 @@
         "@inlang/cli": "^3.3.3",
         "@inlang/paraglide-js": "^2.24.1",
         "@playwright/test": "^1.62.1",
-        "@sveltejs/vite-plugin-svelte": "^7.3.0",
+        "@sveltejs/vite-plugin-svelte": "^7.3.1",
         "@tsconfig/svelte": "^5.0.8",
         "@types/chrome": "^0.2.9",
         "@vitest/coverage-v8": "^5.0.3",
@@ -30,7 +30,7 @@
         "happy-dom": "^20.14.3",
         "svelte-check": "^4.7.6",
         "typescript": "^6.0.3",
-        "vite": "^8.2.2",
+        "vite": "^8.3.2",
         "vitest": "^5.0.3",
         "web-ext": "^10.6.0"
     },
