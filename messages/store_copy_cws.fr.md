@@ -14,7 +14,7 @@ Utilisation :
 - Ouvrez l'onglet dans lequel vous souhaitez changer l'heure.
 - Cliquez sur l'icône Extensions dans la barre d'outils, puis sur Time Travel.
 - Choisissez une date dans le calendrier et modifiez l'heure si nécessaire, ou saisissez directement une date et une heure (voir les exemples ci-dessous).
-- Validez avec Entrée ou en cliquant sur le bouton d'application, qui affiche un aperçu de la modification à appliquer (par ex. "Changer la date à 27 avr. 2025 12:40").
+- Validez avec Entrée ou en cliquant sur le bouton d'application, qui affiche un aperçu de la modification à appliquer (par ex. "Changer la date à 27 avr. 2025 12:40"). Lors de la première activation de l'extension dans un onglet, la page doit être rechargée une fois pour que les modifications s'appliquent.
 - Tout objet JavaScript Date, Intl.DateTimeFormat ou Temporal.Now de l'onglet actuel renvoie désormais la date et l'heure factices que vous avez définies. Les autres onglets et origines ne sont pas affectés.
 
 Pour rétablir l'heure du système, cliquez sur l'icône de l'extension et désactivez l'interrupteur "Date JavaScript factice", ou videz le champ de saisie et appuyez sur Entrée.

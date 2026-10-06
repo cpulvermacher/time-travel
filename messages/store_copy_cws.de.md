@@ -14,7 +14,7 @@ Verwendung:
 - Den Tab öffnen, in dem die Zeit geändert werden soll.
 - In der Symbolleiste auf das Erweiterungen-Symbol und dann auf Time Travel klicken.
 - Ein Datum im Kalender auswählen und die Uhrzeit bei Bedarf anpassen, oder Datum und Uhrzeit direkt eingeben (siehe Beispiele unten).
-- Mit Enter oder per Klick auf die Schaltfläche zum Übernehmen bestätigen, die eine Vorschau der anzuwendenden Änderung anzeigt (z. B. "Ändern zu 27. Apr. 2025, 12:40").
+- Mit Enter oder per Klick auf die Schaltfläche zum Übernehmen bestätigen, die eine Vorschau der anzuwendenden Änderung anzeigt (z. B. "Ändern zu 27. Apr. 2025, 12:40"). Wird die Erweiterung zum ersten Mal in einem Tab aktiviert, muss die Seite einmal neu geladen werden, damit die Änderungen wirksam werden.
 - Jedes JavaScript-Date-, Intl.DateTimeFormat- oder Temporal.Now-Objekt im aktuellen Tab liefert nun das gesetzte falsche Datum bzw. die falsche Uhrzeit. Andere Tabs und Origins sind nicht betroffen.
 
 Um die Systemzeit wiederherzustellen, auf das Symbol der Erweiterung klicken und den Schalter "JavaScript-Datum fälschen" ausschalten, oder das Eingabefeld leeren und Enter drücken.
