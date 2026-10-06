@@ -21,7 +21,7 @@
         "@biomejs/biome": "2.5.6",
         "@inlang/cli": "^3.3.3",
         "@inlang/paraglide-js": "^2.24.1",
-        "@playwright/test": "^1.62.1",
+        "@playwright/test": "^1.63.0",
         "@sveltejs/vite-plugin-svelte": "^7.3.1",
         "@tsconfig/svelte": "^5.0.8",
         "@types/chrome": "^0.2.9",
