@@ -3,3 +3,6 @@ minimumReleaseAge: 4320
 allowBuilds:
   esbuild: false
   spawn-sync: false
+
+overrides:
+  devalue@<=5.9.2: ^5.9.3
