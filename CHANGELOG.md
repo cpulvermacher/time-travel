@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.1.1]
+- Dependency updates.
+
 ## [3.1.0]
 - Add support for the `Temporal` API (in browsers that provide it): `Temporal.Now` returns the fake date, time and time zone, and `Temporal.Instant.prototype.toLocaleString()` uses the faked time zone. Sub-millisecond precision is not available for the faked time.
 - In the offset badge shown for timezones with DST, show nearest offset transitions (requires Temporal support available in Firefox 139+, Chrome 144+).
