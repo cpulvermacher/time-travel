@@ -1,0 +1,6 @@
+{
+    "extensionDescription": {
+        "message": "Simula la fecha, la hora y la zona horaria actuales en los objetos JavaScript Date, Intl.DateTimeFormat o Temporal.",
+        "description": "descripción que se muestra en la interfaz del navegador"
+    }
+}

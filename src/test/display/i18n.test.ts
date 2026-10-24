@@ -14,10 +14,12 @@ describe('getTranslationLocale', () => {
         expect(getTranslationLocale('de-DE')).toBe('de');
         expect(getTranslationLocale('ja')).toBe('ja');
         expect(getTranslationLocale('ja-JP')).toBe('ja');
+        expect(getTranslationLocale('es')).toBe('es');
+        expect(getTranslationLocale('es-ES')).toBe('es');
+        expect(getTranslationLocale('es-MX')).toBe('es');
     });
 
     it('falls back to en if not available', () => {
-        expect(getTranslationLocale('es')).toBe('en');
         expect(getTranslationLocale('it')).toBe('en');
         expect(getTranslationLocale('xx')).toBe('en');
         expect(getTranslationLocale('')).toBe('en');
