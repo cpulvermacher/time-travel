@@ -1,12 +1,20 @@
 import { type Locale, locales } from '@/paraglide/runtime';
 
+/** languages using Traditional Chinese script, which we serve with zh_TW */
+const traditionalChinesePrefixes = ['zh-TW', 'zh-HK', 'zh-MO', 'zh-Hant'];
+
 /**
  * for a language string like 'en' or 'de-AT', return available locale.
  * defaults to 'en' if not available.
  */
 export function getTranslationLocale(language: string): Locale {
+    // browsers report e.g. 'zh-TW', while locale names use underscores like the _locales/ dirs
+    const normalized = language.replace('_', '-');
+    if (traditionalChinesePrefixes.some((prefix) => normalized.startsWith(prefix))) {
+        return 'zh_TW';
+    }
     for (const locale of locales) {
-        if (language.startsWith(locale)) {
+        if (normalized.startsWith(locale.replace('_', '-'))) {
             return locale;
         }
     }

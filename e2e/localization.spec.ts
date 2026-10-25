@@ -37,6 +37,13 @@ const languages = [
         pageTime: '2025年4月27日 12:40:00',
         applyButton: '日時を2025年4月27日 12:40に変更',
     },
+    {
+        name: 'Traditional Chinese',
+        locale: 'zh-TW',
+        weekdays: ['日', '一', '二', '三', '四', '五', '六'],
+        pageTime: '2025年4月27日 12:40:00',
+        applyButton: '將日期變更為 2025年4月27日 12:40',
+    },
 ];
 
 for (const { name, locale, weekdays, pageTime, applyButton } of languages) {

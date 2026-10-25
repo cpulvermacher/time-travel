@@ -17,9 +17,15 @@ describe('getTranslationLocale', () => {
         expect(getTranslationLocale('es')).toBe('es');
         expect(getTranslationLocale('es-ES')).toBe('es');
         expect(getTranslationLocale('es-MX')).toBe('es');
+        expect(getTranslationLocale('zh-TW')).toBe('zh_TW');
+        expect(getTranslationLocale('zh_TW')).toBe('zh_TW');
+        expect(getTranslationLocale('zh-HK')).toBe('zh_TW');
+        expect(getTranslationLocale('zh-Hant-TW')).toBe('zh_TW');
     });
 
     it('falls back to en if not available', () => {
+        expect(getTranslationLocale('zh')).toBe('en');
+        expect(getTranslationLocale('zh-CN')).toBe('en');
         expect(getTranslationLocale('it')).toBe('en');
         expect(getTranslationLocale('xx')).toBe('en');
         expect(getTranslationLocale('')).toBe('en');
