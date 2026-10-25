@@ -146,8 +146,9 @@
         box-shadow: var(--ring);
     }
 
-    /* for Japanese, add a suffix to the year*/
-    :lang(ja) :global {
+    /* for Japanese and Chinese, add a suffix to the year*/
+    :lang(ja) :global,
+    :lang(zh) :global {
         .datepicker header span div:not(.years)::after {
             content: "年";
         }

@@ -1,24 +1,24 @@
 import { type Locale, locales } from '@/paraglide/runtime';
 
-/** languages using Traditional Chinese script, which we serve with zh_TW */
-const traditionalChinesePrefixes = ['zh-TW', 'zh-HK', 'zh-MO', 'zh-Hant'];
+/** languages using Traditional Chinese script (lowercase), which we serve with zh-TW */
+const traditionalChinesePrefixes = ['zh-tw', 'zh-hk', 'zh-mo', 'zh-hant'];
 
 /**
  * for a language string like 'en' or 'de-AT', return available locale.
  * defaults to 'en' if not available.
  */
 export function getTranslationLocale(language: string): Locale {
-    // browsers report e.g. 'zh-TW', while locale names use underscores like the _locales/ dirs
-    const normalized = language.replace('_', '-');
+    // language tags are case-insensitive, and some sources use underscores like the _locales/ dirs
+    const normalized = language.replaceAll('_', '-').toLowerCase();
     if (traditionalChinesePrefixes.some((prefix) => normalized.startsWith(prefix))) {
-        return 'zh_TW';
+        return 'zh-TW';
     }
     // any other Chinese (zh, zh-CN, zh-SG, zh-Hans) uses Simplified script
     if (normalized === 'zh' || normalized.startsWith('zh-')) {
-        return 'zh_CN';
+        return 'zh-CN';
     }
     for (const locale of locales) {
-        if (normalized.startsWith(locale.replace('_', '-'))) {
+        if (normalized.startsWith(locale.toLowerCase())) {
             return locale;
         }
     }
@@ -59,7 +59,9 @@ export function getFirstDayOfWeek(lang: string): number {
         lang.startsWith('uk') ||
         lang.startsWith('vi') ||
         lang === 'zh' ||
-        lang === 'zh-CN'
+        lang === 'zh-CN' ||
+        lang === 'zh-Hans' ||
+        lang === 'zh-Hans-CN'
     ) {
         return 1;
     }

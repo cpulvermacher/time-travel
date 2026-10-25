@@ -17,15 +17,19 @@ describe('getTranslationLocale', () => {
         expect(getTranslationLocale('es')).toBe('es');
         expect(getTranslationLocale('es-ES')).toBe('es');
         expect(getTranslationLocale('es-MX')).toBe('es');
-        expect(getTranslationLocale('zh-TW')).toBe('zh_TW');
-        expect(getTranslationLocale('zh_TW')).toBe('zh_TW');
-        expect(getTranslationLocale('zh-HK')).toBe('zh_TW');
-        expect(getTranslationLocale('zh-Hant-TW')).toBe('zh_TW');
-        expect(getTranslationLocale('zh')).toBe('zh_CN');
-        expect(getTranslationLocale('zh-CN')).toBe('zh_CN');
-        expect(getTranslationLocale('zh_CN')).toBe('zh_CN');
-        expect(getTranslationLocale('zh-SG')).toBe('zh_CN');
-        expect(getTranslationLocale('zh-Hans-CN')).toBe('zh_CN');
+        expect(getTranslationLocale('zh-TW')).toBe('zh-TW');
+        expect(getTranslationLocale('zh_TW')).toBe('zh-TW');
+        expect(getTranslationLocale('zh-tw')).toBe('zh-TW');
+        expect(getTranslationLocale('zh-HK')).toBe('zh-TW');
+        expect(getTranslationLocale('zh-hk')).toBe('zh-TW');
+        expect(getTranslationLocale('zh-Hant-TW')).toBe('zh-TW');
+        expect(getTranslationLocale('zh_Hant_HK')).toBe('zh-TW');
+        expect(getTranslationLocale('zh')).toBe('zh-CN');
+        expect(getTranslationLocale('zh-CN')).toBe('zh-CN');
+        expect(getTranslationLocale('zh_CN')).toBe('zh-CN');
+        expect(getTranslationLocale('zh-SG')).toBe('zh-CN');
+        expect(getTranslationLocale('zh-Hans-CN')).toBe('zh-CN');
+        expect(getTranslationLocale('EN-us')).toBe('en');
     });
 
     it('falls back to en if not available', () => {
@@ -52,6 +56,8 @@ describe('getFirstDayOfWeek', () => {
         expect(getFirstDayOfWeek('tr')).toBe(1);
         expect(getFirstDayOfWeek('uk')).toBe(1);
         expect(getFirstDayOfWeek('vi')).toBe(1);
+        expect(getFirstDayOfWeek('zh-CN')).toBe(1);
+        expect(getFirstDayOfWeek('zh-Hans-CN')).toBe(1);
     });
 
     it('returns Sunday for others', () => {
