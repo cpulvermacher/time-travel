@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.1.2]
+- Add Spanish translation.
+
 ## [3.1.1]
 - Dependency updates.
 
