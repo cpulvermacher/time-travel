@@ -43,4 +43,4 @@ Ejemplos de fechas y formatos:
 
 Esta extensión es software de código abierto distribuido bajo la licencia MIT.
 
-Si tienes ideas o informes de errores, o quieres ayudar a mejorar Time Travel, abre una issue en [GitHub](https://github.com/cpulvermacher/time-travel).
+Si tienes ideas o informes de errores, o quieres ayudar a mejorar Time Travel, abre un issue en [GitHub](https://github.com/cpulvermacher/time-travel).
