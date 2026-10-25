@@ -45,6 +45,7 @@ describe('getFirstDayOfWeek', () => {
         expect(getFirstDayOfWeek('cs')).toBe(1);
         expect(getFirstDayOfWeek('de')).toBe(1);
         expect(getFirstDayOfWeek('de-AT')).toBe(1);
+        expect(getFirstDayOfWeek('de_AT')).toBe(1);
         expect(getFirstDayOfWeek('en-GB')).toBe(1);
         expect(getFirstDayOfWeek('es')).toBe(1);
         expect(getFirstDayOfWeek('fr')).toBe(1);

@@ -7,9 +7,9 @@ const traditionalChinesePrefixes = ['zh-tw', 'zh-hk', 'zh-mo', 'zh-hant'];
  * for a language string like 'en' or 'de-AT', return available locale.
  * defaults to 'en' if not available.
  */
-export function getTranslationLocale(language: string): Locale {
+export function getTranslationLocale(uiLanguage: string): Locale {
     // language tags are case-insensitive, and some sources use underscores like the _locales/ dirs
-    const normalized = language.replaceAll('_', '-').toLowerCase();
+    const normalized = uiLanguage.replaceAll('_', '-').toLowerCase();
     if (traditionalChinesePrefixes.some((prefix) => normalized.startsWith(prefix))) {
         return 'zh-TW';
     }
@@ -26,7 +26,8 @@ export function getTranslationLocale(language: string): Locale {
 }
 
 /** get the first day of the week (1=Monday, 7: Sunday) */
-export function getFirstDayOfWeek(lang: string): number {
+export function getFirstDayOfWeek(uiLanguage: string): number {
+    const lang = uiLanguage.replaceAll('_', '-').toLowerCase();
     /* v8 ignore start -- environment-dependent: `getWeekInfo` exists on newer runtimes
        (Chrome 130+, Node 24+) but not on older ones, so exactly one of the two paths below
        is reachable per environment. Excluded so coverage stays stable across Node versions. */
@@ -47,7 +48,7 @@ export function getFirstDayOfWeek(lang: string): number {
         lang.startsWith('cs') ||
         lang.startsWith('da') ||
         lang.startsWith('de') ||
-        lang === 'en-GB' ||
+        lang === 'en-gb' ||
         lang.startsWith('es') ||
         lang.startsWith('fr') ||
         lang.startsWith('it') ||
@@ -59,9 +60,9 @@ export function getFirstDayOfWeek(lang: string): number {
         lang.startsWith('uk') ||
         lang.startsWith('vi') ||
         lang === 'zh' ||
-        lang === 'zh-CN' ||
-        lang === 'zh-Hans' ||
-        lang === 'zh-Hans-CN'
+        lang === 'zh-cn' ||
+        lang === 'zh-hans' ||
+        lang === 'zh-hans-cn'
     ) {
         return 1;
     }
