@@ -23,6 +23,13 @@ const languages = [
         applyButton: 'Changer la date à 27 avr. 2025 12:40',
     },
     {
+        name: 'Spanish',
+        locale: 'es-ES',
+        weekdays: ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'],
+        pageTime: '27 abr 2025 12:40:00',
+        applyButton: 'Cambiar fecha a 27 abr 2025 12:40',
+    },
+    {
         name: 'Japanese',
         locale: 'ja-JP',
         // Sunday first, and a date format that puts the year first
