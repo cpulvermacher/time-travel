@@ -78,7 +78,7 @@ export async function injectFunction<Args extends [string] | [string, string], R
     args: Args,
     world: `${chrome.scripting.ExecutionWorld}` = 'MAIN',
     allFrames = false
-): Promise<chrome.scripting.Awaited<Result> | null> {
+): Promise<Awaited<Result> | null> {
     const result = await chrome.scripting.executeScript({
         target: allFrames ? { tabId, allFrames: true } : { tabId },
         func,
