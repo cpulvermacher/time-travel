@@ -27,12 +27,12 @@ export function getTranslationLocale(uiLanguage: string): Locale {
 
 /** get the first day of the week (1=Monday, 7: Sunday) */
 export function getFirstDayOfWeek(uiLanguage: string): number {
-    const lang = uiLanguage.replaceAll('_', '-').toLowerCase();
+    const normalized = uiLanguage.replaceAll('_', '-').toLowerCase();
     /* v8 ignore start -- environment-dependent: `getWeekInfo` exists on newer runtimes
-       (Chrome 130+, Node 24+) but not on older ones, so exactly one of the two paths below
-       is reachable per environment. Excluded so coverage stays stable across Node versions. */
+        (Chrome 130+, Node 24+) but not on older ones, so exactly one of the two paths below
+        is reachable per environment. Excluded so coverage stays stable across Node versions. */
     // Chrome supports `getWeekInfo()` since version 130
-    const locale = new Intl.Locale(lang);
+    const locale = new Intl.Locale(normalized);
     if ('getWeekInfo' in locale) {
         interface WeekInfo {
             firstDay: number;
@@ -44,25 +44,25 @@ export function getFirstDayOfWeek(uiLanguage: string): number {
     // for browsers without support, add some common Monday cases and assume Sunday for the rest
     // when adding language support, add appropriate regions here as well
     if (
-        lang.startsWith('ca') ||
-        lang.startsWith('cs') ||
-        lang.startsWith('da') ||
-        lang.startsWith('de') ||
-        lang === 'en-gb' ||
-        lang.startsWith('es') ||
-        lang.startsWith('fr') ||
-        lang.startsWith('it') ||
-        lang.startsWith('nl') ||
-        lang.startsWith('pl') ||
-        lang.startsWith('ru') ||
-        lang.startsWith('sv') ||
-        lang.startsWith('tr') ||
-        lang.startsWith('uk') ||
-        lang.startsWith('vi') ||
-        lang === 'zh' ||
-        lang === 'zh-cn' ||
-        lang === 'zh-hans' ||
-        lang === 'zh-hans-cn'
+        normalized.startsWith('ca') ||
+        normalized.startsWith('cs') ||
+        normalized.startsWith('da') ||
+        normalized.startsWith('de') ||
+        normalized === 'en-gb' ||
+        normalized.startsWith('es') ||
+        normalized.startsWith('fr') ||
+        normalized.startsWith('it') ||
+        normalized.startsWith('nl') ||
+        normalized.startsWith('pl') ||
+        normalized.startsWith('ru') ||
+        normalized.startsWith('sv') ||
+        normalized.startsWith('tr') ||
+        normalized.startsWith('uk') ||
+        normalized.startsWith('vi') ||
+        normalized === 'zh' ||
+        normalized === 'zh-cn' ||
+        normalized === 'zh-hans' ||
+        normalized === 'zh-hans-cn'
     ) {
         return 1;
     }
