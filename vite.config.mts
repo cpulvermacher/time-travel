@@ -18,8 +18,8 @@ export default defineConfig(() => ({
             configFile: '../svelte.config.mjs',
         }),
         paraglideVitePlugin({
-            project: './project.inlang',
-            outdir: './src/paraglide',
+            project: resolve(import.meta.dirname, './project.inlang'),
+            outdir: resolve(import.meta.dirname, './src/paraglide'),
             strategy: ['baseLocale'], // locale configured via overwriteGetLocale()
         }),
     ],
