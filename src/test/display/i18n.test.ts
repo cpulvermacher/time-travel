@@ -21,11 +21,14 @@ describe('getTranslationLocale', () => {
         expect(getTranslationLocale('zh_TW')).toBe('zh_TW');
         expect(getTranslationLocale('zh-HK')).toBe('zh_TW');
         expect(getTranslationLocale('zh-Hant-TW')).toBe('zh_TW');
+        expect(getTranslationLocale('zh')).toBe('zh_CN');
+        expect(getTranslationLocale('zh-CN')).toBe('zh_CN');
+        expect(getTranslationLocale('zh_CN')).toBe('zh_CN');
+        expect(getTranslationLocale('zh-SG')).toBe('zh_CN');
+        expect(getTranslationLocale('zh-Hans-CN')).toBe('zh_CN');
     });
 
     it('falls back to en if not available', () => {
-        expect(getTranslationLocale('zh')).toBe('en');
-        expect(getTranslationLocale('zh-CN')).toBe('en');
         expect(getTranslationLocale('it')).toBe('en');
         expect(getTranslationLocale('xx')).toBe('en');
         expect(getTranslationLocale('')).toBe('en');

@@ -1,0 +1,6 @@
+{
+    "extensionDescription": {
+        "message": "在 JavaScript Date、Intl.DateTimeFormat 或 Temporal 对象中模拟当前的日期、时间和时区。",
+        "description": "显示在浏览器界面中的说明"
+    }
+}

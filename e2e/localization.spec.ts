@@ -44,6 +44,13 @@ const languages = [
         pageTime: '2025年4月27日 12:40:00',
         applyButton: '將日期變更為 2025年4月27日 12:40',
     },
+    {
+        name: 'Simplified Chinese',
+        locale: 'zh-CN',
+        weekdays: ['一', '二', '三', '四', '五', '六', '日'],
+        pageTime: '2025年4月27日 12:40:00',
+        applyButton: '将日期更改为 2025年4月27日 12:40',
+    },
 ];
 
 for (const { name, locale, weekdays, pageTime, applyButton } of languages) {

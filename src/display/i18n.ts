@@ -13,6 +13,10 @@ export function getTranslationLocale(language: string): Locale {
     if (traditionalChinesePrefixes.some((prefix) => normalized.startsWith(prefix))) {
         return 'zh_TW';
     }
+    // any other Chinese (zh, zh-CN, zh-SG, zh-Hans) uses Simplified script
+    if (normalized === 'zh' || normalized.startsWith('zh-')) {
+        return 'zh_CN';
+    }
     for (const locale of locales) {
         if (normalized.startsWith(locale.replace('_', '-'))) {
             return locale;

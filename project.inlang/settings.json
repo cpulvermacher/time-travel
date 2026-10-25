@@ -7,7 +7,8 @@
     "de",
     "ja",
     "es",
-    "zh_TW"
+    "zh_TW",
+    "zh_CN"
   ],
   "modules": [
     "https://cdn.jsdelivr.net/npm/@inlang/plugin-message-format@4/dist/index.js",
