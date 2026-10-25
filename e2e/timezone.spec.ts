@@ -229,11 +229,13 @@ test.describe('daylight saving time', () => {
             pageTime: 'Jan 15, 2025 12:40:00',
             offset: '+00:00',
             season: 'standard',
-            title:
-                'Europe/London (Greenwich Mean Time)\n' +
-                'This time zone observes Daylight Saving Time (DST) at other times of the year.\n' +
-                'This offset has been in effect since Oct 27, 2024, 01:00.\n' +
-                'It changes to +01:00 on Mar 30, 2025, 02:00.',
+            // Chromium 156 has no long name for London in winter, so we fall back to the generic one
+            title: new RegExp(
+                '^Europe/London \\((Greenwich Mean Time|United Kingdom Time)\\)\\n' +
+                    'This time zone observes Daylight Saving Time \\(DST\\) at other times of the year\\.\\n' +
+                    'This offset has been in effect since Oct 27, 2024, 01:00\\.\\n' +
+                    'It changes to \\+01:00 on Mar 30, 2025, 02:00\\.$'
+            ),
         },
         {
             // in the southern hemisphere DST is in effect around the turn of the year
